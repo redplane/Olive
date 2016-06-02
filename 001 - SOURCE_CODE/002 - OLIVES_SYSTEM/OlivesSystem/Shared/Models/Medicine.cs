@@ -3,23 +3,23 @@
     public class Medicine
     {
         /// <summary>
-        /// Medicine name.
+        ///     Medicine name.
         /// </summary>
         public string Name { get; set; }
-        
+
         /// <summary>
-        /// Total quantity patient needs to 
+        ///     Total quantity patient needs to
         /// </summary>
         public double Quantity { get; set; }
-        
+
         /// <summary>
-        /// Medicine unit.
+        ///     Medicine unit.
         /// </summary>
         public string Unit { get; set; }
-        
+
         /// <summary>
-        /// Note.
+        ///     Note.
         /// </summary>
-        public string Note { get; set; } 
+        public string Note { get; set; }
     }
 }
