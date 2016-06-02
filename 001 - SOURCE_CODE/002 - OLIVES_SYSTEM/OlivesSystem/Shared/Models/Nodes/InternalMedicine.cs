@@ -3,50 +3,50 @@
     public class InternalMedicine : MedicalRecord
     {
         /// <summary>
-        /// Note about circulatory system.
-        /// Hệ tuần hoàn.
+        ///     Note about circulatory system.
+        ///     Hệ tuần hoàn.
         /// </summary>
-        public string [] Circulatory { get; set; }
+        public string[] Circulatory { get; set; }
 
         /// <summary>
-        /// Note about respiratory system.
-        /// Hệ hô hấp.
+        ///     Note about respiratory system.
+        ///     Hệ hô hấp.
         /// </summary>
-        public string [] Respirative { get; set; }
+        public string[] Respirative { get; set; }
 
         /// <summary>
-        /// Digestive system.
+        ///     Digestive system.
         /// </summary>
-        public string [] Digestion { get; set; }
+        public string[] Digestion { get; set; }
 
         /// <summary>
-        /// Excretory system.
-        /// Hệ bài tiết (Thận - tiết nhiệu - sinh dục)
+        ///     Excretory system.
+        ///     Hệ bài tiết (Thận - tiết nhiệu - sinh dục)
         /// </summary>
-        public string [] Excretory { get; set; }
+        public string[] Excretory { get; set; }
 
         /// <summary>
-        /// Neural system.
-        /// Hệ thần kinh.
+        ///     Neural system.
+        ///     Hệ thần kinh.
         /// </summary>
-        public string [] Nerve { get; set; }
+        public string[] Nerve { get; set; }
 
         /// <summary>
-        /// Related to bone and muscle.
-        /// Hệ xương khớp.
+        ///     Related to bone and muscle.
+        ///     Hệ xương khớp.
         /// </summary>
-        public string [] Musculoskeletal { get; set; }
+        public string[] Musculoskeletal { get; set; }
 
         /// <summary>
-        /// Related to teeth, ear, ...
-        /// Răng - hàm - mặt
+        ///     Related to teeth, ear, ...
+        ///     Răng - hàm - mặt
         /// </summary>
-        public string [] Dentomaxillofacial { get; set; }
+        public string[] Dentomaxillofacial { get; set; }
 
         /// <summary>
-        /// Eye.
-        /// Mắt.
+        ///     Eye.
+        ///     Mắt.
         /// </summary>
-        public string [] Optic { get; set; }
+        public string[] Optic { get; set; }
     }
 }
