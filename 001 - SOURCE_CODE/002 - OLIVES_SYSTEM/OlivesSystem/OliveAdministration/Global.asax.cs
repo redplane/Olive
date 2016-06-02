@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Web;
@@ -11,7 +12,9 @@ using DotnetSignalR.Models;
 using DotnetSignalR.Repository;
 using Neo4jClient;
 using Newtonsoft.Json;
+using Shared.Constants;
 using Shared.Interfaces;
+using Shared.Models.Nodes;
 
 namespace DotnetSignalR
 {
@@ -76,6 +79,57 @@ namespace DotnetSignalR
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 
+            #endregion
+
+            #region Admin creation
+
+            var person = new Person();
+            person.FirstName = "Nguyen";
+            person.LastName = "Linh";
+            person.Created = DateTime.Now.Ticks;
+            person.Birthday = DateTime.Now.Ticks;
+            person.Id = "c857a1fe-084c-4926-9ad7-ecfeabd038ff";
+            person.Password = "c857a1fe-084c-4926-9ad7-ecfeabd038ff";
+            person.Role = Roles.Admin;
+            person.Gender = Constants.Male;
+
+            // TODO: Remove this code.
+
+            var parameters = new Dictionary<string, object>();
+            parameters.Add("mergeInfo", person);
+            parameters.Add("info", person);
+
+            graphClient.Cypher
+                .Merge($"(n:Person {{ Id: '{person.Id}'}})")
+                .OnCreate()
+                .Set("n = {info}")
+                .WithParams(parameters)
+                .ExecuteWithoutResults();
+
+            var doctorIds = new[] {"a43bd26a-f380-45cf-b877-65a6460bc3be", "11b9190a-803b-4610-9a12-0630588de37a", "b14e626e-9e0f-40f8-824e-415c57bdd942", "cdad3953-2994-49d6-8c48-ec3c015b78db" };
+
+            for (var i = 0; i < doctorIds.Length; i++)
+            {
+                var doctor = new Doctor();
+                doctor.Id = doctorIds[i];
+                doctor.LastName = $"LastName_{i}";
+                doctor.FirstName = $"FirstName_{i}";
+                doctor.Created = DateTime.Now.Ticks;
+                doctor.Email = $"Email_{i}";
+                doctor.Created = DateTime.Now.Ticks;
+                doctor.Password = $"Password_{i}";
+                doctor.Gender = 1;
+                doctor.Phone = $"00000{i}";
+                doctor.Gender = Constants.Female;
+
+                graphClient.Cypher
+                    .Merge($"(n:Person {{ Id: '{doctorIds[i]}'}})")
+                    .OnCreate()
+                    .Set("n = {info}")
+                    .Set("n = {info}")
+                    .WithParam("info", doctor)
+                    .ExecuteWithoutResults();
+            }
             #endregion
         }
     }
