@@ -1,6 +1,8 @@
-﻿namespace Shared.Models.Nodes
+﻿using Shared.Interfaces;
+
+namespace Shared.Models.Nodes
 {
-    public class Person
+    public class Person : IPerson
     {
         /// <summary>
         ///     Person GUID.
@@ -36,6 +38,11 @@
         ///     Email address which is used for registration or for contacting.
         /// </summary>
         public string Email { get; set; }
+
+        /// <summary>
+        ///     Password of this account.
+        /// </summary>
+        public string Password { get; set; }
 
         /// <summary>
         ///     Phone number which is used for contacting.
