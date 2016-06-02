@@ -3,8 +3,8 @@
     public class ProvidesTreatment
     {
         /// <summary>
-        /// Duration of treatment.
+        ///     Duration of treatment.
         /// </summary>
-        public long Duration { get; set; } 
+        public long Duration { get; set; }
     }
 }
