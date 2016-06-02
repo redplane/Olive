@@ -1,0 +1,5 @@
+{
+  "db_url": "http://localhost:7474/db/data",
+  "db_account": "neo4j",
+  "db_password": "Redplane1"
+}
