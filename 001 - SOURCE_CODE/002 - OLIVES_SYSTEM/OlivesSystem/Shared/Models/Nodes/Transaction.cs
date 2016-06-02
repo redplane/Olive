@@ -3,23 +3,23 @@
     public class Transaction
     {
         /// <summary>
-        /// Transaction GUID.
+        ///     Transaction GUID.
         /// </summary>
         public string Id { get; set; }
-        
+
         /// <summary>
-        /// Message of transaction.
+        ///     Message of transaction.
         /// </summary>
         public string Content { get; set; }
-        
+
         /// <summary>
-        /// Time when transaction is created.
+        ///     Time when transaction is created.
         /// </summary>
         public long Time { get; set; }
-        
+
         /// <summary>
-        /// Cost.
+        ///     Cost.
         /// </summary>
-        public double Cost { get; set; } 
+        public double Cost { get; set; }
     }
 }
