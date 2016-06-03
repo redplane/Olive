@@ -23,5 +23,13 @@
         public const string RequestHeaderAccountEmail = "account_email";
 
         public const string RequestHeaderAccountPassword = "account_password";
+
+        #region Account statuses
+
+        public const byte AccountInactive = 0;
+        public const byte AccountPending = 1;
+        public const byte AccountActive = 2;
+
+        #endregion
     }
 }
