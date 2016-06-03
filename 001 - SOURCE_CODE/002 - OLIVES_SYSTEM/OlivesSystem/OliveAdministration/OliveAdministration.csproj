@@ -157,6 +157,8 @@
     <Compile Include="Repository\RepositoryAccount.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\CreateDoctorViewModel.cs" />
+    <Compile Include="ViewModels\EditDoctorViewModel.cs" />
+    <Compile Include="ViewModels\EditPersonViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
