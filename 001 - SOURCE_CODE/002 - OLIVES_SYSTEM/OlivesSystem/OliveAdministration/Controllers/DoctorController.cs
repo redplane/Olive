@@ -145,26 +145,26 @@ namespace DotnetSignalR.Controllers
         {
             // Invalid role.
             // TODO: Uncomment this.
-            //var roleResult = await IsInValidRoleAsync(Roles.Admin);
-            //if (roleResult != HttpStatusCode.OK)
-            //{
-            //    Response.StatusCode = (int) roleResult;
-            //    return Json(null);
-            //}
+            var roleResult = await IsInValidRoleAsync(Roles.Admin);
+            if (roleResult != HttpStatusCode.OK)
+            {
+                Response.StatusCode = (int)roleResult;
+                return Json(null);
+            }
 
-            //// Initialize a response form which server will respond to client.
-            //var response = new ResponseViewModel();
+            // Initialize a response form which server will respond to client.
+            var response = new ResponseViewModel();
 
-            //// Invalid model state.
-            //if (!ModelState.IsValid)
-            //{
-            //    // Because model is invalid. Treat this as invalid request.
-            //    Response.StatusCode = (int) HttpStatusCode.BadRequest;
+            // Invalid model state.
+            if (!ModelState.IsValid)
+            {
+                // Because model is invalid. Treat this as invalid request.
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-            //    // Errors list construction.
-            //    response.Errors = RetrieveValidationErrors(ModelState);
-            //    return Json(null);
-            //}
+                // Errors list construction.
+                response.Errors = RetrieveValidationErrors(ModelState);
+                return Json(null);
+            }
 
             // Todo: Continue the implementation.
             var doctor = new Doctor();
