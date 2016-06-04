@@ -10,15 +10,16 @@ namespace Shared.ViewModels
         /// </summary>
         [Required(ErrorMessage = ErrorCodes.EmailIsRequired)]
         [RegularExpression(Regexes.Email, ErrorMessage = ErrorCodes.InvalidEmail)]
-        [MaxLength(Constants.Constants.EmailMaxLength, ErrorMessage = ErrorCodes.InvalidEmailLength)]
+        [MaxLength(FieldLength.EmailMaxLength, ErrorMessage = ErrorCodes.InvalidEmailLength)]
         public string Email { get; set; }
 
+        // TODO: Uncomment attributes below.
         /// <summary>
         ///     Password of account.
         /// </summary>
         [Required(ErrorMessage = ErrorCodes.PasswordIsRequired)]
-        [RegularExpression(Regexes.Password, ErrorMessage = ErrorCodes.InvalidPasswordFormat)]
-        [MaxLength(Constants.Constants.PasswordMaxLength, ErrorMessage = ErrorCodes.InvalidPasswordLength)]
+        //[RegularExpression(Regexes.Password, ErrorMessage = ErrorCodes.InvalidPasswordFormat)]
+        //[MaxLength(Constants.Constants.PasswordMaxLength, ErrorMessage = ErrorCodes.InvalidPasswordLength)]
         public string Password { get; set; }
     }
 }

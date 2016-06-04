@@ -47,11 +47,11 @@ namespace DotnetSignalR.Controllers
 
             // Pass parameter to login function. 
             var result = await _repositoryAccount.LoginAsync(loginViewModel);
-            
+
             // If no result return, that means no account.
             if (result == null)
             {
-                Response.StatusCode = (int) HttpStatusCode.BadRequest;
+                Response.StatusCode = (int) HttpStatusCode.NotFound;
                 return Json(null);
             }
 

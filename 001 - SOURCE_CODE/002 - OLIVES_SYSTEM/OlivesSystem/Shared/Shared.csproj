@@ -41,8 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants\AccountStatus.cs" />
     <Compile Include="Constants\Constants.cs" />
     <Compile Include="Constants\ErrorCodes.cs" />
+    <Compile Include="Constants\FieldLength.cs" />
+    <Compile Include="Constants\Gender.cs" />
     <Compile Include="Constants\Regexes.cs" />
     <Compile Include="Constants\Roles.cs" />
     <Compile Include="Interfaces\IDbSetting.cs" />
@@ -66,6 +69,9 @@
     <Compile Include="Models\Nodes\Prescription.cs" />
     <Compile Include="Models\Nodes\Transaction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\CreateDoctorViewModel.cs" />
+    <Compile Include="ViewModels\CreatePersonViewModel.cs" />
+    <Compile Include="ViewModels\EditPersonViewModel.cs" />
     <Compile Include="ViewModels\FilterDoctorViewModel.cs" />
     <Compile Include="ViewModels\FilterPersonViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />

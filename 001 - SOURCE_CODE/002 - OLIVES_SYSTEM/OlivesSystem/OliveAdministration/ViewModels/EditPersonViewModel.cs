@@ -1,31 +1,13 @@
-﻿using Shared.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using Shared.Constants;
 
 namespace DotnetSignalR.ViewModels
 {
-    public class EditPersonViewModel
+    public class EditPersonViewModel : Shared.ViewModels.EditPersonViewModel
     {
-        public string Id { get; set; }
-        
-        public string FirstName { get; set; }
-
-        public string LastName { get; set; }
-
-        public long Birthday { get; set; }
-
-        public byte Gender { get; set; }
-
-        public Coordinate Address { get; set; }
-        
-        public string Password { get; set; }
-
-        public string Phone { get; set; }
-
         public double Money { get; set; }
-
-        public long Created { get; set; }
-
-        public byte Role { get; set; }
-
+        
+        [Range(AccountStatus.Inactive, AccountStatus.Active, ErrorMessage = ErrorCodes.InvalidAccountStatus)]
         public byte Status { get; set; }
     }
 }

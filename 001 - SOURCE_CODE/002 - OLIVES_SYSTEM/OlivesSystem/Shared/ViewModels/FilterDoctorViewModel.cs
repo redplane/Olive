@@ -1,6 +1,4 @@
-﻿using Shared.Interfaces;
-
-namespace Shared.ViewModels
+﻿namespace Shared.ViewModels
 {
     public class FilterDoctorViewModel : FilterPersonViewModel
     {
@@ -10,6 +8,6 @@ namespace Shared.ViewModels
 
         public double? RankFrom { get; set; }
 
-        public double? RankTo { get; set; }   
+        public double? RankTo { get; set; }
     }
 }

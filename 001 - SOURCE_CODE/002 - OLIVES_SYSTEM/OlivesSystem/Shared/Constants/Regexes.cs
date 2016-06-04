@@ -5,8 +5,9 @@
         /// <summary>
         ///     Regex for email.
         /// </summary>
-        public const string Email = @"/^[^@]+@(yahoo|ymail|rocketmail|gmail|hotmail)\.com$/i";
+        public const string Email = @"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$";
 
+        // TODO : Change regex formular to hash.
         /// <summary>
         ///     Regex of account password.
         /// </summary>

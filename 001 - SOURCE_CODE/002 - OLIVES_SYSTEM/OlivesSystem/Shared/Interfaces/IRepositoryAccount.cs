@@ -12,23 +12,24 @@ namespace Shared.Interfaces
         Task<bool> CreatePersonAsync(IPerson info);
 
         /// <summary>
-        /// Check whether person with specific information exists or not.
+        ///     Check whether person with specific information exists or not.
         /// </summary>
         /// <param name="email"></param>
+        /// <param name="emailCaseSensitive"></param>
         /// <param name="password"></param>
         /// <param name="role"></param>
         /// <returns></returns>
-        Task<IPerson> GetPersonExistAsync(string email, string password, byte? role);
+        Task<IPerson> GetPersonExistAsync(string email, bool emailCaseSensitive, string password, byte? role);
 
         /// <summary>
-        /// Filter person by using specific conditions.
+        ///     Filter person by using specific conditions.
         /// </summary>
         /// <param name="filter">Specific conditions.</param>
         /// <returns></returns>
         Task<IEnumerable<Person>> FilterPersonAsync(FilterPersonViewModel filter);
 
         /// <summary>
-        /// Filter doctors by using specific conditions.
+        ///     Filter doctors by using specific conditions.
         /// </summary>
         /// <param name="filter">Specific conditions</param>
         /// <returns></returns>

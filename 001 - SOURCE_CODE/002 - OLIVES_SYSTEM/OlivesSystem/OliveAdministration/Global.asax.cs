@@ -86,12 +86,14 @@ namespace DotnetSignalR
             var person = new Person();
             person.FirstName = "Nguyen";
             person.LastName = "Linh";
+            person.Email = "redplane_dt@yahoo.com.vn";
+            person.Password = "redplane";
             person.Created = DateTime.Now.Ticks;
             person.Birthday = DateTime.Now.Ticks;
             person.Id = "c857a1fe-084c-4926-9ad7-ecfeabd038ff";
             person.Password = "c857a1fe-084c-4926-9ad7-ecfeabd038ff";
             person.Role = Roles.Admin;
-            person.Gender = Constants.Male;
+            person.Gender = Gender.Male;
 
             // TODO: Remove this code.
 
@@ -106,7 +108,11 @@ namespace DotnetSignalR
                 .WithParams(parameters)
                 .ExecuteWithoutResults();
 
-            var doctorIds = new[] {"a43bd26a-f380-45cf-b877-65a6460bc3be", "11b9190a-803b-4610-9a12-0630588de37a", "b14e626e-9e0f-40f8-824e-415c57bdd942", "cdad3953-2994-49d6-8c48-ec3c015b78db" };
+            var doctorIds = new[]
+            {
+                "a43bd26a-f380-45cf-b877-65a6460bc3be", "11b9190a-803b-4610-9a12-0630588de37a",
+                "b14e626e-9e0f-40f8-824e-415c57bdd942", "cdad3953-2994-49d6-8c48-ec3c015b78db"
+            };
 
             for (var i = 0; i < doctorIds.Length; i++)
             {
@@ -114,13 +120,14 @@ namespace DotnetSignalR
                 doctor.Id = doctorIds[i];
                 doctor.LastName = $"LastName_{i}";
                 doctor.FirstName = $"FirstName_{i}";
+
                 doctor.Created = DateTime.Now.Ticks;
                 doctor.Email = $"Email_{i}";
                 doctor.Created = DateTime.Now.Ticks;
                 doctor.Password = $"Password_{i}";
-                doctor.Gender = 1;
                 doctor.Phone = $"00000{i}";
-                doctor.Gender = Constants.Female;
+                doctor.Gender = Gender.Female;
+                doctor.Role = Roles.Doctor;
 
                 graphClient.Cypher
                     .Merge($"(n:Person {{ Id: '{doctorIds[i]}'}})")
@@ -130,6 +137,7 @@ namespace DotnetSignalR
                     .WithParam("info", doctor)
                     .ExecuteWithoutResults();
             }
+
             #endregion
         }
     }

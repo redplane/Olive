@@ -84,8 +84,23 @@
         public const string SpecializationAreasIsRequired = "0x00000017";
 
         /// <summary>
-        /// User has already existed.
+        ///     User has already existed.
         /// </summary>
         public const string UserHasAlreadyExisted = "0x00000018";
+
+        /// <summary>
+        ///     Doctor id is required.
+        /// </summary>
+        public const string DoctorIdIsRequired = "0x00000019";
+
+        /// <summary>
+        ///     Passwords must match to each other.
+        /// </summary>
+        public const string PasswordsMustMatch = "0x00000020";
+
+        /// <summary>
+        ///     Account status is invalid.
+        /// </summary>
+        public const string InvalidAccountStatus = "0x00000021";
     }
 }

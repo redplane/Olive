@@ -5,6 +5,11 @@ namespace Shared.Models.Nodes
     public class Person : IPerson
     {
         /// <summary>
+        ///     Status of account.
+        /// </summary>
+        public byte Status { get; set; }
+
+        /// <summary>
         ///     Person GUID.
         /// </summary>
         public string Id { get; set; }
@@ -63,10 +68,5 @@ namespace Shared.Models.Nodes
         ///     Role of person [0 - Admin | 1 - Patient | 2 - Doctor]
         /// </summary>
         public byte Role { get; set; }
-
-        /// <summary>
-        /// Status of account.
-        /// </summary>
-        public byte Status { get; set; }
     }
 }

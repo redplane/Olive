@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -7,11 +6,11 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using DotnetSignalR.ViewModels;
 using Neo4jClient;
-using Newtonsoft.Json;
 using Shared.Constants;
 using Shared.Interfaces;
 using Shared.Models.Nodes;
 using Shared.ViewModels;
+using CreateDoctorViewModel = DotnetSignalR.ViewModels.CreateDoctorViewModel;
 
 namespace DotnetSignalR.Controllers
 {
@@ -32,22 +31,32 @@ namespace DotnetSignalR.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Get(string id)
+        public async Task<ActionResult> Get(FilterDoctorViewModel info)
         {
             // Whether request comes from valid people or not.
             var isInvalidRole = await IsInValidRoleAsync(Roles.Admin);
             if (isInvalidRole != HttpStatusCode.OK)
             {
-                Response.StatusCode = (int)isInvalidRole;
+                Response.StatusCode = (int) isInvalidRole;
                 return Json(null, JsonRequestBehavior.AllowGet);
             }
 
-            // TODO: Implement modelstate checking.
+            var response = new ResponseViewModel();
+
+            // Invalid model state.
+            if (!ModelState.IsValid)
+            {
+                // Because model is invalid. Treat this as invalid request.
+                Response.StatusCode = (int) HttpStatusCode.BadRequest;
+
+                // Errors list construction.
+                response.Errors = RetrieveValidationErrors(ModelState);
+                return Json(null);
+            }
 
             // Only filter by specific GUID and role.
             var filter = new FilterDoctorViewModel();
-            filter.Id = id;
-            filter.Role = Roles.Doctor;
+            filter.Id = info.Id;
             filter.Page = 0;
             filter.Records = 1;
 
@@ -57,15 +66,31 @@ namespace DotnetSignalR.Controllers
             // No result has been found.
             if (results == null)
             {
-                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                Response.StatusCode = (int) HttpStatusCode.NotFound;
+                return Json(null, JsonRequestBehavior.AllowGet);
+            }
+
+            var doctors = results as Doctor[] ?? results.ToArray();
+
+            // List contains no doctor.
+            if (doctors.Length < 1)
+            {
+                Response.StatusCode = (int) HttpStatusCode.NotFound;
+                return Json(null, JsonRequestBehavior.AllowGet);
+            }
+
+            // Not only one result has been retrieved.
+            if (doctors.Length > 1)
+            {
+                Response.StatusCode = (int) HttpStatusCode.Conflict;
                 return Json(null, JsonRequestBehavior.AllowGet);
             }
 
             // Retrieve the first result.
-            var result = results.FirstOrDefault();
+            var result = doctors[0];
             if (result == null)
             {
-                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                Response.StatusCode = (int) HttpStatusCode.NotFound;
                 return Json(null, JsonRequestBehavior.AllowGet);
             }
 
@@ -73,16 +98,15 @@ namespace DotnetSignalR.Controllers
             result.Password = "";
 
             // Initialize response from server.
-            var response = new ResponseViewModel();
             response.Data = result;
 
-            Response.StatusCode = (int)HttpStatusCode.OK;
+            Response.StatusCode = (int) HttpStatusCode.OK;
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
-        /// Access role : Admin
-        /// Description : Create an user account with given information.
+        ///     Access role : Admin
+        ///     Description : Create an user account with given information.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
@@ -93,7 +117,7 @@ namespace DotnetSignalR.Controllers
             var isInValidRole = await IsInValidRoleAsync(Roles.Admin);
             if (isInValidRole != HttpStatusCode.OK)
             {
-                Response.StatusCode = (int)isInValidRole;
+                Response.StatusCode = (int) isInValidRole;
                 return Json(null);
             }
 
@@ -107,7 +131,7 @@ namespace DotnetSignalR.Controllers
             }
 
             // Whether email has been used before or not.
-            var doctor = await _repositoryAccount.GetPersonExistAsync(info.Email, null, null);
+            var doctor = await _repositoryAccount.GetPersonExistAsync(info.Email, false, null, null);
             if (doctor != null)
             {
                 var errors = new List<string>();
@@ -116,7 +140,7 @@ namespace DotnetSignalR.Controllers
                 var response = new ResponseViewModel();
                 response.Errors = errors;
 
-                Response.StatusCode = (int)HttpStatusCode.Conflict;
+                Response.StatusCode = (int) HttpStatusCode.Conflict;
                 return Json(response);
             }
 
@@ -130,25 +154,28 @@ namespace DotnetSignalR.Controllers
             doctor.Email = info.Email;
             doctor.Password = info.Password;
             doctor.Phone = info.Phone;
-            doctor.Money = info.Money;
             doctor.Created = DateTime.Now.Ticks;
             doctor.Role = Roles.Doctor;
 
             // Call repository function to create an account.
             await _repositoryAccount.CreatePersonAsync(doctor);
-            Response.StatusCode = (int)HttpStatusCode.OK;
+            Response.StatusCode = (int) HttpStatusCode.OK;
             return Json(null);
         }
 
+        /// <summary>
+        ///     Update a doctor information by using specific id.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> Put(EditDoctorViewModel info)
         {
             // Invalid role.
-            // TODO: Uncomment this.
             var roleResult = await IsInValidRoleAsync(Roles.Admin);
             if (roleResult != HttpStatusCode.OK)
             {
-                Response.StatusCode = (int)roleResult;
+                Response.StatusCode = (int) roleResult;
                 return Json(null);
             }
 
@@ -159,19 +186,74 @@ namespace DotnetSignalR.Controllers
             if (!ModelState.IsValid)
             {
                 // Because model is invalid. Treat this as invalid request.
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                Response.StatusCode = (int) HttpStatusCode.BadRequest;
 
                 // Errors list construction.
                 response.Errors = RetrieveValidationErrors(ModelState);
+                return Json(response);
+            }
+
+            #region Retrieve doctor from database
+
+            // Initialize doctor filter.
+            var filterDoctorViewModel = new FilterDoctorViewModel();
+            filterDoctorViewModel.Id = info.Id;
+
+            // Retrieve doctors by using specific id.
+            var doctors = await _repositoryAccount.FilterDoctorAsync(filterDoctorViewModel);
+
+            // Invalid result.
+            if (doctors == null)
+            {
+                // Because model is invalid. Treat this as invalid request.
+                Response.StatusCode = (int) HttpStatusCode.NotFound;
+
                 return Json(null);
             }
 
-            // Todo: Continue the implementation.
-            var doctor = new Doctor();
-            
+            var results = doctors as Doctor[] ?? doctors.ToArray();
+
+            // No doctor has been found.
+            if (results.Length < 1)
+            {
+                // Because model is invalid. Treat this as invalid request.
+                Response.StatusCode = (int) HttpStatusCode.NotFound;
+
+                return Json(null);
+            }
+
+            // More than one doctor has been found.
+            if (results.Length > 1)
+            {
+                // Treat the result as conflict on server.
+                Response.StatusCode = (int) HttpStatusCode.Conflict;
+
+                return Json(null);
+            }
+
+            #endregion
+
+            #region Information update
+
+            var doctor = results[0];
+            doctor.FirstName = info.FirstName;
+            doctor.LastName = info.LastName;
+            doctor.Birthday = info.Birthday;
+            doctor.Gender = info.Gender;
+            doctor.Address = info.Address;
+            doctor.Password = info.Password;
+            doctor.Phone = info.Phone;
+            doctor.Money = info.Money;
+            doctor.Status = info.Status;
+            doctor.Specialization = info.Specialization;
+            doctor.SpecializationAreas = info.SpecializationAreas;
+            doctor.Rank = info.Rank;
+
+            #endregion
+
             // By default, result comes back from repository is an object. 
             // It is need casting to IEnumerable<Node<string>> data type.
-            var rawResult = await _repositoryAccount.UpdatePersonAsync("999", doctor);
+            var rawResult = await _repositoryAccount.UpdatePersonAsync(info.Id, doctor);
 
             // No data comes back.
             if (rawResult == null)
@@ -190,9 +272,10 @@ namespace DotnetSignalR.Controllers
                 return Json(null);
             }
 
-            doctor = JsonConvert.DeserializeObject<Doctor>(resultNode.Data);
-            var a = 1;
-            return Json(null);
+            // Retrieve the updated information.
+            //doctor = JsonConvert.DeserializeObject<Doctor>();
+            Response.StatusCode = (int) HttpStatusCode.OK;
+            return Json(resultNode.Data);
         }
     }
 }
