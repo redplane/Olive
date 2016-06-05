@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Shared.Models.Nodes
+﻿namespace Shared.Models.Nodes
 {
     public class Doctor : Person
     {
@@ -9,7 +7,5 @@ namespace Shared.Models.Nodes
         public double Rank { get; set; }
 
         public string IdentityCardNo { get; set; }
-
-        public IList<MedicalExamPackage> Packages { get; set; }
     }
 }
