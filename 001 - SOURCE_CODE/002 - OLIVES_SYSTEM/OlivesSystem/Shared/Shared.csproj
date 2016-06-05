@@ -33,6 +33,9 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6\Facades\System.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,13 +44,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\CoordinateValidationAttribute.cs" />
+    <Compile Include="Attributes\LongCompareAttribute.cs" />
+    <Compile Include="Attributes\RegexMatchAttribute.cs" />
     <Compile Include="Constants\AccountStatus.cs" />
-    <Compile Include="Constants\Constants.cs" />
+    <Compile Include="Constants\HeaderFields.cs" />
     <Compile Include="Constants\ErrorCodes.cs" />
     <Compile Include="Constants\FieldLength.cs" />
     <Compile Include="Constants\Gender.cs" />
     <Compile Include="Constants\Regexes.cs" />
     <Compile Include="Constants\Roles.cs" />
+    <Compile Include="Constants\Times.cs" />
     <Compile Include="Interfaces\IDbSetting.cs" />
     <Compile Include="Interfaces\IPagination.cs" />
     <Compile Include="Interfaces\IPerson.cs" />
@@ -60,7 +67,6 @@
     <Compile Include="Models\Nodes\Allergy.cs" />
     <Compile Include="Models\Coordinate.cs" />
     <Compile Include="Models\Nodes\Doctor.cs" />
-    <Compile Include="Models\Nodes\IdentityCard.cs" />
     <Compile Include="Models\Nodes\InternalMedicine.cs" />
     <Compile Include="Models\Nodes\MedicalRecord.cs" />
     <Compile Include="Models\Nodes\Patient.cs" />
@@ -69,11 +75,12 @@
     <Compile Include="Models\Nodes\Prescription.cs" />
     <Compile Include="Models\Nodes\Transaction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\CreateDoctorViewModel.cs" />
-    <Compile Include="ViewModels\CreatePersonViewModel.cs" />
+    <Compile Include="ViewModels\InitializeDoctorViewModel.cs" />
+    <Compile Include="ViewModels\InitializePersonViewModel.cs" />
     <Compile Include="ViewModels\EditPersonViewModel.cs" />
     <Compile Include="ViewModels\FilterDoctorViewModel.cs" />
     <Compile Include="ViewModels\FilterPersonViewModel.cs" />
+    <Compile Include="ViewModels\GetPersonViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\ResponseViewModel.cs" />
   </ItemGroup>

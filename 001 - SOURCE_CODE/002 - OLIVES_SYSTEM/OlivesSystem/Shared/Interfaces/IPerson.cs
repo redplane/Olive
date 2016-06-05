@@ -1,6 +1,4 @@
-﻿using Shared.Models;
-
-namespace Shared.Interfaces
+﻿namespace Shared.Interfaces
 {
     public interface IPerson
     {
@@ -30,11 +28,6 @@ namespace Shared.Interfaces
         byte Gender { get; set; }
 
         /// <summary>
-        ///     Place where person is living at.
-        /// </summary>
-        Coordinate Address { get; set; }
-
-        /// <summary>
         ///     Email address which is used for registration or for contacting.
         /// </summary>
         string Email { get; set; }
@@ -58,6 +51,16 @@ namespace Shared.Interfaces
         ///     Time when account has been registered.
         /// </summary>
         long Created { get; set; }
+
+        /// <summary>
+        /// Latitude of place where person lives.
+        /// </summary>
+        double? AddressLatitude { get; set; }
+
+        /// <summary>
+        /// Longitude of place where person lives.
+        /// </summary>
+        double? AddressLongitude { get; set; }
 
         /// <summary>
         ///     Role of person [0 - Admin | 1 - Patient | 2 - Doctor]

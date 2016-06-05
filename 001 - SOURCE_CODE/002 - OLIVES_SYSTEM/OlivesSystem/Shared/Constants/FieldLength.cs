@@ -10,7 +10,7 @@
         /// <summary>
         ///     Maximum length of Password.
         /// </summary>
-        public const int PasswordMaxLength = 16;
+        public const int PasswordMaxLength = 32;
 
         /// <summary>
         ///     Maximum length of Specialization.

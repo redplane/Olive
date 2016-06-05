@@ -7,15 +7,14 @@
         /// </summary>
         public const string Email = @"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$";
 
-        // TODO : Change regex formular to hash.
         /// <summary>
         ///     Regex of account password.
         /// </summary>
-        public const string Password = @"/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]*/g";
+        public const string Password = @"^([a-fA-F0-9]){32}$";
 
         /// <summary>
         ///     Invalid phone number.
         /// </summary>
-        public const string Phone = @"/^[0-9 ]*/g";
+        public const string Phone = @"^([0-9]){0,15}$";
     }
 }

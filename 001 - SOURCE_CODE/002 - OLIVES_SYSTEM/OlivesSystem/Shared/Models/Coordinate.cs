@@ -1,4 +1,5 @@
-﻿namespace Shared.Models
+﻿
+namespace Shared.Models
 {
     public class Coordinate
     {

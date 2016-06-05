@@ -8,7 +8,7 @@ namespace Shared.Models.Nodes
         ///     Status of account.
         /// </summary>
         public byte Status { get; set; }
-
+        
         /// <summary>
         ///     Person GUID.
         /// </summary>
@@ -35,11 +35,6 @@ namespace Shared.Models.Nodes
         public byte Gender { get; set; }
 
         /// <summary>
-        ///     Place where person is living at.
-        /// </summary>
-        public Coordinate Address { get; set; }
-
-        /// <summary>
         ///     Email address which is used for registration or for contacting.
         /// </summary>
         public string Email { get; set; }
@@ -63,6 +58,16 @@ namespace Shared.Models.Nodes
         ///     Time when account has been registered.
         /// </summary>
         public long Created { get; set; }
+
+        /// <summary>
+        /// Latitude of place where person lives.
+        /// </summary>
+        public double? AddressLatitude { get; set; }
+
+        /// <summary>
+        /// Longitude of place where person lives.
+        /// </summary>
+        public double? AddressLongitude { get; set; }
 
         /// <summary>
         ///     Role of person [0 - Admin | 1 - Patient | 2 - Doctor]

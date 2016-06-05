@@ -3,8 +3,10 @@ using Shared.Constants;
 
 namespace DotnetSignalR.ViewModels
 {
-    public class CreateDoctorViewModel : Shared.ViewModels.CreateDoctorViewModel
+    public class InitializeDoctorViewModel : Shared.ViewModels.InitializeDoctorViewModel
     {
+        public string IdentityCardNo { get; set; }
+
         public double Money { get; set; }
 
         [Range(AccountStatus.Inactive, AccountStatus.Active, ErrorMessage = ErrorCodes.InvalidAccountStatus)]

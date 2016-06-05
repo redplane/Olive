@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.Mvc;
+using DotnetSignalR.Attributes;
 using DotnetSignalR.Controllers;
 using DotnetSignalR.Models;
 using DotnetSignalR.Repository;
@@ -76,6 +77,8 @@ namespace DotnetSignalR
                 .OnActivating(e => e.ReplaceInstance(repositoryAccount))
                 .SingleInstance();
 
+            builder.RegisterType<OlivesAuthorize>().PropertiesAutowired();
+            builder.RegisterFilterProvider();
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 

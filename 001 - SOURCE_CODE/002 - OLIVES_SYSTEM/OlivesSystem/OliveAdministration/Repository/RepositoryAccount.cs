@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Neo4jClient;
 using Neo4jClient.Cypher;
+using Neo4jClient.Transactions;
 using Shared.Constants;
 using Shared.Interfaces;
+using Shared.Models;
 using Shared.Models.Nodes;
 using Shared.ViewModels;
 
@@ -30,19 +32,89 @@ namespace DotnetSignalR.Repository
         {
             _graphClient = graphClient;
         }
+        
+        public async Task<bool> IsDoctorAbleToRegister(string id, string identityCardNo)
+        {
+            // By default, where condition hasn't been used.
+            var hasWhereCondition = false;
+
+            // Execute query asynchronously.
+            var query = _graphClient.Cypher
+                .Match("(n:Person)");
+
+            #region Doctor identity
+
+            if (!string.IsNullOrEmpty(id))
+            {
+                id = $"~'(?i){id}'";
+                query = (!hasWhereCondition)
+                    ? query.Where<Doctor>(n => n.Id == id)
+                    : query.OrWhere<Doctor>(n => n.Id == id);
+
+                hasWhereCondition = true;
+            }
+
+            #endregion
+
+            #region Doctor identity card number
+
+            if (!string.IsNullOrEmpty(identityCardNo))
+            {
+                query = (!hasWhereCondition)
+                    ? query.Where($"n.IdentityCardNo =~ '(?i){identityCardNo}'")
+                    : query.OrWhere($"n.IdentityCardNo =~ '(?i){identityCardNo}'");
+            }
+
+            #endregion
+
+            // Retrieve query result.
+            var queryResult = await query
+                .Return(n => n.Count())
+                .ResultsAsync;
+
+            // Retrieve counter.
+            var result = queryResult.SingleOrDefault();
+
+            // Count the number of result.
+            return result == 0;
+        }
 
         /// <summary>
         ///     Create person asynchronously with given parameter.
         /// </summary>
         /// <param name="info"></param>
-        public async Task<bool> CreatePersonAsync(IPerson info)
+        public bool InitializePerson(IPerson info)
         {
-            await _graphClient.Cypher
-                .Create("(n:Person {info})")
-                .WithParam("info", info)
-                .ExecuteWithoutResultsAsync();
+            // Cast normal graph client to a transact client to do a transaction.
+            var transactClient = (ITransactionalGraphClient) _graphClient;
 
-            return true;
+            using (var transaction = transactClient.BeginTransaction())
+            {
+                try
+                {
+                    var matchPerson = $"(p:Person {{Id : '{info.Id}'}})";
+                  
+                    var query = transactClient.Cypher
+                        .Merge(matchPerson)
+                        .Set("p = {person}")
+                        .WithParam("person", info);
+                    
+                    // Input parameters. 
+                    query.ExecuteWithoutResults();
+
+                    // Confirm to do execute transaction.
+                    transaction.Commit();
+
+                    return true;
+                }
+                catch (Exception)
+                {
+                    // As exception is thrown, roll back the transaction and tell client the transaction is failed.
+                    transaction.Rollback();
+
+                    return false;
+                }
+            }
         }
 
         /// <summary>
@@ -56,22 +128,71 @@ namespace DotnetSignalR.Repository
         public async Task<IPerson> GetPersonExistAsync(string email, bool emailCaseSensitive = false,
             string password = "", byte? role = null)
         {
-            var exactEmail = email;
-            if (!emailCaseSensitive)
-                exactEmail = "~(?i)" + email;
-
+            // Initialize match command
             var query = _graphClient.Cypher
-                .Match("(n:Person)")
-                .Where($"n.Email = '{exactEmail}'");
+                .Match("(n:Person)");
 
+            // Email case sensitive check.
+            if (emailCaseSensitive)
+                query = query.Where<IPerson>(n => n.Email == email);
+            else
+                query = query.Where($"n.Email =~ '(?i){email}'");
+
+            // Password filter if this property isn't empty.
             if (!string.IsNullOrEmpty(password))
                 query = query.AndWhere<IPerson>(n => n.Password == password);
 
+            // Role filter if this property isn't empty.
             if (role != null)
                 query = query.AndWhere<IPerson>(n => n.Role == role);
 
             // Retrieve query result asynchronously.
             var queryResult = await query.Return(n => n.As<Person>()).Limit(1).ResultsAsync;
+
+            // No result has been retrieved.
+            if (queryResult == null)
+                return null;
+
+            // Retrieve the first queried result.
+            var person = queryResult.FirstOrDefault();
+
+            if (person == null)
+                return null;
+
+            return person;
+        }
+
+        /// <summary>
+        ///     Check whether person exists or not.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="emailCaseSensitive">Whether email should be found case insensitively.</param>
+        /// <param name="password"></param>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        public IPerson GetPersonExist(string email, bool emailCaseSensitive = false,
+            string password = "", byte? role = null)
+        {
+            // Initialize match command
+            var query = _graphClient.Cypher
+                .Match("(n:Person)");
+
+            // Email case sensitive check.
+            if (emailCaseSensitive)
+                query = query.Where<IPerson>(n => n.Email == email);
+            else
+                query = query.Where($"n.Email =~ '(?i){email}'");
+
+            // Password filter if this property isn't empty.
+            if (!string.IsNullOrEmpty(password))
+                query = query.AndWhere<IPerson>(n => n.Password == password);
+
+            // Role filter if this property isn't empty.
+            if (role != null)
+                query = query.AndWhere<IPerson>(n => n.Role == role);
+
+            // Retrieve query result asynchronously.
+            var queryResult = query.Return(n => n.As<Person>()).Limit(1).Results;
 
             // No result has been retrieved.
             if (queryResult == null)
@@ -125,19 +246,21 @@ namespace DotnetSignalR.Repository
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<Person>> FilterPersonAsync(FilterPersonViewModel filter)
+        public async Task<object> FilterPersonAsync(FilterPersonViewModel filter)
         {
             ICypherFluentQuery query;
             bool isWhereConditionUsed;
 
             // Query construction.
-            CypherFilterPerson(filter, out query, out isWhereConditionUsed);
+            FilterPerson(filter, out query, out isWhereConditionUsed);
 
             // Calculate the number of records should be skip over.
-            var skippedRecords = filter.Page*filter.Records;
+            var skippedRecords = 0;
+            if (filter.Page != null && filter.Records != null)
+                skippedRecords = filter.Page.Value*filter.Records.Value;
 
             // Execute query asynchronously.
-            var results = await query.Return(n => n.As<Person>())
+            var results = await query.Return(n => n.As<Node<string>>())
                 .Skip(skippedRecords)
                 .Limit(filter.Records)
                 .ResultsAsync;
@@ -150,7 +273,7 @@ namespace DotnetSignalR.Repository
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<Doctor>> FilterDoctorAsync(FilterDoctorViewModel filter)
+        public async Task<IList<Doctor>> FilterDoctorAsync(FilterDoctorViewModel filter)
         {
             bool isWhereConditionUsed;
             ICypherFluentQuery query;
@@ -159,57 +282,53 @@ namespace DotnetSignalR.Repository
             filter.Role = Roles.Doctor;
 
             // Firstly, filter general information.
-            CypherFilterPerson(filter, out query, out isWhereConditionUsed);
+            FilterPerson(filter, out query, out isWhereConditionUsed);
 
             #region Specialization
 
             if (!string.IsNullOrEmpty(filter.Specialization))
             {
-                if (!isWhereConditionUsed)
-                {
-                    query = query.Where($"n.Specialization =~ '(?i).*{filter.Specialization}.*'");
-                    isWhereConditionUsed = true;
-                }
-                else
-                    query = query.AndWhere($"n.Specialization =~ '(?i).*{filter.Specialization}.*'");
+                var specializationQuery = $"n.Specialization =~'(?i).*{filter.Specialization}.*'";
+                query = !isWhereConditionUsed
+                    ? query.Where(specializationQuery)
+                    : query.AndWhere(specializationQuery);
+                isWhereConditionUsed = true;
             }
 
             #endregion
-
-            #region Specialization Areas
-
-            if (filter.SpecializationAreas != null && filter.SpecializationAreas.Length > 0)
-            {
-                // TODO: Implement later.
-                throw new NotImplementedException("Implement this please.");
-            }
-
-            #endregion
-
+            
             #region Rank
 
             // Start of rank.
             if (filter.RankFrom != null)
             {
-                if (!isWhereConditionUsed)
-                {
-                    query = query.Where<Doctor>(n => n.Rank >= filter.RankFrom);
-                    isWhereConditionUsed = true;
-                }
-                else
-                    query = query.AndWhere<Doctor>(n => n.Rank >= filter.RankFrom);
+                query = !isWhereConditionUsed
+                    ? query.Where<Doctor>(n => n.Rank >= filter.RankFrom)
+                    : query.AndWhere<Doctor>(n => n.Rank >= filter.RankFrom);
+                ;
+                isWhereConditionUsed = true;
             }
 
             // End of rank.
             if (filter.RankTo != null)
             {
-                if (!isWhereConditionUsed)
-                {
-                    query = query.Where<Doctor>(n => n.Rank <= filter.RankTo);
-                    isWhereConditionUsed = true;
-                }
-                else
-                    query = query.AndWhere<Doctor>(n => n.Rank <= filter.RankTo);
+                query = !isWhereConditionUsed
+                    ? query.Where<Doctor>(n => n.Rank <= filter.RankTo)
+                    : query.AndWhere<Doctor>(n => n.Rank <= filter.RankTo);
+                isWhereConditionUsed = true;
+            }
+
+            #endregion
+
+            #region IdentityCardNo
+
+            if (!string.IsNullOrEmpty(filter.IdentityCardNo))
+            {
+                var identityCardQuery = $"n.IdentityCardNo =~ '(?i).*{filter.IdentityCardNo}.*'";
+                query = !isWhereConditionUsed
+                    ? query.Where(identityCardQuery)
+                    : query.AndWhere(identityCardQuery);
+                //isWhereConditionUsed = true;
             }
 
             #endregion
@@ -227,7 +346,7 @@ namespace DotnetSignalR.Repository
 
             #endregion
 
-            return results;
+            return results.ToList();
         }
 
         /// <summary>
@@ -253,12 +372,48 @@ namespace DotnetSignalR.Repository
         }
 
         /// <summary>
+        ///     Find doctor and only retrieve the first result.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public async Task<Doctor> FindDoctor(FilterDoctorViewModel filter)
+        {
+            // Retrieve a list of doctor.
+            var results = await FilterDoctorAsync(filter);
+
+            // Not only one doctor has been retrieved.
+            var doctors = results as Doctor[] ?? results.ToArray();
+            if (doctors.Length != 1)
+                return null;
+
+            return doctors[0];
+        }
+
+        /// <summary>
+        ///     Check whether doctor has been registered or not.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="identityCardId"></param>
+        /// <returns></returns>
+        public async Task<IList<Doctor>> FindDoctor(string id, string identityCardId)
+        {
+            var results = await _graphClient.Cypher
+                .Match("(n:Person)")
+                .Where<Doctor>(n => n.Id == id)
+                .OrWhere<Doctor>(n => n.IdentityCardNo == identityCardId)
+                .Return(n => n.As<Doctor>())
+                .ResultsAsync;
+
+            return results.ToList();
+        }
+        
+        /// <summary>
         ///     Personal information filter query construction.
         /// </summary>
         /// <param name="filter"></param>
         /// <param name="query"></param>
         /// <param name="isWhereConditionUsed"></param>
-        private void CypherFilterPerson(FilterPersonViewModel filter, out ICypherFluentQuery query,
+        private void FilterPerson(FilterPersonViewModel filter, out ICypherFluentQuery query,
             out bool isWhereConditionUsed)
         {
             // By default, where condition hasn't been used.
@@ -270,34 +425,25 @@ namespace DotnetSignalR.Repository
 
             #region First name
 
+            // Filter by first name.
             if (!string.IsNullOrEmpty(filter.FirstName))
             {
-                if (!isWhereConditionUsed)
-                {
-                    query = query.Where($"n.FirstName =~ '(?i).*{filter.FirstName}.*'");
-                    isWhereConditionUsed = true;
-                }
-                else
-                {
-                    query.AndWhere($"n.FirstName =~ '(?i).*{filter.FirstName}.*'");
-                }
+                var queryFirstName = $"n.FirstName =~'(?i).*{filter.FirstName}.*'";
+                query = query.Where(queryFirstName);
+                isWhereConditionUsed = true;
             }
 
             #endregion
 
             #region Last name
 
+            // Filter by last name.
             if (!string.IsNullOrEmpty(filter.LastName))
             {
-                if (!isWhereConditionUsed)
-                {
-                    query = query.Where($"n.LastName =~ '(?i).*{filter.LastName}.*'");
-                    isWhereConditionUsed = true;
-                }
-                else
-                {
-                    query.AndWhere($"n.LastName =~ '(?i).*{filter.LastName}.*'");
-                }
+                // Last name matching query construction.
+                var queryLastName = $"n.LastName =~'(?i).*{filter.LastName}.*'";
+                query = (!isWhereConditionUsed) ? query.Where(queryLastName) : query.AndWhere(queryLastName); 
+                isWhereConditionUsed = true;
             }
 
             #endregion
@@ -307,25 +453,19 @@ namespace DotnetSignalR.Repository
             // Start date of birth is set.
             if (filter.BirthdayFrom != null)
             {
-                if (!isWhereConditionUsed)
-                {
-                    query = query.Where<IPerson>(n => n.Birthday >= filter.BirthdayFrom);
-                    isWhereConditionUsed = true;
-                }
-                else
-                    query = query.AndWhere<IPerson>(n => n.Birthday >= filter.BirthdayFrom);
+                query = !isWhereConditionUsed
+                    ? query.Where<IPerson>(n => n.Birthday >= filter.BirthdayFrom)
+                    : query.AndWhere<IPerson>(n => n.Birthday >= filter.BirthdayFrom);
+                isWhereConditionUsed = true;
             }
 
             // End date of birth is set.
             if (filter.BirthdayTo != null)
             {
-                if (!isWhereConditionUsed)
-                {
-                    query = query.Where<IPerson>(n => n.Birthday <= filter.BirthdayTo);
-                    isWhereConditionUsed = true;
-                }
-                else
-                    query = query.AndWhere<IPerson>(n => n.Birthday <= filter.BirthdayTo);
+                query = !isWhereConditionUsed
+                    ? query.Where<IPerson>(n => n.Birthday <= filter.BirthdayTo)
+                    : query.AndWhere<IPerson>(n => n.Birthday <= filter.BirthdayTo);
+                isWhereConditionUsed = true;
             }
 
             #endregion
@@ -334,13 +474,10 @@ namespace DotnetSignalR.Repository
 
             if (filter.Gender != null)
             {
-                if (!isWhereConditionUsed)
-                {
-                    query = query.Where<IPerson>(n => n.Gender == filter.Gender);
-                    isWhereConditionUsed = true;
-                }
-                else
-                    query = query.AndWhere<IPerson>(n => n.Gender == filter.Gender);
+                query = !isWhereConditionUsed
+                    ? query.Where<IPerson>(n => n.Gender == filter.Gender)
+                    : query.AndWhere<IPerson>(n => n.Gender == filter.Gender);
+                isWhereConditionUsed = true;
             }
 
             #endregion
@@ -349,24 +486,18 @@ namespace DotnetSignalR.Repository
 
             if (filter.MoneyFrom != null)
             {
-                if (!isWhereConditionUsed)
-                {
-                    query = query.Where<IPerson>(n => n.Money >= filter.MoneyFrom);
-                    isWhereConditionUsed = true;
-                }
-                else
-                    query = query.AndWhere<IPerson>(n => n.Money >= filter.MoneyFrom);
+                query = !isWhereConditionUsed
+                    ? query.Where<IPerson>(n => n.Money >= filter.MoneyFrom)
+                    : query.AndWhere<IPerson>(n => n.Money >= filter.MoneyFrom);
+                isWhereConditionUsed = true;
             }
 
             if (filter.MoneyTo != null)
             {
-                if (!isWhereConditionUsed)
-                {
-                    query = query.Where<IPerson>(n => n.Money <= filter.MoneyTo);
-                    isWhereConditionUsed = true;
-                }
-                else
-                    query = query.AndWhere<IPerson>(n => n.Money <= filter.MoneyTo);
+                query = !isWhereConditionUsed
+                    ? query.Where<IPerson>(n => n.Money <= filter.MoneyTo)
+                    : query.AndWhere<IPerson>(n => n.Money <= filter.MoneyTo);
+                isWhereConditionUsed = true;
             }
 
             #endregion
@@ -375,13 +506,10 @@ namespace DotnetSignalR.Repository
 
             if (filter.CreatedFrom != null)
             {
-                if (!isWhereConditionUsed)
-                {
-                    query = query.Where<IPerson>(n => n.Created >= filter.CreatedFrom);
-                    isWhereConditionUsed = true;
-                }
-                else
-                    query = query.AndWhere<IPerson>(n => n.Created >= filter.CreatedFrom);
+                query = !isWhereConditionUsed
+                    ? query.Where<IPerson>(n => n.Created >= filter.CreatedFrom)
+                    : query.AndWhere<IPerson>(n => n.Created >= filter.CreatedFrom);
+                isWhereConditionUsed = true;
             }
 
             if (filter.CreatedTo != null)
@@ -401,13 +529,10 @@ namespace DotnetSignalR.Repository
 
             if (filter.Role != null)
             {
-                if (!isWhereConditionUsed)
-                {
-                    query = query.Where<IPerson>(n => n.Role == filter.Role);
-                    isWhereConditionUsed = true;
-                }
-                else
-                    query = query.Where<IPerson>(n => n.Role == filter.Role);
+                query = !isWhereConditionUsed
+                    ? query.Where<IPerson>(n => n.Role == filter.Role)
+                    : query.Where<IPerson>(n => n.Role == filter.Role);
+                isWhereConditionUsed = true;
             }
 
             #endregion

@@ -94,13 +94,28 @@
         public const string DoctorIdIsRequired = "0x00000019";
 
         /// <summary>
-        ///     Passwords must match to each other.
+        ///     Doctor id is required.
         /// </summary>
-        public const string PasswordsMustMatch = "0x00000020";
+        public const string InvalidBirthday = "0x00000020";
 
         /// <summary>
         ///     Account status is invalid.
         /// </summary>
         public const string InvalidAccountStatus = "0x00000021";
+
+        /// <summary>
+        ///     Address is invalid.
+        /// </summary>
+        public const string InvalidAddress = "0x00000022";
+
+        /// <summary>
+        ///     Cannot register doctor because of id or identity card no conflict.
+        /// </summary>
+        public const string DoctorIdentityConflict = "0x00000023";
+
+        /// <summary>
+        ///     Address is required.
+        /// </summary>
+        public const string AddressIsRequired = "0x00000024";
     }
 }

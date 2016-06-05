@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Shared.Constants;
 
-namespace DotnetSignalR.ViewModels
+namespace Shared.ViewModels
 {
-    public class GetDoctorViewModel
+    public class GetPersonViewModel
     {
+        /// <summary>
+        ///     Doctor GUID.
+        /// </summary>
         [Required(ErrorMessage = ErrorCodes.DoctorIdIsRequired)]
         public string Id { get; set; }
-
-        public string IdentityCardNo { get; set; }
     }
 }

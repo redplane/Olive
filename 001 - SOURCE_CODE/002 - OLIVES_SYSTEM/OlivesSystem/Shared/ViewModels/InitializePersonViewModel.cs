@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Shared.Attributes;
 using Shared.Constants;
-using Shared.Models;
 
 namespace Shared.ViewModels
 {
-    public class CreatePersonViewModel
+    public class InitializePersonViewModel
     {
         [Required(ErrorMessage = ErrorCodes.FirstNameIsRequired)]
         [MaxLength(32, ErrorMessage = ErrorCodes.InvalidFirstNameLength)]
@@ -19,8 +19,6 @@ namespace Shared.ViewModels
         [Range(Constants.Gender.Male, Constants.Gender.Female, ErrorMessage = ErrorCodes.InvalidGender)]
         public byte Gender { get; set; }
 
-        public Coordinate Address { get; set; }
-
         [Required(ErrorMessage = ErrorCodes.EmailIsRequired)]
         [MaxLength(FieldLength.EmailMaxLength, ErrorMessage = ErrorCodes.InvalidEmailLength)]
         [RegularExpression(Regexes.Email, ErrorMessage = ErrorCodes.InvalidEmail)]
@@ -28,11 +26,11 @@ namespace Shared.ViewModels
 
         [Required(ErrorMessage = ErrorCodes.PasswordIsRequired)]
         [MaxLength(FieldLength.PasswordMaxLength, ErrorMessage = ErrorCodes.InvalidPasswordLength)]
-        [RegularExpression(Regexes.Password, ErrorMessage = ErrorCodes.InvalidPasswordFormat)]
+        [RegexMatch(Regexes.Password, ErrorMessage = ErrorCodes.InvalidPasswordFormat)]
         public string Password { get; set; }
 
         [Required(ErrorMessage = ErrorCodes.PhoneNumberIsRequired)]
-        [RegularExpression(Regexes.Phone, ErrorMessage = ErrorCodes.InvalidPhoneFormat)]
+        [RegexMatch(Regexes.Phone, ErrorMessage = ErrorCodes.InvalidPhoneFormat)]
         public string Phone { get; set; }
     }
 }
