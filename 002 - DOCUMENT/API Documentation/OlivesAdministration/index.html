@@ -1,0 +1,218 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lumino - Widgets</title>
+
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/datepicker3.css" rel="stylesheet">
+<link href="css/styles.css" rel="stylesheet">
+
+<!--Icons-->
+<script src="js/lumino.glyphs.js"></script>
+
+<!--[if lt IE 9]>
+<script src="js/html5shiv.js"></script>
+<script src="js/respond.min.js"></script>
+<![endif]-->
+
+</head>
+
+<body>
+	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sidebar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#"><span>Olives</span> Administration</a>
+			</div>
+							
+		</div><!-- /.container-fluid -->
+	</nav>
+
+    <div ng-app="ApiModule"
+         ng-controller="ApiController">
+        <div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
+            <ul class="nav menu">
+                <li ng-repeat="data in controllers track by $index"
+					ng-class="selectedControllerIndex == $index ? 'active' : ''">
+					<a 	href="javascript:void(0);"
+						ng-click="ControllerSelect($index)">
+						<svg class="glyph stroked dashboard-dial">
+							<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#stroked-dashboard-dial"></use>
+						</svg> {{data.Controller}}
+					</a>
+                </li>
+            </ul>
+
+        </div><!--/.sidebar-->
+
+        <div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">{{currentController.Controller}}</h1>
+                </div>
+            </div><!--/.row-->
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div ng-repeat="action in currentController.Actions">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"
+                             data-toggle="collapse"
+                             data-target="#{{action.Name}}">
+                            <span>
+                                <span class="glyphicon glyphicon-briefcase"></span>
+                                <span>{{action.Name}}</span>
+                            </span>
+                        </div>
+
+                        <div class="panel-body collapse"
+                             id="{{action.Name}}">
+                            <table class="table table-responsive table-striped">
+                                <tr>
+                                    <th>Description</th>
+                                    <td>{{action.Description}}</td>
+									<td></td>
+                                </tr>
+                                <tr>
+                                    <th>Link</th>
+                                    <td><a>{{action.Link}}</a></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th>Method</th>
+                                    <td>{{action.Method}}</td>
+                                    <td></td>
+                                </tr>
+                                <tr ng-hide="action.Headers.length < 1 || action.Headers == null">
+                                    <th>Header</th>
+                                    <td>Key</td>
+                                    <td>Value</td>
+                                </tr>
+                                <tr ng-repeat="header in action.Headers">
+                                    <td></td>
+                                    <td><span class="glyphicon glyphicon-book"></span> {{header.Name}}</td>
+                                    <td>{{header.Value}}</td>
+                                </tr>
+                            </table>
+
+                            <table class="table table-responsive">
+
+                                <tr>
+                                    <th colspan="5" class="bg-primary text-center"><strong style="color: red">REQUEST</strong></th>
+                                </tr>
+
+                                <tr>
+                                    <th></th>
+                                    <th class="text-center">Description</th>
+                                    <th>Type</th>
+                                    <th>Min</th>
+                                    <th>Max</th>
+                                </tr>
+
+                                <tr ng-repeat="header in action.Request.Headers">
+                                    <th></th>
+                                    <th>{{header.Name}}</th>
+                                    <th>{{header.Value}}</th>
+                                </tr>
+                                <tr ng-repeat="param in action.Request.Params">
+                                    <td><b>{{param.Name}}</b></td>
+                                    <td>{{param.Description}}</td>
+                                    <td><label class="label label-info">{{param.Type}}</label></td>
+                                    <td>{{param.Min}}</td>
+                                    <td>{{param.Max}}</td>
+                                </tr>
+
+                                <tr>
+                                    <th colspan="5" class="bg-primary text-center"><strong style="color: red">RESPONSE</strong></th>
+                                </tr>
+
+                                <tr>
+                                    <th></th>
+                                    <th class="text-center">Description</th>
+                                    <th>Type</th>
+                                    <th>Min</th>
+                                    <th>Max</th>
+                                </tr>
+
+                                <tr ng-show="action.Response.Params.length > 0">
+                                    <th colspan="5" class="bg-primary"><strong style="color:blue;">Params</strong></th>
+                                </tr>
+                                <tr ng-repeat="param in action.Response.Params">
+                                    <td><b>{{param.Name}}</b></td>
+                                    <td>{{param.Description}}</td>
+                                    <td><label class="label label-info">{{param.Type}}</label></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+
+                                <tr>
+                                    <th colspan="5" class="bg-primary"><strong style="color: blue">Statuses</strong></th>
+                                </tr>
+
+                                <tr ng-repeat="status in action.Response.Statuses">
+                                    <td><b>{{status.Name}}</b></td>
+                                    <td>{{status.Description}}</td>
+                                    <td><label class="label label-info">{{status.Type}}</label></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+
+                            <table class="table table-responsive table-striped"></table>
+                        </div>
+
+                    </div>
+                </div>
+
+                </div><!--/.col-->
+            </div><!--/.row-->
+        </div> <!--/.main-->
+    </div>
+     
+	<script src="js/jquery-2.2.4.min.js"></script>
+	<script src="js/angular.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/api-admin.js"></script>
+	<script src="js/api-doctor.js"></script>
+	<script>
+		angular.module("ApiModule", [])
+			.controller("ApiController", function ($scope) {
+
+				$scope.controllers = [];
+				$scope.controllers.push(apis);
+				$scope.controllers.push(doctors);
+				$scope.currentController = $scope.controllers[0];
+				$scope.selectedControllerIndex = 0;
+				
+				$scope.ControllerSelect = function(index){
+					$scope.currentController = $scope.controllers[index];
+					$scope.selectedControllerIndex = index;
+				}
+			});
+	</script>
+
+	<script>
+		!function ($) {
+		    $(document).on("click","ul.nav li.parent > a > span.icon", function(){          
+		        $(this).find('em:first').toggleClass("glyphicon-minus");      
+		    }); 
+		    $(".sidebar span.icon").find('em:first').addClass("glyphicon-plus");
+		}(window.jQuery);
+
+		$(window).on('resize', function () {
+		  if ($(window).width() > 768) $('#sidebar-collapse').collapse('show')
+		})
+		$(window).on('resize', function () {
+		  if ($(window).width() <= 767) $('#sidebar-collapse').collapse('hide')
+		})
+	</script>	
+</body>
+
+</html>
