@@ -7,6 +7,7 @@ namespace Shared.ViewModels
 {
     public class EditPersonViewModel
     {
+        [Required(AllowEmptyStrings = false, ErrorMessage = ErrorCodes.DoctorIdIsRequired)]
         public string Id { get; set; }
 
         [Required(ErrorMessage = ErrorCodes.FirstNameIsRequired)]
@@ -30,5 +31,10 @@ namespace Shared.ViewModels
         [Required(ErrorMessage = ErrorCodes.PhoneNumberIsRequired)]
         [RegularExpression(Regexes.Phone, ErrorMessage = ErrorCodes.InvalidPhoneFormat)]
         public string Phone { get; set; }
+
+        public double Money { get; set; }
+
+        [Range(AccountStatus.Inactive, AccountStatus.Active, ErrorMessage = ErrorCodes.InvalidAccountStatus)]
+        public byte Status { get; set; }
     }
 }

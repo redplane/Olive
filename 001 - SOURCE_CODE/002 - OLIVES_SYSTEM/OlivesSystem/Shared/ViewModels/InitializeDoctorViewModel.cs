@@ -17,5 +17,12 @@ namespace Shared.ViewModels
         [Required(ErrorMessage = ErrorCodes.SpecializationIsRequired)]
         [MaxLength(FieldLength.SpecializationMaxLength, ErrorMessage = ErrorCodes.InvalidSpecializationLength)]
         public string Specialization { get; set; }
+
+        [Required(AllowEmptyStrings = false, ErrorMessage = ErrorCodes.IdentityIsRequired)]
+        [MaxLength(FieldLength.IdentityCardMaxLength, ErrorMessage = ErrorCodes.InvalidIdentityCardLength)]
+        public string IdentityCardNo { get; set; }
+
+        [Range(AccountStatus.Inactive, AccountStatus.Active, ErrorMessage = ErrorCodes.InvalidAccountStatus)]
+        public byte Status { get; set; }
     }
 }

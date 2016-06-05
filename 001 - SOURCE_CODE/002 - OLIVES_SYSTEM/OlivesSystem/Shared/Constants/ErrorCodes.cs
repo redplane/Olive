@@ -117,5 +117,25 @@
         ///     Address is required.
         /// </summary>
         public const string AddressIsRequired = "0x00000024";
+
+        /// <summary>
+        /// Identity card is required.
+        /// </summary>
+        public const string IdentityIsRequired = "0x00000025";
+        
+        /// <summary>
+        /// Identity card number can only contains 9 numbers.
+        /// </summary>
+        public const string InvalidIdentityCardLength = "0x00000026";
+
+        /// <summary>
+        /// Record must be from 1 to 20
+        /// </summary>
+        public const string InvalidPageRecords = "0x00000027";
+
+        /// <summary>
+        /// Page index must be from 0 and larger.
+        /// </summary>
+        public const string InvalidPageIndex = "0x00000028";
     }
 }

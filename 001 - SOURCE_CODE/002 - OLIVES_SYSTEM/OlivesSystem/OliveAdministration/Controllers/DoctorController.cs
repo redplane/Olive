@@ -13,7 +13,6 @@ using Shared.Constants;
 using Shared.Interfaces;
 using Shared.Models.Nodes;
 using Shared.ViewModels;
-using InitializeDoctorViewModel = DotnetSignalR.ViewModels.InitializeDoctorViewModel;
 
 namespace DotnetSignalR.Controllers
 {
@@ -311,6 +310,10 @@ namespace DotnetSignalR.Controllers
         [OlivesAuthorize(new[] {Roles.Admin})]
         public async Task<ActionResult> Filter(FilterDoctorViewModel info)
         {
+            if (info == null)
+                info = new FilterDoctorViewModel();
+            info.Role = Roles.Doctor;
+
             var results = await _repositoryAccount.FilterDoctorAsync(info);
             Response.StatusCode = (int) HttpStatusCode.OK;
             return Json(results);
