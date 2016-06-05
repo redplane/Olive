@@ -95,7 +95,7 @@ namespace DotnetSignalR
             admin.Created = DateTime.Now.Ticks;
             admin.Birthday = DateTime.Now.Ticks;
             admin.Id = "2f28d661db9449fdb90d0879f5231fde";
-            admin.Password = "c857a1fe-084c-4926-9ad7-ecfeabd038ff";
+            admin.Password = "c857a1fe084c49269ad7ecfeabd038ff";
             admin.Role = Roles.Admin;
             admin.Gender = Gender.Male;
 
