@@ -165,6 +165,7 @@
     <Compile Include="ViewModels\FindPatientViewModel.cs" />
     <Compile Include="ViewModels\GetDoctorViewModel.cs" />
     <Compile Include="ViewModels\EditDoctorViewModel.cs" />
+    <Compile Include="ViewModels\ModifyPatientStatusViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />

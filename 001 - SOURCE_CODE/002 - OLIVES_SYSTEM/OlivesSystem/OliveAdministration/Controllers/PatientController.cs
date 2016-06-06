@@ -143,7 +143,7 @@ namespace DotnetSignalR.Controllers
 
             return Json(response);
         }
-
+        
         public async Task<ActionResult> Put(FindPatientViewModel patient, InitializePatientViewModel info)
         {
             // Initialize response.
@@ -232,6 +232,52 @@ namespace DotnetSignalR.Controllers
             // Return status OK to client to notify edition is successful.
             Response.StatusCode = (int)HttpStatusCode.OK;
             return Json(response);
+        }
+
+        /// <summary>
+        /// Disable patient account.
+        /// </summary>
+        /// <param name="patient"></param>
+        /// <returns></returns>
+        public async Task<ActionResult> ModifyStatus(ModifyPatientStatusViewModel patient)
+        {
+            // Response initialization
+            var response = new ResponseViewModel();
+
+            #region ModelState validation
+
+            // Invalid model state.
+            if (!ModelState.IsValid)
+            {
+                // Because model is invalid. Treat this as invalid request.
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+                // Errors list construction.
+                response.Errors = RetrieveValidationErrors(ModelState);
+                return Json(response);
+            }
+
+            #endregion
+
+            // Retrieve patients from database.
+            var patients = await _repositoryAccount.FindPatientById(patient.Id);
+
+            #region Result handling
+
+            // No patient has been found.
+            if (patients.Count < 1)
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            // More than one result has been retrieved.
+            if (patients.Count != 1)
+                return new HttpStatusCodeResult(HttpStatusCode.Conflict);
+
+            #endregion
+
+            // Modify account status to disabled.
+            var result = await _repositoryAccount.ModifyAccountStatus(patient.Id, patient.Status);
+
+            return !result ? new HttpStatusCodeResult(HttpStatusCode.NotModified) : new HttpStatusCodeResult(HttpStatusCode.OK);
         }
     }
 }

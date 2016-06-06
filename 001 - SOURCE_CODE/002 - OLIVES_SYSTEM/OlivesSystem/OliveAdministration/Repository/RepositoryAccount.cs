@@ -182,41 +182,7 @@ namespace DotnetSignalR.Repository
 
             return person;
         }
-
-        /// <summary>
-        ///     Log user in
-        /// </summary>
-        /// <param name="info"></param>
-        /// <returns></returns>
-        public async Task<IPerson> LoginAsync(LoginViewModel info)
-        {
-            try
-            {
-                // Query construction.
-                var query = await _graphClient.Cypher.Match("(admin:Person)")
-                    .Where<IPerson>(admin => admin.Email == info.Email)
-                    .AndWhere<IPerson>(admin => admin.Password == info.Password)
-                    .AndWhere<IPerson>(admin => admin.Role == info.Role)
-                    .Return(admin => admin.As<Person>())
-                    .Limit(1)
-                    .ResultsAsync;
-
-                // Invalid query result.
-                var result = query.FirstOrDefault();
-                if (result == null)
-                    return null;
-
-                result.Password = "";
-                result.Id = "";
-
-                return result;
-            }
-            catch (Exception exception)
-            {
-                return null;
-            }
-        }
-
+        
         /// <summary>
         ///     Filter person asynchronously.
         /// </summary>
@@ -621,7 +587,64 @@ namespace DotnetSignalR.Repository
 
             return result;
         }
-        
+
+        /// <summary>
+        ///     Log user in
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        public async Task<IPerson> LoginAsync(LoginViewModel info)
+        {
+            try
+            {
+                // Query construction.
+                var query = await _graphClient.Cypher.Match("(admin:Person)")
+                    .Where<IPerson>(admin => admin.Email == info.Email)
+                    .AndWhere<IPerson>(admin => admin.Password == info.Password)
+                    .AndWhere<IPerson>(admin => admin.Role == info.Role)
+                    .Return(admin => admin.As<Person>())
+                    .Limit(1)
+                    .ResultsAsync;
+
+                // Invalid query result.
+                var result = query.FirstOrDefault();
+                if (result == null)
+                    return null;
+
+                result.Password = "";
+                result.Id = "";
+
+                return result;
+            }
+            catch (Exception exception)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Change account status base on account id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public async Task<bool> ModifyAccountStatus(string id, byte status)
+        {
+            try
+            {
+                await _graphClient.Cypher.OptionalMatch("(n:Person)")
+                    .Where<IPerson>(n => n.Id == id)
+                    .Set($"n.Status = {status}")
+                    .ExecuteWithoutResultsAsync();
+
+                return true;
+            }
+            catch (Exception exception)
+            {
+                return false;
+            }
+        }
+
         #endregion
     }
 }
