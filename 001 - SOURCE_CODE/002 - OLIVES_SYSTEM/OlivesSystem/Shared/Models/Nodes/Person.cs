@@ -27,7 +27,7 @@ namespace Shared.Models.Nodes
         /// <summary>
         ///     Birthday (ticks).
         /// </summary>
-        public long Birthday { get; set; }
+        public long? Birthday { get; set; }
 
         /// <summary>
         ///     Person gender.

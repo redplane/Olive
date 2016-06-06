@@ -25,7 +25,7 @@
         /// <summary>
         /// Minimum record number of a page.
         /// </summary>
-        public const int RecordMin = 0;
+        public const int RecordMin = 1;
 
         /// <summary>
         /// Maximum record number of a page.

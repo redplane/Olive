@@ -76,12 +76,19 @@ namespace Shared.Interfaces
         /// <returns></returns>
         Task<IList<Patient>> FindPatientById(string id);
 
+        /// <summary>
+        /// Filter patients by using specific conditions.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        Task<ResponsePersonFilter> FilterPatientAsync(FilterPatientViewModel filter);
+
         #endregion
 
         #region Doctor
 
         #endregion
-        
+
         #region Shared
 
         /// <summary>

@@ -78,6 +78,7 @@
     <Compile Include="Models\Nodes\Prescription.cs" />
     <Compile Include="Models\Nodes\Transaction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\FilterPatientViewModel.cs" />
     <Compile Include="ViewModels\InitializeDoctorViewModel.cs" />
     <Compile Include="ViewModels\InitializePatientViewModel.cs" />
     <Compile Include="ViewModels\InitializePersonViewModel.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="ViewModels\FilterPersonViewModel.cs" />
     <Compile Include="ViewModels\GetPersonViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModels\ResponsePersonFilter.cs" />
     <Compile Include="ViewModels\ResponseViewModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

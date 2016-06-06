@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using DotnetSignalR.Attributes;
 using DotnetSignalR.ViewModels;
 using Neo4jClient;
 using Newtonsoft.Json;
@@ -16,7 +17,16 @@ namespace DotnetSignalR.Controllers
 {
     public class PatientController : ParentController
     {
+        #region Dependency injections
+
+        /// <summary>
+        /// Repository account DI
+        /// </summary>
         private readonly IRepositoryAccount _repositoryAccount;
+
+        #endregion
+
+        #region Constructors
 
         /// <summary>
         ///     Initialize an instance of AdminController.
@@ -26,12 +36,16 @@ namespace DotnetSignalR.Controllers
         {
             _repositoryAccount = repositoryAccount;
         }
-        
+
+        #endregion
+
         /// <summary>
         /// Find a patient by using a specific id.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
+        [HttpGet]
+        [OlivesAuthorize(new [] { Roles.Admin })]
         public async Task<ActionResult> Get(FindPatientViewModel info)
         {
             // Initialize response.
@@ -71,12 +85,14 @@ namespace DotnetSignalR.Controllers
             response.Data = patients[0];
             return Json(response, JsonRequestBehavior.AllowGet);
         }
-        
+
         /// <summary>
         /// Create a patient with specific information.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
+        [HttpPost]
+        [OlivesAuthorize(new [] { Roles.Admin })]
         public async Task<ActionResult> Post(InitializePatientViewModel info)
         {
 
@@ -144,17 +160,17 @@ namespace DotnetSignalR.Controllers
             return Json(response);
         }
         
+        [HttpPost]
+        [OlivesAuthorize(new [] {Roles.Admin})]
         public async Task<ActionResult> Put(FindPatientViewModel patient, InitializePatientViewModel info)
         {
             // Initialize response.
             var response = new ResponseViewModel();
-            if (!TryUpdateModel(info, null, null, new[] { "Email" })) // fourth parameter is an array of properties (by name) that are excluded
-            {
-                response.Errors = RetrieveValidationErrors(ModelState);
-                // updated and validated correctly!
-                return Json(null);
-            }
+
             #region ModelState validation
+
+            // Email cannot be edited, therefore, it doesn't required.
+            ModelState.Remove("Email");
 
             // Invalid model state.
             if (!ModelState.IsValid)
@@ -167,7 +183,6 @@ namespace DotnetSignalR.Controllers
                 return Json(response);
             }
 
-            return Json(null);
             #endregion
             
             // Retrieve patient from database.
@@ -278,6 +293,38 @@ namespace DotnetSignalR.Controllers
             var result = await _repositoryAccount.ModifyAccountStatus(patient.Id, patient.Status);
 
             return !result ? new HttpStatusCodeResult(HttpStatusCode.NotModified) : new HttpStatusCodeResult(HttpStatusCode.OK);
+        }
+
+        [HttpPost]
+        [OlivesAuthorize(new[] { Roles.Admin })]
+        public async Task<ActionResult> Filter(FilterPatientViewModel filter)
+        {
+            #region ModelState validation
+
+            // Invalid model state.
+            if (!ModelState.IsValid)
+            {
+                // Initialize response form.
+                var response = new ResponseViewModel();
+
+                // Because model is invalid. Treat this as invalid request.
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+                // Errors list construction.
+                response.Errors = RetrieveValidationErrors(ModelState);
+                return Json(response);
+            }
+
+            #endregion
+
+            // Filter patient by using specific conditions.
+            var results = await _repositoryAccount.FilterPatientAsync(filter);
+
+            // No record has been retrieved.
+            if (results == null || results.Total < 1 || results.Data.Count < 1)
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            return Json(results);
         }
     }
 }

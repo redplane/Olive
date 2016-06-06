@@ -20,7 +20,7 @@
         /// <summary>
         ///     Birthday (ticks).
         /// </summary>
-        long Birthday { get; set; }
+        long? Birthday { get; set; }
 
         /// <summary>
         ///     Person gender.

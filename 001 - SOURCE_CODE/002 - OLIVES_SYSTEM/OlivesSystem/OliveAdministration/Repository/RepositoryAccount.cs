@@ -197,9 +197,7 @@ namespace DotnetSignalR.Repository
             FilterPerson(filter, out query, out isWhereConditionUsed);
 
             // Calculate the number of records should be skip over.
-            var skippedRecords = 0;
-            if (filter.Page != null && filter.Records != null)
-                skippedRecords = filter.Page.Value * filter.Records.Value;
+            var skippedRecords = filter.Page * filter.Records;
 
             // Execute query asynchronously.
             var results = await query.Return(n => n.As<Node<string>>())
@@ -208,6 +206,94 @@ namespace DotnetSignalR.Repository
                 .ResultsAsync;
 
             return results;
+        }
+
+        public async Task<ResponsePersonFilter> FilterPatientAsync(FilterPatientViewModel filter)
+        {
+            bool isWhereConditionUsed;
+            ICypherFluentQuery query;
+
+            // Filter must contain specific role.
+            filter.Role = Roles.Patient;
+
+            // Firstly, filter general information.
+            FilterPerson(filter, out query, out isWhereConditionUsed);
+
+            #region Weight
+
+            // Start of rank.
+            if (filter.MinWeight != null)
+            {
+                query = !isWhereConditionUsed
+                    ? query.Where<Patient>(n => n.Weight >= filter.MinWeight)
+                    : query.AndWhere<Patient>(n => n.Weight >= filter.MinWeight);
+                ;
+                isWhereConditionUsed = true;
+            }
+
+            // End of rank.
+            if (filter.MaxWeight != null)
+            {
+                query = !isWhereConditionUsed
+                    ? query.Where<Doctor>(n => n.Rank <= filter.MaxWeight.Value)
+                    : query.AndWhere<Doctor>(n => n.Rank <= filter.MaxHeight.Value);
+                isWhereConditionUsed = true;
+            }
+
+            #endregion
+
+            #region Height
+
+            // Start of rank.
+            if (filter.MinHeight != null)
+            {
+                query = !isWhereConditionUsed
+                    ? query.Where<Patient>(n => n.Height >= filter.MinHeight)
+                    : query.AndWhere<Patient>(n => n.Height >= filter.MinHeight);
+                ;
+                isWhereConditionUsed = true;
+            }
+
+            // End of rank.
+            if (filter.MaxHeight != null)
+            {
+                query = !isWhereConditionUsed
+                    ? query.Where<Patient>(n => n.Height <= filter.MaxHeight)
+                    : query.AndWhere<Patient>(n => n.Height <= filter.MaxHeight);
+                isWhereConditionUsed = true;
+            }
+
+            #endregion
+
+            #region Cypher query execution
+
+            // Initialize filter result.
+            var result = new ResponsePersonFilter();
+
+            // Count total records.
+            var cypherCountAsync = await query.Return(n => n.Count())
+                .ResultsAsync;
+            result.Total = (int)cypherCountAsync.SingleOrDefault();
+
+            // No record has been retrieved.
+            if (result.Total < 1)
+                return result;
+
+            // Calculate the number of records should be skip over.
+            var skippedRecords = filter.Page * filter.Records;
+            
+            // Execute query asynchronously.
+            var resultsAsync = await query.Return(n => n.As<Patient>())
+                .Skip(skippedRecords)
+                .Limit(filter.Records)
+                .ResultsAsync;
+            
+            #endregion
+            
+            // Update result data.
+            result.Data = new List<IPerson>(resultsAsync);
+
+            return result;
         }
 
         /// <summary>
