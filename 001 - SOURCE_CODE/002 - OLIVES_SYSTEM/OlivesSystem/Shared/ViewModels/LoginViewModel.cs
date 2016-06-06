@@ -21,5 +21,7 @@ namespace Shared.ViewModels
         //[RegularExpression(Regexes.Password, ErrorMessage = ErrorCodes.InvalidPasswordFormat)]
         //[MaxLength(Constants.Constants.PasswordMaxLength, ErrorMessage = ErrorCodes.InvalidPasswordLength)]
         public string Password { get; set; }
+
+        public int Role { get; set; }
     }
 }

@@ -196,8 +196,8 @@ namespace DotnetSignalR.Repository
                 var query = await _graphClient.Cypher.Match("(admin:Person)")
                     .Where<IPerson>(admin => admin.Email == info.Email)
                     .AndWhere<IPerson>(admin => admin.Password == info.Password)
-                    .AndWhere<IPerson>(admin => admin.Role == Roles.Admin)
-                    .Return(admin => admin.As<IPerson>())
+                    .AndWhere<IPerson>(admin => admin.Role == info.Role)
+                    .Return(admin => admin.As<Person>())
                     .Limit(1)
                     .ResultsAsync;
 
@@ -211,7 +211,7 @@ namespace DotnetSignalR.Repository
 
                 return result;
             }
-            catch
+            catch (Exception exception)
             {
                 return null;
             }

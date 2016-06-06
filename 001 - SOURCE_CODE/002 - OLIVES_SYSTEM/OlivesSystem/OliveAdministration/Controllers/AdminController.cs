@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using log4net;
+using Shared.Constants;
 using Shared.Interfaces;
 using Shared.ViewModels;
 
@@ -45,6 +46,9 @@ namespace DotnetSignalR.Controllers
                 Response.StatusCode = (int) HttpStatusCode.BadRequest;
                 return Json(response);
             }
+
+            // Update role Admin to login view model.
+            loginViewModel.Role = Roles.Admin;
 
             // Pass parameter to login function. 
             var result = await _repositoryAccount.LoginAsync(loginViewModel);
