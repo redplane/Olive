@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using log4net;
 using Shared.Interfaces;
 using Shared.ViewModels;
 
@@ -10,6 +11,7 @@ namespace DotnetSignalR.Controllers
     {
         private readonly IRepositoryAccount _repositoryAccount;
 
+        private readonly ILog _logger = LogManager.GetLogger(typeof(AdminController));
         /// <summary>
         ///     Initialize an instance of AdminController.
         /// </summary>
@@ -22,6 +24,7 @@ namespace DotnetSignalR.Controllers
         [HttpGet]
         public ActionResult Login()
         {
+            _logger.Info("Login has been called");
             return View();
         }
 

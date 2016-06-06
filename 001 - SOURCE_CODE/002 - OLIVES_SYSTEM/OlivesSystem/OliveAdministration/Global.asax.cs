@@ -163,6 +163,8 @@ namespace DotnetSignalR
             }
 
             #endregion
+
+            log4net.Config.XmlConfigurator.Configure();
         }
     }
 }
