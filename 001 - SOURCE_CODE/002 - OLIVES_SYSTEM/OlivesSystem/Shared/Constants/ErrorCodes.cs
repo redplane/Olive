@@ -137,5 +137,30 @@
         /// Page index must be from 0 and larger.
         /// </summary>
         public const string InvalidPageIndex = "0x00000028";
+
+        /// <summary>
+        /// Patient id is required.
+        /// </summary>
+        public const string PatientIdIsRequired = "0x00000029";
+
+        /// <summary>
+        /// Invalid patient id
+        /// </summary>
+        public const string InvalidPatientId = "0x00000030";
+
+        /// <summary>
+        /// Weight can only be from 1 to 500 kg
+        /// </summary>
+        public const string InvalidPersonWeight = "0x00000031";
+
+        /// <summary>
+        /// Height can only be from 20 to 500 cm
+        /// </summary>
+        public const string InvalidPersonHeight = "0x00000032";
+
+        /// <summary>
+        /// Birthday is required.
+        /// </summary>
+        public const string BirthdayIsRequired = "0x00000033";
     }
 }

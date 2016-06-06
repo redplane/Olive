@@ -11,20 +11,6 @@ namespace DotnetSignalR.Controllers
     public class ParentController : Controller
     {
         /// <summary>
-        ///     Class which stores accounts.
-        /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
-
-        /// <summary>
-        ///     Initialize an instance of ParentController with given parameters.
-        /// </summary>
-        /// <param name="repositoryAccount"></param>
-        public ParentController(IRepositoryAccount repositoryAccount)
-        {
-            _repositoryAccount = repositoryAccount;
-        }
-
-        /// <summary>
         ///     Retrieve validation errors and bind 'em to list.
         /// </summary>
         /// <param name="modelState"></param>
@@ -38,27 +24,6 @@ namespace DotnetSignalR.Controllers
             return modelState.Keys.SelectMany(key => modelState[key].Errors.Select(error => error.ErrorMessage));
         }
 
-        /// <summary>
-        ///     Check if the request comes from a person with a specific role.
-        /// </summary>
-        /// <param name="role"></param>
-        /// <returns></returns>
-        protected async Task<HttpStatusCode> IsInValidRoleAsync(byte role)
-        {
-            // Retrieve account and password from request.
-            var accountEmail = Request.Headers[HeaderFields.RequestAccountEmail];
-            var accountPassword = Request.Headers[HeaderFields.RequestAccountPassword];
-
-            // Invalid account name or password.
-            if (string.IsNullOrEmpty(accountEmail) || string.IsNullOrEmpty(accountPassword))
-                return HttpStatusCode.Unauthorized;
-
-            // Retrieve person whose properties match conditions.
-            var person = await _repositoryAccount.GetPersonExistAsync(accountEmail, true, accountPassword, role);
-            if (person.Role != role)
-                return HttpStatusCode.Forbidden;
-
-            return HttpStatusCode.OK;
-        }
+        
     }
 }

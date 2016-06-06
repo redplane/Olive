@@ -8,14 +8,7 @@ namespace Shared.Interfaces
     public interface IRepositoryAccount
     {
         Task<IPerson> LoginAsync(LoginViewModel info);
-
-        /// <summary>
-        ///     Initialize a person in database.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <returns></returns>
-        bool InitializePerson(IPerson info);
-
+        
         /// <summary>
         /// Base on personal identity or identity card, check whether doctor can be registered or not.
         /// </summary>
@@ -47,15 +40,7 @@ namespace Shared.Interfaces
         /// <param name="filter">Specific conditions</param>
         /// <returns></returns>
         Task<IList<Doctor>> FilterDoctorAsync(FilterDoctorViewModel filter);
-
-        /// <summary>
-        ///     Update person information by using id for search.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="info"></param>
-        /// <returns></returns>
-        Task<object> UpdatePersonAsync(string id, IPerson info);
-
+        
         /// <summary>
         ///     Retrieve personal information by using specific conditions.
         /// </summary>
@@ -81,6 +66,48 @@ namespace Shared.Interfaces
         /// <param name="identityCardId"></param>
         /// <returns></returns>
         Task<IList<Doctor>> FindDoctor(string id, string identityCardId);
-        
+
+        #region Patient
+
+        /// <summary>
+        /// Find patient by using specific id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<IList<Patient>> FindPatientById(string id);
+
+        #endregion
+
+        #region Doctor
+
+        #endregion
+
+
+        #region Shared
+
+        /// <summary>
+        ///     Initialize a person in database.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        bool InitializePerson(IPerson info);
+
+        /// <summary>
+        ///     Update person information by using id for search.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        Task<object> EditPersonAsync(string id, IPerson info);
+
+        /// <summary>
+        /// Using id and email to check whether person can be created or not.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        Task<bool> IsPatientAbleToCreated(string id, string email);
+
+        #endregion
     }
 }

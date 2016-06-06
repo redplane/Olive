@@ -27,7 +27,7 @@ namespace DotnetSignalR.Controllers
         ///     Initialize an instance of DoctorController
         /// </summary>
         /// <param name="repositoryAccount"></param>
-        public DoctorController(IRepositoryAccount repositoryAccount) : base(repositoryAccount)
+        public DoctorController(IRepositoryAccount repositoryAccount)
         {
             _repositoryAccount = repositoryAccount;
         }
@@ -253,7 +253,7 @@ namespace DotnetSignalR.Controllers
             var doctor = doctors[0];
             doctor.FirstName = info.FirstName;
             doctor.LastName = info.LastName;
-            doctor.Birthday = info.Birthday;
+            doctor.Birthday = info.Birthday ?? Times.MinimumSelectionTime;
             doctor.Gender = info.Gender;
 
             if (!string.IsNullOrEmpty(info.Password))
@@ -275,7 +275,7 @@ namespace DotnetSignalR.Controllers
 
             // By default, result comes back from repository is an object. 
             // It is need casting to IEnumerable<Node<string>> data type.
-            var rawResult = await _repositoryAccount.UpdatePersonAsync(info.Id, doctor);
+            var rawResult = await _repositoryAccount.EditPersonAsync(info.Id, doctor);
 
             // No data comes back.
             if (rawResult == null)

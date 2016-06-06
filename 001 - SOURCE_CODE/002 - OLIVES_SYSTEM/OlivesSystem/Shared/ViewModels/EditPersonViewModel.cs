@@ -18,8 +18,9 @@ namespace Shared.ViewModels
         [MaxLength(32, ErrorMessage = ErrorCodes.InvalidLastNameLength)]
         public string LastName { get; set; }
 
+        [Required(ErrorMessage = ErrorCodes.BirthdayIsRequired)]
         [CompareLong(Times.MinimumSelectionTime, Comparision = -1, ErrorMessageEqualSmaller = ErrorCodes.InvalidBirthday )]
-        public long Birthday { get; set; }
+        public long? Birthday { get; set; }
 
         [Range(Constants.Gender.Male, Constants.Gender.Female, ErrorMessage = ErrorCodes.InvalidGender)]
         public byte Gender { get; set; }

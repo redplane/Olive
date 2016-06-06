@@ -10,13 +10,12 @@ namespace DotnetSignalR.Controllers
     public class AdminController : ParentController
     {
         private readonly IRepositoryAccount _repositoryAccount;
-
-        private readonly ILog _logger = LogManager.GetLogger(typeof(AdminController));
+        
         /// <summary>
         ///     Initialize an instance of AdminController.
         /// </summary>
         /// <param name="repositoryAccount"></param>
-        public AdminController(IRepositoryAccount repositoryAccount) : base(repositoryAccount)
+        public AdminController(IRepositoryAccount repositoryAccount)
         {
             _repositoryAccount = repositoryAccount;
         }
@@ -24,7 +23,6 @@ namespace DotnetSignalR.Controllers
         [HttpGet]
         public ActionResult Login()
         {
-            _logger.Info("Login has been called");
             return View();
         }
 

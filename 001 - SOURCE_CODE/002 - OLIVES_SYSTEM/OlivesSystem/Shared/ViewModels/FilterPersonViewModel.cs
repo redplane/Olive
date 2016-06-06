@@ -56,15 +56,13 @@ namespace Shared.ViewModels
 
         [CompareLong(Times.MinimumSelectionTime, Comparision = -1, ErrorMessageEqualSmaller = ErrorCodes.InvalidBirthday)]
         public long? CreatedTo { get; set; }
-
-        public byte? Role { get; set; }
-
-        public byte? Status { get; set; }
         
         [IntCompare(FieldLength.PageIndexMin, Comparision = 1, ErrorMessageEqualHigher = ErrorCodes.InvalidPageIndex)]
         public int? Page { get; set; }
 
         [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessage = ErrorCodes.InvalidPageRecords)]
         public int? Records { get; set; }
+
+        public byte Role { get; set; }
     }
 }

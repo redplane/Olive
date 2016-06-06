@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Mvc;
+using DotnetSignalR.Attributes;
 using Neo4jClient;
 using Neo4jClient.Cypher;
 using Neo4jClient.Transactions;
@@ -20,9 +23,7 @@ namespace DotnetSignalR.Repository
         /// </summary>
         private readonly GraphClient _graphClient;
 
-        public RepositoryAccount()
-        {
-        }
+        #region Constructor
 
         /// <summary>
         ///     Initialize an instance of RepositoryAccount class.
@@ -32,7 +33,20 @@ namespace DotnetSignalR.Repository
         {
             _graphClient = graphClient;
         }
-        
+
+        /// <summary>
+        ///     Initialize an instance of RepositoryAccount class.
+        /// </summary>
+        /// <param name="graphClient"></param>
+        public RepositoryAccount()
+        {
+            
+        }
+
+        #endregion
+
+        #region Doctor
+
         public async Task<bool> IsDoctorAbleToRegister(string id, string identityCardNo)
         {
             // By default, where condition hasn't been used.
@@ -77,44 +91,6 @@ namespace DotnetSignalR.Repository
 
             // Count the number of result.
             return result == 0;
-        }
-
-        /// <summary>
-        ///     Create person asynchronously with given parameter.
-        /// </summary>
-        /// <param name="info"></param>
-        public bool InitializePerson(IPerson info)
-        {
-            // Cast normal graph client to a transact client to do a transaction.
-            var transactClient = (ITransactionalGraphClient) _graphClient;
-
-            using (var transaction = transactClient.BeginTransaction())
-            {
-                try
-                {
-                    var matchPerson = $"(p:Person {{Id : '{info.Id}'}})";
-                  
-                    var query = transactClient.Cypher
-                        .Merge(matchPerson)
-                        .Set("p = {person}")
-                        .WithParam("person", info);
-                    
-                    // Input parameters. 
-                    query.ExecuteWithoutResults();
-
-                    // Confirm to do execute transaction.
-                    transaction.Commit();
-
-                    return true;
-                }
-                catch (Exception)
-                {
-                    // As exception is thrown, roll back the transaction and tell client the transaction is failed.
-                    transaction.Rollback();
-
-                    return false;
-                }
-            }
         }
 
         /// <summary>
@@ -257,7 +233,7 @@ namespace DotnetSignalR.Repository
             // Calculate the number of records should be skip over.
             var skippedRecords = 0;
             if (filter.Page != null && filter.Records != null)
-                skippedRecords = filter.Page.Value*filter.Records.Value;
+                skippedRecords = filter.Page.Value * filter.Records.Value;
 
             // Execute query asynchronously.
             var results = await query.Return(n => n.As<Node<string>>())
@@ -296,7 +272,7 @@ namespace DotnetSignalR.Repository
             }
 
             #endregion
-            
+
             #region Rank
 
             // Start of rank.
@@ -336,7 +312,7 @@ namespace DotnetSignalR.Repository
             #region Cypher query execution
 
             // Calculate the number of records should be skip over.
-            var skippedRecords = filter.Page*filter.Records;
+            var skippedRecords = filter.Page * filter.Records;
 
             // Execute query asynchronously.
             var results = await query.Return(n => n.As<Doctor>())
@@ -348,29 +324,7 @@ namespace DotnetSignalR.Repository
 
             return results.ToList();
         }
-
-        /// <summary>
-        ///     Update personal information by search user GUID.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="info"></param>
-        /// <returns></returns>
-        public async Task<object> UpdatePersonAsync(string id, IPerson info)
-        {
-            // Keep the id of information.
-            info.Id = id;
-
-            var result = await _graphClient.Cypher
-                .Match("(n:Person)")
-                .Where<IPerson>(n => n.Id == id)
-                .Set("n = {info}")
-                .WithParam("info", info)
-                .Return(n => n.As<Node<string>>())
-                .ResultsAsync;
-
-            return result;
-        }
-
+        
         /// <summary>
         ///     Find doctor and only retrieve the first result.
         /// </summary>
@@ -406,7 +360,7 @@ namespace DotnetSignalR.Repository
 
             return results.ToList();
         }
-        
+
         /// <summary>
         ///     Personal information filter query construction.
         /// </summary>
@@ -442,7 +396,7 @@ namespace DotnetSignalR.Repository
             {
                 // Last name matching query construction.
                 var queryLastName = $"n.LastName =~'(?i).*{filter.LastName}.*'";
-                query = (!isWhereConditionUsed) ? query.Where(queryLastName) : query.AndWhere(queryLastName); 
+                query = (!isWhereConditionUsed) ? query.Where(queryLastName) : query.AndWhere(queryLastName);
                 isWhereConditionUsed = true;
             }
 
@@ -537,5 +491,137 @@ namespace DotnetSignalR.Repository
 
             #endregion
         }
+
+        #endregion
+
+        #region Patient
+
+        /// <summary>
+        /// Find person by using GUID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [OlivesAuthorize(new[] { Roles.Admin })]
+        public async Task<IList<Patient>> FindPatientById(string id)
+        {
+            var resultAsync = await _graphClient.Cypher.Match("(n:Person)")
+                .Where<IPerson>(n => n.Id == id)
+                .Return(n => n.As<Patient>())
+                .ResultsAsync;
+
+            var results = resultAsync.ToList();
+            return results;
+        }
+
+        /// <summary>
+        /// Using id and email to check whether person can be created or not.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        public async Task<bool> IsPatientAbleToCreated(string id, string email)
+        {
+            // Initialize match query.
+            var query = _graphClient.Cypher.Match("(n:Person)")
+                .Where<IPerson>(n => n.Role == Roles.Patient);
+
+            var isWhereAvailable = true;
+            
+            // Patient id.
+            if (!string.IsNullOrEmpty(id))
+            {
+                query = isWhereAvailable
+                    ? query.AndWhere<IPerson>(n => n.Id == id)
+                    : query.OrWhere<IPerson>(n => n.Id == id);
+
+                isWhereAvailable = false;
+            }
+            
+            // Patient email
+            if (!string.IsNullOrEmpty(email))
+            {
+                var cypherEmail = $"n.Email =~ '(?i){email}'";
+                 
+                query = isWhereAvailable
+                    ? query.AndWhere(cypherEmail)
+                    : query.OrWhere(cypherEmail);
+
+                isWhereAvailable = false;
+            }
+
+            var resultAsync = await query.Return(n => n.Count())
+                .ResultsAsync;
+
+            // Retrieve counter.
+            var result = resultAsync.SingleOrDefault();
+
+            // Count the number of result.
+            return result == 0;
+        }
+
+        #endregion
+
+        #region Shared
+
+        /// <summary>
+        ///     Create person synchronously with given parameter.
+        /// </summary>
+        /// <param name="info"></param>
+        public bool InitializePerson(IPerson info)
+        {
+            // Cast normal graph client to a transact client to do a transaction.
+            var transactClient = (ITransactionalGraphClient)_graphClient;
+
+            using (var transaction = transactClient.BeginTransaction())
+            {
+                try
+                {
+                    var query = transactClient.Cypher
+                        .Merge($"(p:Person {{Id : '{info.Id}'}})")
+                        .Set("p = {person}")
+                        .WithParam("person", info);
+
+                    // Input parameters. 
+                    query.ExecuteWithoutResults();
+
+                    // Confirm to do execute transaction.
+                    transaction.Commit();
+
+                    return true;
+                }
+                catch (Exception)
+                {
+                    // As exception is thrown, roll back the transaction and tell client the transaction is failed.
+                    transaction.Rollback();
+
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Update personal information by search user GUID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        public async Task<object> EditPersonAsync(string id, IPerson info)
+        {
+            // Keep the id of information.
+            info.Id = id;
+
+            var result = await _graphClient.Cypher
+                .Match("(n:Person)")
+                .Where<IPerson>(n => n.Id == id)
+                .Set("n = {info}")
+                .WithParam("info", info)
+                .Return(n => n.As<Node<string>>())
+                .ResultsAsync;
+
+            return result;
+        }
+        
+        #endregion
     }
 }

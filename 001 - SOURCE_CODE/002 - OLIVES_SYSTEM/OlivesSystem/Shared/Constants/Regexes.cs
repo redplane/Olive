@@ -21,5 +21,10 @@
         /// Regex of identity card.
         /// </summary>
         public const string IdentityCard = @"^([0-9])$";
+
+        /// <summary>
+        /// Regular expression of personal id.
+        /// </summary>
+        public const string PersonalId = "^[?[0-9A-F]{8}[-]?([0-9A-F]{4}[-]?){3}[0-9A-F]{12}?$";
     }
 }

@@ -37,6 +37,7 @@ namespace DotnetSignalR
             //// ...or you can register individual controlllers manually.
             builder.RegisterType<AdminController>().InstancePerRequest();
             builder.RegisterType<DoctorController>().InstancePerRequest();
+            builder.RegisterType<PatientController>().InstancePerRequest();
 
             #endregion
 
