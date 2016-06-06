@@ -69,7 +69,7 @@ namespace DotnetSignalR.Controllers
 
             // Respond to client.
             response.Data = patients[0];
-            return Json(response);
+            return Json(response, JsonRequestBehavior.AllowGet);
         }
         
         /// <summary>
