@@ -81,8 +81,7 @@ namespace Shared.Interfaces
         #region Doctor
 
         #endregion
-
-
+        
         #region Shared
 
         /// <summary>
@@ -108,6 +107,14 @@ namespace Shared.Interfaces
         /// <returns></returns>
         Task<bool> IsPatientAbleToCreated(string id, string email);
 
+        /// <summary>
+        /// Change account status base on account id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        Task<bool> ModifyAccountStatus(string id, byte status);
+        
         #endregion
     }
 }

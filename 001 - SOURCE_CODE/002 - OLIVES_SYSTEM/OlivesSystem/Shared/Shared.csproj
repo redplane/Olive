@@ -45,6 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\CoordinateValidationAttribute.cs" />
+    <Compile Include="Attributes\IntsMatchAttribute.cs" />
+    <Compile Include="Attributes\BytesMatchAttribute.cs" />
     <Compile Include="Attributes\IntCompareAttribute.cs" />
     <Compile Include="Attributes\LongCompareAttribute.cs" />
     <Compile Include="Attributes\RegexMatchAttribute.cs" />

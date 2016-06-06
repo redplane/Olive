@@ -162,5 +162,10 @@
         /// Birthday is required.
         /// </summary>
         public const string BirthdayIsRequired = "0x00000033";
+
+        /// <summary>
+        /// Patient status must be 0 or 2
+        /// </summary>
+        public const string InvalidPatientStatus = "0x00000034";
     }
 }
