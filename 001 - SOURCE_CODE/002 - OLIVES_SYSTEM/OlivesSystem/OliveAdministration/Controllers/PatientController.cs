@@ -4,23 +4,23 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using DotnetSignalR.Attributes;
-using DotnetSignalR.ViewModels;
 using Neo4jClient;
 using Newtonsoft.Json;
+using OliveAdministration.Attributes;
+using OliveAdministration.ViewModels;
 using Shared.Constants;
 using Shared.Interfaces;
 using Shared.Models.Nodes;
 using Shared.ViewModels;
 
-namespace DotnetSignalR.Controllers
+namespace OliveAdministration.Controllers
 {
     public class PatientController : ParentController
     {
         #region Dependency injections
 
         /// <summary>
-        /// Repository account DI
+        ///     Repository account DI
         /// </summary>
         private readonly IRepositoryAccount _repositoryAccount;
 
@@ -40,12 +40,12 @@ namespace DotnetSignalR.Controllers
         #endregion
 
         /// <summary>
-        /// Find a patient by using a specific id.
+        ///     Find a patient by using a specific id.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new [] { Roles.Admin })]
+        [OlivesAuthorize(new[] {Roles.Admin})]
         public async Task<ActionResult> Get(FindPatientViewModel info)
         {
             // Initialize response.
@@ -57,7 +57,7 @@ namespace DotnetSignalR.Controllers
             if (!ModelState.IsValid)
             {
                 // Because model is invalid. Treat this as invalid request.
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                Response.StatusCode = (int) HttpStatusCode.BadRequest;
 
                 // Errors list construction.
                 response.Errors = RetrieveValidationErrors(ModelState);
@@ -87,15 +87,14 @@ namespace DotnetSignalR.Controllers
         }
 
         /// <summary>
-        /// Create a patient with specific information.
+        ///     Create a patient with specific information.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPost]
-        [OlivesAuthorize(new [] { Roles.Admin })]
+        [OlivesAuthorize(new[] {Roles.Admin})]
         public async Task<ActionResult> Post(InitializePatientViewModel info)
         {
-
             // Initialize response.
             var response = new ResponseViewModel();
 
@@ -105,7 +104,7 @@ namespace DotnetSignalR.Controllers
             if (!ModelState.IsValid)
             {
                 // Because model is invalid. Treat this as invalid request.
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                Response.StatusCode = (int) HttpStatusCode.BadRequest;
 
                 // Errors list construction.
                 response.Errors = RetrieveValidationErrors(ModelState);
@@ -122,7 +121,7 @@ namespace DotnetSignalR.Controllers
             // Patient cannot be initialized.
             if (!isPatientAbleToInitialize)
             {
-                Response.StatusCode = (int)HttpStatusCode.Conflict;
+                Response.StatusCode = (int) HttpStatusCode.Conflict;
                 return Json(response);
             }
 
@@ -146,7 +145,7 @@ namespace DotnetSignalR.Controllers
             patient.Height = info.Height;
             patient.Weight = info.Weight;
             patient.Anamneses = info.Anamneses;
-            
+
             #endregion
 
             // Initialize patient information into db.
@@ -159,9 +158,9 @@ namespace DotnetSignalR.Controllers
 
             return Json(response);
         }
-        
+
         [HttpPost]
-        [OlivesAuthorize(new [] {Roles.Admin})]
+        [OlivesAuthorize(new[] {Roles.Admin})]
         public async Task<ActionResult> Put(FindPatientViewModel patient, InitializePatientViewModel info)
         {
             // Initialize response.
@@ -176,7 +175,7 @@ namespace DotnetSignalR.Controllers
             if (!ModelState.IsValid)
             {
                 // Because model is invalid. Treat this as invalid request.
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                Response.StatusCode = (int) HttpStatusCode.BadRequest;
 
                 // Errors list construction.
                 response.Errors = RetrieveValidationErrors(ModelState);
@@ -184,7 +183,7 @@ namespace DotnetSignalR.Controllers
             }
 
             #endregion
-            
+
             // Retrieve patient from database.
             var patients = await _repositoryAccount.FindPatientById(patient.Id);
 
@@ -221,17 +220,17 @@ namespace DotnetSignalR.Controllers
             // No data comes back.
             if (rawResult == null)
             {
-                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                Response.StatusCode = (int) HttpStatusCode.NotFound;
                 return Json(null);
             }
 
             // Retrieve the first result.
-            var resultNode = ((IEnumerable<Node<string>>)rawResult).FirstOrDefault();
+            var resultNode = ((IEnumerable<Node<string>>) rawResult).FirstOrDefault();
 
             // Invalid node.
             if (resultNode == null || string.IsNullOrEmpty(resultNode.Data))
             {
-                Response.StatusCode = (int)HttpStatusCode.NotFound;
+                Response.StatusCode = (int) HttpStatusCode.NotFound;
                 return Json(null);
             }
 
@@ -245,12 +244,12 @@ namespace DotnetSignalR.Controllers
             #endregion
 
             // Return status OK to client to notify edition is successful.
-            Response.StatusCode = (int)HttpStatusCode.OK;
+            Response.StatusCode = (int) HttpStatusCode.OK;
             return Json(response);
         }
 
         /// <summary>
-        /// Disable patient account.
+        ///     Disable patient account.
         /// </summary>
         /// <param name="patient"></param>
         /// <returns></returns>
@@ -265,7 +264,7 @@ namespace DotnetSignalR.Controllers
             if (!ModelState.IsValid)
             {
                 // Because model is invalid. Treat this as invalid request.
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                Response.StatusCode = (int) HttpStatusCode.BadRequest;
 
                 // Errors list construction.
                 response.Errors = RetrieveValidationErrors(ModelState);
@@ -292,11 +291,13 @@ namespace DotnetSignalR.Controllers
             // Modify account status to disabled.
             var result = await _repositoryAccount.ModifyAccountStatus(patient.Id, patient.Status);
 
-            return !result ? new HttpStatusCodeResult(HttpStatusCode.NotModified) : new HttpStatusCodeResult(HttpStatusCode.OK);
+            return !result
+                ? new HttpStatusCodeResult(HttpStatusCode.NotModified)
+                : new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
         [HttpPost]
-        [OlivesAuthorize(new[] { Roles.Admin })]
+        [OlivesAuthorize(new[] {Roles.Admin})]
         public async Task<ActionResult> Filter(FilterPatientViewModel filter)
         {
             #region ModelState validation
@@ -308,7 +309,7 @@ namespace DotnetSignalR.Controllers
                 var response = new ResponseViewModel();
 
                 // Because model is invalid. Treat this as invalid request.
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                Response.StatusCode = (int) HttpStatusCode.BadRequest;
 
                 // Errors list construction.
                 response.Errors = RetrieveValidationErrors(ModelState);

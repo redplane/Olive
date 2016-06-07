@@ -1,5 +1,4 @@
 ﻿using System;
-using System.CodeDom;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
@@ -11,7 +10,7 @@ namespace Shared.Attributes
     public class IntsMatchAttribute : ValidationAttribute
     {
         /// <summary>
-        /// Values collection in which data must be equal.
+        ///     Values collection in which data must be equal.
         /// </summary>
         private readonly int[] _milesStone;
 
@@ -23,7 +22,7 @@ namespace Shared.Attributes
         {
             _milesStone = milestones;
         }
-        
+
         /// <summary>
         ///     Check whether property is valid or not.
         /// </summary>
@@ -40,9 +39,9 @@ namespace Shared.Attributes
             if (_milesStone == null || _milesStone.Length < 1)
                 throw new Exception("Invalid milestones.");
 
-            
+
             // Convert value to int.
-            var convertedValue = (int)value;
+            var convertedValue = (int) value;
 
             if (!_milesStone.Any(x => x == convertedValue))
             {
@@ -51,7 +50,6 @@ namespace Shared.Attributes
             }
 
             return ValidationResult.Success;
-            
         }
     }
 }

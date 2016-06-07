@@ -10,47 +10,52 @@ namespace Shared.ViewModels
     {
 #pragma warning disable 108, 114
         /// <summary>
-        /// Person first name
+        ///     Person first name
         /// </summary>
         public string FirstName { get; set; }
 
         /// <summary>
-        /// Person last name
+        ///     Person last name
         /// </summary>
         public string LastName { get; set; }
 
         /// <summary>
-        /// Date after that person was born
+        ///     Date after that person was born
         /// </summary>
-
-        [CompareLong(Times.MinimumSelectionTime, Comparision = -1, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMinBirthday")]
+        [CompareLong(Times.MinimumSelectionTime, Comparision = -1, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "InvalidMinBirthday")]
         public long? MinBirthday { get; set; }
 
         /// <summary>
-        /// Date before which that person had been born
+        ///     Date before which that person had been born
         /// </summary>
-        [CompareLong(Times.MinimumSelectionTime, Comparision = -1, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMaxBirthday")]
+        [CompareLong(Times.MinimumSelectionTime, Comparision = -1, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "InvalidMaxBirthday")]
         public long? MaxBirthday { get; set; }
 
         /// <summary>
-        /// Gender of person
+        ///     Gender of person
         /// </summary>
         public byte? Gender { get; set; }
-        
+
         public long? MoneyFrom { get; set; }
 
         public long? MoneyTo { get; set; }
 
-        [CompareLong(Times.MinimumSelectionTime, Comparision = -1, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMinDate")]
+        [CompareLong(Times.MinimumSelectionTime, Comparision = -1, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "InvalidMinDate")]
         public long? MinCreated { get; set; }
 
-        [CompareLong(Times.MinimumSelectionTime, Comparision = -1, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMaxDate")]
+        [CompareLong(Times.MinimumSelectionTime, Comparision = -1, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "InvalidMaxDate")]
         public long? MaxCreated { get; set; }
-        
-        [IntCompare(FieldLength.PageIndexMin, Comparision = 1, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidPageIndex")]
+
+        [IntCompare(FieldLength.PageIndexMin, Comparision = 1, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "InvalidPageIndex")]
         public int Page { get; set; }
 
-        [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidPageRecords")]
+        [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "InvalidPageRecords")]
         public int Records { get; set; }
 
         public byte? Role { get; set; }

@@ -1,6 +1,6 @@
 ﻿using Owin;
 
-namespace DotnetSignalR
+namespace OliveAdministration
 {
     public class Startup
     {

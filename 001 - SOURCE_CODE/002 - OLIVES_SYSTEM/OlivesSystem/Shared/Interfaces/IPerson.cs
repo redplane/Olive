@@ -53,12 +53,12 @@
         long Created { get; set; }
 
         /// <summary>
-        /// Latitude of place where person lives.
+        ///     Latitude of place where person lives.
         /// </summary>
         double? AddressLatitude { get; set; }
 
         /// <summary>
-        /// Longitude of place where person lives.
+        ///     Longitude of place where person lives.
         /// </summary>
         double? AddressLongitude { get; set; }
 

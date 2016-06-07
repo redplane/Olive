@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Web;
@@ -7,17 +6,18 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.Mvc;
-using DotnetSignalR.Attributes;
-using DotnetSignalR.Controllers;
-using DotnetSignalR.Models;
-using DotnetSignalR.Repository;
+using log4net.Config;
 using Neo4jClient;
 using Newtonsoft.Json;
+using OliveAdministration.Attributes;
+using OliveAdministration.Controllers;
+using OliveAdministration.Models;
+using OliveAdministration.Repository;
 using Shared.Constants;
 using Shared.Interfaces;
 using Shared.Models.Nodes;
 
-namespace DotnetSignalR
+namespace OliveAdministration
 {
     public class WebApiApplication : HttpApplication
     {
@@ -87,12 +87,11 @@ namespace DotnetSignalR
 
             //InitializeDemoData(graphClient);
 
-            log4net.Config.XmlConfigurator.Configure();
+            XmlConfigurator.Configure();
         }
 
         private void InitializeDemoData(GraphClient graphClient)
         {
-
             #region Admin creation
 
             // TODO: Remove this code.
@@ -134,7 +133,6 @@ namespace DotnetSignalR
                 .Set("n = {info}")
                 .WithParam("info", admin)
                 .ExecuteWithoutResults();
-
 
             #endregion
 
@@ -203,7 +201,6 @@ namespace DotnetSignalR
                     .WithParam("info", patient)
                     .ExecuteWithoutResults();
             }
-
 
             #endregion
         }

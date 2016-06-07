@@ -1,5 +1,4 @@
 ﻿using System;
-using System.CodeDom;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
@@ -11,7 +10,7 @@ namespace Shared.Attributes
     public class BytesMatchAttribute : ValidationAttribute
     {
         /// <summary>
-        /// Values collection in which data must be equal.
+        ///     Values collection in which data must be equal.
         /// </summary>
         private readonly byte[] _milesStone;
 
@@ -23,7 +22,7 @@ namespace Shared.Attributes
         {
             _milesStone = milestones;
         }
-        
+
         /// <summary>
         ///     Check whether property is valid or not.
         /// </summary>
@@ -39,9 +38,9 @@ namespace Shared.Attributes
             // Invalid milestone.
             if (_milesStone == null || _milesStone.Length < 1)
                 throw new Exception("Invalid milestones.");
-            
+
             // Convert value to int.
-            var convertedValue = (byte)value;
+            var convertedValue = (byte) value;
 
             if (!_milesStone.Any(x => x == convertedValue))
             {
@@ -50,7 +49,6 @@ namespace Shared.Attributes
             }
 
             return ValidationResult.Success;
-            
         }
     }
 }

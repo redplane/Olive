@@ -43,46 +43,51 @@ namespace Shared.Attributes
                 return ValidationResult.Success;
 
             // Convert value to int.
-            var convertedValue = (long)value;
+            var convertedValue = (long) value;
 
             switch (Comparision)
             {
                 case -2:
-                    {
-                        if (convertedValue >= Milestone)
-                            return
-                                new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName), Milestone));
+                {
+                    if (convertedValue >= Milestone)
+                        return
+                            new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName),
+                                Milestone));
 
-                        break;
-                    }
+                    break;
+                }
                 case -1:
-                    {
-                        if (convertedValue > Milestone)
-                            return
-                            new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName), Milestone));
-                        break;
-                    }
+                {
+                    if (convertedValue > Milestone)
+                        return
+                            new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName),
+                                Milestone));
+                    break;
+                }
                 case 0: // Value must be equal to milestone.
-                    {
-                        if (convertedValue != Milestone)
-                            return
-                                    new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName), Milestone));
-                        break;
-                    }
+                {
+                    if (convertedValue != Milestone)
+                        return
+                            new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName),
+                                Milestone));
+                    break;
+                }
                 case 1: // Value must be larger than or equal to milestone.
-                    {
-                        if (convertedValue < Milestone)
-                            return
-                                    new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName), Milestone));
-                        break;
-                    }
+                {
+                    if (convertedValue < Milestone)
+                        return
+                            new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName),
+                                Milestone));
+                    break;
+                }
                 case 2: // Value must be larger than milestone.
-                    {
-                        if (convertedValue <= Milestone)
-                            return
-                                    new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName), Milestone));
-                        break;
-                    }
+                {
+                    if (convertedValue <= Milestone)
+                        return
+                            new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName),
+                                Milestone));
+                    break;
+                }
                 default:
                     throw new NotImplementedException();
             }

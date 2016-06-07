@@ -7,11 +7,10 @@ using Neo4jClient.Cypher;
 using Neo4jClient.Transactions;
 using Shared.Constants;
 using Shared.Interfaces;
-using Shared.Models;
 using Shared.Models.Nodes;
 using Shared.ViewModels;
 
-namespace DotnetSignalR.Repository
+namespace OliveAdministration.Repository
 {
     public class RepositoryAccount : IRepositoryAccount
     {
@@ -37,7 +36,6 @@ namespace DotnetSignalR.Repository
         /// <param name="graphClient"></param>
         public RepositoryAccount()
         {
-            
         }
 
         #endregion
@@ -45,7 +43,7 @@ namespace DotnetSignalR.Repository
         #region Doctor
 
         /// <summary>
-        /// Find doctor by using GUID.
+        ///     Find doctor by using GUID.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -60,7 +58,7 @@ namespace DotnetSignalR.Repository
             var results = resultAsync.ToList();
             return results;
         }
-        
+
         public async Task<bool> IsDoctorAbleToRegister(string id, string identityCardNo)
         {
             // By default, where condition hasn't been used.
@@ -75,7 +73,7 @@ namespace DotnetSignalR.Repository
             if (!string.IsNullOrEmpty(id))
             {
                 id = $"~'(?i){id}'";
-                query = (!hasWhereCondition)
+                query = !hasWhereCondition
                     ? query.Where<Doctor>(n => n.Id == id)
                     : query.OrWhere<Doctor>(n => n.Id == id);
 
@@ -88,7 +86,7 @@ namespace DotnetSignalR.Repository
 
             if (!string.IsNullOrEmpty(identityCardNo))
             {
-                query = (!hasWhereCondition)
+                query = !hasWhereCondition
                     ? query.Where($"n.IdentityCardNo =~ '(?i){identityCardNo}'")
                     : query.OrWhere($"n.IdentityCardNo =~ '(?i){identityCardNo}'");
             }
@@ -196,7 +194,7 @@ namespace DotnetSignalR.Repository
 
             return person;
         }
-        
+
         /// <summary>
         ///     Filter person asynchronously.
         /// </summary>
@@ -211,7 +209,7 @@ namespace DotnetSignalR.Repository
             FilterPerson(filter, out query, out isWhereConditionUsed);
 
             // Calculate the number of records should be skip over.
-            var skippedRecords = filter.Page * filter.Records;
+            var skippedRecords = filter.Page*filter.Records;
 
             // Execute query asynchronously.
             var results = await query.Return(n => n.As<Node<string>>())
@@ -223,7 +221,7 @@ namespace DotnetSignalR.Repository
         }
 
         /// <summary>
-        /// Filter patients by using specific conditions
+        ///     Filter patients by using specific conditions
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -292,23 +290,23 @@ namespace DotnetSignalR.Repository
             // Count total records.
             var cypherCountAsync = await query.Return(n => n.Count())
                 .ResultsAsync;
-            result.Total = (int)cypherCountAsync.SingleOrDefault();
+            result.Total = (int) cypherCountAsync.SingleOrDefault();
 
             // No record has been retrieved.
             if (result.Total < 1)
                 return result;
 
             // Calculate the number of records should be skip over.
-            var skippedRecords = filter.Page * filter.Records;
-            
+            var skippedRecords = filter.Page*filter.Records;
+
             // Execute query asynchronously.
             var resultsAsync = await query.Return(n => n.As<Patient>())
                 .Skip(skippedRecords)
                 .Limit(filter.Records)
                 .ResultsAsync;
-            
+
             #endregion
-            
+
             // Update result data.
             result.Data = new List<IPerson>(resultsAsync);
 
@@ -388,14 +386,14 @@ namespace DotnetSignalR.Repository
             // Count total records.
             var cypherCountAsync = await query.Return(n => n.Count())
                 .ResultsAsync;
-            result.Total = (int)cypherCountAsync.SingleOrDefault();
+            result.Total = (int) cypherCountAsync.SingleOrDefault();
 
             // No record has been retrieved.
             if (result.Total < 1)
                 return result;
 
             // Calculate the number of records should be skip over.
-            var skippedRecords = filter.Page * filter.Records;
+            var skippedRecords = filter.Page*filter.Records;
 
             // Execute query asynchronously.
             var resultsAsync = await query.Return(n => n.As<Doctor>())
@@ -409,15 +407,14 @@ namespace DotnetSignalR.Repository
             result.Data = new List<IPerson>(resultsAsync);
 
             return result;
-
         }
-       
+
         #endregion
 
         #region Patient
 
         /// <summary>
-        /// Find person by using GUID.
+        ///     Find person by using GUID.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -433,7 +430,7 @@ namespace DotnetSignalR.Repository
         }
 
         /// <summary>
-        /// Using id and email to check whether person can be created or not.
+        ///     Using id and email to check whether person can be created or not.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="email"></param>
@@ -445,7 +442,7 @@ namespace DotnetSignalR.Repository
                 .Where<IPerson>(n => n.Role == Roles.Patient);
 
             var isWhereAvailable = true;
-            
+
             // Patient id.
             if (!string.IsNullOrEmpty(id))
             {
@@ -455,12 +452,12 @@ namespace DotnetSignalR.Repository
 
                 isWhereAvailable = false;
             }
-            
+
             // Patient email
             if (!string.IsNullOrEmpty(email))
             {
                 var cypherEmail = $"n.Email =~ '(?i){email}'";
-                 
+
                 query = isWhereAvailable
                     ? query.AndWhere(cypherEmail)
                     : query.OrWhere(cypherEmail);
@@ -489,7 +486,7 @@ namespace DotnetSignalR.Repository
         public bool InitializePerson(IPerson info)
         {
             // Cast normal graph client to a transact client to do a transaction.
-            var transactClient = (ITransactionalGraphClient)_graphClient;
+            var transactClient = (ITransactionalGraphClient) _graphClient;
 
             using (var transaction = transactClient.BeginTransaction())
             {
@@ -575,7 +572,7 @@ namespace DotnetSignalR.Repository
         }
 
         /// <summary>
-        /// Change account status base on account id.
+        ///     Change account status base on account id.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>
@@ -632,7 +629,7 @@ namespace DotnetSignalR.Repository
             {
                 // Last name matching query construction.
                 var queryLastName = $"n.LastName =~'(?i).*{filter.LastName}.*'";
-                query = (!isWhereConditionUsed) ? query.Where(queryLastName) : query.AndWhere(queryLastName);
+                query = !isWhereConditionUsed ? query.Where(queryLastName) : query.AndWhere(queryLastName);
                 isWhereConditionUsed = true;
             }
 

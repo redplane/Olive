@@ -11,7 +11,7 @@
         ///     Weight of person.
         /// </summary>
         public float? Weight { get; set; }
-        
+
         /// <summary>
         ///     Family anamneses.
         /// </summary>

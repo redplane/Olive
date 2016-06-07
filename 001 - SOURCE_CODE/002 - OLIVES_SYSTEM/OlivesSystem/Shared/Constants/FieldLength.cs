@@ -18,22 +18,22 @@
         public const int SpecializationMaxLength = 128;
 
         /// <summary>
-        /// Maximum length of Identity card.
+        ///     Maximum length of Identity card.
         /// </summary>
         public const int IdentityCardMaxLength = 9;
 
         /// <summary>
-        /// Minimum record number of a page.
+        ///     Minimum record number of a page.
         /// </summary>
         public const int RecordMin = 1;
 
         /// <summary>
-        /// Maximum record number of a page.
+        ///     Maximum record number of a page.
         /// </summary>
         public const int RecordMax = 20;
 
         /// <summary>
-        /// Minimum index of page.
+        ///     Minimum index of page.
         /// </summary>
         public const int PageIndexMin = 0;
 
@@ -41,6 +41,5 @@
         public const int FirstNameMaxLength = 32;
 
         public const int LastNameMaxLength = 32;
-
     }
 }

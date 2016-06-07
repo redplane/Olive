@@ -4,7 +4,7 @@ using System.Web.Mvc;
 using Shared.Constants;
 using Shared.Interfaces;
 
-namespace DotnetSignalR.Attributes
+namespace OliveAdministration.Attributes
 {
     public class OlivesAuthorize : AuthorizeAttribute
     {

@@ -1,17 +1,16 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using log4net;
 using Shared.Constants;
 using Shared.Interfaces;
 using Shared.ViewModels;
 
-namespace DotnetSignalR.Controllers
+namespace OliveAdministration.Controllers
 {
     public class AdminController : ParentController
     {
         private readonly IRepositoryAccount _repositoryAccount;
-        
+
         /// <summary>
         ///     Initialize an instance of AdminController.
         /// </summary>

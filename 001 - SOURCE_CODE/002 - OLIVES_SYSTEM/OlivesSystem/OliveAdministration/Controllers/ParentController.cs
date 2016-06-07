@@ -2,15 +2,10 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Web.Mvc;
-using System.Web.Mvc.Filters;
-using Shared.Constants;
-using Shared.Interfaces;
 
-namespace DotnetSignalR.Controllers
+namespace OliveAdministration.Controllers
 {
     public class ParentController : Controller
     {
@@ -51,9 +46,8 @@ namespace DotnetSignalR.Controllers
                 // Suppress exception
             }
 
-            
+
             return base.BeginExecuteCore(callback, state);
         }
-        
     }
 }

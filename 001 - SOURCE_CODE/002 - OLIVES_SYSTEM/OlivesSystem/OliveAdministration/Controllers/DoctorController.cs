@@ -4,17 +4,17 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using DotnetSignalR.Attributes;
-using DotnetSignalR.ViewModels;
 using Neo4jClient;
 using Newtonsoft.Json;
+using OliveAdministration.Attributes;
+using OliveAdministration.ViewModels;
 using Shared.Constants;
 using Shared.Interfaces;
 using Shared.Models.Nodes;
 using Shared.Resources;
 using Shared.ViewModels;
 
-namespace DotnetSignalR.Controllers
+namespace OliveAdministration.Controllers
 {
     public class DoctorController : ParentController
     {
@@ -114,7 +114,7 @@ namespace DotnetSignalR.Controllers
             #endregion
 
             #region Identity card validation
-            
+
             // Check whether this identity card is in use or not.
             var idAbleToRegister = await _repositoryAccount.IsDoctorAbleToRegister(null, info.IdentityCardNo);
             if (!idAbleToRegister)
@@ -250,7 +250,7 @@ namespace DotnetSignalR.Controllers
 
             #region Information update
 
-            var doctor = (Doctor)doctors[0];
+            var doctor = (Doctor) doctors[0];
             doctor.FirstName = info.FirstName;
             doctor.LastName = info.LastName;
             doctor.Birthday = info.Birthday ?? Times.MinimumSelectionTime;

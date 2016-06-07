@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Shared.Interfaces;
 
-namespace DotnetSignalR.Models
+namespace OliveAdministration.Models
 {
     public class DbSetting : IDbSetting
     {

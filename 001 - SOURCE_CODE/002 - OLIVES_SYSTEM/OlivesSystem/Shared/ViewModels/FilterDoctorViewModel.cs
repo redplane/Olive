@@ -3,7 +3,7 @@
     public class FilterDoctorViewModel : FilterPersonViewModel
     {
         public string Specialization { get; set; }
-        
+
         public double? MinRank { get; set; }
 
         public double? MaxRank { get; set; }

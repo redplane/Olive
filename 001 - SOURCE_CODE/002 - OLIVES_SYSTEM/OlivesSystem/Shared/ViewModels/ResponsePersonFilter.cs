@@ -6,7 +6,7 @@ namespace Shared.ViewModels
     public class ResponsePersonFilter
     {
         public List<IPerson> Data { get; set; }
-        
-        public int Total { get; set; }  
+
+        public int Total { get; set; }
     }
 }

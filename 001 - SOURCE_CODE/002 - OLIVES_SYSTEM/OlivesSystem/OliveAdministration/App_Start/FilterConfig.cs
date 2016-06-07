@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 
-namespace DotnetSignalR
+namespace OliveAdministration
 {
     public class FilterConfig
     {

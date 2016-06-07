@@ -2,14 +2,15 @@
 using Shared.Constants;
 using Shared.Resources;
 
-namespace DotnetSignalR.ViewModels
+namespace OliveAdministration.ViewModels
 {
     public class RetrieveDoctorViewModel
     {
-        [Required(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "RequirePersonalId")]
+        [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "RequirePersonalId")]
         public string Id { get; set; }
 
-        [MaxLength(FieldLength.IdentityCardMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidIdentityCard")]
+        [MaxLength(FieldLength.IdentityCardMaxLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "InvalidIdentityCard")]
         public string IdentityCardNo { get; set; }
     }
 }

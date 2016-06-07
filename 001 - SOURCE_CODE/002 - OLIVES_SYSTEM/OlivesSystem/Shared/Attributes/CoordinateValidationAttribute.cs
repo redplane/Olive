@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using Shared.Models;
 
 namespace Shared.Attributes
@@ -20,7 +19,7 @@ namespace Shared.Attributes
 
             // Cast value to Coordinate instance.
             var coordinate = (Coordinate) value;
-            
+
             // Invalid latitude.
             if (coordinate.Latitude < -90 || coordinate.Latitude > 90)
                 return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));

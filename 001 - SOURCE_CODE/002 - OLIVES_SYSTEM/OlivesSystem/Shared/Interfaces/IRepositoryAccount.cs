@@ -7,7 +7,6 @@ namespace Shared.Interfaces
 {
     public interface IRepositoryAccount
     {
-        
         /// <summary>
         ///     Check whether person with specific information exists or not.
         /// </summary>
@@ -17,7 +16,7 @@ namespace Shared.Interfaces
         /// <param name="role"></param>
         /// <returns></returns>
         Task<IPerson> GetPersonExistAsync(string email, bool emailCaseSensitive, string password, byte? role);
-        
+
         /// <summary>
         ///     Retrieve personal information by using specific conditions.
         /// </summary>
@@ -28,18 +27,18 @@ namespace Shared.Interfaces
         /// <returns></returns>
         IPerson GetPersonExist(string email, bool emailCaseSensitive = false,
             string password = "", byte? role = null);
-        
+
         #region Patient
 
         /// <summary>
-        /// Find patient by using specific id.
+        ///     Find patient by using specific id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         Task<IList<Patient>> FindPatientById(string id);
 
         /// <summary>
-        /// Filter patients by using specific conditions.
+        ///     Filter patients by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -50,14 +49,14 @@ namespace Shared.Interfaces
         #region Doctor
 
         /// <summary>
-        /// Find doctor by using GUID.
+        ///     Find doctor by using GUID.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         Task<IList<Doctor>> FindDoctorById(string id);
 
         /// <summary>
-        /// Base on personal identity or identity card, check whether doctor can be registered or not.
+        ///     Base on personal identity or identity card, check whether doctor can be registered or not.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="identityCardNo"></param>
@@ -92,7 +91,7 @@ namespace Shared.Interfaces
         Task<object> EditPersonAsync(string id, IPerson info);
 
         /// <summary>
-        /// Using id and email to check whether person can be created or not.
+        ///     Using id and email to check whether person can be created or not.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="email"></param>
@@ -100,7 +99,7 @@ namespace Shared.Interfaces
         Task<bool> IsPatientAbleToCreated(string id, string email);
 
         /// <summary>
-        /// Change account status base on account id.
+        ///     Change account status base on account id.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>
@@ -115,7 +114,7 @@ namespace Shared.Interfaces
         Task<object> FilterPersonAsync(FilterPersonViewModel filter);
 
         /// <summary>
-        /// Log user in and retrieve the user information.
+        ///     Log user in and retrieve the user information.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
