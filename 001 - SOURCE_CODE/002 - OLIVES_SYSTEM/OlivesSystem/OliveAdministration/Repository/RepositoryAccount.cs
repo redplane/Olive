@@ -33,7 +33,6 @@ namespace OliveAdministration.Repository
         /// <summary>
         ///     Initialize an instance of RepositoryAccount class.
         /// </summary>
-        /// <param name="graphClient"></param>
         public RepositoryAccount()
         {
         }
