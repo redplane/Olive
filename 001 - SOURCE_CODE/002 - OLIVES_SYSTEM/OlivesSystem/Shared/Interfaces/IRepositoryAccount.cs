@@ -44,6 +44,29 @@ namespace Shared.Interfaces
         /// <returns></returns>
         Task<ResponsePersonFilter> FilterPatientAsync(FilterPatientViewModel filter);
 
+        /// <summary>
+        /// Initialize personal note of patient.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="note"></param>
+        bool InitializePatientNote(string id, PersonalNote note);
+
+        /// <summary>
+        /// Initialize an allergy connected to a person.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="allergy"></param>
+        /// <returns></returns>
+        bool InitializePatientAllergies(string id, Allergy allergy);
+
+        /// <summary>
+        /// Initialize addiction causes to a patient by using patient id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="addiction"></param>
+        /// <returns></returns>
+        bool InitializePatientAddiction(string id, Addiction addiction);
+        
         #endregion
 
         #region Doctor

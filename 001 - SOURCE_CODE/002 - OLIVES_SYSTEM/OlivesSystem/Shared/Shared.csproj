@@ -70,7 +70,7 @@
     <Compile Include="Constants\Gender.cs" />
     <Compile Include="Constants\Regexes.cs" />
     <Compile Include="Constants\Roles.cs" />
-    <Compile Include="Constants\Times.cs" />
+    <Compile Include="Constants\Values.cs" />
     <Compile Include="Interfaces\IDbSetting.cs" />
     <Compile Include="Interfaces\IPagination.cs" />
     <Compile Include="Interfaces\IPerson.cs" />

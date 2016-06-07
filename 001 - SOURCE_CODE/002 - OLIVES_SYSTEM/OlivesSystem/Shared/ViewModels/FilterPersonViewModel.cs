@@ -22,14 +22,14 @@ namespace Shared.ViewModels
         /// <summary>
         ///     Date after that person was born
         /// </summary>
-        [CompareLong(Times.MinimumSelectionTime, Comparision = -1, ErrorMessageResourceType = typeof (Language),
+        [CompareLong(Values.MinimumSelectionTime, Comparision = -1, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidMinBirthday")]
         public long? MinBirthday { get; set; }
 
         /// <summary>
         ///     Date before which that person had been born
         /// </summary>
-        [CompareLong(Times.MinimumSelectionTime, Comparision = -1, ErrorMessageResourceType = typeof (Language),
+        [CompareLong(Values.MinimumSelectionTime, Comparision = -1, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidMaxBirthday")]
         public long? MaxBirthday { get; set; }
 
@@ -42,11 +42,11 @@ namespace Shared.ViewModels
 
         public long? MoneyTo { get; set; }
 
-        [CompareLong(Times.MinimumSelectionTime, Comparision = -1, ErrorMessageResourceType = typeof (Language),
+        [CompareLong(Values.MinimumSelectionTime, Comparision = -1, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidMinDate")]
         public long? MinCreated { get; set; }
 
-        [CompareLong(Times.MinimumSelectionTime, Comparision = -1, ErrorMessageResourceType = typeof (Language),
+        [CompareLong(Values.MinimumSelectionTime, Comparision = -1, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidMaxDate")]
         public long? MaxCreated { get; set; }
 

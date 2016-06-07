@@ -474,6 +474,115 @@ namespace OliveAdministration.Repository
             return result == 0;
         }
 
+        /// <summary>
+        /// Initialize personal note of patient.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="note"></param>
+        public bool InitializePatientNote(string id, PersonalNote note)
+        {
+            var transactClient = (ITransactionalGraphClient) _graphClient;
+            using (var transactSession = transactClient.BeginTransaction())
+            {
+                try
+                {
+                    // Create :NOTES connection from person to personal note as conditions are met.
+                    transactClient.Cypher
+                        .Match("(p:Person)")
+                        .Where<IPerson>(p => p.Id == id)
+                        .AndWhere<IPerson>(p => p.Role == Roles.Admin)
+                        .Create("(p)-[:NOTES]->(a:PersonalNote {note})")
+                        .WithParam("note", note)
+                        .ExecuteWithoutResults();
+
+                    transactSession.Commit();
+                    return true;
+                }
+                catch (Exception exception)
+                {
+                    // TODO: Initialize a log here.
+                    // Rollback the transaction because of error.
+                    transactSession.Rollback();
+
+                    return false;
+                }
+            }   
+        }
+
+        /// <summary>
+        /// Initialize an allergy connected to a person.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="allergy"></param>
+        /// <returns></returns>
+        public bool InitializePatientAllergies(string id, Allergy allergy)
+        {
+            var transactClient = (ITransactionalGraphClient)_graphClient;
+            using (var transactSession = transactClient.BeginTransaction())
+            {
+                try
+                {
+                    // Create :NOTES connection from person to personal note as conditions are met.
+                    transactClient.Cypher
+                        .Match("(p:Person)")
+                        .Where<IPerson>(p => p.Id == id)
+                        .AndWhere<IPerson>(p => p.Role == Roles.Admin)
+                        .Create("(p)-[:IS_ALLERGIC_WITH]->(a:Allergy {allergy})")
+                        .WithParam("allergy", allergy)
+                        .ExecuteWithoutResults();
+
+                    transactSession.Commit();
+
+                    return true;
+                }
+                catch (Exception exception)
+                {
+                    // TODO: Initialize a log here.
+                    // Rollback the transaction because of error.
+                    transactSession.Rollback();
+
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Initialize addiction causes to a patient by using patient id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="addiction"></param>
+        /// <returns></returns>
+        public bool InitializePatientAddiction(string id, Addiction addiction)
+        {
+            var transactClient = (ITransactionalGraphClient)_graphClient;
+            using (var transactSession = transactClient.BeginTransaction())
+            {
+                try
+                {
+                    // Create :NOTES connection from person to personal note as conditions are met.
+                    transactClient.Cypher
+                        .Match("(p:Person)")
+                        .Where<IPerson>(p => p.Id == id)
+                        .AndWhere<IPerson>(p => p.Role == Roles.Admin)
+                        .Create("(p)-[:ADDICTS_WITH]->(a:Addiction {addiction})")
+                        .WithParam("addiction", addiction)
+                        .ExecuteWithoutResults();
+
+                    transactSession.Commit();
+
+                    return true;
+                }
+                catch (Exception exception)
+                {
+                    // TODO: Initialize a log here.
+                    // Rollback the transaction because of error.
+                    transactSession.Rollback();
+
+                    return false;
+                }
+            }
+        }
+
         #endregion
 
         #region Shared

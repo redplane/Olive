@@ -35,7 +35,7 @@ namespace Shared.Models.Nodes
         /// <summary>
         ///     Birthday (ticks).
         /// </summary>
-        [CompareLong(Times.MinimumSelectionTime, Comparision = 1, ErrorMessageResourceType = typeof (Language),
+        [CompareLong(Values.MinimumSelectionTime, Comparision = 1, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidBirthday")]
         public long? Birthday { get; set; }
 

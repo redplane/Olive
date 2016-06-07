@@ -205,6 +205,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Note ID is invalid.
+        /// </summary>
+        public static string InvalidNoteId {
+            get {
+                return ResourceManager.GetString("InvalidNoteId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Page index must be from 0.
         /// </summary>
         public static string InvalidPageIndex {
@@ -246,6 +255,15 @@ namespace Shared.Resources {
         public static string InvalidSpecializationLength {
             get {
                 return ResourceManager.GetString("InvalidSpecializationLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Temperature is invalid.
+        /// </summary>
+        public static string InvalidTemperature {
+            get {
+                return ResourceManager.GetString("InvalidTemperature", resourceCulture);
             }
         }
         

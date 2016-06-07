@@ -26,5 +26,7 @@
         ///     Regular expression of personal id.
         /// </summary>
         public const string PersonalId = "^[?[0-9A-F]{8}[-]?([0-9A-F]{4}[-]?){3}[0-9A-F]{12}?$";
+
+        public const string PersonalNoteId = "^[?[0-9A-F]{8}[-]?([0-9A-F]{4}[-]?){3}[0-9A-F]{12}?$";
     }
 }

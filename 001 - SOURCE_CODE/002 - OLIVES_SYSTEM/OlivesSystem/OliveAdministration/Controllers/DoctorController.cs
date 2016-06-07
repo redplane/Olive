@@ -253,7 +253,7 @@ namespace OliveAdministration.Controllers
             var doctor = (Doctor) doctors[0];
             doctor.FirstName = info.FirstName;
             doctor.LastName = info.LastName;
-            doctor.Birthday = info.Birthday ?? Times.MinimumSelectionTime;
+            doctor.Birthday = info.Birthday ?? Values.MinimumSelectionTime;
             doctor.Gender = info.Gender;
 
             if (!string.IsNullOrEmpty(info.Password))
