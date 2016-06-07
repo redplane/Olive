@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OliveAdministration", "Oliv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{5227A0F6-C8CD-4A8B-B8BB-870BDE42F88B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olives", "Olives\Olives.csproj", "{5F274B6D-FA31-421C-A0AB-1868B974821F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{5227A0F6-C8CD-4A8B-B8BB-870BDE42F88B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5227A0F6-C8CD-4A8B-B8BB-870BDE42F88B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5227A0F6-C8CD-4A8B-B8BB-870BDE42F88B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F274B6D-FA31-421C-A0AB-1868B974821F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F274B6D-FA31-421C-A0AB-1868B974821F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F274B6D-FA31-421C-A0AB-1868B974821F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F274B6D-FA31-421C-A0AB-1868B974821F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

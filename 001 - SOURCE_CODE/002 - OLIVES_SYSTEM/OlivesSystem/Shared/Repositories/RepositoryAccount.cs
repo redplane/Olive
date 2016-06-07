@@ -10,7 +10,7 @@ using Shared.Interfaces;
 using Shared.Models.Nodes;
 using Shared.ViewModels;
 
-namespace OliveAdministration.Repository
+namespace Shared.Repositories
 {
     public class RepositoryAccount : IRepositoryAccount
     {

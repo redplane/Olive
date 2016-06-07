@@ -9,15 +9,15 @@ using Autofac.Integration.Mvc;
 using log4net.Config;
 using Neo4jClient;
 using Newtonsoft.Json;
-using OliveAdministration.Attributes;
-using OliveAdministration.Controllers;
-using OliveAdministration.Models;
+using Olives.Attributes;
+using Olives.Controllers;
+using Olives.Models;
 using Shared.Constants;
 using Shared.Interfaces;
 using Shared.Models.Nodes;
 using Shared.Repositories;
 
-namespace OliveAdministration
+namespace Olives
 {
     public class WebApiApplication : HttpApplication
     {
