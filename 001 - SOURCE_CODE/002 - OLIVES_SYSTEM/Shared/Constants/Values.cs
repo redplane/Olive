@@ -6,14 +6,13 @@
 
 
         /// <summary>
-        /// Minimum body temperature (celsius degrees)
+        ///     Minimum body temperature (celsius degrees)
         /// </summary>
         public const int MinBodyTemperature = 20;
 
         /// <summary>
-        /// Maximum body temperature (celsius degrees)
+        ///     Maximum body temperature (celsius degrees)
         /// </summary>
         public const int MaxBodyTemperature = 45;
-
     }
 }

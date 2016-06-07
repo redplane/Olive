@@ -63,7 +63,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Check identity and identity card to decide whether doctor can be registered or not.
+        ///     Check identity and identity card to decide whether doctor can be registered or not.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="identityCardNo"></param>
@@ -218,7 +218,7 @@ namespace Shared.Repositories
             FilterPerson(filter, out query, out isWhereConditionUsed);
 
             // Calculate the number of records should be skip over.
-            var skippedRecords = filter.Page * filter.Records;
+            var skippedRecords = filter.Page*filter.Records;
 
             // Execute query asynchronously.
             var results = await query.Return(n => n.As<Node<string>>())
@@ -299,14 +299,14 @@ namespace Shared.Repositories
             // Count total records.
             var cypherCountAsync = await query.Return(n => n.Count())
                 .ResultsAsync;
-            result.Total = (int)cypherCountAsync.SingleOrDefault();
+            result.Total = (int) cypherCountAsync.SingleOrDefault();
 
             // No record has been retrieved.
             if (result.Total < 1)
                 return result;
 
             // Calculate the number of records should be skip over.
-            var skippedRecords = filter.Page * filter.Records;
+            var skippedRecords = filter.Page*filter.Records;
 
             // Execute query asynchronously.
             var resultsAsync = await query.Return(n => n.As<Patient>())
@@ -395,14 +395,14 @@ namespace Shared.Repositories
             // Count total records.
             var cypherCountAsync = await query.Return(n => n.Count())
                 .ResultsAsync;
-            result.Total = (int)cypherCountAsync.SingleOrDefault();
+            result.Total = (int) cypherCountAsync.SingleOrDefault();
 
             // No record has been retrieved.
             if (result.Total < 1)
                 return result;
 
             // Calculate the number of records should be skip over.
-            var skippedRecords = filter.Page * filter.Records;
+            var skippedRecords = filter.Page*filter.Records;
 
             // Execute query asynchronously.
             var resultsAsync = await query.Return(n => n.As<Doctor>())
@@ -485,13 +485,13 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Initialize personal note of patient.
+        ///     Initialize personal note of patient.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="note"></param>
         public bool InitializePatientNote(string id, PersonalNote note)
         {
-            var transactClient = (ITransactionalGraphClient)_graphClient;
+            var transactClient = (ITransactionalGraphClient) _graphClient;
             using (var transactSession = transactClient.BeginTransaction())
             {
                 try
@@ -520,14 +520,14 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Initialize an allergy connected to a person.
+        ///     Initialize an allergy connected to a person.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="allergy"></param>
         /// <returns></returns>
         public bool InitializePatientAllergies(string id, Allergy allergy)
         {
-            var transactClient = (ITransactionalGraphClient)_graphClient;
+            var transactClient = (ITransactionalGraphClient) _graphClient;
             using (var transactSession = transactClient.BeginTransaction())
             {
                 try
@@ -557,14 +557,14 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Initialize addiction causes to a patient by using patient id.
+        ///     Initialize addiction causes to a patient by using patient id.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="addiction"></param>
         /// <returns></returns>
         public bool InitializePatientAddiction(string id, Addiction addiction)
         {
-            var transactClient = (ITransactionalGraphClient)_graphClient;
+            var transactClient = (ITransactionalGraphClient) _graphClient;
             using (var transactSession = transactClient.BeginTransaction())
             {
                 try
@@ -604,7 +604,7 @@ namespace Shared.Repositories
         public bool InitializePerson(IPerson info)
         {
             // Cast normal graph client to a transact client to do a transaction.
-            var transactClient = (ITransactionalGraphClient)_graphClient;
+            var transactClient = (ITransactionalGraphClient) _graphClient;
 
             using (var transaction = transactClient.BeginTransaction())
             {
@@ -686,7 +686,7 @@ namespace Shared.Repositories
                 // Not only unique result has been retrieved.
                 if (result.Count != 1)
                     return null;
-                
+
                 result[0].Password = "";
                 result[0].Id = "";
 

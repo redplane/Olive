@@ -5,11 +5,11 @@
         /// <summary>
         ///     Email account key.
         /// </summary>
-        public const string RequestAccountEmail = "account_email";
+        public const string RequestAccountEmail = "Email";
 
         /// <summary>
         ///     Password of email account.
         /// </summary>
-        public const string RequestAccountPassword = "account_password";
+        public const string RequestAccountPassword = "Password";
     }
 }

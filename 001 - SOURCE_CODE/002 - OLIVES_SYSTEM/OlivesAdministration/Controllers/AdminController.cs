@@ -1,11 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Results;
-using System.Web.UI.WebControls;
 using Shared.Constants;
 using Shared.Interfaces;
 using Shared.ViewModels;
@@ -17,7 +13,7 @@ namespace OlivesAdministration.Controllers
         #region Properties
 
         /// <summary>
-        ///  Repository account.
+        ///     Repository account.
         /// </summary>
         private readonly IRepositoryAccount _repositoryAccount;
 
@@ -45,12 +41,12 @@ namespace OlivesAdministration.Controllers
         /// <param name="loginViewModel"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<HttpResponseMessage> Login([FromBody]LoginViewModel loginViewModel)
+        public async Task<HttpResponseMessage> Login([FromBody] LoginViewModel loginViewModel)
         {
             // Invalid model state.
             if (!ModelState.IsValid)
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-            
+
             // Update role Admin to login view model.
             loginViewModel.Role = Roles.Admin;
 

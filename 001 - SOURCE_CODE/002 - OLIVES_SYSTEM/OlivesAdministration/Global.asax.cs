@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.IO;
+using System.Web;
 using System.Web.Http;
 using Autofac;
 using Autofac.Integration.WebApi;
@@ -17,7 +18,7 @@ using Shared.Repositories;
 
 namespace OlivesAdministration
 {
-    public class WebApiApplication : System.Web.HttpApplication
+    public class WebApiApplication : HttpApplication
     {
         protected void Application_Start()
         {
@@ -85,7 +86,7 @@ namespace OlivesAdministration
 
             #endregion
 
-            InitializeDemoData(graphClient);
+            //InitializeDemoData(graphClient);
 
             XmlConfigurator.Configure();
         }

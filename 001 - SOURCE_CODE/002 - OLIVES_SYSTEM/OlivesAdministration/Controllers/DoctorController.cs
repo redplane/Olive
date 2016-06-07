@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Neo4jClient;
 using Newtonsoft.Json;
 using OlivesAdministration.Attributes;
 using OlivesAdministration.ViewModels;
@@ -58,7 +56,7 @@ namespace OlivesAdministration.Controllers
             if (!ModelState.IsValid)
             {
                 // Because model is invalid. Treat this as invalid request.
-                return  Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
 
             #endregion
@@ -82,7 +80,7 @@ namespace OlivesAdministration.Controllers
             // No result has been found.
             if (result == null || result.Count < 1)
                 return Request.CreateResponse(HttpStatusCode.NotFound);
-            
+
             // Not only one result has been retrieved.
             if (result.Count != 1)
                 return Request.CreateResponse(HttpStatusCode.Conflict);
@@ -107,7 +105,7 @@ namespace OlivesAdministration.Controllers
             // Invalid data validation.
             if (!ModelState.IsValid)
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-            
+
             #endregion
 
             #region Identity card validation
@@ -118,7 +116,7 @@ namespace OlivesAdministration.Controllers
             {
                 // Throw error back to user.
                 ModelState.AddModelError("Conflict", Language.DoctorExisted);
-                
+
                 // Respond back to client.
                 return Request.CreateResponse(HttpStatusCode.Conflict, RetrieveValidationErrors(ModelState));
             }
@@ -192,7 +190,7 @@ namespace OlivesAdministration.Controllers
             // Invalid result.
             if (results == null)
                 return Request.CreateResponse(HttpStatusCode.NotFound);
-             
+
             // To doctors list.
             var doctors = results.Data;
 
@@ -254,7 +252,7 @@ namespace OlivesAdministration.Controllers
             // No data comes back.
             if (nodes == null)
                 return Request.CreateResponse(HttpStatusCode.NoContent);
-            
+
             // Retrieve the first result.
             var node = nodes.FirstOrDefault();
 
@@ -266,7 +264,7 @@ namespace OlivesAdministration.Controllers
 
             // Retrieve the updated information.
             doctor = JsonConvert.DeserializeObject<Doctor>(node.Data);
-            
+
             // Return status OK to client to notify edition is successful.
             return Request.CreateResponse(HttpStatusCode.OK, doctor);
 
@@ -274,7 +272,7 @@ namespace OlivesAdministration.Controllers
         }
 
         /// <summary>
-        /// Filter doctors by using specific conditions.
+        ///     Filter doctors by using specific conditions.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>

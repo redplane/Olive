@@ -35,7 +35,7 @@ namespace OlivesAdministration.Controllers
 
             if (language != null && !string.IsNullOrEmpty(language.Value))
                 acceptLanguage = language.Value;
-            
+
             try
             {
                 Thread.CurrentThread.CurrentCulture = new CultureInfo(acceptLanguage);
@@ -48,9 +48,10 @@ namespace OlivesAdministration.Controllers
 
             base.Initialize(controllerContext);
         }
-        
-        //protected override IAsyncResult BeginExecuteCore(AsyncCallback callback, object state)
+
         //{
+
+        //protected override IAsyncResult BeginExecuteCore(AsyncCallback callback, object state)
         //    // By default, english will be used.
         //    var acceptLanguage = "en-US";
 

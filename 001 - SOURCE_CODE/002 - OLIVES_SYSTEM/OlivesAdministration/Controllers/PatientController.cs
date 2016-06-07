@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -12,7 +11,6 @@ using Shared.Constants;
 using Shared.Interfaces;
 using Shared.Models.Nodes;
 using Shared.ViewModels;
-using Neo4jClient;
 
 namespace OlivesAdministration.Controllers
 {
@@ -47,8 +45,8 @@ namespace OlivesAdministration.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] { Roles.Admin })]
-        public async Task<HttpResponseMessage> Get([FromUri]FindPatientViewModel info)
+        [OlivesAuthorize(new[] {Roles.Admin})]
+        public async Task<HttpResponseMessage> Get([FromUri] FindPatientViewModel info)
         {
             #region ModelState validation
 
@@ -56,7 +54,7 @@ namespace OlivesAdministration.Controllers
             if (!ModelState.IsValid)
                 // Because model is invalid. Treat this as invalid request.
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-            
+
             #endregion
 
             // Retrieve list of patients.
@@ -84,8 +82,8 @@ namespace OlivesAdministration.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPost]
-        [OlivesAuthorize(new[] { Roles.Admin })]
-        public async Task<HttpResponseMessage> Post([FromBody]InitializePatientViewModel info)
+        [OlivesAuthorize(new[] {Roles.Admin})]
+        public async Task<HttpResponseMessage> Post([FromBody] InitializePatientViewModel info)
         {
             #region ModelState validation
 
@@ -103,7 +101,6 @@ namespace OlivesAdministration.Controllers
             // Patient cannot be initialized.
             if (!isPatientAbleToInitialize)
                 return Request.CreateResponse(HttpStatusCode.Conflict);
-
 
             #endregion
 
@@ -137,14 +134,15 @@ namespace OlivesAdministration.Controllers
         }
 
         /// <summary>
-        /// Edit patient information.
+        ///     Edit patient information.
         /// </summary>
         /// <param name="patient"></param>
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPut]
-        [OlivesAuthorize(new[] { Roles.Admin })]
-        public async Task<HttpResponseMessage> Put([FromUri]FindPatientViewModel patient, [FromBody]InitializePatientViewModel info)
+        [OlivesAuthorize(new[] {Roles.Admin})]
+        public async Task<HttpResponseMessage> Put([FromUri] FindPatientViewModel patient,
+            [FromBody] InitializePatientViewModel info)
         {
             #region ModelState validation
 
@@ -204,7 +202,7 @@ namespace OlivesAdministration.Controllers
             // TODO: Modify information in Chat system.
             // Retrieve the updated information.
             patients[0] = JsonConvert.DeserializeObject<Patient>(node.Data);
-            
+
             #endregion
 
             // Return status OK to client to notify edition is successful.
@@ -218,8 +216,8 @@ namespace OlivesAdministration.Controllers
         /// <returns></returns>
         [Route("api/patient/status")]
         [HttpGet]
-        [OlivesAuthorize(new [] {Roles.Admin})]
-        public async Task<HttpResponseMessage> Status([FromUri]ModifyPatientStatusViewModel patient)
+        [OlivesAuthorize(new[] {Roles.Admin})]
+        public async Task<HttpResponseMessage> Status([FromUri] ModifyPatientStatusViewModel patient)
         {
             #region ModelState validation
 
@@ -252,8 +250,8 @@ namespace OlivesAdministration.Controllers
 
         [Route("api/patient/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Roles.Admin })]
-        public async Task<HttpResponseMessage> Filter([FromBody]FilterPatientViewModel filter)
+        [OlivesAuthorize(new[] {Roles.Admin})]
+        public async Task<HttpResponseMessage> Filter([FromBody] FilterPatientViewModel filter)
         {
             #region ModelState validation
 
@@ -261,7 +259,7 @@ namespace OlivesAdministration.Controllers
             if (!ModelState.IsValid)
                 // Because model is invalid. Treat this as invalid request.
                 return Request.CreateResponse(HttpStatusCode.BadRequest, ModelState);
-            
+
             #endregion
 
             // Filter patient by using specific conditions.
