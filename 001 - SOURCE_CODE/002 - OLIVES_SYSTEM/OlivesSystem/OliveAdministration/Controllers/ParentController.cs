@@ -46,6 +46,7 @@ namespace OliveAdministration.Controllers
                 // Suppress exception
             }
 
+            HttpContext.Response.AppendHeader("Access-Control-Allow-Origin", "*");
 
             return base.BeginExecuteCore(callback, state);
         }
