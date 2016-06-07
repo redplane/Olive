@@ -1,24 +1,27 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Shared.Attributes;
-using Shared.Constants;
 using Shared.Models;
-using Shared.ViewModels;
+using Shared.Models.Nodes;
+using Shared.Resources;
 
 namespace DotnetSignalR.ViewModels
 {
-    public class EditDoctorViewModel : EditPersonViewModel
+    public class EditDoctorViewModel : Person
     {
-        [CoordinateValidation(ErrorMessage = ErrorCodes.InvalidAddress)]
+#pragma warning disable 108, 114
+        [Required(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidPersonalId")]
+        public string Id { get; set; }
+
+        [CoordinateValidation(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidAddress")]
         public Coordinate Address { get; set; }
 
-        [Required(ErrorMessage = ErrorCodes.SpecializationIsRequired)]
-        [MaxLength(FieldLength.SpecializationMaxLength, ErrorMessage = ErrorCodes.InvalidSpecializationLength)]
+        [Required(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "RequireSpecialization")]
         public string Specialization { get; set; }
         
         public double Rank { get; set; }
 
-        [Required(AllowEmptyStrings = false, ErrorMessage = ErrorCodes.IdentityIsRequired)]
-        [MaxLength(FieldLength.IdentityCardMaxLength, ErrorMessage = ErrorCodes.InvalidIdentityCardLength)]
+        [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "RequireIdentityCard")]
         public string IdentityCardNo { get; set; }
+#pragma warning restore 108, 114
     }
 }

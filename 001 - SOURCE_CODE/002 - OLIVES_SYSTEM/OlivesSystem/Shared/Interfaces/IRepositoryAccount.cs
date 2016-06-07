@@ -7,15 +7,6 @@ namespace Shared.Interfaces
 {
     public interface IRepositoryAccount
     {
-        Task<IPerson> LoginAsync(LoginViewModel info);
-        
-        /// <summary>
-        /// Base on personal identity or identity card, check whether doctor can be registered or not.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="identityCardNo"></param>
-        /// <returns></returns>
-        Task<bool> IsDoctorAbleToRegister(string id, string identityCardNo);
         
         /// <summary>
         ///     Check whether person with specific information exists or not.
@@ -26,20 +17,6 @@ namespace Shared.Interfaces
         /// <param name="role"></param>
         /// <returns></returns>
         Task<IPerson> GetPersonExistAsync(string email, bool emailCaseSensitive, string password, byte? role);
-
-        /// <summary>
-        ///     Filter person by using specific conditions.
-        /// </summary>
-        /// <param name="filter">Specific conditions.</param>
-        /// <returns></returns>
-        Task<object> FilterPersonAsync(FilterPersonViewModel filter);
-
-        /// <summary>
-        ///     Filter doctors by using specific conditions.
-        /// </summary>
-        /// <param name="filter">Specific conditions</param>
-        /// <returns></returns>
-        Task<IList<Doctor>> FilterDoctorAsync(FilterDoctorViewModel filter);
         
         /// <summary>
         ///     Retrieve personal information by using specific conditions.
@@ -51,22 +28,7 @@ namespace Shared.Interfaces
         /// <returns></returns>
         IPerson GetPersonExist(string email, bool emailCaseSensitive = false,
             string password = "", byte? role = null);
-
-        /// <summary>
-        ///     Check whether doctor has been registered or not.
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
-        Task<Doctor> FindDoctor(FilterDoctorViewModel filter);
-
-        /// <summary>
-        ///     Check whether doctor has been registered or not.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="identityCardId"></param>
-        /// <returns></returns>
-        Task<IList<Doctor>> FindDoctor(string id, string identityCardId);
-
+        
         #region Patient
 
         /// <summary>
@@ -86,6 +48,29 @@ namespace Shared.Interfaces
         #endregion
 
         #region Doctor
+
+        /// <summary>
+        /// Find doctor by using GUID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<IList<Doctor>> FindDoctorById(string id);
+
+        /// <summary>
+        /// Base on personal identity or identity card, check whether doctor can be registered or not.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="identityCardNo"></param>
+        /// <returns></returns>
+        Task<bool> IsDoctorAbleToRegister(string id, string identityCardNo);
+
+
+        /// <summary>
+        ///     Filter doctors by using specific conditions.
+        /// </summary>
+        /// <param name="filter">Specific conditions</param>
+        /// <returns></returns>
+        Task<ResponsePersonFilter> FilterDoctorAsync(FilterDoctorViewModel filter);
 
         #endregion
 
@@ -121,7 +106,21 @@ namespace Shared.Interfaces
         /// <param name="status"></param>
         /// <returns></returns>
         Task<bool> ModifyAccountStatus(string id, byte status);
-        
+
+        /// <summary>
+        ///     Filter person by using specific conditions.
+        /// </summary>
+        /// <param name="filter">Specific conditions.</param>
+        /// <returns></returns>
+        Task<object> FilterPersonAsync(FilterPersonViewModel filter);
+
+        /// <summary>
+        /// Log user in and retrieve the user information.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        Task<IPerson> LoginAsync(LoginViewModel info);
+
         #endregion
     }
 }

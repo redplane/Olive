@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using DotnetSignalR.Attributes;
@@ -12,6 +11,7 @@ using Newtonsoft.Json;
 using Shared.Constants;
 using Shared.Interfaces;
 using Shared.Models.Nodes;
+using Shared.Resources;
 using Shared.ViewModels;
 
 namespace DotnetSignalR.Controllers
@@ -40,7 +40,7 @@ namespace DotnetSignalR.Controllers
         /// <returns></returns>
         [HttpGet]
         [OlivesAuthorize(new[] {Roles.Admin})]
-        public async Task<ActionResult> Get(GetDoctorViewModel info)
+        public async Task<ActionResult> Get(RetrieveDoctorViewModel info)
         {
             var response = new ResponseViewModel();
 
@@ -73,7 +73,7 @@ namespace DotnetSignalR.Controllers
             #region Results handling
 
             // Retrieve filtered result asynchronously.
-            var result = await _repositoryAccount.FindDoctor(filter);
+            var result = await _repositoryAccount.FindDoctorById(info.Id);
 
             // No result has been found.
             if (result == null)
@@ -121,7 +121,7 @@ namespace DotnetSignalR.Controllers
             {
                 var response = new ResponseViewModel();
                 var errors = new List<string>();
-                errors.Add(ErrorCodes.DoctorIdentityConflict);
+                errors.Add(Language.DoctorExisted);
                 response.Data = errors;
 
                 Response.StatusCode = (int) HttpStatusCode.Conflict;
@@ -212,7 +212,7 @@ namespace DotnetSignalR.Controllers
             }
 
             // To doctors list.
-            var doctors = results.ToList();
+            var doctors = results.Data;
 
             // No doctor has been found.
             if (doctors.Count < 1)
@@ -239,7 +239,7 @@ namespace DotnetSignalR.Controllers
             if (!isIdentityCardAvailable)
             {
                 var errors = new List<string>();
-                errors.Add(ErrorCodes.DoctorIdentityConflict);
+                errors.Add(Language.IdentityCardInUse);
                 response.Data = errors;
 
                 Response.StatusCode = (int) HttpStatusCode.Conflict;
@@ -250,7 +250,7 @@ namespace DotnetSignalR.Controllers
 
             #region Information update
 
-            var doctor = doctors[0];
+            var doctor = (Doctor)doctors[0];
             doctor.FirstName = info.FirstName;
             doctor.LastName = info.LastName;
             doctor.Birthday = info.Birthday ?? Times.MinimumSelectionTime;

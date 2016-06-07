@@ -37,5 +37,10 @@
         /// </summary>
         public const int PageIndexMin = 0;
 
+
+        public const int FirstNameMaxLength = 32;
+
+        public const int LastNameMaxLength = 32;
+
     }
 }

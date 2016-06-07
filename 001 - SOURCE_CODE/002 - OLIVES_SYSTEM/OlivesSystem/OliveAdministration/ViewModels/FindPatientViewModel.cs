@@ -2,13 +2,14 @@
 using System.Text.RegularExpressions;
 using Shared.Attributes;
 using Shared.Constants;
+using Shared.Resources;
 
 namespace DotnetSignalR.ViewModels
 {
     public class FindPatientViewModel
     {
-        [Required(ErrorMessage = ErrorCodes.PatientIdIsRequired)]
-        [RegexMatch(Regexes.PersonalId, ErrorMessage = ErrorCodes.InvalidPatientId, Options = RegexOptions.IgnoreCase)]
+        [Required(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "RequirePersonalId")]
+        [RegexMatch(Regexes.PersonalId, Options = RegexOptions.IgnoreCase, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidPersonalId")]
         public string Id { get; set; } 
     }
 }

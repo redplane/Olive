@@ -9,31 +9,6 @@ namespace Shared.Attributes
     public class CompareLongAttribute : ValidationAttribute
     {
         /// <summary>
-        ///     Message which will be thrown when value must be equal to the compared one.
-        /// </summary>
-        public string ErrorMessageEqual = "";
-
-        /// <summary>
-        ///     Message which will be thrown when value must be larger than or equal to the compared one.
-        /// </summary>
-        public string ErrorMessageEqualHigher = "";
-
-        /// <summary>
-        ///     Message which will be thrown when value must be smaller than or equal to the compared one.
-        /// </summary>
-        public string ErrorMessageEqualSmaller = "";
-
-        /// <summary>
-        ///     Message which will be thrown when value must be higher than the compared one.
-        /// </summary>
-        public string ErrorMessageHigher = "";
-
-        /// <summary>
-        ///     Message which will be thrown when value must be equal lower than the compared one.
-        /// </summary>
-        public string ErrorMessageLower = "";
-
-        /// <summary>
         ///     Initialize an instance of CompareLongAttribute class.
         /// </summary>
         /// <param name="milestone"></param>
@@ -68,84 +43,46 @@ namespace Shared.Attributes
                 return ValidationResult.Success;
 
             // Convert value to int.
-            var convertedValue = (long) value;
+            var convertedValue = (long)value;
 
             switch (Comparision)
             {
                 case -2:
-                {
-                    if (convertedValue >= Milestone)
                     {
-                        if (string.IsNullOrEmpty(ErrorMessageLower))
+                        if (convertedValue >= Milestone)
                             return
-                                new ValidationResult(
-                                    $"{validationContext.DisplayName} should be smaller than {Milestone}");
+                                new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName), Milestone));
 
-                        return
-                            new ValidationResult(string.Format(ErrorMessageLower, validationContext.DisplayName,
-                                Milestone));
+                        break;
                     }
-                    break;
-                }
                 case -1:
-                {
-                    if (convertedValue > Milestone)
                     {
-                        if (string.IsNullOrEmpty(ErrorMessageEqualSmaller))
+                        if (convertedValue > Milestone)
                             return
-                                new ValidationResult(
-                                    $"{validationContext.DisplayName} should be smaller than or equal to {Milestone}");
-
-                        return
-                            new ValidationResult(string.Format(ErrorMessageEqualSmaller, validationContext.DisplayName,
-                                Milestone));
+                            new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName), Milestone));
+                        break;
                     }
-                    break;
-                }
                 case 0: // Value must be equal to milestone.
-                {
-                    if (convertedValue != Milestone)
                     {
-                        if (string.IsNullOrEmpty(ErrorMessageEqual))
+                        if (convertedValue != Milestone)
                             return
-                                new ValidationResult($"{validationContext.DisplayName} should be equal to {Milestone}");
-
-                        return
-                            new ValidationResult(string.Format(ErrorMessageEqual, validationContext.DisplayName,
-                                Milestone));
+                                    new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName), Milestone));
+                        break;
                     }
-                    break;
-                }
                 case 1: // Value must be larger than or equal to milestone.
-                {
-                    if (convertedValue < Milestone)
                     {
-                        if (string.IsNullOrEmpty(ErrorMessageEqualHigher))
+                        if (convertedValue < Milestone)
                             return
-                                new ValidationResult(
-                                    $"{validationContext.DisplayName} should be larger than or equal to {Milestone}");
-
-                        return
-                            new ValidationResult(string.Format(ErrorMessageEqualHigher, validationContext.DisplayName,
-                                Milestone));
+                                    new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName), Milestone));
+                        break;
                     }
-                    break;
-                }
                 case 2: // Value must be larger than milestone.
-                {
-                    if (convertedValue <= Milestone)
                     {
-                        if (string.IsNullOrEmpty(ErrorMessageHigher))
+                        if (convertedValue <= Milestone)
                             return
-                                new ValidationResult(
-                                    $"{validationContext.DisplayName} should be larger than {Milestone}");
-
-                        return
-                            new ValidationResult(string.Format(ErrorMessageHigher, validationContext.DisplayName,
-                                Milestone));
+                                    new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName), Milestone));
+                        break;
                     }
-                    break;
-                }
                 default:
                     throw new NotImplementedException();
             }

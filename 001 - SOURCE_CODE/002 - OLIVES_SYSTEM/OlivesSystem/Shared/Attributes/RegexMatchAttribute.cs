@@ -45,7 +45,7 @@ namespace Shared.Attributes
             if (Regex.IsMatch(input, Pattern, Options))
                 return ValidationResult.Success;
 
-            return new ValidationResult(string.Format(ErrorMessage, validationContext.DisplayName));
+            return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
         }
     }
 }

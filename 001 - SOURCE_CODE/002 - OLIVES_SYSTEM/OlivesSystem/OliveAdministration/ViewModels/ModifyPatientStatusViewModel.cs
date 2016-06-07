@@ -1,11 +1,12 @@
 ﻿using Shared.Attributes;
 using Shared.Constants;
+using Shared.Resources;
 
 namespace DotnetSignalR.ViewModels
 {
     public class ModifyPatientStatusViewModel : FindPatientViewModel
     {
-        [BytesMatch(new[] { AccountStatus.Inactive, AccountStatus.Active }, ErrorMessage = ErrorCodes.InvalidPatientStatus)]
+        [BytesMatch(new[] { AccountStatus.Inactive, AccountStatus.Active }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidAccountStatus")]
         public byte Status { get; set; }
     }
 }

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web.Mvc;
-using DotnetSignalR.Attributes;
 using Neo4jClient;
 using Neo4jClient.Cypher;
 using Neo4jClient.Transactions;
@@ -47,6 +44,23 @@ namespace DotnetSignalR.Repository
 
         #region Doctor
 
+        /// <summary>
+        /// Find doctor by using GUID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<IList<Doctor>> FindDoctorById(string id)
+        {
+            var resultAsync = await _graphClient.Cypher.Match("(n:Person)")
+                .Where<IPerson>(n => n.Id == id)
+                .AndWhere<IPerson>(n => n.Role == Roles.Doctor)
+                .Return(n => n.As<Doctor>())
+                .ResultsAsync;
+
+            var results = resultAsync.ToList();
+            return results;
+        }
+        
         public async Task<bool> IsDoctorAbleToRegister(string id, string identityCardNo)
         {
             // By default, where condition hasn't been used.
@@ -208,6 +222,11 @@ namespace DotnetSignalR.Repository
             return results;
         }
 
+        /// <summary>
+        /// Filter patients by using specific conditions
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         public async Task<ResponsePersonFilter> FilterPatientAsync(FilterPatientViewModel filter)
         {
             bool isWhereConditionUsed;
@@ -301,7 +320,7 @@ namespace DotnetSignalR.Repository
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<IList<Doctor>> FilterDoctorAsync(FilterDoctorViewModel filter)
+        public async Task<ResponsePersonFilter> FilterDoctorAsync(FilterDoctorViewModel filter)
         {
             bool isWhereConditionUsed;
             ICypherFluentQuery query;
@@ -328,27 +347,27 @@ namespace DotnetSignalR.Repository
             #region Rank
 
             // Start of rank.
-            if (filter.RankFrom != null)
+            if (filter.MinRank != null)
             {
                 query = !isWhereConditionUsed
-                    ? query.Where<Doctor>(n => n.Rank >= filter.RankFrom)
-                    : query.AndWhere<Doctor>(n => n.Rank >= filter.RankFrom);
+                    ? query.Where<Doctor>(n => n.Rank >= filter.MinRank)
+                    : query.AndWhere<Doctor>(n => n.Rank >= filter.MinRank);
                 ;
                 isWhereConditionUsed = true;
             }
 
             // End of rank.
-            if (filter.RankTo != null)
+            if (filter.MaxRank != null)
             {
                 query = !isWhereConditionUsed
-                    ? query.Where<Doctor>(n => n.Rank <= filter.RankTo)
-                    : query.AndWhere<Doctor>(n => n.Rank <= filter.RankTo);
+                    ? query.Where<Doctor>(n => n.Rank <= filter.MaxRank)
+                    : query.AndWhere<Doctor>(n => n.Rank <= filter.MaxRank);
                 isWhereConditionUsed = true;
             }
 
             #endregion
 
-            #region IdentityCardNo
+            #region Identity card number
 
             if (!string.IsNullOrEmpty(filter.IdentityCardNo))
             {
@@ -363,187 +382,36 @@ namespace DotnetSignalR.Repository
 
             #region Cypher query execution
 
+            // Initialize filter result.
+            var result = new ResponsePersonFilter();
+
+            // Count total records.
+            var cypherCountAsync = await query.Return(n => n.Count())
+                .ResultsAsync;
+            result.Total = (int)cypherCountAsync.SingleOrDefault();
+
+            // No record has been retrieved.
+            if (result.Total < 1)
+                return result;
+
             // Calculate the number of records should be skip over.
             var skippedRecords = filter.Page * filter.Records;
 
             // Execute query asynchronously.
-            var results = await query.Return(n => n.As<Doctor>())
+            var resultsAsync = await query.Return(n => n.As<Doctor>())
                 .Skip(skippedRecords)
                 .Limit(filter.Records)
                 .ResultsAsync;
 
             #endregion
 
-            return results.ToList();
+            // Update result data.
+            result.Data = new List<IPerson>(resultsAsync);
+
+            return result;
+
         }
-        
-        /// <summary>
-        ///     Find doctor and only retrieve the first result.
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
-        public async Task<Doctor> FindDoctor(FilterDoctorViewModel filter)
-        {
-            // Retrieve a list of doctor.
-            var results = await FilterDoctorAsync(filter);
-
-            // Not only one doctor has been retrieved.
-            var doctors = results as Doctor[] ?? results.ToArray();
-            if (doctors.Length != 1)
-                return null;
-
-            return doctors[0];
-        }
-
-        /// <summary>
-        ///     Check whether doctor has been registered or not.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="identityCardId"></param>
-        /// <returns></returns>
-        public async Task<IList<Doctor>> FindDoctor(string id, string identityCardId)
-        {
-            var results = await _graphClient.Cypher
-                .Match("(n:Person)")
-                .Where<Doctor>(n => n.Id == id)
-                .OrWhere<Doctor>(n => n.IdentityCardNo == identityCardId)
-                .Return(n => n.As<Doctor>())
-                .ResultsAsync;
-
-            return results.ToList();
-        }
-
-        /// <summary>
-        ///     Personal information filter query construction.
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <param name="query"></param>
-        /// <param name="isWhereConditionUsed"></param>
-        private void FilterPerson(FilterPersonViewModel filter, out ICypherFluentQuery query,
-            out bool isWhereConditionUsed)
-        {
-            // By default, where condition hasn't been used.
-            isWhereConditionUsed = false;
-
-            // Whether where condition has been used or not.
-            query = _graphClient.Cypher
-                .Match("(n:Person)");
-
-            #region First name
-
-            // Filter by first name.
-            if (!string.IsNullOrEmpty(filter.FirstName))
-            {
-                var queryFirstName = $"n.FirstName =~'(?i).*{filter.FirstName}.*'";
-                query = query.Where(queryFirstName);
-                isWhereConditionUsed = true;
-            }
-
-            #endregion
-
-            #region Last name
-
-            // Filter by last name.
-            if (!string.IsNullOrEmpty(filter.LastName))
-            {
-                // Last name matching query construction.
-                var queryLastName = $"n.LastName =~'(?i).*{filter.LastName}.*'";
-                query = (!isWhereConditionUsed) ? query.Where(queryLastName) : query.AndWhere(queryLastName);
-                isWhereConditionUsed = true;
-            }
-
-            #endregion
-
-            #region Birthday
-
-            // Start date of birth is set.
-            if (filter.BirthdayFrom != null)
-            {
-                query = !isWhereConditionUsed
-                    ? query.Where<IPerson>(n => n.Birthday >= filter.BirthdayFrom)
-                    : query.AndWhere<IPerson>(n => n.Birthday >= filter.BirthdayFrom);
-                isWhereConditionUsed = true;
-            }
-
-            // End date of birth is set.
-            if (filter.BirthdayTo != null)
-            {
-                query = !isWhereConditionUsed
-                    ? query.Where<IPerson>(n => n.Birthday <= filter.BirthdayTo)
-                    : query.AndWhere<IPerson>(n => n.Birthday <= filter.BirthdayTo);
-                isWhereConditionUsed = true;
-            }
-
-            #endregion
-
-            #region Gender
-
-            if (filter.Gender != null)
-            {
-                query = !isWhereConditionUsed
-                    ? query.Where<IPerson>(n => n.Gender == filter.Gender)
-                    : query.AndWhere<IPerson>(n => n.Gender == filter.Gender);
-                isWhereConditionUsed = true;
-            }
-
-            #endregion
-
-            #region Money
-
-            if (filter.MoneyFrom != null)
-            {
-                query = !isWhereConditionUsed
-                    ? query.Where<IPerson>(n => n.Money >= filter.MoneyFrom)
-                    : query.AndWhere<IPerson>(n => n.Money >= filter.MoneyFrom);
-                isWhereConditionUsed = true;
-            }
-
-            if (filter.MoneyTo != null)
-            {
-                query = !isWhereConditionUsed
-                    ? query.Where<IPerson>(n => n.Money <= filter.MoneyTo)
-                    : query.AndWhere<IPerson>(n => n.Money <= filter.MoneyTo);
-                isWhereConditionUsed = true;
-            }
-
-            #endregion
-
-            #region Created date
-
-            if (filter.CreatedFrom != null)
-            {
-                query = !isWhereConditionUsed
-                    ? query.Where<IPerson>(n => n.Created >= filter.CreatedFrom)
-                    : query.AndWhere<IPerson>(n => n.Created >= filter.CreatedFrom);
-                isWhereConditionUsed = true;
-            }
-
-            if (filter.CreatedTo != null)
-            {
-                if (!isWhereConditionUsed)
-                {
-                    query = query.Where<IPerson>(n => n.Created <= filter.CreatedTo);
-                    isWhereConditionUsed = true;
-                }
-                else
-                    query = query.AndWhere<IPerson>(n => n.Created <= filter.CreatedTo);
-            }
-
-            #endregion
-
-            #region Role
-
-            if (filter.Role != null)
-            {
-                query = !isWhereConditionUsed
-                    ? query.Where<IPerson>(n => n.Role == filter.Role)
-                    : query.Where<IPerson>(n => n.Role == filter.Role);
-                isWhereConditionUsed = true;
-            }
-
-            #endregion
-        }
-
+       
         #endregion
 
         #region Patient
@@ -553,8 +421,6 @@ namespace DotnetSignalR.Repository
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet]
-        [OlivesAuthorize(new[] { Roles.Admin })]
         public async Task<IList<Patient>> FindPatientById(string id)
         {
             var resultAsync = await _graphClient.Cypher.Match("(n:Person)")
@@ -702,7 +568,7 @@ namespace DotnetSignalR.Repository
 
                 return result;
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 return null;
             }
@@ -725,10 +591,141 @@ namespace DotnetSignalR.Repository
 
                 return true;
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        ///     Personal information filter query construction.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="query"></param>
+        /// <param name="isWhereConditionUsed"></param>
+        private void FilterPerson(FilterPersonViewModel filter, out ICypherFluentQuery query,
+            out bool isWhereConditionUsed)
+        {
+            // By default, where condition hasn't been used.
+            isWhereConditionUsed = false;
+
+            // Whether where condition has been used or not.
+            query = _graphClient.Cypher
+                .Match("(n:Person)");
+
+            #region First name
+
+            // Filter by first name.
+            if (!string.IsNullOrEmpty(filter.FirstName))
+            {
+                var queryFirstName = $"n.FirstName =~'(?i).*{filter.FirstName}.*'";
+                query = query.Where(queryFirstName);
+                isWhereConditionUsed = true;
+            }
+
+            #endregion
+
+            #region Last name
+
+            // Filter by last name.
+            if (!string.IsNullOrEmpty(filter.LastName))
+            {
+                // Last name matching query construction.
+                var queryLastName = $"n.LastName =~'(?i).*{filter.LastName}.*'";
+                query = (!isWhereConditionUsed) ? query.Where(queryLastName) : query.AndWhere(queryLastName);
+                isWhereConditionUsed = true;
+            }
+
+            #endregion
+
+            #region Birthday
+
+            // Start date of birth is set.
+            if (filter.MinBirthday != null)
+            {
+                query = !isWhereConditionUsed
+                    ? query.Where<IPerson>(n => n.Birthday >= filter.MinBirthday)
+                    : query.AndWhere<IPerson>(n => n.Birthday >= filter.MinBirthday);
+                isWhereConditionUsed = true;
+            }
+
+            // End date of birth is set.
+            if (filter.MaxBirthday != null)
+            {
+                query = !isWhereConditionUsed
+                    ? query.Where<IPerson>(n => n.Birthday <= filter.MaxBirthday)
+                    : query.AndWhere<IPerson>(n => n.Birthday <= filter.MaxBirthday);
+                isWhereConditionUsed = true;
+            }
+
+            #endregion
+
+            #region Gender
+
+            if (filter.Gender != null)
+            {
+                query = !isWhereConditionUsed
+                    ? query.Where<IPerson>(n => n.Gender == filter.Gender)
+                    : query.AndWhere<IPerson>(n => n.Gender == filter.Gender);
+                isWhereConditionUsed = true;
+            }
+
+            #endregion
+
+            #region Money
+
+            if (filter.MoneyFrom != null)
+            {
+                query = !isWhereConditionUsed
+                    ? query.Where<IPerson>(n => n.Money >= filter.MoneyFrom)
+                    : query.AndWhere<IPerson>(n => n.Money >= filter.MoneyFrom);
+                isWhereConditionUsed = true;
+            }
+
+            if (filter.MoneyTo != null)
+            {
+                query = !isWhereConditionUsed
+                    ? query.Where<IPerson>(n => n.Money <= filter.MoneyTo)
+                    : query.AndWhere<IPerson>(n => n.Money <= filter.MoneyTo);
+                isWhereConditionUsed = true;
+            }
+
+            #endregion
+
+            #region Created date
+
+            if (filter.MinCreated != null)
+            {
+                query = !isWhereConditionUsed
+                    ? query.Where<IPerson>(n => n.Created >= filter.MinCreated)
+                    : query.AndWhere<IPerson>(n => n.Created >= filter.MinCreated);
+                isWhereConditionUsed = true;
+            }
+
+            if (filter.MaxCreated != null)
+            {
+                if (!isWhereConditionUsed)
+                {
+                    query = query.Where<IPerson>(n => n.Created <= filter.MaxCreated);
+                    isWhereConditionUsed = true;
+                }
+                else
+                    query = query.AndWhere<IPerson>(n => n.Created <= filter.MaxCreated);
+            }
+
+            #endregion
+
+            #region Role
+
+            if (filter.Role != null)
+            {
+                query = !isWhereConditionUsed
+                    ? query.Where<IPerson>(n => n.Role == filter.Role)
+                    : query.Where<IPerson>(n => n.Role == filter.Role);
+                isWhereConditionUsed = true;
+            }
+
+            #endregion
         }
 
         #endregion

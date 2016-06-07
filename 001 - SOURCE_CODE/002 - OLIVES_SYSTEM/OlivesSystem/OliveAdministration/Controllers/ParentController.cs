@@ -1,8 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.Mvc.Filters;
 using Shared.Constants;
 using Shared.Interfaces;
 
@@ -24,6 +28,32 @@ namespace DotnetSignalR.Controllers
             return modelState.Keys.SelectMany(key => modelState[key].Errors.Select(error => error.ErrorMessage));
         }
 
+        protected override IAsyncResult BeginExecuteCore(AsyncCallback callback, object state)
+        {
+            // By default, english will be used.
+            var acceptLanguage = "en-US";
+
+            // Check whether any language has been sent to server.
+            var language =
+                Request.Headers.AllKeys.FirstOrDefault(
+                    x => x.Equals("Accept-Language", StringComparison.InvariantCultureIgnoreCase));
+
+            if (!string.IsNullOrEmpty(acceptLanguage))
+                acceptLanguage = Request.Headers[language];
+
+            try
+            {
+                Thread.CurrentThread.CurrentCulture = new CultureInfo(acceptLanguage);
+                Thread.CurrentThread.CurrentUICulture = new CultureInfo(acceptLanguage);
+            }
+            catch (Exception)
+            {
+                // Suppress exception
+            }
+
+            
+            return base.BeginExecuteCore(callback, state);
+        }
         
     }
 }

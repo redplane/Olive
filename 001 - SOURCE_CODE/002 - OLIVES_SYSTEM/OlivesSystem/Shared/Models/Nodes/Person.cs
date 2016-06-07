@@ -1,14 +1,13 @@
-﻿using Shared.Interfaces;
+﻿using System.ComponentModel.DataAnnotations;
+using Shared.Attributes;
+using Shared.Constants;
+using Shared.Interfaces;
+using Shared.Resources;
 
 namespace Shared.Models.Nodes
 {
     public class Person : IPerson
     {
-        /// <summary>
-        ///     Status of account.
-        /// </summary>
-        public byte Status { get; set; }
-        
         /// <summary>
         ///     Person GUID.
         /// </summary>
@@ -17,36 +16,44 @@ namespace Shared.Models.Nodes
         /// <summary>
         ///     Person last name.
         /// </summary>
+        [MaxLength(FieldLength.FirstNameMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidFirstName")]
         public string LastName { get; set; }
 
         /// <summary>
         ///     Person first name.
         /// </summary>
+        [MaxLength(FieldLength.LastNameMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidLastName")]
         public string FirstName { get; set; }
 
         /// <summary>
         ///     Birthday (ticks).
         /// </summary>
+        [CompareLong(Times.MinimumSelectionTime, Comparision = 1, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidBirthday")]
         public long? Birthday { get; set; }
 
         /// <summary>
         ///     Person gender.
         /// </summary>
+        [Range(Constants.Gender.Male, Constants.Gender.Female, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidGender")]
         public byte Gender { get; set; }
 
         /// <summary>
         ///     Email address which is used for registration or for contacting.
         /// </summary>
+        [MaxLength(FieldLength.EmailMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidEmailMaximumLength")]
+        [RegularExpression(Regexes.Email, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidEmailFormat")]
         public string Email { get; set; }
 
         /// <summary>
         ///     Password of this account.
         /// </summary>
+        // TODO: Implement dataannotation for password
         public string Password { get; set; }
 
         /// <summary>
         ///     Phone number which is used for contacting.
         /// </summary>
+        [RegexMatch(Regexes.Phone, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidPhone")]
         public string Phone { get; set; }
 
         /// <summary>
@@ -73,5 +80,10 @@ namespace Shared.Models.Nodes
         ///     Role of person [0 - Admin | 1 - Patient | 2 - Doctor]
         /// </summary>
         public byte Role { get; set; }
+
+        /// <summary>
+        ///     Status of account.
+        /// </summary>
+        public byte Status { get; set; }
     }
 }
