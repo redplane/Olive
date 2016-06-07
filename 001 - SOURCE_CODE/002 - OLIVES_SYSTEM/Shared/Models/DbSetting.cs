@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Shared.Interfaces;
 
-namespace OliveAdministration.Models
+namespace Shared.Models
 {
     public class DbSetting : IDbSetting
     {

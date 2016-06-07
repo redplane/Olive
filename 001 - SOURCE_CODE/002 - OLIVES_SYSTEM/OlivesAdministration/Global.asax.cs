@@ -7,11 +7,11 @@ using Autofac.Integration.WebApi;
 using log4net.Config;
 using Neo4jClient;
 using Newtonsoft.Json;
-using OliveAdministration.Models;
 using OlivesAdministration.Attributes;
 using OlivesAdministration.Controllers;
 using Shared.Constants;
 using Shared.Interfaces;
+using Shared.Models;
 using Shared.Models.Nodes;
 using Shared.Repositories;
 
