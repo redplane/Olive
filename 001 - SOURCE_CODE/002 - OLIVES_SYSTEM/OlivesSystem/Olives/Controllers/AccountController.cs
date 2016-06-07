@@ -7,32 +7,38 @@ using Shared.ViewModels;
 
 namespace Olives.Controllers
 {
-    public class AdminController : ParentController
+    public class AccountController : ParentController
     {
-        private readonly IRepositoryAccount _repositoryAccount;
+
+        #region Properties
 
         /// <summary>
-        ///     Initialize an instance of AdminController.
+        /// Repository of accounts
+        /// </summary>
+        private readonly IRepositoryAccount _repositoryAccount;
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Initialize an instance of AccountController with Dependency injections.
         /// </summary>
         /// <param name="repositoryAccount"></param>
-        public AdminController(IRepositoryAccount repositoryAccount)
+        public AccountController(IRepositoryAccount repositoryAccount)
         {
             _repositoryAccount = repositoryAccount;
         }
 
-        [HttpGet]
-        public ActionResult Login()
-        {
-            return View();
-        }
+        #endregion
+
+        #region Login
 
         /// <summary>
-        ///     This function is for posting login information to service.
-        ///     HttpStatusCode != 200 means login is not successful.
+        /// This function is for authenticate an user account.
         /// </summary>
         /// <param name="loginViewModel"></param>
         /// <returns></returns>
-        [HttpPost]
         public async Task<ActionResult> Login(LoginViewModel loginViewModel)
         {
             // Response initialization.
@@ -42,7 +48,7 @@ namespace Olives.Controllers
             if (!ModelState.IsValid)
             {
                 response.Errors = RetrieveValidationErrors(ModelState);
-                Response.StatusCode = (int) HttpStatusCode.BadRequest;
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 return Json(response);
             }
 
@@ -54,15 +60,18 @@ namespace Olives.Controllers
 
             // If no result return, that means no account.
             if (result == null)
-            {
-                Response.StatusCode = (int) HttpStatusCode.NotFound;
-                return Json(null);
-            }
-
-            Response.StatusCode = (int) HttpStatusCode.OK;
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            
+            // Requested user is not a patient or a doctor.
+            if (result.Role != Roles.Patient && result.Role != Roles.Doctor)
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            
+            Response.StatusCode = (int)HttpStatusCode.OK;
             response.Data = result;
 
             return Json(response);
         }
+
+        #endregion
     }
 }

@@ -35,10 +35,8 @@ namespace Olives
             //builder.RegisterControllers(typeof(AdminController).Assembly);
 
             //// ...or you can register individual controlllers manually.
-            builder.RegisterType<AdminController>().InstancePerRequest();
-            builder.RegisterType<DoctorController>().InstancePerRequest();
-            builder.RegisterType<PatientController>().InstancePerRequest();
-
+            builder.RegisterType<AccountController>().InstancePerRequest();
+            
             #endregion
 
             #region Database connection

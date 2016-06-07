@@ -25,6 +25,6 @@ namespace Shared.ViewModels
         //[MaxLength(Constants.Constants.PasswordMaxLength, ErrorMessage = ErrorCodes.InvalidPasswordLength)]
         public string Password { get; set; }
 
-        public int Role { get; set; }
+        public int? Role { get; set; }
     }
 }

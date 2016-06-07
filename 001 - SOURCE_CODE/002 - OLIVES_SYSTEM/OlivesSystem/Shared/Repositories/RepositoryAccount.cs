@@ -14,10 +14,14 @@ namespace Shared.Repositories
 {
     public class RepositoryAccount : IRepositoryAccount
     {
+        #region Properties
+
         /// <summary>
         ///     Instance which connects to neo4j database.
         /// </summary>
         private readonly GraphClient _graphClient;
+
+        #endregion
 
         #region Constructor
 
@@ -58,6 +62,12 @@ namespace Shared.Repositories
             return results;
         }
 
+        /// <summary>
+        /// Check identity and identity card to decide whether doctor can be registered or not.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="identityCardNo"></param>
+        /// <returns></returns>
         public async Task<bool> IsDoctorAbleToRegister(string id, string identityCardNo)
         {
             // By default, where condition hasn't been used.
@@ -208,7 +218,7 @@ namespace Shared.Repositories
             FilterPerson(filter, out query, out isWhereConditionUsed);
 
             // Calculate the number of records should be skip over.
-            var skippedRecords = filter.Page*filter.Records;
+            var skippedRecords = filter.Page * filter.Records;
 
             // Execute query asynchronously.
             var results = await query.Return(n => n.As<Node<string>>())
@@ -289,14 +299,14 @@ namespace Shared.Repositories
             // Count total records.
             var cypherCountAsync = await query.Return(n => n.Count())
                 .ResultsAsync;
-            result.Total = (int) cypherCountAsync.SingleOrDefault();
+            result.Total = (int)cypherCountAsync.SingleOrDefault();
 
             // No record has been retrieved.
             if (result.Total < 1)
                 return result;
 
             // Calculate the number of records should be skip over.
-            var skippedRecords = filter.Page*filter.Records;
+            var skippedRecords = filter.Page * filter.Records;
 
             // Execute query asynchronously.
             var resultsAsync = await query.Return(n => n.As<Patient>())
@@ -385,14 +395,14 @@ namespace Shared.Repositories
             // Count total records.
             var cypherCountAsync = await query.Return(n => n.Count())
                 .ResultsAsync;
-            result.Total = (int) cypherCountAsync.SingleOrDefault();
+            result.Total = (int)cypherCountAsync.SingleOrDefault();
 
             // No record has been retrieved.
             if (result.Total < 1)
                 return result;
 
             // Calculate the number of records should be skip over.
-            var skippedRecords = filter.Page*filter.Records;
+            var skippedRecords = filter.Page * filter.Records;
 
             // Execute query asynchronously.
             var resultsAsync = await query.Return(n => n.As<Doctor>())
@@ -481,7 +491,7 @@ namespace Shared.Repositories
         /// <param name="note"></param>
         public bool InitializePatientNote(string id, PersonalNote note)
         {
-            var transactClient = (ITransactionalGraphClient) _graphClient;
+            var transactClient = (ITransactionalGraphClient)_graphClient;
             using (var transactSession = transactClient.BeginTransaction())
             {
                 try
@@ -506,7 +516,7 @@ namespace Shared.Repositories
 
                     return false;
                 }
-            }   
+            }
         }
 
         /// <summary>
@@ -594,7 +604,7 @@ namespace Shared.Repositories
         public bool InitializePerson(IPerson info)
         {
             // Cast normal graph client to a transact client to do a transaction.
-            var transactClient = (ITransactionalGraphClient) _graphClient;
+            var transactClient = (ITransactionalGraphClient)_graphClient;
 
             using (var transaction = transactClient.BeginTransaction())
             {
@@ -655,23 +665,32 @@ namespace Shared.Repositories
             try
             {
                 // Query construction.
-                var query = await _graphClient.Cypher.Match("(admin:Person)")
+                var query = _graphClient.Cypher.Match("(admin:Person)")
                     .Where<IPerson>(admin => admin.Email == info.Email)
-                    .AndWhere<IPerson>(admin => admin.Password == info.Password)
-                    .AndWhere<IPerson>(admin => admin.Role == info.Role)
-                    .Return(admin => admin.As<Person>())
-                    .Limit(1)
+                    .AndWhere<IPerson>(admin => admin.Password == info.Password);
+
+                // If role is specified, filter account by role.
+                if (info.Role != null) query = query.AndWhere<IPerson>(admin => admin.Role == info.Role);
+
+                // Retrieve result asynchronously.
+                var resultAsync = await query.Return(admin => admin.As<Person>())
                     .ResultsAsync;
 
-                // Invalid query result.
-                var result = query.FirstOrDefault();
-                if (result == null)
+                // Result is invalid.
+                if (resultAsync == null)
                     return null;
 
-                result.Password = "";
-                result.Id = "";
+                // Invalid query result.
+                var result = resultAsync.ToList();
 
-                return result;
+                // Not only unique result has been retrieved.
+                if (result.Count != 1)
+                    return null;
+                
+                result[0].Password = "";
+                result[0].Id = "";
+
+                return result[0];
             }
             catch (Exception)
             {
