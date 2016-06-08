@@ -16,13 +16,18 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="modelState"></param>
         /// <returns></returns>
-        protected IEnumerable<string> RetrieveValidationErrors(ModelStateDictionary modelState)
+        protected object RetrieveValidationErrors(ModelStateDictionary modelState)
         {
             // Invalid model state.
             if (modelState == null)
                 return new List<string>();
 
-            return modelState.Keys.SelectMany(key => modelState[key].Errors.Select(error => error.ErrorMessage));
+            var response = new
+            {
+                Errors = modelState.Keys.SelectMany(key => modelState[key].Errors.Select(error => error.ErrorMessage)),
+            };
+
+            return response;
         }
 
         protected override void Initialize(HttpControllerContext controllerContext)

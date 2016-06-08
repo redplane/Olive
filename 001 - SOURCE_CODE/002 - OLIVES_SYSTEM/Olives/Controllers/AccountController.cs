@@ -1,9 +1,14 @@
-﻿using System.Net;
+﻿using System.IO;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
+using System.Web.Razor.Parser;
 using Shared.Constants;
 using Shared.Interfaces;
+using Shared.Resources;
 using Shared.ViewModels;
 
 namespace Olives.Controllers
@@ -34,6 +39,18 @@ namespace Olives.Controllers
 
         #region Login
 
+        [Route("api/account/index")]
+        [HttpGet]
+        public HttpResponseMessage Index()
+        {
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            var viewPath = HttpContext.Current.Server.MapPath(@"~/Views/Account/Index.html");
+            var info = File.ReadAllText(viewPath);
+            response.Content = new StringContent(info);
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
+            return response;
+        }
+
         /// <summary>
         ///     This function is for authenticate an user account.
         /// </summary>
@@ -52,11 +69,16 @@ namespace Olives.Controllers
 
             // If no result return, that means no account.
             if (result == null)
-                return Request.CreateResponse(HttpStatusCode.NotFound);
-
+            {
+                ModelState.AddModelError("Credential", Language.InvalidLoginInfo);
+                return Request.CreateResponse(HttpStatusCode.NotFound, RetrieveValidationErrors(ModelState));
+            }
             // Requested user is not a patient or a doctor.
             if (result.Role != Roles.Patient && result.Role != Roles.Doctor)
-                return Request.CreateResponse(HttpStatusCode.NotFound);
+            {
+                ModelState.AddModelError("Credential", Language.InvalidLoginInfo);
+                return Request.CreateResponse(HttpStatusCode.NotFound, RetrieveValidationErrors(ModelState));
+            }
 
             return Request.CreateResponse(HttpStatusCode.OK, result);
         }
