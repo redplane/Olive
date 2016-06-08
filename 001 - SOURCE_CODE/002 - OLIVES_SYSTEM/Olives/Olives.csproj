@@ -119,6 +119,8 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <Content Include="Configurations\OlivesGraphDb.json" />
+    <None Include="Properties\PublishProfiles\oliveshealth - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\oliveshealth - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

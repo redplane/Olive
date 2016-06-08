@@ -46,10 +46,7 @@ namespace Olives.Controllers
             // Invalid model state.
             if (!ModelState.IsValid)
                 return Request.CreateResponse(HttpStatusCode.BadGateway, RetrieveValidationErrors(ModelState));
-
-            // Update role Admin to login view model.
-            loginViewModel.Role = Roles.Admin;
-
+            
             // Pass parameter to login function. 
             var result = await _repositoryAccount.LoginAsync(loginViewModel);
 
