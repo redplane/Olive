@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Controllers;
+using System.Web.Http.ModelBinding;
 using Shared.Constants;
 using Shared.Interfaces;
+using Shared.Models;
+using Shared.Resources;
 
 namespace OlivesAdministration.Attributes
 {
@@ -56,7 +60,10 @@ namespace OlivesAdministration.Attributes
             if (string.IsNullOrEmpty(accountEmail) || string.IsNullOrEmpty(accountPassword))
             {
                 // Treat this request is unauthorized.
-                actionContext.Response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+                var responseError = new ResponseErrror();
+                responseError.Errors = new List<string> { Language.MustAuthorize };
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, responseError);
+
                 return;
             }
 
@@ -66,14 +73,18 @@ namespace OlivesAdministration.Attributes
             // No person has been found.
             if (person == null)
             {
-                actionContext.Response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+                var responseError = new ResponseErrror();
+                responseError.Errors = new List<string> { Language.MustAuthorize };
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, responseError);
+
                 return;
             }
 
             if (!Roles.Any(x => x == person.Role))
             {
-                // Role isn't valid. Tell the client the access is forbidden.
-                actionContext.Response = new HttpResponseMessage(HttpStatusCode.Forbidden);
+                var responseError = new ResponseErrror();
+                responseError.Errors = new List<string> { Language.RequestForbidden };
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Forbidden, responseError);
             }
 
             //base.OnAuthorization(actionContext);
