@@ -60,18 +60,7 @@ namespace OlivesAdministration.Controllers
             }
 
             #endregion
-
-            #region Information initialization
-
-            // Only filter by specific GUID and role.
-            var filter = new FilterDoctorViewModel();
-            filter.Id = info.Id;
-            filter.IdentityCardNo = info.IdentityCardNo;
-            filter.Page = 0;
-            filter.Records = 1;
-
-            #endregion
-
+            
             #region Results handling
 
             // Retrieve filtered result asynchronously.
@@ -79,11 +68,18 @@ namespace OlivesAdministration.Controllers
 
             // No result has been found.
             if (result == null || result.Count < 1)
-                return Request.CreateResponse(HttpStatusCode.NotFound);
+            {
+                ModelState.AddModelError("FindResult", Language.DoctorDoesNotExist);
+                return Request.CreateResponse(HttpStatusCode.NotFound, RetrieveValidationErrors(ModelState));
+            }
+                
 
             // Not only one result has been retrieved.
             if (result.Count != 1)
-                return Request.CreateResponse(HttpStatusCode.Conflict);
+            {
+                ModelState.AddModelError("FindResult", Language.FindResultConflict);
+                return Request.CreateResponse(HttpStatusCode.Conflict, RetrieveValidationErrors(ModelState));
+            }
 
             #endregion
 
@@ -141,13 +137,10 @@ namespace OlivesAdministration.Controllers
 
             if (info.Address != null)
             {
-                doctor.AddressLongitude = info.Address.Longitude;
-                doctor.AddressLatitude = info.Address.Latitude;
+                doctor.Latitude = info.Address.Longitude;
+                doctor.Longitude = info.Address.Latitude;
             }
-
-            doctor.IdentityCardNo = info.IdentityCardNo;
-            doctor.Specialization = info.Specialization;
-
+            
             #endregion
 
             // Call repository function to create an account.
@@ -231,14 +224,13 @@ namespace OlivesAdministration.Controllers
 
             if (info.Address != null)
             {
-                doctor.AddressLongitude = info.Address.Longitude;
-                doctor.AddressLatitude = info.Address.Latitude;
+                doctor.Latitude = info.Address.Longitude;
+                doctor.Latitude = info.Address.Latitude;
             }
 
             doctor.Phone = info.Phone;
             doctor.Money = info.Money;
             doctor.Status = info.Status;
-            doctor.Specialization = info.Specialization;
             doctor.Rank = info.Rank;
 
             #endregion
@@ -279,13 +271,22 @@ namespace OlivesAdministration.Controllers
         [Route("api/doctor/filter")]
         [HttpPost]
         [OlivesAuthorize(new[] {Roles.Admin})]
-        public async Task<HttpResponseMessage> Filter(FilterDoctorViewModel info)
+        public async Task<HttpResponseMessage> Filter([FromBody]FilterDoctorViewModel info)
         {
             // Information hasn't been initialize.
             // By default, select all doctor without using any specific conditions.
             if (info == null)
                 info = new FilterDoctorViewModel();
 
+            #region ModelState validation
+
+            Validate(info);
+            // Invalid data validation.
+            if (!ModelState.IsValid)
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+
+            #endregion
+            
             // Set filter role to Doctor.
             info.Role = Roles.Doctor;
 

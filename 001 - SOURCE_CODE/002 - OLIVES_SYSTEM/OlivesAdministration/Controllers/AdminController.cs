@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Shared.Constants;
 using Shared.Interfaces;
+using Shared.Resources;
 using Shared.ViewModels;
 
 namespace OlivesAdministration.Controllers
@@ -55,7 +56,10 @@ namespace OlivesAdministration.Controllers
 
             // If no result return, that means no account.
             if (result == null)
-                return Request.CreateResponse(HttpStatusCode.NotFound);
+            {
+                ModelState.AddModelError("Credential", Language.InvalidLoginInfo);
+                return Request.CreateResponse(HttpStatusCode.NotFound, RetrieveValidationErrors(ModelState));
+            }
 
             return Request.CreateResponse(HttpStatusCode.OK, result);
         }
