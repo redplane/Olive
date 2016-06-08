@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DoctorDoesNotExist" xml:space="preserve">
+    <value>Doctor doesn't exist</value>
+  </data>
   <data name="DoctorExisted" xml:space="preserve">
     <value>Doctor has existed in database</value>
+  </data>
+  <data name="FindResultConflict" xml:space="preserve">
+    <value>Result isn't unique</value>
   </data>
   <data name="IdentityCardInUse" xml:space="preserve">
     <value>Identity card is in use</value>
@@ -150,8 +156,14 @@
   <data name="InvalidIdentityCard" xml:space="preserve">
     <value>Identity card can only contain {0} number(s)</value>
   </data>
+  <data name="InvalidIdentityCardMaxLength" xml:space="preserve">
+    <value>Identity card can only contains {1} number(s)</value>
+  </data>
   <data name="InvalidLastName" xml:space="preserve">
     <value>Last name can only contains {1} characters(s)</value>
+  </data>
+  <data name="InvalidLoginInfo" xml:space="preserve">
+    <value>Invalid account or password</value>
   </data>
   <data name="InvalidMaxBirthday" xml:space="preserve">
     <value>Max birthday is invalid</value>
@@ -181,13 +193,19 @@
     <value>Phone number can only contain numeric character(s)</value>
   </data>
   <data name="InvalidSpecializationLength" xml:space="preserve">
-    <value>Specialization can only contains {0} character(s)</value>
+    <value>Speciality can only contains {0} character(s)</value>
   </data>
   <data name="InvalidTemperature" xml:space="preserve">
     <value>Temperature is invalid</value>
   </data>
   <data name="InvalidWeight" xml:space="preserve">
     <value>Weight can only be from {1} to {2} kg(s)</value>
+  </data>
+  <data name="MustAuthorize" xml:space="preserve">
+    <value>You must be authorized to access this function</value>
+  </data>
+  <data name="RequestForbidden" xml:space="preserve">
+    <value>You are forbidden to access this function</value>
   </data>
   <data name="RequireAddress" xml:space="preserve">
     <value>Address is required</value>

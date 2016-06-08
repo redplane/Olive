@@ -61,11 +61,29 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Doctor doesn&apos;t exist.
+        /// </summary>
+        public static string DoctorDoesNotExist {
+            get {
+                return ResourceManager.GetString("DoctorDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Doctor has existed in database.
         /// </summary>
         public static string DoctorExisted {
             get {
                 return ResourceManager.GetString("DoctorExisted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Result isn&apos;t unique.
+        /// </summary>
+        public static string FindResultConflict {
+            get {
+                return ResourceManager.GetString("FindResultConflict", resourceCulture);
             }
         }
         
@@ -160,11 +178,29 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Identity card can only contains {1} number(s).
+        /// </summary>
+        public static string InvalidIdentityCardMaxLength {
+            get {
+                return ResourceManager.GetString("InvalidIdentityCardMaxLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Last name can only contains {1} characters(s).
         /// </summary>
         public static string InvalidLastName {
             get {
                 return ResourceManager.GetString("InvalidLastName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid account or password.
+        /// </summary>
+        public static string InvalidLoginInfo {
+            get {
+                return ResourceManager.GetString("InvalidLoginInfo", resourceCulture);
             }
         }
         
@@ -250,7 +286,7 @@ namespace Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Specialization can only contains {0} character(s).
+        ///   Looks up a localized string similar to Speciality can only contains {0} character(s).
         /// </summary>
         public static string InvalidSpecializationLength {
             get {
@@ -273,6 +309,24 @@ namespace Shared.Resources {
         public static string InvalidWeight {
             get {
                 return ResourceManager.GetString("InvalidWeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must be authorized to access this function.
+        /// </summary>
+        public static string MustAuthorize {
+            get {
+                return ResourceManager.GetString("MustAuthorize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are forbidden to access this function.
+        /// </summary>
+        public static string RequestForbidden {
+            get {
+                return ResourceManager.GetString("RequestForbidden", resourceCulture);
             }
         }
         

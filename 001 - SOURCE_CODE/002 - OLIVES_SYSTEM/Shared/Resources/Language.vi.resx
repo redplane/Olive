@@ -120,6 +120,9 @@
   <data name="InvalidPatientGender" xml:space="preserve">
     <value>Giới tính bệnh nhân không hợp lệ</value>
   </data>
+  <data name="MustAuthorize" xml:space="preserve">
+    <value>Bạn phải đăng nhập để sử dụng chức năng này</value>
+  </data>
   <data name="RequirePatientFirstName" xml:space="preserve">
     <value>Đề nghị điền tên bệnh nhân</value>
   </data>

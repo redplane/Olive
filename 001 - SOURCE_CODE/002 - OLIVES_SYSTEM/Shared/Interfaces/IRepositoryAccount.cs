@@ -72,7 +72,7 @@ namespace Shared.Interfaces
 
         #region Doctor
 
-        /// <summary>
+        /// <summary>s
         ///     Find doctor by using GUID.
         /// </summary>
         /// <param name="id"></param>

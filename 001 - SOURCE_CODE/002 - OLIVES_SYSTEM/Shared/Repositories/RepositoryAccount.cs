@@ -6,6 +6,7 @@ using Neo4jClient;
 using Neo4jClient.Cypher;
 using Neo4jClient.Transactions;
 using Shared.Constants;
+using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models.Nodes;
 using Shared.ViewModels;
@@ -44,7 +45,7 @@ namespace Shared.Repositories
         #endregion
 
         #region Doctor
-
+        
         /// <summary>
         ///     Find doctor by using GUID.
         /// </summary>
@@ -338,11 +339,11 @@ namespace Shared.Repositories
             // Firstly, filter general information.
             FilterPerson(filter, out query, out isWhereConditionUsed);
 
-            #region Specialization
+            #region Speciality
 
-            if (!string.IsNullOrEmpty(filter.Specialization))
+            if (!string.IsNullOrEmpty(filter.Speciality))
             {
-                var specializationQuery = $"n.Specialization =~'(?i).*{filter.Specialization}.*'";
+                var specializationQuery = $"n.{MethodHelper.Instance.RetrievePropertyName(()=> filter.Speciality)} =~'(?i).*{filter.Speciality}.*'";
                 query = !isWhereConditionUsed
                     ? query.Where(specializationQuery)
                     : query.AndWhere(specializationQuery);
@@ -416,6 +417,48 @@ namespace Shared.Repositories
             result.Data = new List<IPerson>(resultsAsync);
 
             return result;
+        }
+
+        public async Task<long> InitializeDoctor(Doctor doctor, IdentityCard identityCard)
+        {
+            // Query initialization.
+            ICypherFluentQuery query;
+
+            //OPTIONAL MATCH (p:Person) WHERE p.Id = '1234' WITH p
+            query = _graphClient.Cypher.OptionalMatch("(p:Person)")
+                .Where<Doctor>(p => p.Id == doctor.Id)
+                .With("p");
+
+            //OPTIONAL MATCH (i:IdentityCard) WHERE i.Id = '12345' 
+            query = query.OptionalMatch("(i:IdentityCard)")
+                .Where<IdentityCard>(i => i.Id == identityCard.Id);
+
+            #region With section
+
+            var withCommand = "CASE ";
+            withCommand += "WHEN p IS NULL THEN 1 ";
+            withCommand += "WHEN i IS NULL THEN 2 ";
+            withCommand += "ELSE 0 ";
+            withCommand += "END AS results";
+
+            query = query.With(withCommand);
+
+            #endregion
+
+            #region Foreach section
+
+            var forEachCommand =
+                "(result in case when results = 0 then [1] else [] end | CREATE(p) -[:HAS_IDENTITY]->(i))";
+
+            query = query.With("withCommand")
+                .ForEach(forEachCommand);
+
+            #endregion
+
+            var resultAsync = await query.Return(n => n.Count())
+                .ResultsAsync;
+
+            return resultAsync.SingleOrDefault();
         }
 
         #endregion
@@ -665,16 +708,15 @@ namespace Shared.Repositories
             try
             {
                 // Query construction.
-                var query = _graphClient.Cypher.Match("(admin:Person)")
-                    .Where<IPerson>(admin => admin.Email == info.Email)
-                    .AndWhere<IPerson>(admin => admin.Password == info.Password);
+                var query = _graphClient.Cypher.Match("(p:Person)")
+                    .Where<IPerson>(p => p.Email == info.Email)
+                    .AndWhere<IPerson>(p => p.Password == info.Password);
 
                 // If role is specified, filter account by role.
-                if (info.Role != null) query = query.AndWhere<IPerson>(admin => admin.Role == info.Role);
-
+                if (info.Role != null) query = query.AndWhere<IPerson>(p => p.Role == info.Role);
+                
                 // Retrieve result asynchronously.
-                var resultAsync = await query.Return(admin => admin.As<Person>())
-                    .ResultsAsync;
+                var resultAsync = await query.Return(p => p.As<Person>()).ResultsAsync;
 
                 // Result is invalid.
                 if (resultAsync == null)
@@ -686,10 +728,7 @@ namespace Shared.Repositories
                 // Not only unique result has been retrieved.
                 if (result.Count != 1)
                     return null;
-
-                result[0].Password = "";
-                result[0].Id = "";
-
+                
                 return result[0];
             }
             catch (Exception)

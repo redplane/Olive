@@ -55,12 +55,17 @@
         /// <summary>
         ///     Latitude of place where person lives.
         /// </summary>
-        double? AddressLatitude { get; set; }
+        double? Latitude { get; set; }
 
         /// <summary>
         ///     Longitude of place where person lives.
         /// </summary>
-        double? AddressLongitude { get; set; }
+        double? Longitude { get; set; }
+
+        /// <summary>
+        /// Address of person
+        /// </summary>
+        string Address { get; set; }
 
         /// <summary>
         ///     Role of person [0 - Admin | 1 - Patient | 2 - Doctor]

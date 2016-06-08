@@ -6,14 +6,21 @@ namespace Shared.Models.Nodes
 {
     public class Doctor : Person
     {
+        /// <summary>
+        /// Speciality of doctor.
+        /// </summary>
         [MaxLength(FieldLength.SpecializationMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidSpecializationLength")]
-        public string Specialization { get; set; }
+        public string Speciality { get; set; }
 
+        /// <summary>
+        /// Rank of doctor.
+        /// </summary>
         public double Rank { get; set; }
-
-        [MaxLength(FieldLength.IdentityCardMaxLength, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidIdentityCard")]
-        public string IdentityCardNo { get; set; }
+        
+        /// <summary>
+        /// Number of people who vote this doctor.
+        /// </summary>
+        public int Voters { get; set; }
     }
 }
