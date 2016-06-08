@@ -37,7 +37,7 @@ namespace OlivesAdministration
 
             //// ...or you can register individual controlllers manually.
             builder.RegisterType<AdminController>().InstancePerRequest();
-            //builder.RegisterType<DoctorController>().InstancePerRequest();
+            builder.RegisterType<DoctorController>().InstancePerRequest();
             builder.RegisterType<PatientController>().InstancePerRequest();
 
             #endregion
@@ -188,8 +188,8 @@ namespace OlivesAdministration
                 patient.Phone = $"01234567{i}";
                 patient.Money = i;
                 patient.Created = DateTime.Now.Ticks;
-                patient.AddressLatitude = i;
-                patient.AddressLongitude = i;
+                patient.Latitude = i;
+                patient.Longitude = i;
                 patient.Role = Roles.Patient;
                 patient.Height = i;
                 patient.Weight = i;
