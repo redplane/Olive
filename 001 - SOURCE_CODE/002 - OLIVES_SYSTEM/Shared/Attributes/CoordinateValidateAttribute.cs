@@ -6,7 +6,7 @@ namespace Shared.Attributes
     /// <summary>
     ///     This attribute is for validating Geometry coordinate.
     /// </summary>
-    public class CoordinateValidationAttribute : ValidationAttribute
+    public class CoordinateValidateAttribute : ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
@@ -21,11 +21,11 @@ namespace Shared.Attributes
             var coordinate = (Coordinate) value;
 
             // Invalid latitude.
-            if (coordinate.Latitude < -90 || coordinate.Latitude > 90)
+            if (coordinate.Latitude < -85 || coordinate.Latitude > 85)
                 return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
 
             // Invalid longitude
-            if (coordinate.Longitude < -90 || coordinate.Longitude > 90)
+            if (coordinate.Longitude < -180 || coordinate.Longitude > 180)
                 return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
 
             return ValidationResult.Success;

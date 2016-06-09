@@ -12,7 +12,7 @@ namespace Olives.ViewModels
         [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "InvalidPersonalId")]
         public string Id { get; set; }
 
-        [CoordinateValidation(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "InvalidAddress")
+        [CoordinateValidate(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "InvalidAddress")
         ]
         public Coordinate Address { get; set; }
 

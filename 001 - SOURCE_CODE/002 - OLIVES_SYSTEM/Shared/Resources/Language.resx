@@ -154,16 +154,28 @@
     <value>Height can only be fromt {1} to {2} cm(s)</value>
   </data>
   <data name="InvalidIdentityCard" xml:space="preserve">
-    <value>Identity card can only contain {0} number(s)</value>
+    <value>Identity card can only contains 9 numbers</value>
   </data>
   <data name="InvalidIdentityCardMaxLength" xml:space="preserve">
     <value>Identity card can only contains {1} number(s)</value>
   </data>
+  <data name="InvalidIdentityCardIssuePlace" xml:space="preserve">
+    <value>Identity card issue place is invalid</value>
+  </data>
+  <data name="InvalidIssueDate" xml:space="preserve">
+    <value>Issue data is invalid</value>
+  </data>
   <data name="InvalidLastName" xml:space="preserve">
     <value>Last name can only contains {1} characters(s)</value>
   </data>
+  <data name="InvalidLatitude" xml:space="preserve">
+    <value>Latitude must be from {1} to {2}</value>
+  </data>
   <data name="InvalidLoginInfo" xml:space="preserve">
     <value>Invalid account or password</value>
+  </data>
+  <data name="InvalidLongitude" xml:space="preserve">
+    <value>Longitude must be from {1} to {2}</value>
   </data>
   <data name="InvalidMaxBirthday" xml:space="preserve">
     <value>Max birthday is invalid</value>
@@ -222,6 +234,12 @@
   <data name="RequireIdentityCard" xml:space="preserve">
     <value>Identity card is required</value>
   </data>
+  <data name="RequireIdentityCardNo" xml:space="preserve">
+    <value>Identity card number is required</value>
+  </data>
+  <data name="RequireIdentityIssueDate" xml:space="preserve">
+    <value>Identity card issue date is required</value>
+  </data>
   <data name="RequireLastName" xml:space="preserve">
     <value>Last name is required</value>
   </data>
@@ -236,5 +254,11 @@
   </data>
   <data name="RequireSpecialization" xml:space="preserve">
     <value>Specialization is required</value>
+  </data>
+  <data name="InvalidIdentityCardIssueDate" xml:space="preserve">
+    <value>Issue date must be after year {1}</value>
+  </data>
+  <data name="RequireIdentityCardIssuePlace" xml:space="preserve">
+    <value>Identity card issue place is required</value>
   </data>
 </root>

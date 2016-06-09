@@ -20,7 +20,7 @@
         /// <summary>
         ///     Regex of identity card.
         /// </summary>
-        public const string IdentityCard = @"^([0-9])$";
+        public const string IdentityCard = @"^[0-9]{9}$";
 
         /// <summary>
         ///     Regular expression of personal id.

@@ -8,27 +8,6 @@ namespace Shared.Interfaces
 {
     public interface IRepositoryAccount
     {
-        /// <summary>
-        ///     Check whether person with specific information exists or not.
-        /// </summary>
-        /// <param name="email"></param>
-        /// <param name="emailCaseSensitive"></param>
-        /// <param name="password"></param>
-        /// <param name="role"></param>
-        /// <returns></returns>
-        Task<IPerson> GetPersonExistAsync(string email, bool emailCaseSensitive, string password, byte? role);
-
-        /// <summary>
-        ///     Retrieve personal information by using specific conditions.
-        /// </summary>
-        /// <param name="email"></param>
-        /// <param name="emailCaseSensitive"></param>
-        /// <param name="password"></param>
-        /// <param name="role"></param>
-        /// <returns></returns>
-        IPerson GetPersonExist(string email, bool emailCaseSensitive = false,
-            string password = "", byte? role = null);
-
         #region Patient
 
         /// <summary>
@@ -136,7 +115,7 @@ namespace Shared.Interfaces
         /// </summary>
         /// <param name="filter">Specific conditions.</param>
         /// <returns></returns>
-        Task<object> FilterPersonAsync(FilterPersonViewModel filter);
+        Task<IEnumerable<Node<string>>> FilterPersonAsync(FilterPersonViewModel filter);
 
         /// <summary>
         ///     Log user in and retrieve the user information.
@@ -145,6 +124,15 @@ namespace Shared.Interfaces
         /// <returns></returns>
         Task<IPerson> LoginAsync(LoginViewModel info);
 
+        /// <summary>
+        ///     Retrieve personal information by using specific conditions.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        IPerson FindPerson(string email, string password, byte? role);
+        
         #endregion
     }
 }

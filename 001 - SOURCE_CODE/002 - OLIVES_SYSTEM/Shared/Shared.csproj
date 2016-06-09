@@ -58,7 +58,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\CoordinateValidationAttribute.cs" />
+    <Compile Include="Attributes\CoordinateValidateAttribute.cs" />
+    <Compile Include="Attributes\TickToYearCompare.cs" />
     <Compile Include="Attributes\IntsMatchAttribute.cs" />
     <Compile Include="Attributes\BytesMatchAttribute.cs" />
     <Compile Include="Attributes\IntCompareAttribute.cs" />

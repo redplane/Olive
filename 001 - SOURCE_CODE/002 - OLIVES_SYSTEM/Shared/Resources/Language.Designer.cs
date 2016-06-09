@@ -169,11 +169,29 @@ namespace Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Identity card can only contain {0} number(s).
+        ///   Looks up a localized string similar to Identity card can only contains 9 numbers.
         /// </summary>
         public static string InvalidIdentityCard {
             get {
                 return ResourceManager.GetString("InvalidIdentityCard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Issue date must be after year {1}.
+        /// </summary>
+        public static string InvalidIdentityCardIssueDate {
+            get {
+                return ResourceManager.GetString("InvalidIdentityCardIssueDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Identity card issue place is invalid.
+        /// </summary>
+        public static string InvalidIdentityCardIssuePlace {
+            get {
+                return ResourceManager.GetString("InvalidIdentityCardIssuePlace", resourceCulture);
             }
         }
         
@@ -187,6 +205,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Issue data is invalid.
+        /// </summary>
+        public static string InvalidIssueDate {
+            get {
+                return ResourceManager.GetString("InvalidIssueDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Last name can only contains {1} characters(s).
         /// </summary>
         public static string InvalidLastName {
@@ -196,11 +223,29 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Latitude must be from {1} to {2}.
+        /// </summary>
+        public static string InvalidLatitude {
+            get {
+                return ResourceManager.GetString("InvalidLatitude", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid account or password.
         /// </summary>
         public static string InvalidLoginInfo {
             get {
                 return ResourceManager.GetString("InvalidLoginInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Longitude must be from {1} to {2}.
+        /// </summary>
+        public static string InvalidLongitude {
+            get {
+                return ResourceManager.GetString("InvalidLongitude", resourceCulture);
             }
         }
         
@@ -372,6 +417,33 @@ namespace Shared.Resources {
         public static string RequireIdentityCard {
             get {
                 return ResourceManager.GetString("RequireIdentityCard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Identity card issue place is required.
+        /// </summary>
+        public static string RequireIdentityCardIssuePlace {
+            get {
+                return ResourceManager.GetString("RequireIdentityCardIssuePlace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Identity card number is required.
+        /// </summary>
+        public static string RequireIdentityCardNo {
+            get {
+                return ResourceManager.GetString("RequireIdentityCardNo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Identity card issue date is required.
+        /// </summary>
+        public static string RequireIdentityIssueDate {
+            get {
+                return ResourceManager.GetString("RequireIdentityIssueDate", resourceCulture);
             }
         }
         

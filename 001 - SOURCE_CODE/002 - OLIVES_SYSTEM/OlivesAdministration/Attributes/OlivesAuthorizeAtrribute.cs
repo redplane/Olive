@@ -67,7 +67,7 @@ namespace OlivesAdministration.Attributes
             }
 
             // Retrieve person whose properties match conditions.
-            var person = AccountsRepository.GetPersonExist(accountEmail, true, accountPassword);
+            var person = AccountsRepository.FindPerson(accountEmail, accountPassword, null);
 
             // No person has been found.
             if (person == null)

@@ -7,7 +7,5 @@
         public double? MinRank { get; set; }
 
         public double? MaxRank { get; set; }
-
-        public string IdentityCardNo { get; set; }
     }
 }

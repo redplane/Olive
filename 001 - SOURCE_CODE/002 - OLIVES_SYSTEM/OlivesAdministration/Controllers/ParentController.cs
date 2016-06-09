@@ -6,6 +6,7 @@ using System.Threading;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.ModelBinding;
+using Shared.Models;
 
 namespace OlivesAdministration.Controllers
 {
@@ -20,13 +21,11 @@ namespace OlivesAdministration.Controllers
         {
             // Invalid model state.
             if (modelState == null)
-                return new List<string>();
+                return null;
 
-            var response = new
-            {
-                Errors = modelState.Keys.SelectMany(key => modelState[key].Errors.Select(error => error.ErrorMessage))
-            };
-
+            var response = new ResponseErrror();
+            response.Errors = new List<string>(modelState.Keys.SelectMany(key => modelState[key].Errors.Select(error => error.ErrorMessage)));
+            
             return response;
         }
 

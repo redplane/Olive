@@ -10,6 +10,8 @@ namespace Shared.ViewModels
     public class InitializeDoctorViewModel : Doctor
     {
 #pragma warning disable 108, 114
+#pragma warning restore 108, 114
+
         [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "RequireFirstName")]
         public string FirstName { get; set; }
 
@@ -43,16 +45,38 @@ namespace Shared.ViewModels
         ///     For doctor, address is compulsory.
         /// </summary>
         [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "RequireAddress")]
-        public Coordinate Address { get; set; }
+        public string Address { get; set; }
+        
+        [Required(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "RequireSpecialization")]
+        public string Speciality { get; set; }
 
-        [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "RequireSpecialization")]
-        public string Specialization { get; set; }
+        /// <summary>
+        ///     Latitude of place where person lives.
+        /// </summary>
+        public double? Latitude { get; set; }
 
-        [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "RequireIdentityCard")]
+        /// <summary>
+        ///     Longitude of place where person lives.
+        /// </summary>
+        public double? Longitude { get; set; }
+
+
+        #region Identity card
+
+        [MaxLength(FieldLength.IdentityCardNoMaxLength, ErrorMessageResourceType = typeof(Language),
+            ErrorMessageResourceName = "InvalidIdentityCardMaxLength")]
+        [RegexMatch(Regexes.IdentityCard, ErrorMessageResourceType = typeof(Language),
+            ErrorMessageResourceName = "InvalidIdentityCard")]
         public string IdentityCardNo { get; set; }
+        
+        [TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidIdentityCardIssueDate")]
+        public long IdentityCardIssueDate { get; set; }
 
-        public byte Status { get; set; }
-#pragma warning restore 108, 114
+        [Required(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "RequireIdentityCardIssuePlace")]
+        [CoordinateValidate(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidIdentityCardIssuePlace")]
+        public Coordinate IdentityCardIssuePlace { get; set; }
+        
+        #endregion
+
     }
 }

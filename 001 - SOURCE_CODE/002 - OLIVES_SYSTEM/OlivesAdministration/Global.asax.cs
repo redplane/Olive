@@ -91,7 +91,7 @@ namespace OlivesAdministration
             XmlConfigurator.Configure();
         }
 
-        private void InitializeDemoData(GraphClient graphClient)
+        private async void InitializeDemoData(GraphClient graphClient)
         {
             #region Admin creation
 
@@ -104,7 +104,7 @@ namespace OlivesAdministration
             admin.Created = DateTime.Now.Ticks;
             admin.Birthday = DateTime.Now.Ticks;
             admin.Id = "2f28d661db9449fdb90d0879f5231fde";
-            admin.Password = "c857a1fe084c49269ad7ecfeabd038ff";
+            admin.Password = "redplane_dt@yahoo.com.vn";
             admin.Role = Roles.Admin;
             admin.Gender = Gender.Male;
 
@@ -150,24 +150,28 @@ namespace OlivesAdministration
             {
                 var doctor = new Doctor();
                 doctor.Id = doctorIds[i];
-                doctor.LastName = $"LastName_{i}";
-                doctor.FirstName = $"FirstName_{i}";
-
+                doctor.LastName = $"LastName{i}";
+                doctor.FirstName = $"FirstName{i}";
+                doctor.Birthday = DateTime.Now.Ticks;
                 doctor.Created = DateTime.Now.Ticks;
-                doctor.Email = $"Email_{i}";
+                doctor.Email = $"doctor{i}@gmail.com";
                 doctor.Created = DateTime.Now.Ticks;
-                doctor.Password = "FC19B12217DA838C647522D6B6AFC2FC";
+                doctor.Password = $"doctorpassword{i}";
                 doctor.Phone = $"00000{i}";
                 doctor.Gender = Gender.Female;
                 doctor.Role = Roles.Doctor;
+                doctor.Photo = string.Format("https://imageshack.com?photo={0}", i);
+                doctor.Rank = i;
+                doctor.Speciality = $"Speciality[{i}]";
+                doctor.Voters = i;
 
-                graphClient.Cypher
+                await graphClient.Cypher
                     .Merge($"(n:Person {{ Id: '{doctorIds[i]}'}})")
                     .OnCreate()
                     .Set("n = {info}")
                     .Set("n = {info}")
                     .WithParam("info", doctor)
-                    .ExecuteWithoutResults();
+                    .ExecuteWithoutResultsAsync();
             }
 
             #endregion
@@ -194,13 +198,13 @@ namespace OlivesAdministration
                 patient.Height = i;
                 patient.Weight = i;
 
-                graphClient.Cypher
+                await graphClient.Cypher
                     .Merge($"(n:Person {{ Id: '{patient.Id}'}})")
                     .OnCreate()
                     .Set("n = {info}")
                     .Set("n = {info}")
                     .WithParam("info", patient)
-                    .ExecuteWithoutResults();
+                    .ExecuteWithoutResultsAsync();
             }
 
             #endregion

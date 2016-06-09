@@ -14,5 +14,8 @@
         ///     Maximum body temperature (celsius degrees)
         /// </summary>
         public const int MaxBodyTemperature = 45;
+
+        public const int MinimumAllowedYear = 1916;
+
     }
 }

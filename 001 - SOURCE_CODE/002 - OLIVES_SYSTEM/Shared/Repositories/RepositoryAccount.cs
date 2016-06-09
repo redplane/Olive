@@ -114,72 +114,24 @@ namespace Shared.Repositories
             // Count the number of result.
             return result == 0;
         }
-
+        
         /// <summary>
         ///     Check whether person exists or not.
         /// </summary>
         /// <param name="email"></param>
-        /// <param name="emailCaseSensitive">Whether email should be found case insensitively.</param>
         /// <param name="password"></param>
         /// <param name="role"></param>
         /// <returns></returns>
-        public async Task<IPerson> GetPersonExistAsync(string email, bool emailCaseSensitive = false,
-            string password = "", byte? role = null)
+        public IPerson FindPerson(string email, string password, byte? role )
         {
+            // No email has been specified.
+            if (string.IsNullOrEmpty(email))
+                throw new Exception("Email is required.");
+
             // Initialize match command
             var query = _graphClient.Cypher
-                .Match("(n:Person)");
-
-            // Email case sensitive check.
-            if (emailCaseSensitive)
-                query = query.Where<IPerson>(n => n.Email == email);
-            else
-                query = query.Where($"n.Email =~ '(?i){email}'");
-
-            // Password filter if this property isn't empty.
-            if (!string.IsNullOrEmpty(password))
-                query = query.AndWhere<IPerson>(n => n.Password == password);
-
-            // Role filter if this property isn't empty.
-            if (role != null)
-                query = query.AndWhere<IPerson>(n => n.Role == role);
-
-            // Retrieve query result asynchronously.
-            var queryResult = await query.Return(n => n.As<Person>()).Limit(1).ResultsAsync;
-
-            // No result has been retrieved.
-            if (queryResult == null)
-                return null;
-
-            // Retrieve the first queried result.
-            var person = queryResult.FirstOrDefault();
-
-            if (person == null)
-                return null;
-
-            return person;
-        }
-
-        /// <summary>
-        ///     Check whether person exists or not.
-        /// </summary>
-        /// <param name="email"></param>
-        /// <param name="emailCaseSensitive">Whether email should be found case insensitively.</param>
-        /// <param name="password"></param>
-        /// <param name="role"></param>
-        /// <returns></returns>
-        public IPerson GetPersonExist(string email, bool emailCaseSensitive = false,
-            string password = "", byte? role = null)
-        {
-            // Initialize match command
-            var query = _graphClient.Cypher
-                .Match("(n:Person)");
-
-            // Email case sensitive check.
-            if (emailCaseSensitive)
-                query = query.Where<IPerson>(n => n.Email == email);
-            else
-                query = query.Where($"n.Email =~ '(?i){email}'");
+                .Match("(n:Person)")
+                .Where<IPerson>(n => n.Email == email);
 
             // Password filter if this property isn't empty.
             if (!string.IsNullOrEmpty(password))
@@ -210,7 +162,7 @@ namespace Shared.Repositories
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<object> FilterPersonAsync(FilterPersonViewModel filter)
+        public async Task<IEnumerable<Node<string>>> FilterPersonAsync(FilterPersonViewModel filter)
         {
             ICypherFluentQuery query;
             bool isWhereConditionUsed;
@@ -376,18 +328,18 @@ namespace Shared.Repositories
 
             #endregion
 
-            #region Identity card number
+            //#region Identity card number
 
-            if (!string.IsNullOrEmpty(filter.IdentityCardNo))
-            {
-                var identityCardQuery = $"n.IdentityCardNo =~ '(?i).*{filter.IdentityCardNo}.*'";
-                query = !isWhereConditionUsed
-                    ? query.Where(identityCardQuery)
-                    : query.AndWhere(identityCardQuery);
-                //isWhereConditionUsed = true;
-            }
+            //if (!string.IsNullOrEmpty(filter.IdentityCardNo))
+            //{
+            //    var identityCardQuery = $"n.IdentityCardNo =~ '(?i).*{filter.IdentityCardNo}.*'";
+            //    query = !isWhereConditionUsed
+            //        ? query.Where(identityCardQuery)
+            //        : query.AndWhere(identityCardQuery);
+            //    //isWhereConditionUsed = true;
+            //}
 
-            #endregion
+            //#endregion
 
             #region Cypher query execution
 
@@ -432,7 +384,7 @@ namespace Shared.Repositories
 
             //OPTIONAL MATCH (i:IdentityCard) WHERE i.Id = '12345' 
             query = query.OptionalMatch("(i:IdentityCard)")
-                .Where<IdentityCard>(i => i.Id == identityCard.Id);
+                .Where<IdentityCard>(i => i.No == identityCard.No);
 
             #region With section
 
