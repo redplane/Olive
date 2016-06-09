@@ -1,6 +1,9 @@
-﻿using System.Net;
+﻿using System.IO;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using Shared.Constants;
@@ -33,6 +36,17 @@ namespace OlivesAdministration.Controllers
         }
 
         #endregion
+
+        [Route("admin/index")]
+        public HttpResponseMessage Index()
+        {
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            var viewPath = HttpContext.Current.Server.MapPath(@"~/Views/Index.html");
+            var info = File.ReadAllText(viewPath);
+            response.Content = new StringContent(info);
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
+            return response;
+        }
 
         #region Login
 
