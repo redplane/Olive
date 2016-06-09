@@ -60,7 +60,7 @@ namespace OlivesAdministration.Controllers
             }
 
             #endregion
-            
+
             #region Results handling
 
             // Retrieve filtered result asynchronously.
@@ -72,7 +72,7 @@ namespace OlivesAdministration.Controllers
                 ModelState.AddModelError("FindResult", Language.DoctorDoesNotExist);
                 return Request.CreateResponse(HttpStatusCode.NotFound, RetrieveValidationErrors(ModelState));
             }
-                
+
 
             // Not only one result has been retrieved.
             if (result.Count != 1)
@@ -140,7 +140,7 @@ namespace OlivesAdministration.Controllers
                 doctor.Latitude = info.Address.Longitude;
                 doctor.Longitude = info.Address.Latitude;
             }
-            
+
             #endregion
 
             // Call repository function to create an account.
@@ -271,7 +271,7 @@ namespace OlivesAdministration.Controllers
         [Route("api/doctor/filter")]
         [HttpPost]
         [OlivesAuthorize(new[] {Roles.Admin})]
-        public async Task<HttpResponseMessage> Filter([FromBody]FilterDoctorViewModel info)
+        public async Task<HttpResponseMessage> Filter([FromBody] FilterDoctorViewModel info)
         {
             // Information hasn't been initialize.
             // By default, select all doctor without using any specific conditions.
@@ -286,7 +286,7 @@ namespace OlivesAdministration.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
 
             #endregion
-            
+
             // Set filter role to Doctor.
             info.Role = Roles.Doctor;
 

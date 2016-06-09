@@ -43,6 +43,5 @@
         public const int LastNameMaxLength = 32;
 
         public const int IdentityCardNoMaxLength = 9;
-
     }
 }

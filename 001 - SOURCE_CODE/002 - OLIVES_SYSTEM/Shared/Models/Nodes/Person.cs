@@ -9,6 +9,16 @@ namespace Shared.Models.Nodes
     public class Person : IPerson
     {
         /// <summary>
+        ///     Status of account [0 - Disabled | 1 - Pending | 2 - Active].
+        /// </summary>
+        public byte Status { get; set; }
+
+        /// <summary>
+        ///     Photo link of avatar
+        /// </summary>
+        public string Photo { get; set; }
+
+        /// <summary>
         ///     Person GUID.
         /// </summary>
         public string Id { get; set; }
@@ -84,7 +94,7 @@ namespace Shared.Models.Nodes
         public double? Longitude { get; set; }
 
         /// <summary>
-        /// Address of person.
+        ///     Address of person.
         /// </summary>
         public string Address { get; set; }
 
@@ -94,19 +104,8 @@ namespace Shared.Models.Nodes
         public byte Role { get; set; }
 
         /// <summary>
-        ///     Status of account [0 - Disabled | 1 - Pending | 2 - Active].
-        /// </summary>
-        public byte Status { get; set; }
-
-        /// <summary>
-        /// Photo link of avatar
-        /// </summary>
-        public string Photo { get; set; }
-
-        /// <summary>
-        /// Time when accout has been modified.
+        ///     Time when accout has been modified.
         /// </summary>
         public long LastModified { get; set; }
-
     }
 }

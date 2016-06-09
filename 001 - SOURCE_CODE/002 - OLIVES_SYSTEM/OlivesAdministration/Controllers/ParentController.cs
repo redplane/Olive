@@ -24,7 +24,7 @@ namespace OlivesAdministration.Controllers
 
             var response = new
             {
-                Errors = modelState.Keys.SelectMany(key => modelState[key].Errors.Select(error => error.ErrorMessage)),
+                Errors = modelState.Keys.SelectMany(key => modelState[key].Errors.Select(error => error.ErrorMessage))
             };
 
             return response;

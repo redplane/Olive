@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Shared.Constants;
 using Shared.Resources;
 
 namespace OlivesAdministration.ViewModels

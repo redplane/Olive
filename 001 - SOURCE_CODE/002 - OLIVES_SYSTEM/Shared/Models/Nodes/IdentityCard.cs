@@ -7,14 +7,16 @@ namespace Shared.Models.Nodes
 {
     public class IdentityCard
     {
-        [MaxLength(FieldLength.IdentityCardNoMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidIdentityCardMaxLength")]
-        [RegexMatch("^[0-9]*", ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidIdentityCard")]
+        [MaxLength(FieldLength.IdentityCardNoMaxLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "InvalidIdentityCardMaxLength")]
+        [RegexMatch("^[0-9]*", ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "InvalidIdentityCard")]
         public string Id { get; set; }
-        
+
         public long IssueDate { get; set; }
-        
+
         public double Latitude { get; set; }
-        
-        public double Longitude { get; set; } 
+
+        public double Longitude { get; set; }
     }
 }

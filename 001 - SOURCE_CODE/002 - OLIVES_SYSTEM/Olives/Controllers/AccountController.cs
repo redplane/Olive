@@ -5,7 +5,6 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Web.Razor.Parser;
 using Shared.Constants;
 using Shared.Interfaces;
 using Shared.Resources;
@@ -63,7 +62,7 @@ namespace Olives.Controllers
             // Invalid model state.
             if (!ModelState.IsValid)
                 return Request.CreateResponse(HttpStatusCode.BadGateway, RetrieveValidationErrors(ModelState));
-            
+
             // Pass parameter to login function. 
             var result = await _repositoryAccount.LoginAsync(loginViewModel);
 

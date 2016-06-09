@@ -63,7 +63,7 @@
         double? Longitude { get; set; }
 
         /// <summary>
-        /// Address of person
+        ///     Address of person
         /// </summary>
         string Address { get; set; }
 
@@ -71,5 +71,10 @@
         ///     Role of person [0 - Admin | 1 - Patient | 2 - Doctor]
         /// </summary>
         byte Role { get; set; }
+
+        /// <summary>
+        ///     When account has been modified lastly.
+        /// </summary>
+        long LastModified { get; set; }
     }
 }

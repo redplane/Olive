@@ -24,7 +24,7 @@ namespace Olives.Controllers
 
             var response = new
             {
-                Errors = modelState.Keys.SelectMany(key => modelState[key].Errors.Select(error => error.ErrorMessage)),
+                Errors = modelState.Keys.SelectMany(key => modelState[key].Errors.Select(error => error.ErrorMessage))
             };
 
             return response;
@@ -54,9 +54,9 @@ namespace Olives.Controllers
             base.Initialize(controllerContext);
         }
 
-        //{
-
         //protected override IAsyncResult BeginExecuteCore(AsyncCallback callback, object state)
+
+        //{
         //    // By default, english will be used.
         //    var acceptLanguage = "en-US";
 

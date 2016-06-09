@@ -5,7 +5,6 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Controllers;
-using System.Web.Http.ModelBinding;
 using Shared.Constants;
 using Shared.Interfaces;
 using Shared.Models;
@@ -61,7 +60,7 @@ namespace OlivesAdministration.Attributes
             {
                 // Treat this request is unauthorized.
                 var responseError = new ResponseErrror();
-                responseError.Errors = new List<string> { Language.MustAuthorize };
+                responseError.Errors = new List<string> {Language.MustAuthorize};
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, responseError);
 
                 return;
@@ -74,7 +73,7 @@ namespace OlivesAdministration.Attributes
             if (person == null)
             {
                 var responseError = new ResponseErrror();
-                responseError.Errors = new List<string> { Language.MustAuthorize };
+                responseError.Errors = new List<string> {Language.MustAuthorize};
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, responseError);
 
                 return;
@@ -83,7 +82,7 @@ namespace OlivesAdministration.Attributes
             if (!Roles.Any(x => x == person.Role))
             {
                 var responseError = new ResponseErrror();
-                responseError.Errors = new List<string> { Language.RequestForbidden };
+                responseError.Errors = new List<string> {Language.RequestForbidden};
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Forbidden, responseError);
             }
 

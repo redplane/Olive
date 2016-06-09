@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Shared.Models
 {
     public class ResponseErrror
     {
-        public IList<string> Errors { get; set; } 
+        public IList<string> Errors { get; set; }
     }
 }

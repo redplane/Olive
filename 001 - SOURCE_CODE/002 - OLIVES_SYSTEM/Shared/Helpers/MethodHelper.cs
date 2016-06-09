@@ -23,7 +23,8 @@ namespace Shared.Helpers
             var property = propertyLambda.Body as MemberExpression;
 
             if (property == null)
-                throw new ArgumentException("You must pass a lambda of the form: '() => Class.Property' or '() => object.Property'");
+                throw new ArgumentException(
+                    "You must pass a lambda of the form: '() => Class.Property' or '() => object.Property'");
 
             return property.Member.Name;
         }

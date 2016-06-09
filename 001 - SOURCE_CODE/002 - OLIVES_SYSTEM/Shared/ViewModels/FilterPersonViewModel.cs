@@ -8,6 +8,15 @@ namespace Shared.ViewModels
 {
     public class FilterPersonViewModel : Person
     {
+        /// <summary>
+        ///     Time after which account was modified.
+        /// </summary>
+        public long? MinLastModified { get; set; }
+
+        /// <summary>
+        ///     Time before which account had been modified.
+        /// </summary>
+        public long? MaxLastModified { get; set; }
 #pragma warning disable 108, 114
         /// <summary>
         ///     Person first name
@@ -59,6 +68,7 @@ namespace Shared.ViewModels
         public int Records { get; set; }
 
         public byte? Role { get; set; }
+
 #pragma warning restore 108, 114
     }
 }

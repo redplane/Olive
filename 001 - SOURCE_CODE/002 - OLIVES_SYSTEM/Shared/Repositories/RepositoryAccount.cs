@@ -45,7 +45,7 @@ namespace Shared.Repositories
         #endregion
 
         #region Doctor
-        
+
         /// <summary>
         ///     Find doctor by using GUID.
         /// </summary>
@@ -343,7 +343,8 @@ namespace Shared.Repositories
 
             if (!string.IsNullOrEmpty(filter.Speciality))
             {
-                var specializationQuery = $"n.{MethodHelper.Instance.RetrievePropertyName(()=> filter.Speciality)} =~'(?i).*{filter.Speciality}.*'";
+                var specializationQuery =
+                    $"n.{MethodHelper.Instance.RetrievePropertyName(() => filter.Speciality)} =~'(?i).*{filter.Speciality}.*'";
                 query = !isWhereConditionUsed
                     ? query.Where(specializationQuery)
                     : query.AndWhere(specializationQuery);
@@ -714,7 +715,7 @@ namespace Shared.Repositories
 
                 // If role is specified, filter account by role.
                 if (info.Role != null) query = query.AndWhere<IPerson>(p => p.Role == info.Role);
-                
+
                 // Retrieve result asynchronously.
                 var resultAsync = await query.Return(p => p.As<Person>()).ResultsAsync;
 
@@ -728,7 +729,7 @@ namespace Shared.Repositories
                 // Not only unique result has been retrieved.
                 if (result.Count != 1)
                     return null;
-                
+
                 return result[0];
             }
             catch (Exception)
@@ -765,12 +766,12 @@ namespace Shared.Repositories
         /// </summary>
         /// <param name="filter"></param>
         /// <param name="query"></param>
-        /// <param name="isWhereConditionUsed"></param>
+        /// <param name="isWhereUnavailable"></param>
         private void FilterPerson(FilterPersonViewModel filter, out ICypherFluentQuery query,
-            out bool isWhereConditionUsed)
+            out bool isWhereUnavailable)
         {
             // By default, where condition hasn't been used.
-            isWhereConditionUsed = false;
+            isWhereUnavailable = false;
 
             // Whether where condition has been used or not.
             query = _graphClient.Cypher
@@ -783,7 +784,7 @@ namespace Shared.Repositories
             {
                 var queryFirstName = $"n.FirstName =~'(?i).*{filter.FirstName}.*'";
                 query = query.Where(queryFirstName);
-                isWhereConditionUsed = true;
+                isWhereUnavailable = true;
             }
 
             #endregion
@@ -795,8 +796,8 @@ namespace Shared.Repositories
             {
                 // Last name matching query construction.
                 var queryLastName = $"n.LastName =~'(?i).*{filter.LastName}.*'";
-                query = !isWhereConditionUsed ? query.Where(queryLastName) : query.AndWhere(queryLastName);
-                isWhereConditionUsed = true;
+                query = !isWhereUnavailable ? query.Where(queryLastName) : query.AndWhere(queryLastName);
+                isWhereUnavailable = true;
             }
 
             #endregion
@@ -806,19 +807,19 @@ namespace Shared.Repositories
             // Start date of birth is set.
             if (filter.MinBirthday != null)
             {
-                query = !isWhereConditionUsed
+                query = !isWhereUnavailable
                     ? query.Where<IPerson>(n => n.Birthday >= filter.MinBirthday)
                     : query.AndWhere<IPerson>(n => n.Birthday >= filter.MinBirthday);
-                isWhereConditionUsed = true;
+                isWhereUnavailable = true;
             }
 
             // End date of birth is set.
             if (filter.MaxBirthday != null)
             {
-                query = !isWhereConditionUsed
+                query = !isWhereUnavailable
                     ? query.Where<IPerson>(n => n.Birthday <= filter.MaxBirthday)
                     : query.AndWhere<IPerson>(n => n.Birthday <= filter.MaxBirthday);
-                isWhereConditionUsed = true;
+                isWhereUnavailable = true;
             }
 
             #endregion
@@ -827,10 +828,10 @@ namespace Shared.Repositories
 
             if (filter.Gender != null)
             {
-                query = !isWhereConditionUsed
+                query = !isWhereUnavailable
                     ? query.Where<IPerson>(n => n.Gender == filter.Gender)
                     : query.AndWhere<IPerson>(n => n.Gender == filter.Gender);
-                isWhereConditionUsed = true;
+                isWhereUnavailable = true;
             }
 
             #endregion
@@ -839,18 +840,18 @@ namespace Shared.Repositories
 
             if (filter.MoneyFrom != null)
             {
-                query = !isWhereConditionUsed
+                query = !isWhereUnavailable
                     ? query.Where<IPerson>(n => n.Money >= filter.MoneyFrom)
                     : query.AndWhere<IPerson>(n => n.Money >= filter.MoneyFrom);
-                isWhereConditionUsed = true;
+                isWhereUnavailable = true;
             }
 
             if (filter.MoneyTo != null)
             {
-                query = !isWhereConditionUsed
+                query = !isWhereUnavailable
                     ? query.Where<IPerson>(n => n.Money <= filter.MoneyTo)
                     : query.AndWhere<IPerson>(n => n.Money <= filter.MoneyTo);
-                isWhereConditionUsed = true;
+                isWhereUnavailable = true;
             }
 
             #endregion
@@ -859,18 +860,18 @@ namespace Shared.Repositories
 
             if (filter.MinCreated != null)
             {
-                query = !isWhereConditionUsed
+                query = !isWhereUnavailable
                     ? query.Where<IPerson>(n => n.Created >= filter.MinCreated)
                     : query.AndWhere<IPerson>(n => n.Created >= filter.MinCreated);
-                isWhereConditionUsed = true;
+                isWhereUnavailable = true;
             }
 
             if (filter.MaxCreated != null)
             {
-                if (!isWhereConditionUsed)
+                if (!isWhereUnavailable)
                 {
                     query = query.Where<IPerson>(n => n.Created <= filter.MaxCreated);
-                    isWhereConditionUsed = true;
+                    isWhereUnavailable = true;
                 }
                 else
                     query = query.AndWhere<IPerson>(n => n.Created <= filter.MaxCreated);
@@ -882,10 +883,28 @@ namespace Shared.Repositories
 
             if (filter.Role != null)
             {
-                query = !isWhereConditionUsed
+                query = !isWhereUnavailable
                     ? query.Where<IPerson>(n => n.Role == filter.Role)
                     : query.Where<IPerson>(n => n.Role == filter.Role);
-                isWhereConditionUsed = true;
+                isWhereUnavailable = true;
+            }
+
+            #endregion
+
+            #region Last Modified
+
+            if (filter.MinLastModified != null)
+            {
+                query = !isWhereUnavailable
+                    ? query.Where<IPerson>(n => n.LastModified >= filter.MinLastModified)
+                    : query.AndWhere<IPerson>(n => n.LastModified >= filter.MinLastModified);
+            }
+
+            if (filter.MaxLastModified != null)
+            {
+                query = !isWhereUnavailable
+                    ? query.Where<IPerson>(n => n.LastModified <= filter.MaxLastModified)
+                    : query.AndWhere<IPerson>(n => n.LastModified <= filter.MaxLastModified);
             }
 
             #endregion
