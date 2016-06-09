@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using Shared.Constants;
 using Shared.Interfaces;
 using Shared.Resources;
@@ -41,6 +42,7 @@ namespace OlivesAdministration.Controllers
         /// </summary>
         /// <param name="loginViewModel"></param>
         /// <returns></returns>
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         [HttpPost]
         public async Task<HttpResponseMessage> Login([FromBody] LoginViewModel loginViewModel)
         {
