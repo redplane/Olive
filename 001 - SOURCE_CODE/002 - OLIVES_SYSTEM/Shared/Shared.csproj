@@ -109,9 +109,9 @@
     </Compile>
     <Compile Include="ViewModels\FilterPatientViewModel.cs" />
     <Compile Include="ViewModels\InitializeDoctorViewModel.cs" />
-    <Compile Include="ViewModels\InitializePatientViewModel.cs" />
     <Compile Include="ViewModels\FilterDoctorViewModel.cs" />
     <Compile Include="ViewModels\FilterPersonViewModel.cs" />
+    <Compile Include="ViewModels\InitializePersonViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\ResponsePersonFilter.cs" />
   </ItemGroup>
@@ -119,6 +119,7 @@
     <EmbeddedResource Include="Resources\Language.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Language.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Language.vi.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

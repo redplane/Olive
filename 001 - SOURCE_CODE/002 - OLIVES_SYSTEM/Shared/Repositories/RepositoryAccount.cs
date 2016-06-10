@@ -588,35 +588,27 @@ namespace Shared.Repositories
         ///     Create person synchronously with given parameter.
         /// </summary>
         /// <param name="info"></param>
-        public bool InitializePerson(IPerson info)
+        public async Task<Node<string>> InitializePerson(IPerson info)
         {
-            // Cast normal graph client to a transact client to do a transaction.
-            var transactClient = (ITransactionalGraphClient)_graphClient;
-
-            using (var transaction = transactClient.BeginTransaction())
+            try
             {
-                try
-                {
-                    var query = transactClient.Cypher
-                        .Merge($"(p:Person {{Id : '{info.Id}'}})")
-                        .Set("p = {person}")
-                        .WithParam("person", info);
+                var query = _graphClient.Cypher
+                    .Merge($"(p:Person {{Id : '{info.Id}'}})")
+                    .Set("p = {person}")
+                    .WithParam("person", info)
+                    .Return(p => p.As<Node<string>>());
 
-                    // Input parameters. 
-                    query.ExecuteWithoutResults();
+                // Do the query and receive the result.
+                var resultAsync = await query.ResultsAsync;
 
-                    // Confirm to do execute transaction.
-                    transaction.Commit();
-
-                    return true;
-                }
-                catch (Exception)
-                {
-                    // As exception is thrown, roll back the transaction and tell client the transaction is failed.
-                    transaction.Rollback();
-
-                    return false;
-                }
+                // Retrieve the first node.
+                var result = resultAsync.FirstOrDefault();
+                    
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
 

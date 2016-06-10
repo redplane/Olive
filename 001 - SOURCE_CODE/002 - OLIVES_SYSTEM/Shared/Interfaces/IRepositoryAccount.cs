@@ -72,7 +72,7 @@ namespace Shared.Interfaces
         /// <param name="filter">Specific conditions</param>
         /// <returns></returns>
         Task<ResponsePersonFilter> FilterDoctorAsync(FilterDoctorViewModel filter);
-        
+
         #endregion
 
         #region Shared
@@ -82,7 +82,7 @@ namespace Shared.Interfaces
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        bool InitializePerson(IPerson info);
+        Task<Node<string>> InitializePerson(IPerson info);
 
         /// <summary>
         ///     Update person information by using id for search.

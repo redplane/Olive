@@ -5,17 +5,12 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.UI.WebControls;
-using System.Web.WebPages.Scope;
-using Newtonsoft.Json;
 using OlivesAdministration.Attributes;
 using OlivesAdministration.ViewModels;
 using Shared.Constants;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.Models.Nodes;
 using Shared.Resources;
-using Shared.ViewModels;
 
 namespace OlivesAdministration.Controllers
 {
@@ -46,10 +41,10 @@ namespace OlivesAdministration.Controllers
 
         #region Methods
 
-        [Route("api/person/change_status")]
-        [HttpPut]
+        [Route("api/person/status")]
+        [HttpPost]
         [OlivesAuthorize(new[] { Roles.Admin })]
-        public async Task<HttpResponseMessage> ModifyStatus(ModifyStatusViewModel info)
+        public async Task<HttpResponseMessage> Status(ModifyStatusViewModel info)
         {
             #region Model validation
 

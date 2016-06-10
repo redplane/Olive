@@ -151,6 +151,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Birthyear must be after {1}.
+        /// </summary>
+        public static string InvalidBirthyear {
+            get {
+                return ResourceManager.GetString("InvalidBirthyear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Email format is incorret.
         /// </summary>
         public static string InvalidEmailFormat {
@@ -286,6 +295,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to MaxCreated must be after {1}.
+        /// </summary>
+        public static string InvalidMaxCreated {
+            get {
+                return ResourceManager.GetString("InvalidMaxCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Max date is invalid.
         /// </summary>
         public static string InvalidMaxDate {
@@ -300,6 +318,15 @@ namespace Shared.Resources {
         public static string InvalidMaxHeight {
             get {
                 return ResourceManager.GetString("InvalidMaxHeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MaxLastModified must be after {2}.
+        /// </summary>
+        public static string InvalidMaxLastModified {
+            get {
+                return ResourceManager.GetString("InvalidMaxLastModified", resourceCulture);
             }
         }
         
@@ -322,6 +349,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to MinCreated must be after {1}.
+        /// </summary>
+        public static string InvalidMinCreated {
+            get {
+                return ResourceManager.GetString("InvalidMinCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Min date is invalid.
         /// </summary>
         public static string InvalidMinDate {
@@ -336,6 +372,15 @@ namespace Shared.Resources {
         public static string InvalidMinHeight {
             get {
                 return ResourceManager.GetString("InvalidMinHeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MinLastModified must be after {1}.
+        /// </summary>
+        public static string InvalidMinLastModified {
+            get {
+                return ResourceManager.GetString("InvalidMinLastModified", resourceCulture);
             }
         }
         
@@ -372,6 +417,15 @@ namespace Shared.Resources {
         public static string InvalidPageRecords {
             get {
                 return ResourceManager.GetString("InvalidPageRecords", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient is invalid.
+        /// </summary>
+        public static string InvalidPatient {
+            get {
+                return ResourceManager.GetString("InvalidPatient", resourceCulture);
             }
         }
         
@@ -430,11 +484,47 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Password can only contain at most 16 alphanumeric characters.
+        /// </summary>
+        public static string MaxLengthPassword {
+            get {
+                return ResourceManager.GetString("MaxLengthPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password must contain at least 8 alphanumeric characters.
+        /// </summary>
+        public static string MinLengthPassword {
+            get {
+                return ResourceManager.GetString("MinLengthPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You must be authorized to access this function.
         /// </summary>
         public static string MustAuthorize {
             get {
                 return ResourceManager.GetString("MustAuthorize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not only one record has been returned.
+        /// </summary>
+        public static string RecordIsNotUnique {
+            get {
+                return ResourceManager.GetString("RecordIsNotUnique", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password can only contain alphanumeric characters.
+        /// </summary>
+        public static string RegexPassword {
+            get {
+                return ResourceManager.GetString("RegexPassword", resourceCulture);
             }
         }
         

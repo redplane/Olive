@@ -285,4 +285,34 @@
   <data name="InvalidMinHeight" xml:space="preserve">
     <value>Min height should be from {1} to {2} cm(s)</value>
   </data>
+  <data name="InvalidBirthyear" xml:space="preserve">
+    <value>Birthyear must be after {1}</value>
+  </data>
+  <data name="MaxLengthPassword" xml:space="preserve">
+    <value>Password can only contain at most 16 alphanumeric characters</value>
+  </data>
+  <data name="MinLengthPassword" xml:space="preserve">
+    <value>Password must contain at least 8 alphanumeric characters</value>
+  </data>
+  <data name="RegexPassword" xml:space="preserve">
+    <value>Password can only contain alphanumeric characters</value>
+  </data>
+  <data name="InvalidMaxLastModified" xml:space="preserve">
+    <value>MaxLastModified must be after {2}</value>
+  </data>
+  <data name="InvalidMinLastModified" xml:space="preserve">
+    <value>MinLastModified must be after {1}</value>
+  </data>
+  <data name="InvalidMaxCreated" xml:space="preserve">
+    <value>MaxCreated must be after {1}</value>
+  </data>
+  <data name="InvalidMinCreated" xml:space="preserve">
+    <value>MinCreated must be after {1}</value>
+  </data>
+  <data name="InvalidPatient" xml:space="preserve">
+    <value>Patient is invalid</value>
+  </data>
+  <data name="RecordIsNotUnique" xml:space="preserve">
+    <value>Not only one record has been returned</value>
+  </data>
 </root>

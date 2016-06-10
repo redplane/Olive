@@ -27,9 +27,25 @@
         /// </summary>
         public const int MaxBodyWeight = 500;
 
+        /// <summary>
+        /// The lowest height body can be.
+        /// </summary>
         public const int MinBodyHeight = 30;
 
+        /// <summary>
+        /// The longest height body can be.
+        /// </summary>
         public const int MaxBodyHeight = 400;
+
+        /// <summary>
+        /// The shortest length password can be.
+        /// </summary>
+        public const int MinPasswordLength = 8;
+
+        /// <summary>
+        /// The longest length password can be.
+        /// </summary>
+        public const int MaxPasswordLength = 16;
 
     }
 }

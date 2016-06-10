@@ -24,24 +24,23 @@ namespace Shared.Models.Nodes
         public string Id { get; set; }
 
         /// <summary>
-        ///     Person last name.
+        ///     Person first name.
         /// </summary>
-        [MaxLength(FieldLength.FirstNameMaxLength, ErrorMessageResourceType = typeof (Language),
+        [MaxLength(FieldLength.LastNameMaxLength, ErrorMessageResourceType = typeof(Language),
             ErrorMessageResourceName = "InvalidFirstName")]
-        public string LastName { get; set; }
+        public string FirstName { get; set; }
 
         /// <summary>
-        ///     Person first name.
+        ///     Person last name.
         /// </summary>
         [MaxLength(FieldLength.LastNameMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidLastName")]
-        public string FirstName { get; set; }
+        public string LastName { get; set; }
 
         /// <summary>
         ///     Birthday (ticks).
         /// </summary>
-        [CompareLong(Values.MinimumSelectionTime, Comparision = 1, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidBirthday")]
+        [TickToYearCompare(Values.MinimumAllowedYear, Comparision = 1, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidBirthyear")]
         public long? Birthday { get; set; }
 
         /// <summary>

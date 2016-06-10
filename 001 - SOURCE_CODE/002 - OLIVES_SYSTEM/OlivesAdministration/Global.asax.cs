@@ -8,6 +8,7 @@ using Autofac;
 using Autofac.Integration.WebApi;
 using log4net.Config;
 using Neo4jClient;
+using Neo4jClient.Transactions;
 using Newtonsoft.Json;
 using OlivesAdministration.Attributes;
 using OlivesAdministration.Controllers;
@@ -95,7 +96,7 @@ namespace OlivesAdministration
             XmlConfigurator.Configure();
         }
 
-        private async void InitializeDemoData(GraphClient graphClient)
+        private async void InitializeDemoData(ITransactionalGraphClient graphClient)
         {
             #region Admin creation
 

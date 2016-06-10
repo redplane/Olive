@@ -22,15 +22,17 @@ namespace Shared.ViewModels
         [RegexMatch(Regexes.Phone, ErrorMessageResourceType = typeof(Language),
             ErrorMessageResourceName = "InvalidPhone")]
         public string Phone { get; set; }
-        
+
         /// <summary>
         ///     Time after which account was modified.
         /// </summary>
+        [TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMinLastModified")]
         public long? MinLastModified { get; set; }
 
         /// <summary>
         ///     Time before which account had been modified.
         /// </summary>
+        [TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMaxLastModified")]
         public long? MaxLastModified { get; set; }
 
         /// <summary>
@@ -73,13 +75,11 @@ namespace Shared.ViewModels
         /// Amount of money user's must be lower than.
         /// </summary>
         public double? MaxMoney { get; set; }
-
-        [CompareLong(Values.MinimumSelectionTime, Comparision = -1, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidMinDate")]
+        
+        [TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMinCreated")]
         public long? MinCreated { get; set; }
 
-        [CompareLong(Values.MinimumSelectionTime, Comparision = -1, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidMaxDate")]
+        [TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMaxCreated")]
         public long? MaxCreated { get; set; }
 
         /// <summary>

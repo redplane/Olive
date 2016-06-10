@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -9,6 +9,7 @@ using OlivesAdministration.Attributes;
 using OlivesAdministration.ViewModels;
 using Shared.Constants;
 using Shared.Interfaces;
+using Shared.Models;
 using Shared.Models.Nodes;
 using Shared.Resources;
 using Shared.ViewModels;
@@ -86,58 +87,62 @@ namespace OlivesAdministration.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { User = result });
         }
 
-        /// <summary>
-        ///     Access role : Admin
-        ///     Description : Create an user account with given information.
-        /// </summary>
-        /// <param name="person"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [OlivesAuthorize(new[] { Roles.Admin })]
-        public async Task<HttpResponseMessage> Post([FromBody] InitializeDoctorViewModel person)
-        {
-            #region ModelState validation
+        #region Doctor initialize function
 
-            // Invalid data validation.
-            if (!ModelState.IsValid)
-                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+        ///// <summary>
+        /////     Access role : Admin
+        /////     Description : Create an user account with given information.
+        ///// </summary>
+        ///// <param name="person"></param>
+        ///// <returns></returns>
+        //[HttpPost]
+        //[OlivesAuthorize(new[] { Roles.Admin })]
+        //public async Task<HttpResponseMessage> Post([FromBody] InitializeDoctorViewModel person)
+        //{
+        //    #region ModelState validation
 
-            #endregion
+        //    // Invalid data validation.
+        //    if (!ModelState.IsValid)
+        //        return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
 
-            #region Information initialization
+        //    #endregion
 
-            // TODO: Create a person on chat system.
-            // Initialize an instance of Doctor.
-            var doctor = new Doctor();
-            doctor.Id = Guid.NewGuid().ToString("N");
-            doctor.FirstName = person.FirstName;
-            doctor.LastName = person.LastName;
-            doctor.Birthday = person.Birthday;
-            doctor.Gender = person.Gender;
-            doctor.Email = person.Email;
-            doctor.Password = person.Password;
-            doctor.Phone = person.Phone;
-            doctor.Created = DateTime.Now.Ticks;
-            doctor.Role = Roles.Doctor;
+        //    #region Information initialization
 
-            //if (info.Address != null)
-            //{
-            //    doctor.Latitude = info.Address.Longitude;
-            //    doctor.Longitude = info.Address.Latitude;
-            //}
+        //    // TODO: Create a person on chat system.
+        //    // Initialize an instance of Doctor.
+        //    var doctor = new Doctor();
+        //    doctor.Id = Guid.NewGuid().ToString("N");
+        //    doctor.FirstName = person.FirstName;
+        //    doctor.LastName = person.LastName;
+        //    doctor.Birthday = person.Birthday;
+        //    doctor.Gender = person.Gender;
+        //    doctor.Email = person.Email;
+        //    doctor.Password = person.Password;
+        //    doctor.Phone = person.Phone;
+        //    doctor.Created = DateTime.Now.Ticks;
+        //    doctor.Role = Roles.Doctor;
 
-            #endregion
+        //    //if (info.Address != null)
+        //    //{
+        //    //    doctor.Latitude = info.Address.Longitude;
+        //    //    doctor.Longitude = info.Address.Latitude;
+        //    //}
 
-            // Call repository function to create an account.
-            var result = await Task.Run(() => _repositoryAccount.InitializePerson(doctor));
+        //    #endregion
 
-            // Transaction is failed. Tell client about the result.
-            if (!result)
-                return Request.CreateResponse(HttpStatusCode.NoContent);
+        //    // Call repository function to create an account.
+        //    var result = await Task.Run(() => _repositoryAccount.InitializePerson(doctor));
 
-            // Tell the client, doctor has been added successfully.
-            return Request.CreateResponse(HttpStatusCode.OK, doctor);
-        }
+        //    // Transaction is failed. Tell client about the result.
+        //    if (!result)
+        //        return Request.CreateResponse(HttpStatusCode.NoContent);
+
+        //    // Tell the client, doctor has been added successfully.
+        //    return Request.CreateResponse(HttpStatusCode.OK, doctor);
+        //}
+
+        #endregion
 
         /// <summary>
         ///     Update a doctor information by using specific id.
@@ -277,5 +282,6 @@ namespace OlivesAdministration.Controllers
                 Total = results.Total
             });
         }
+        
     }
 }
