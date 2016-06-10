@@ -116,48 +116,6 @@ namespace Shared.Repositories
         }
         
         /// <summary>
-        ///     Check whether person exists or not.
-        /// </summary>
-        /// <param name="email"></param>
-        /// <param name="password"></param>
-        /// <param name="role"></param>
-        /// <returns></returns>
-        public IPerson FindPerson(string email, string password, byte? role )
-        {
-            // No email has been specified.
-            if (string.IsNullOrEmpty(email))
-                throw new Exception("Email is required.");
-
-            // Initialize match command
-            var query = _graphClient.Cypher
-                .Match("(n:Person)")
-                .Where<IPerson>(n => n.Email == email);
-
-            // Password filter if this property isn't empty.
-            if (!string.IsNullOrEmpty(password))
-                query = query.AndWhere<IPerson>(n => n.Password == password);
-
-            // Role filter if this property isn't empty.
-            if (role != null)
-                query = query.AndWhere<IPerson>(n => n.Role == role);
-
-            // Retrieve query result asynchronously.
-            var queryResult = query.Return(n => n.As<Person>()).Limit(1).Results;
-
-            // No result has been retrieved.
-            if (queryResult == null)
-                return null;
-
-            // Retrieve the first queried result.
-            var person = queryResult.FirstOrDefault();
-
-            if (person == null)
-                return null;
-
-            return person;
-        }
-
-        /// <summary>
         ///     Filter person asynchronously.
         /// </summary>
         /// <param name="filter"></param>
@@ -171,7 +129,7 @@ namespace Shared.Repositories
             FilterPerson(filter, out query, out isWhereConditionUsed);
 
             // Calculate the number of records should be skip over.
-            var skippedRecords = filter.Page*filter.Records;
+            var skippedRecords = filter.Page * filter.Records;
 
             // Execute query asynchronously.
             var results = await query.Return(n => n.As<Node<string>>())
@@ -252,14 +210,14 @@ namespace Shared.Repositories
             // Count total records.
             var cypherCountAsync = await query.Return(n => n.Count())
                 .ResultsAsync;
-            result.Total = (int) cypherCountAsync.SingleOrDefault();
+            result.Total = (int)cypherCountAsync.SingleOrDefault();
 
             // No record has been retrieved.
             if (result.Total < 1)
                 return result;
 
             // Calculate the number of records should be skip over.
-            var skippedRecords = filter.Page*filter.Records;
+            var skippedRecords = filter.Page * filter.Records;
 
             // Execute query asynchronously.
             var resultsAsync = await query.Return(n => n.As<Patient>())
@@ -349,14 +307,14 @@ namespace Shared.Repositories
             // Count total records.
             var cypherCountAsync = await query.Return(n => n.Count())
                 .ResultsAsync;
-            result.Total = (int) cypherCountAsync.SingleOrDefault();
+            result.Total = (int)cypherCountAsync.SingleOrDefault();
 
             // No record has been retrieved.
             if (result.Total < 1)
                 return result;
 
             // Calculate the number of records should be skip over.
-            var skippedRecords = filter.Page*filter.Records;
+            var skippedRecords = filter.Page * filter.Records;
 
             // Execute query asynchronously.
             var resultsAsync = await query.Return(n => n.As<Doctor>())
@@ -412,6 +370,39 @@ namespace Shared.Repositories
                 .ResultsAsync;
 
             return resultAsync.SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Change doctor status by using id and role.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="status"></param>
+        public async void ModifyPersonStatus(string id, int status)
+        {
+
+            var query = _graphClient.Cypher.Match("(p:Person)")
+                .Where<IPerson>(p => p.Id == id)
+                .Set($"p.Status = {status}");
+
+            await query.ExecuteWithoutResultsAsync();
+            
+            /*
+             * Find user by using specific id
+             * - If status of user has been changed before, return 0
+             * - Person hasn't been found or not only unique record has been retrieved, return -1
+             * - Otherwise 1
+             */
+            //var query = _graphClient.Cypher.OptionalMatch("(p:Person)")
+            //    .Where<IPerson>(p => p.Id == id)
+            //    .With(
+            //        $"p,CASE WHEN COUNT(p) <> 1 THEN 0 ELSE 1 END as result")
+            //    .ForEach(
+            //        $"(temp in CASE WHEN result=1 THEN [1] else [] end | SET p.Status = {status})")
+            //        .Return(p => Return.As<int>("result"));
+
+            //// Retrieve result.
+            //var resultAsync = await query.ResultsAsync;
+            //return resultAsync.SingleOrDefault();
         }
 
         #endregion
@@ -487,7 +478,7 @@ namespace Shared.Repositories
         /// <param name="note"></param>
         public bool InitializePatientNote(string id, PersonalNote note)
         {
-            var transactClient = (ITransactionalGraphClient) _graphClient;
+            var transactClient = (ITransactionalGraphClient)_graphClient;
             using (var transactSession = transactClient.BeginTransaction())
             {
                 try
@@ -523,7 +514,7 @@ namespace Shared.Repositories
         /// <returns></returns>
         public bool InitializePatientAllergies(string id, Allergy allergy)
         {
-            var transactClient = (ITransactionalGraphClient) _graphClient;
+            var transactClient = (ITransactionalGraphClient)_graphClient;
             using (var transactSession = transactClient.BeginTransaction())
             {
                 try
@@ -560,7 +551,7 @@ namespace Shared.Repositories
         /// <returns></returns>
         public bool InitializePatientAddiction(string id, Addiction addiction)
         {
-            var transactClient = (ITransactionalGraphClient) _graphClient;
+            var transactClient = (ITransactionalGraphClient)_graphClient;
             using (var transactSession = transactClient.BeginTransaction())
             {
                 try
@@ -592,7 +583,7 @@ namespace Shared.Repositories
         #endregion
 
         #region Shared
-
+        
         /// <summary>
         ///     Create person synchronously with given parameter.
         /// </summary>
@@ -600,7 +591,7 @@ namespace Shared.Repositories
         public bool InitializePerson(IPerson info)
         {
             // Cast normal graph client to a transact client to do a transaction.
-            var transactClient = (ITransactionalGraphClient) _graphClient;
+            var transactClient = (ITransactionalGraphClient)_graphClient;
 
             using (var transaction = transactClient.BeginTransaction())
             {
@@ -696,7 +687,7 @@ namespace Shared.Repositories
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public async Task<bool> ModifyAccountStatus(string id, byte status)
+        public async Task<bool> ModifyPersonStatus(string id, byte status)
         {
             try
             {
@@ -790,19 +781,19 @@ namespace Shared.Repositories
 
             #region Money
 
-            if (filter.MoneyFrom != null)
+            if (filter.MinMoney != null)
             {
                 query = !isWhereUnavailable
-                    ? query.Where<IPerson>(n => n.Money >= filter.MoneyFrom)
-                    : query.AndWhere<IPerson>(n => n.Money >= filter.MoneyFrom);
+                    ? query.Where<IPerson>(n => n.Money >= filter.MinMoney)
+                    : query.AndWhere<IPerson>(n => n.Money >= filter.MinMoney);
                 isWhereUnavailable = true;
             }
 
-            if (filter.MoneyTo != null)
+            if (filter.MaxMoney != null)
             {
                 query = !isWhereUnavailable
-                    ? query.Where<IPerson>(n => n.Money <= filter.MoneyTo)
-                    : query.AndWhere<IPerson>(n => n.Money <= filter.MoneyTo);
+                    ? query.Where<IPerson>(n => n.Money <= filter.MaxMoney)
+                    : query.AndWhere<IPerson>(n => n.Money <= filter.MaxMoney);
                 isWhereUnavailable = true;
             }
 
@@ -860,6 +851,70 @@ namespace Shared.Repositories
             }
 
             #endregion
+        }
+
+        /// <summary>
+        ///     Check whether person exists or not.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        public IPerson FindPerson(string email, string password, byte? role)
+        {
+            // No email has been specified.
+            if (string.IsNullOrEmpty(email))
+                throw new Exception("Email is required.");
+
+            // Initialize match command
+            var query = _graphClient.Cypher
+                .Match("(n:Person)")
+                .Where<IPerson>(n => n.Email == email);
+
+            // Password filter if this property isn't empty.
+            if (!string.IsNullOrEmpty(password))
+                query = query.AndWhere<IPerson>(n => n.Password == password);
+
+            // Role filter if this property isn't empty.
+            if (role != null)
+                query = query.AndWhere<IPerson>(n => n.Role == role);
+
+            // Retrieve query result asynchronously.
+            var queryResult = query.Return(n => n.As<Person>()).Limit(1).Results;
+
+            // No result has been retrieved.
+            if (queryResult == null)
+                return null;
+
+            // Retrieve the first queried result.
+            var person = queryResult.FirstOrDefault();
+
+            if (person == null)
+                return null;
+
+            return person;
+        }
+
+        public async Task<Person> FindPerson(string id)
+        {
+            var query = _graphClient.Cypher
+                .Match("(n:Person)")
+                .Where<IPerson>(n => n.Id == id);
+            
+            // Retrieve query result asynchronously.
+            var resultAsync = await query.Return(n => n.As<Person>()).Limit(1).ResultsAsync;
+
+            // No result has been retrieved.
+            if (resultAsync == null)
+                return null;
+
+            // Retrieve the first queried result.
+            var person = resultAsync.FirstOrDefault();
+
+            if (person == null)
+                return null;
+
+            return person;
         }
 
         #endregion

@@ -157,27 +157,20 @@ namespace OlivesAdministration.Controllers
             #endregion
 
             #region Retrieve doctor from database
-
-            // Initialize doctor filter.
-            var filterDoctorViewModel = new FilterDoctorViewModel();
-            filterDoctorViewModel.Id = info.Id;
-
+            
             // Retrieve doctors by using specific id.
-            var results = await _repositoryAccount.FilterDoctorAsync(filterDoctorViewModel);
+            var results = await _repositoryAccount.FindDoctorById(info.Id);
 
             // Invalid result.
             if (results == null)
                 return Request.CreateResponse(HttpStatusCode.NotFound);
-
-            // To doctors list.
-            var doctors = results.Data;
-
+            
             // No doctor has been found.
-            if (doctors.Count < 1)
+            if (results.Count < 1)
                 return Request.CreateResponse(HttpStatusCode.NotFound);
 
             // More than one doctor has been found.
-            if (doctors.Count > 1)
+            if (results.Count > 1)
                 return Request.CreateResponse(HttpStatusCode.Conflict);
 
             #endregion
@@ -198,7 +191,7 @@ namespace OlivesAdministration.Controllers
 
             #region Information update
 
-            var doctor = (Doctor)doctors[0];
+            var doctor = results[0];
             doctor.FirstName = info.FirstName;
             doctor.LastName = info.LastName;
             doctor.Birthday = info.Birthday ?? Values.MinimumSelectionTime;
@@ -278,7 +271,11 @@ namespace OlivesAdministration.Controllers
             // Retrieve result from server.
             var results = await _repositoryAccount.FilterDoctorAsync(info);
 
-            return Request.CreateResponse(HttpStatusCode.OK, results);
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                Users = results.Data,
+                Total = results.Total
+            });
         }
     }
 }

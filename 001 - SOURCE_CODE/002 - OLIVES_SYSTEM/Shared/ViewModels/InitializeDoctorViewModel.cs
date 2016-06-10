@@ -10,7 +10,7 @@ namespace Shared.ViewModels
     public class InitializeDoctorViewModel : Doctor
     {
 #pragma warning disable 108, 114
-#pragma warning restore 108, 114
+
 
         [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "RequireFirstName")]
         public string FirstName { get; set; }
@@ -75,8 +75,9 @@ namespace Shared.ViewModels
         [Required(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "RequireIdentityCardIssuePlace")]
         [CoordinateValidate(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidIdentityCardIssuePlace")]
         public Coordinate IdentityCardIssuePlace { get; set; }
-        
+
         #endregion
 
+#pragma warning restore 108, 114
     }
 }

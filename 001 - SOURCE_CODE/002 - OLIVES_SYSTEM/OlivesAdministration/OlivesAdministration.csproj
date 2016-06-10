@@ -184,6 +184,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ParentController.cs" />
     <Compile Include="Controllers\PatientController.cs" />
+    <Compile Include="Controllers\PersonController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -191,6 +192,7 @@
     <Compile Include="ViewModels\EditDoctorViewModel.cs" />
     <Compile Include="ViewModels\FindPatientViewModel.cs" />
     <Compile Include="ViewModels\ModifyPatientStatusViewModel.cs" />
+    <Compile Include="ViewModels\ModifyStatusViewModel.cs" />
     <Compile Include="ViewModels\RetrieveDoctorViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

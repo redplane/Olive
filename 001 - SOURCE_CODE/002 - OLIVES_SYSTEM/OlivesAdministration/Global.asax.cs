@@ -42,6 +42,7 @@ namespace OlivesAdministration
             builder.RegisterType<AdminController>().InstancePerRequest();
             builder.RegisterType<DoctorController>().InstancePerRequest();
             builder.RegisterType<PatientController>().InstancePerRequest();
+            builder.RegisterType<PersonController>().InstancePerRequest();
 
             #endregion
 

@@ -52,7 +52,6 @@ namespace Shared.Interfaces
         #region Doctor
 
         /// <summary>
-        ///     s
         ///     Find doctor by using GUID.
         /// </summary>
         /// <param name="id"></param>
@@ -66,15 +65,14 @@ namespace Shared.Interfaces
         /// <param name="identityCardNo"></param>
         /// <returns></returns>
         Task<bool> IsDoctorAbleToRegister(string id, string identityCardNo);
-
-
+        
         /// <summary>
         ///     Filter doctors by using specific conditions.
         /// </summary>
         /// <param name="filter">Specific conditions</param>
         /// <returns></returns>
         Task<ResponsePersonFilter> FilterDoctorAsync(FilterDoctorViewModel filter);
-
+        
         #endregion
 
         #region Shared
@@ -108,7 +106,7 @@ namespace Shared.Interfaces
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        Task<bool> ModifyAccountStatus(string id, byte status);
+        Task<bool> ModifyPersonStatus(string id, byte status);
 
         /// <summary>
         ///     Filter person by using specific conditions.
@@ -132,6 +130,13 @@ namespace Shared.Interfaces
         /// <param name="role"></param>
         /// <returns></returns>
         IPerson FindPerson(string email, string password, byte? role);
+
+        /// <summary>
+        /// Find person by using specific id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<Person> FindPerson(string id);
         
         #endregion
     }

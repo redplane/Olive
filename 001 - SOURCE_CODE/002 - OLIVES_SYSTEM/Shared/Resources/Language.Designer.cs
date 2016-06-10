@@ -61,6 +61,24 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Account has been activated.
+        /// </summary>
+        public static string AccountHasBeenActivated {
+            get {
+                return ResourceManager.GetString("AccountHasBeenActivated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Account has been disabled.
+        /// </summary>
+        public static string AccountHasBeenDisabled {
+            get {
+                return ResourceManager.GetString("AccountHasBeenDisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Doctor doesn&apos;t exist.
         /// </summary>
         public static string DoctorDoesNotExist {
@@ -93,6 +111,15 @@ namespace Shared.Resources {
         public static string IdentityCardInUse {
             get {
                 return ResourceManager.GetString("IdentityCardInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is something wrong with server. Process cannot be completed.
+        /// </summary>
+        public static string InternalServerError {
+            get {
+                return ResourceManager.GetString("InternalServerError", resourceCulture);
             }
         }
         
@@ -309,6 +336,15 @@ namespace Shared.Resources {
         public static string InvalidPageRecords {
             get {
                 return ResourceManager.GetString("InvalidPageRecords", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Person is invalid.
+        /// </summary>
+        public static string InvalidPerson {
+            get {
+                return ResourceManager.GetString("InvalidPerson", resourceCulture);
             }
         }
         

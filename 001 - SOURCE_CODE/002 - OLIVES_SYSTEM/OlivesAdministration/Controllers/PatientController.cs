@@ -208,46 +208,7 @@ namespace OlivesAdministration.Controllers
             // Return status OK to client to notify edition is successful.
             return Request.CreateResponse(HttpStatusCode.OK, patients[0]);
         }
-
-        /// <summary>
-        ///     Disable patient account.
-        /// </summary>
-        /// <param name="patient"></param>
-        /// <returns></returns>
-        [Route("api/patient/status")]
-        [HttpGet]
-        [OlivesAuthorize(new[] {Roles.Admin})]
-        public async Task<HttpResponseMessage> Status([FromUri] ModifyPatientStatusViewModel patient)
-        {
-            #region ModelState validation
-
-            // Invalid model state.
-            if (!ModelState.IsValid)
-                return Request.CreateResponse(HttpStatusCode.BadRequest, ModelState);
-
-            #endregion
-
-            // Retrieve patients from database.
-            var patients = await _repositoryAccount.FindPatientById(patient.Id);
-
-            #region Result handling
-
-            // No patient has been found.
-            if (patients.Count < 1)
-                return Request.CreateResponse(HttpStatusCode.NotFound);
-
-            // More than one result has been retrieved.
-            if (patients.Count != 1)
-                return Request.CreateResponse(HttpStatusCode.Conflict);
-
-            #endregion
-
-            // Modify account status to disabled.
-            var result = await _repositoryAccount.ModifyAccountStatus(patient.Id, patient.Status);
-
-            return Request.CreateResponse(!result ? HttpStatusCode.NotModified : HttpStatusCode.OK);
-        }
-
+        
         [Route("api/patient/filter")]
         [HttpPost]
         [OlivesAuthorize(new[] {Roles.Admin})]
