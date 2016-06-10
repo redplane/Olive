@@ -3,6 +3,7 @@ using System.Configuration;
 using System.IO;
 using System.Web;
 using System.Web.Http;
+using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.WebApi;
 using log4net.Config;
@@ -24,6 +25,7 @@ namespace OlivesAdministration
         {
             #region Route configuration
 
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
             GlobalConfiguration.Configure(WebApiConfig.Register);
 
             #endregion

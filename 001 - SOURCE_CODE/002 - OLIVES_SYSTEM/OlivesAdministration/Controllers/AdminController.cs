@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using System.Web.Razor.Generator;
 using Shared.Constants;
 using Shared.Interfaces;
 using Shared.Resources;
@@ -37,12 +38,14 @@ namespace OlivesAdministration.Controllers
 
         #endregion
 
+        [HttpGet]
         [Route("admin/index")]
         public HttpResponseMessage Index()
         {
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             var viewPath = HttpContext.Current.Server.MapPath(@"~/Views/Index.html");
             var info = File.ReadAllText(viewPath);
+            
             response.Content = new StringContent(info);
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
             return response;
