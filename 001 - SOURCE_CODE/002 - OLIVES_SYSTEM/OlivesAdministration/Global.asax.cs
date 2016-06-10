@@ -25,8 +25,9 @@ namespace OlivesAdministration
         {
             #region Route configuration
 
-            RouteConfig.RegisterRoutes(RouteTable.Routes);
+            
             GlobalConfiguration.Configure(WebApiConfig.Register);
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
 
             #endregion
 

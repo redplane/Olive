@@ -48,7 +48,7 @@ namespace OlivesAdministration.Controllers
         /// <returns></returns>
         [HttpGet]
         [OlivesAuthorize(new[] { Roles.Admin })]
-        public async Task<HttpResponseMessage> Get(RetrieveDoctorViewModel info)
+        public async Task<HttpResponseMessage> Get([FromUri]RetrieveDoctorViewModel info)
         {
             #region ModelState validation
 
@@ -83,27 +83,27 @@ namespace OlivesAdministration.Controllers
 
             #endregion
 
-            return Request.CreateResponse(HttpStatusCode.OK, result);
+            return Request.CreateResponse(HttpStatusCode.OK, new { User = result });
         }
 
         /// <summary>
         ///     Access role : Admin
         ///     Description : Create an user account with given information.
         /// </summary>
-        /// <param name="info"></param>
+        /// <param name="person"></param>
         /// <returns></returns>
         [HttpPost]
         [OlivesAuthorize(new[] { Roles.Admin })]
         public async Task<HttpResponseMessage> Post([FromBody] InitializeDoctorViewModel person)
         {
             #region ModelState validation
-            
+
             // Invalid data validation.
             if (!ModelState.IsValid)
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-            
+
             #endregion
-            
+
             #region Information initialization
 
             // TODO: Create a person on chat system.
@@ -145,7 +145,7 @@ namespace OlivesAdministration.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPut]
-        [OlivesAuthorize(new[] {Roles.Admin})]
+        [OlivesAuthorize(new[] { Roles.Admin })]
         public async Task<HttpResponseMessage> Put(EditDoctorViewModel info)
         {
             #region ModelState validation
@@ -198,7 +198,7 @@ namespace OlivesAdministration.Controllers
 
             #region Information update
 
-            var doctor = (Doctor) doctors[0];
+            var doctor = (Doctor)doctors[0];
             doctor.FirstName = info.FirstName;
             doctor.LastName = info.LastName;
             doctor.Birthday = info.Birthday ?? Values.MinimumSelectionTime;
@@ -255,7 +255,7 @@ namespace OlivesAdministration.Controllers
         /// <returns></returns>
         [Route("api/doctor/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Roles.Admin})]
+        [OlivesAuthorize(new[] { Roles.Admin })]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterDoctorViewModel info)
         {
             // Information hasn't been initialize.
