@@ -273,4 +273,16 @@
   <data name="InternalServerError" xml:space="preserve">
     <value>There is something wrong with server. Process cannot be completed</value>
   </data>
+  <data name="InvalidMinWeight" xml:space="preserve">
+    <value>Min weight should be from {1} to {2} kg(s)</value>
+  </data>
+  <data name="InvalidMaxHeight" xml:space="preserve">
+    <value>Max height should be from {1} to {2} cms(s)</value>
+  </data>
+  <data name="InvalidMaxWeight" xml:space="preserve">
+    <value>Max weight should be from {1} to {2} kg(s)</value>
+  </data>
+  <data name="InvalidMinHeight" xml:space="preserve">
+    <value>Min height should be from {1} to {2} cm(s)</value>
+  </data>
 </root>

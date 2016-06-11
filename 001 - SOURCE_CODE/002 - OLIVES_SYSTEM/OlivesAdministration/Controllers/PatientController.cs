@@ -216,21 +216,27 @@ namespace OlivesAdministration.Controllers
         {
             #region ModelState validation
 
+            // Filter hasn't been initialized . Initialize it.
+            if (filter == null)
+            {
+                filter = new FilterPatientViewModel();
+                Validate(filter);
+            }
+
             // Invalid model state.
             if (!ModelState.IsValid)
                 // Because model is invalid. Treat this as invalid request.
-                return Request.CreateResponse(HttpStatusCode.BadRequest, ModelState);
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
 
             #endregion
 
             // Filter patient by using specific conditions.
             var results = await _repositoryAccount.FilterPatientAsync(filter);
-
-            // No record has been retrieved.
-            if (results == null || results.Total < 1 || results.Data.Count < 1)
-                return Request.CreateResponse(HttpStatusCode.NotFound);
-
-            return Request.CreateResponse(HttpStatusCode.OK, results);
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                Users = results.Data,
+                Total = results.Total
+            });
         }
     }
 }

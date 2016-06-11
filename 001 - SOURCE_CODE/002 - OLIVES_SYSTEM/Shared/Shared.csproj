@@ -118,7 +118,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\Language.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <SubType>Designer</SubType>
+      <LastGenOutput>Language.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Language.vi.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

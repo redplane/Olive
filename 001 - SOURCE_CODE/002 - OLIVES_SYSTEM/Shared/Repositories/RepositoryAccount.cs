@@ -218,7 +218,7 @@ namespace Shared.Repositories
 
             // Calculate the number of records should be skip over.
             var skippedRecords = filter.Page * filter.Records;
-
+            
             // Execute query asynchronously.
             var resultsAsync = await query.Return(n => n.As<Patient>())
                 .Skip(skippedRecords)

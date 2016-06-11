@@ -142,18 +142,12 @@ namespace OlivesAdministration
             #endregion
 
             #region Doctors creation
-
-            // TODO: Remove this code.
-            var doctorIds = new[]
-            {
-                "a43bd26af38045cfb87765a6460bc3be", "11b9190a803b46109a120630588de37a",
-                "b14e626e9e0f40f8824e415c57bdd942", "cdad3953299449d68c48ec3c015b78db"
-            };
-
-            for (var i = 0; i < doctorIds.Length; i++)
-            {
+            
+            // TODO: Remove this on production
+            for (var i = 0 ; i < 50; i++)
+            { 
                 var doctor = new Doctor();
-                doctor.Id = doctorIds[i];
+                doctor.Id = Guid.NewGuid().ToString("N");
                 doctor.LastName = $"LastName{i}";
                 doctor.FirstName = $"FirstName{i}";
                 doctor.Birthday = DateTime.Now.Ticks;
@@ -168,9 +162,10 @@ namespace OlivesAdministration
                 doctor.Rank = i;
                 doctor.Speciality = $"Speciality[{i}]";
                 doctor.Voters = i;
-
+                doctor.Status = (i > 25) ? AccountStatus.Inactive : AccountStatus.Active;
+                 
                 await graphClient.Cypher
-                    .Merge($"(n:Person {{ Id: '{doctorIds[i]}'}})")
+                    .Merge($"(n:Person {{ Id: '{doctor.Id}'}})")
                     .OnCreate()
                     .Set("n = {info}")
                     .Set("n = {info}")

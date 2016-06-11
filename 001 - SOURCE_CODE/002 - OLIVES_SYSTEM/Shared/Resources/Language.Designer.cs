@@ -295,6 +295,24 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Max height should be from {1} to {2} cms(s).
+        /// </summary>
+        public static string InvalidMaxHeight {
+            get {
+                return ResourceManager.GetString("InvalidMaxHeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max weight should be from {1} to {2} kg(s).
+        /// </summary>
+        public static string InvalidMaxWeight {
+            get {
+                return ResourceManager.GetString("InvalidMaxWeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Min birthday is invalid.
         /// </summary>
         public static string InvalidMinBirthday {
@@ -309,6 +327,24 @@ namespace Shared.Resources {
         public static string InvalidMinDate {
             get {
                 return ResourceManager.GetString("InvalidMinDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Min height should be from {1} to {2} cm(s).
+        /// </summary>
+        public static string InvalidMinHeight {
+            get {
+                return ResourceManager.GetString("InvalidMinHeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Min weight should be from {1} to {2} kg(s).
+        /// </summary>
+        public static string InvalidMinWeight {
+            get {
+                return ResourceManager.GetString("InvalidMinWeight", resourceCulture);
             }
         }
         
