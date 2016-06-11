@@ -11,6 +11,7 @@ using Shared.Constants;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
+using Shared.ViewModels;
 
 namespace OlivesAdministration.Controllers
 {
@@ -44,7 +45,7 @@ namespace OlivesAdministration.Controllers
         [Route("api/person/status")]
         [HttpPost]
         [OlivesAuthorize(new[] { Roles.Admin })]
-        public async Task<HttpResponseMessage> Status(ModifyStatusViewModel info)
+        public async Task<HttpResponseMessage> Status(EditStatusViewModel info)
         {
             #region Model validation
 
@@ -91,6 +92,49 @@ namespace OlivesAdministration.Controllers
                 Message = new[] { Language.AccountHasBeenDisabled }
             });
         }
+
+        [Route("api/person/statistic/status")]
+        [HttpPost]
+        [OlivesAuthorize(new[] { Roles.Admin })]
+        public async Task<HttpResponseMessage> Statistic([FromBody]StatusStatisticViewModel info)
+        {
+            #region Model validation
+
+            // Information hasn't been initialized. Initialize and validate it.
+            if (info == null)
+            {
+                info = new StatusStatisticViewModel();
+                Validate(info);
+            }
+
+            if (!ModelState.IsValid)
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+
+            #endregion
+
+            // Find the person from database using unique identity.
+            var summaryResult = await _repositoryAccount.SummarizePersonRole(info.Role);
+
+            // Patient can only be disabled or enabled.
+            if (info.Role == Roles.Patient)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    ActivePatients = summaryResult.Where(x => x.Status == AccountStatus.Active).Sum(x => x.Total),
+                    DisabledPatients = summaryResult.Where(x => x.Status == AccountStatus.Inactive).Sum(x => x.Total),
+                    Total = summaryResult.Sum(x => x.Total)
+                });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                ActiveDoctors = summaryResult.Where(x => x.Status == AccountStatus.Active).Sum(x => x.Total),
+                PendingDoctors = summaryResult.Where(x => x.Status == AccountStatus.Pending).Sum(x => x.Total),
+                DisabledDoctors = summaryResult.Where(x => x.Status == AccountStatus.Inactive).Sum(x => x.Total),
+                Total = summaryResult.Sum(x => x.Total)
+            });
+        }
+
 
         #endregion
     }

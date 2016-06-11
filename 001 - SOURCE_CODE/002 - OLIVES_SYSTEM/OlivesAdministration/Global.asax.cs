@@ -143,10 +143,10 @@ namespace OlivesAdministration
             #endregion
 
             #region Doctors creation
-            
+
             // TODO: Remove this on production
-            for (var i = 0 ; i < 50; i++)
-            { 
+            for (var i = 0; i < 50; i++)
+            {
                 var doctor = new Doctor();
                 doctor.Id = Guid.NewGuid().ToString("N");
                 doctor.LastName = $"LastName{i}";
@@ -164,7 +164,7 @@ namespace OlivesAdministration
                 doctor.Speciality = $"Speciality[{i}]";
                 doctor.Voters = i;
                 doctor.Status = (i > 25) ? AccountStatus.Inactive : AccountStatus.Active;
-                 
+
                 await graphClient.Cypher
                     .Merge($"(n:Person {{ Id: '{doctor.Id}'}})")
                     .OnCreate()

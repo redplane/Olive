@@ -909,6 +909,31 @@ namespace Shared.Repositories
             return person;
         }
 
+        /// <summary>
+        /// Statistic person base on conditions.
+        /// </summary>
+        /// <param name="role">Role of person</param>
+        /// <returns></returns>
+        public async Task<IList<StatusStatisticViewModel>> SummarizePersonRole(byte? role)
+        {
+            // Query initialization.
+            var query = _graphClient.Cypher.Match("(p:Person)");
+
+            // Role has been specified.
+            if (role != null)
+                query = query.Where<IPerson>(p => p.Role == role);
+
+            // Retrieve the statistic result asynchronously.
+            var resultAsync = await query.Return(p => new StatusStatisticViewModel()
+            {
+                Role = p.As<Person>().Role,
+                Status = p.As<Person>().Status,
+                Total = All.Count()
+            }).ResultsAsync;
+            
+            return resultAsync?.ToList();
+        }
+
         #endregion
     }
 }

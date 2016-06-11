@@ -457,6 +457,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Role should be : {1}.
+        /// </summary>
+        public static string InvalidRole {
+            get {
+                return ResourceManager.GetString("InvalidRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Speciality can only contains {0} character(s).
         /// </summary>
         public static string InvalidSpecializationLength {

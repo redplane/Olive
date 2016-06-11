@@ -315,4 +315,7 @@
   <data name="RecordIsNotUnique" xml:space="preserve">
     <value>Not only one record has been returned</value>
   </data>
+  <data name="InvalidRole" xml:space="preserve">
+    <value>Role should be : {1}</value>
+  </data>
 </root>

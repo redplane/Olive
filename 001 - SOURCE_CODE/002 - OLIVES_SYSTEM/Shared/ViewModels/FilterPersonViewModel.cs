@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Shared.Attributes;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Resources;
 
 namespace Shared.ViewModels
@@ -90,7 +91,7 @@ namespace Shared.ViewModels
         [Range(Constants.Gender.Male, Constants.Gender.Female, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidGender")]
         public byte? Role { get; set; }
 
-        [IntCompare(FieldLength.PageIndexMin, Comparision = 1, ErrorMessageResourceType = typeof(Language),
+        [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language),
             ErrorMessageResourceName = "InvalidPageIndex")]
         public int Page { get; set; }
 

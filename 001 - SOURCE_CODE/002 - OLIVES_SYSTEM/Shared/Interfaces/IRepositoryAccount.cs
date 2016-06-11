@@ -137,7 +137,14 @@ namespace Shared.Interfaces
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Person> FindPerson(string id);
-        
+
+        /// <summary>
+        /// Statistic people by using role.
+        /// </summary>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        Task<IList<StatusStatisticViewModel>> SummarizePersonRole(byte? role);
+
         #endregion
     }
 }
