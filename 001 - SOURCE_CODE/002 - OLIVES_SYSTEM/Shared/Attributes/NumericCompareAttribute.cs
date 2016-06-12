@@ -13,7 +13,7 @@ namespace Shared.Attributes
         #region Constructor
 
         /// <summary>
-        /// Initialize an instance of NumericCompareAttribute class with long milestone.
+        ///     Initialize an instance of NumericCompareAttribute class with long milestone.
         /// </summary>
         /// <param name="milestone"></param>
         public NumericCompareAttribute(long milestone)
@@ -22,7 +22,7 @@ namespace Shared.Attributes
         }
 
         /// <summary>
-        /// Initialize an instance of NumericCompareAttribute class with integer milestone.
+        ///     Initialize an instance of NumericCompareAttribute class with integer milestone.
         /// </summary>
         /// <param name="milestone"></param>
         public NumericCompareAttribute(int milestone)
@@ -31,7 +31,7 @@ namespace Shared.Attributes
         }
 
         /// <summary>
-        /// Initialize an instance of NumericCompareAttribute class with byte milestone.
+        ///     Initialize an instance of NumericCompareAttribute class with byte milestone.
         /// </summary>
         /// <param name="milestone"></param>
         public NumericCompareAttribute(byte milestone)
@@ -126,7 +126,7 @@ namespace Shared.Attributes
         }
 
         /// <summary>
-        /// Override format error message to support multi parameters and multilingual.
+        ///     Override format error message to support multi parameters and multilingual.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>

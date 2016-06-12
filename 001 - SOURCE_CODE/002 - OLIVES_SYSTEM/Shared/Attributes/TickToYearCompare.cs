@@ -45,7 +45,7 @@ namespace Shared.Attributes
             // Convert value to int.
             var ticks = (long) value;
             var year = new DateTime(ticks).Year;
-            
+
             switch (Comparision)
             {
                 case -2:
@@ -62,30 +62,30 @@ namespace Shared.Attributes
                 {
                     if (year > Milestone)
                     {
-                            return
-                                new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName),
-                                    Milestone));
-                        }
+                        return
+                            new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName),
+                                Milestone));
+                    }
                     break;
                 }
                 case 0: // Value must be equal to milestone.
                 {
                     if (year != Milestone)
                     {
-                            return
-                                new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName),
-                                    Milestone));
-                        }
+                        return
+                            new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName),
+                                Milestone));
+                    }
                     break;
                 }
                 case 1: // Value must be larger than or equal to milestone.
                 {
                     if (year < Milestone)
                     {
-                            return
-                                new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName),
-                                    Milestone));
-                        }
+                        return
+                            new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName),
+                                Milestone));
+                    }
                     break;
                 }
                 case 2: // Value must be larger than milestone.
@@ -95,7 +95,6 @@ namespace Shared.Attributes
                         return
                             new ValidationResult(string.Format(FormatErrorMessage(validationContext.DisplayName),
                                 Milestone));
-
                     }
                     break;
                 }

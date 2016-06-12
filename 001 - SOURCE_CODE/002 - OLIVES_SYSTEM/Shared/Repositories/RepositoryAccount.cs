@@ -331,6 +331,12 @@ namespace Shared.Repositories
             return result;
         }
 
+        /// <summary>
+        /// This function is for initializing a doctor with an identity card.
+        /// </summary>
+        /// <param name="doctor"></param>
+        /// <param name="identityCard"></param>
+        /// <returns></returns>
         public async Task<long> InitializeDoctor(Doctor doctor, IdentityCard identityCard)
         {
             // Query initialization.

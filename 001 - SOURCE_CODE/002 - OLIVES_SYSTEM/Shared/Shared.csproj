@@ -61,7 +61,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\CoordinateValidateAttribute.cs" />
+    <Compile Include="Attributes\DateTimeCompareAttribute.cs" />
     <Compile Include="Attributes\InNumericArrayAttribute.cs" />
+    <Compile Include="Attributes\PropertyValidationAttribute.cs" />
     <Compile Include="Attributes\TickToYearCompare.cs" />
     <Compile Include="Attributes\NumericCompareAttribute.cs" />
     <Compile Include="Attributes\RegexMatchAttribute.cs" />
@@ -74,6 +76,7 @@
     <Compile Include="Constants\Values.cs" />
     <Compile Include="Enumerations\Comparision.cs" />
     <Compile Include="Interfaces\IDbSetting.cs" />
+    <Compile Include="Interfaces\IEmailService.cs" />
     <Compile Include="Interfaces\IPagination.cs" />
     <Compile Include="Interfaces\IPerson.cs" />
     <Compile Include="Interfaces\IRepositoryAccount.cs" />
@@ -110,6 +113,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Language.vi.resx</DependentUpon>
     </Compile>
+    <Compile Include="Services\EmailService.cs" />
     <Compile Include="ViewModels\FilterPatientViewModel.cs" />
     <Compile Include="ViewModels\ResponsePersonCode.cs" />
     <Compile Include="ViewModels\StatusStatisticViewModel.cs" />
