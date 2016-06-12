@@ -21,7 +21,7 @@ namespace Shared.Repositories
         /// <summary>
         ///     Instance which connects to neo4j database.
         /// </summary>
-        private readonly GraphClient _graphClient;
+        private readonly ITransactionalGraphClient _graphClient;
 
         #endregion
 
@@ -31,7 +31,7 @@ namespace Shared.Repositories
         ///     Initialize an instance of RepositoryAccount class.
         /// </summary>
         /// <param name="graphClient"></param>
-        public RepositoryAccount(GraphClient graphClient)
+        public RepositoryAccount(ITransactionalGraphClient graphClient)
         {
             _graphClient = graphClient;
         }

@@ -164,7 +164,9 @@ namespace Olives.Controllers
             account.Role = Roles.Patient;
             account.Status = AccountStatus.Active;
             account.Role = info.Role;
-            account.Status = AccountStatus.Pending;
+
+            // TODO : Change status to Pending.
+            account.Status = AccountStatus.Active;
             
             #region Initialize patient
 
