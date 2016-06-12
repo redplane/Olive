@@ -91,7 +91,7 @@ namespace OlivesAdministration
 
             #endregion
 
-            InitializeDemoData(graphClient);
+            //InitializeDemoData(graphClient);
 
             XmlConfigurator.Configure();
         }

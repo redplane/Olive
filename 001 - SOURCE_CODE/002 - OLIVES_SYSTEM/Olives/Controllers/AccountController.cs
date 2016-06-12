@@ -7,7 +7,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using Neo4jClient;
+using log4net;
 using Olives.ViewModels;
 using Shared.Constants;
 using Shared.Interfaces;
@@ -27,6 +27,11 @@ namespace Olives.Controllers
         /// </summary>
         private readonly IRepositoryAccount _repositoryAccount;
 
+        /// <summary>
+        /// Instance of module which is used for logging.
+        /// </summary>
+        private readonly ILog _log;
+
         #endregion
 
         #region Constructors
@@ -35,9 +40,10 @@ namespace Olives.Controllers
         ///     Initialize an instance of AccountController with Dependency injections.
         /// </summary>
         /// <param name="repositoryAccount"></param>
-        public AccountController(IRepositoryAccount repositoryAccount)
+        public AccountController(IRepositoryAccount repositoryAccount, ILog log)
         {
             _repositoryAccount = repositoryAccount;
+            _log = log;
         }
 
         #endregion
@@ -67,7 +73,10 @@ namespace Olives.Controllers
         {
             // Invalid model state.
             if (!ModelState.IsValid)
+            {
+                _log.Error("Invalid login request parameters");
                 return Request.CreateResponse(HttpStatusCode.BadGateway, RetrieveValidationErrors(ModelState));
+            }
 
             // Pass parameter to login function. 
             var result = await _repositoryAccount.LoginAsync(loginViewModel);
@@ -75,12 +84,14 @@ namespace Olives.Controllers
             // If no result return, that means no account.
             if (result == null)
             {
+                _log.Error($"No record has been found with {loginViewModel.Email} - {loginViewModel.Password} - {loginViewModel.Role} ");
                 ModelState.AddModelError("Credential", Language.InvalidLoginInfo);
                 return Request.CreateResponse(HttpStatusCode.NotFound, RetrieveValidationErrors(ModelState));
             }
             // Requested user is not a patient or a doctor.
             if (result.Role != Roles.Patient && result.Role != Roles.Doctor)
             {
+                _log.Error($"{loginViewModel.Email} is a admin, therefore, it cannot be used here.");
                 ModelState.AddModelError("Credential", Language.InvalidLoginInfo);
                 return Request.CreateResponse(HttpStatusCode.NotFound, RetrieveValidationErrors(ModelState));
             }
@@ -89,11 +100,15 @@ namespace Olives.Controllers
             {
                 // Tell doctor to contact admin for account verification.
                 if (result.Role == Roles.Doctor)
+                {
+                    _log.Error($"Access is forbidden because {loginViewModel.Email} is waiting for admin confirmation");
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
                         Errors = new[] {Language.DoctorAccountPending}
                     });
+                }
 
+                _log.Error($"Access is forbidden because {loginViewModel.Email} is waiting for admin confirmation");
                 // Tell patient to access his/her email to verify the account.
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
@@ -101,6 +116,7 @@ namespace Olives.Controllers
                 });
             }
 
+            _log.Info($"{loginViewModel.Email} has logged in successfully");
             return Request.CreateResponse(HttpStatusCode.OK, new { User = result });
         }
 

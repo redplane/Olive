@@ -10,6 +10,7 @@ using Neo4jClient;
 using Newtonsoft.Json;
 using Olives.Attributes;
 using Olives.Controllers;
+using Olives.Module;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Repositories;
@@ -76,9 +77,16 @@ namespace Olives
                 .As<IRepositoryAccount>()
                 .OnActivating(e => e.ReplaceInstance(repositoryAccount))
                 .SingleInstance();
-
+            
+            // OlivesAuthorize attribute registration (to access dependency)
             builder.RegisterType<OlivesAuthorize>().PropertiesAutowired();
+
+            // Log4net module registration (this is for logging)
+            builder.RegisterModule<Log4NetModule>();
+
+            // Web api dependency registration.
             builder.RegisterWebApiFilterProvider(GlobalConfiguration.Configuration);
+            
             var container = builder.Build();
             GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
 
