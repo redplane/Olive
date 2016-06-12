@@ -63,7 +63,6 @@
     <Compile Include="Attributes\CoordinateValidateAttribute.cs" />
     <Compile Include="Attributes\InNumericArrayAttribute.cs" />
     <Compile Include="Attributes\TickToYearCompare.cs" />
-    <Compile Include="Attributes\IntsMatchAttribute.cs" />
     <Compile Include="Attributes\NumericCompareAttribute.cs" />
     <Compile Include="Attributes\RegexMatchAttribute.cs" />
     <Compile Include="Constants\AccountStatus.cs" />
@@ -78,6 +77,7 @@
     <Compile Include="Interfaces\IPagination.cs" />
     <Compile Include="Interfaces\IPerson.cs" />
     <Compile Include="Interfaces\IRepositoryAccount.cs" />
+    <Compile Include="Models\ActivationCode.cs" />
     <Compile Include="Models\Connections\HasAppointment.cs" />
     <Compile Include="Models\Connections\ProvidesTreatment.cs" />
     <Compile Include="Models\DbSetting.cs" />
@@ -86,6 +86,7 @@
     <Compile Include="Models\Nodes\Addiction.cs" />
     <Compile Include="Models\Nodes\Allergy.cs" />
     <Compile Include="Models\Coordinate.cs" />
+    <Compile Include="Models\Nodes\Appointment.cs" />
     <Compile Include="Models\Nodes\Doctor.cs" />
     <Compile Include="Models\Nodes\IdentityCard.cs" />
     <Compile Include="Models\Nodes\InternalMedicine.cs" />
@@ -110,6 +111,7 @@
       <DependentUpon>Language.vi.resx</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\FilterPatientViewModel.cs" />
+    <Compile Include="ViewModels\ResponsePersonCode.cs" />
     <Compile Include="ViewModels\StatusStatisticViewModel.cs" />
     <Compile Include="ViewModels\InitializeDoctorViewModel.cs" />
     <Compile Include="ViewModels\FilterDoctorViewModel.cs" />

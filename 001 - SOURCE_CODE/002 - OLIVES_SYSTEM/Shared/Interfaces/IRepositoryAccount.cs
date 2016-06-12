@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Neo4jClient;
+using Shared.Models;
 using Shared.Models.Nodes;
 using Shared.ViewModels;
 
@@ -85,6 +86,14 @@ namespace Shared.Interfaces
         Task<Node<string>> InitializePerson(IPerson info);
 
         /// <summary>
+        /// Initialize a person attached with activation code.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        Task<ResponsePersonCode> InitializePerson(IPerson info, ActivationCode code);
+
+        /// <summary>
         ///     Update person information by using id for search.
         /// </summary>
         /// <param name="id"></param>
@@ -106,7 +115,7 @@ namespace Shared.Interfaces
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        Task<bool> ModifyPersonStatus(string id, byte status);
+        Task<bool> EditPersonStatus(string id, byte status);
 
         /// <summary>
         ///     Filter person by using specific conditions.

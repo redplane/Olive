@@ -8,6 +8,7 @@ using Neo4jClient.Transactions;
 using Shared.Constants;
 using Shared.Helpers;
 using Shared.Interfaces;
+using Shared.Models;
 using Shared.Models.Nodes;
 using Shared.ViewModels;
 
@@ -613,6 +614,43 @@ namespace Shared.Repositories
         }
 
         /// <summary>
+        ///     Create person synchronously with given parameter.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="code">Account activation code</param>
+        public async Task<ResponsePersonCode> InitializePerson(IPerson info, ActivationCode code)
+        {
+            try
+            {
+                var query = _graphClient.Cypher
+                    .Merge($"(p:Person {{Id : '{info.Id}'}})-[:HAS_ACTIVATION_CODE]->(a:ActivationCode)")
+                    .DetachDelete("a")
+                    .Set("p = {person}")
+                    .WithParam("person", info)
+                    .Create("(p)-[:HAS_ACTIVATION_CODE]->(c:ActivationCode {code}")
+                    .WithParam("code", code)
+                    .Return((p, c) => 
+                    new ResponsePersonCode()
+                    {
+                        Person = p.As<Person>(),
+                        Code = c.As<ActivationCode>()
+                    });
+
+                // Do the query and receive the result.
+                var resultAsync = await query.ResultsAsync;
+
+                // Retrieve the first node.
+                var result = resultAsync.FirstOrDefault();
+
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
         ///     Update personal information by search user GUID.
         /// </summary>
         /// <param name="id"></param>
@@ -679,7 +717,7 @@ namespace Shared.Repositories
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public async Task<bool> ModifyPersonStatus(string id, byte status)
+        public async Task<bool> EditPersonStatus(string id, byte status)
         {
             try
             {
@@ -887,6 +925,11 @@ namespace Shared.Repositories
             return person;
         }
 
+        /// <summary>
+        /// Find person by using GUID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<Person> FindPerson(string id)
         {
             var query = _graphClient.Cypher

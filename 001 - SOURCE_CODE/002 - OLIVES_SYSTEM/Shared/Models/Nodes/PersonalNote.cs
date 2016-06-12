@@ -7,7 +7,7 @@ namespace Shared.Models.Nodes
 {
     public class PersonalNote
     {
-        [RegexMatch(Regexes.PersonalNoteId, ErrorMessageResourceType = typeof (Language),
+        [RegexMatch(Regexes.PersonalNoteIdentity, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidNoteId")]
         public string Id { get; set; }
 

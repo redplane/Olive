@@ -69,8 +69,9 @@ namespace OlivesAdministration.Controllers
             }
 
             // Change account status and retrieve the process result.
-            var result = await _repositoryAccount.ModifyPersonStatus(info.Id, info.Status);
+            var result = await _repositoryAccount.EditPersonStatus(info.Id, info.Status);
 
+            // Error happens while changing account status.
             if (!result)
             {
                 // Response error construction.
@@ -114,23 +115,12 @@ namespace OlivesAdministration.Controllers
 
             // Find the person from database using unique identity.
             var summaryResult = await _repositoryAccount.SummarizePersonRole(info.Role);
-
-            // Patient can only be disabled or enabled.
-            if (info.Role == Roles.Patient)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new
-                {
-                    ActivePatients = summaryResult.Where(x => x.Status == AccountStatus.Active).Sum(x => x.Total),
-                    DisabledPatients = summaryResult.Where(x => x.Status == AccountStatus.Inactive).Sum(x => x.Total),
-                    Total = summaryResult.Sum(x => x.Total)
-                });
-            }
-
+            
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                ActiveDoctors = summaryResult.Where(x => x.Status == AccountStatus.Active).Sum(x => x.Total),
-                PendingDoctors = summaryResult.Where(x => x.Status == AccountStatus.Pending).Sum(x => x.Total),
-                DisabledDoctors = summaryResult.Where(x => x.Status == AccountStatus.Inactive).Sum(x => x.Total),
+                Actives = summaryResult.Where(x => x.Status == AccountStatus.Active).Sum(x => x.Total),
+                Pendings = summaryResult.Where(x => x.Status == AccountStatus.Pending).Sum(x => x.Total),
+                Disables = summaryResult.Where(x => x.Status == AccountStatus.Inactive).Sum(x => x.Total),
                 Total = summaryResult.Sum(x => x.Total)
             });
         }

@@ -93,7 +93,7 @@ namespace OlivesAdministration.Controllers
         /// <returns></returns>
         [HttpPost]
         [OlivesAuthorize(new[] { Roles.Admin })]
-        public async Task<HttpResponseMessage> Post([FromBody] InitializePatientViewModel info)
+        public async Task<HttpResponseMessage> Post([FromBody] InitializePersonViewModel info)
         {
             #region ModelState validation
 
@@ -101,13 +101,28 @@ namespace OlivesAdministration.Controllers
             if (info == null)
             {
                 // Initialize the default instance and do the validation.
-                info = new InitializePatientViewModel();
+                info = new InitializePersonViewModel();
                 Validate(info);
             }
 
             // Invalid model state.
             if (!ModelState.IsValid)
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+
+            #endregion
+
+            #region Database record validation
+
+            // Check whether email has been used or not.
+            var person = _repositoryAccount.FindPerson(info.Email, null, null);
+            if (person != null)
+            {
+                var responseError = new ResponseErrror();
+                responseError.Errors = new List<string>();
+                responseError.Errors.Add(Language.EmailExistInSystem);
+
+                return Request.CreateResponse(HttpStatusCode.Conflict, responseError);
+            }
 
             #endregion
 
@@ -122,13 +137,10 @@ namespace OlivesAdministration.Controllers
             patient.Email = info.Email;
             patient.Password = info.Password;
             patient.Phone = info.Phone;
-            patient.Money = info.Money;
+            patient.Money = 0;
             patient.Created = DateTime.Now.Ticks;
             patient.Role = Roles.Patient;
             patient.Status = AccountStatus.Active;
-            patient.Height = info.Height;
-            patient.Weight = info.Weight;
-            patient.Anamneses = info.Anamneses;
 
             #endregion
 

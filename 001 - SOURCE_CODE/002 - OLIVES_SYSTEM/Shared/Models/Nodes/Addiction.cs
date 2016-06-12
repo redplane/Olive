@@ -2,10 +2,24 @@
 {
     public class Addiction
     {
-        public string Agent { get; set; }
+        /// <summary>
+        /// Which agent causes patient be addictive with.
+        /// </summary>
+        public string Cause { get; set; }
+        
+        /// <summary>
+        /// Note of addiction.
+        /// </summary>
+        public string Note { get; set; }
 
-        public long From { get; set; }
+        /// <summary>
+        /// Time when note was created.
+        /// </summary>
+        public long Created { get; set; }
 
-        public long To { get; set; }
+        /// <summary>
+        /// Time when note was lastly modified.
+        /// </summary>
+        public long LastModified { get; set; }
     }
 }

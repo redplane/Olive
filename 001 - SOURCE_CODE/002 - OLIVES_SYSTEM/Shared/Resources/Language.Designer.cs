@@ -61,6 +61,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please access your email for account verification.
+        /// </summary>
+        public static string AccessEmailForVerification {
+            get {
+                return ResourceManager.GetString("AccessEmailForVerification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Account has been activated.
         /// </summary>
         public static string AccountHasBeenActivated {
@@ -79,6 +88,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please contact administrators to verify this account.
+        /// </summary>
+        public static string DoctorAccountPending {
+            get {
+                return ResourceManager.GetString("DoctorAccountPending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Doctor doesn&apos;t exist.
         /// </summary>
         public static string DoctorDoesNotExist {
@@ -93,6 +111,15 @@ namespace Shared.Resources {
         public static string DoctorExisted {
             get {
                 return ResourceManager.GetString("DoctorExisted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email does exist in system..
+        /// </summary>
+        public static string EmailExistInSystem {
+            get {
+                return ResourceManager.GetString("EmailExistInSystem", resourceCulture);
             }
         }
         
@@ -520,6 +547,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please access your email to verify this account.
+        /// </summary>
+        public static string PatientAccountPending {
+            get {
+                return ResourceManager.GetString("PatientAccountPending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not only one record has been returned.
         /// </summary>
         public static string RecordIsNotUnique {
@@ -660,6 +696,15 @@ namespace Shared.Resources {
         public static string RequireSpecialization {
             get {
                 return ResourceManager.GetString("RequireSpecialization", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please wait for admin confirmation.
+        /// </summary>
+        public static string WaitForAdminConfirmation {
+            get {
+                return ResourceManager.GetString("WaitForAdminConfirmation", resourceCulture);
             }
         }
     }

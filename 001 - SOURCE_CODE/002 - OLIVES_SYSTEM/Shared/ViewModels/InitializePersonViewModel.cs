@@ -32,8 +32,7 @@ namespace Shared.ViewModels
         /// <summary>
         ///     Person gender.
         /// </summary>
-        [Range(Constants.Gender.Male, Constants.Gender.Female, ErrorMessageResourceType = typeof(Language),
-            ErrorMessageResourceName = "InvalidGender")]
+        [InNumericArray(new [] {Constants.Gender.Female, Constants.Gender.Male}, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidGender")]
         public byte Gender { get; set; }
 
         /// <summary>
@@ -49,6 +48,7 @@ namespace Shared.ViewModels
         /// <summary>
         ///     Password of this account.
         /// </summary>
+        [Required(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "RequirePassword")]
         [MinLength(Values.MinPasswordLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "MinLengthPassword")]
         [MaxLength(Values.MaxPasswordLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "MaxLengthPassword")]
         [RegexMatch(Regexes.Password, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "RegexPassword")]
@@ -59,7 +59,6 @@ namespace Shared.ViewModels
         /// </summary>
         [RegexMatch(Regexes.Phone, ErrorMessageResourceType = typeof(Language),
             ErrorMessageResourceName = "InvalidPhone")]
-        
         public string Phone { get; set; }
     }
 }

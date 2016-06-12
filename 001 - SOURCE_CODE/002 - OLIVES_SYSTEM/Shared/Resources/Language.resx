@@ -318,4 +318,19 @@
   <data name="InvalidRole" xml:space="preserve">
     <value>Role should be : {1}</value>
   </data>
+  <data name="EmailExistInSystem" xml:space="preserve">
+    <value>Email does exist in system.</value>
+  </data>
+  <data name="AccessEmailForVerification" xml:space="preserve">
+    <value>Please access your email for account verification</value>
+  </data>
+  <data name="DoctorAccountPending" xml:space="preserve">
+    <value>Please contact administrators to verify this account</value>
+  </data>
+  <data name="PatientAccountPending" xml:space="preserve">
+    <value>Please access your email to verify this account</value>
+  </data>
+  <data name="WaitForAdminConfirmation" xml:space="preserve">
+    <value>Please wait for admin confirmation</value>
+  </data>
 </root>

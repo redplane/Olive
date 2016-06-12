@@ -91,7 +91,7 @@ namespace OlivesAdministration
 
             #endregion
 
-            //InitializeDemoData(graphClient);
+            InitializeDemoData(graphClient);
 
             XmlConfigurator.Configure();
         }
@@ -188,7 +188,7 @@ namespace OlivesAdministration
                 patient.Birthday = DateTime.Now.Ticks;
                 patient.Gender = Gender.Male;
                 patient.Email = $"linhdse031{i}@fpt.edu.vn";
-                patient.Password = $"PatientPassword{i}";
+                patient.Password = $"PatientPassword";
                 patient.Phone = $"01234567{i}";
                 patient.Money = i;
                 patient.Created = DateTime.Now.Ticks;
