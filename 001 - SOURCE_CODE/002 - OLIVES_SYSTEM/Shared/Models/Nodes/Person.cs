@@ -40,7 +40,7 @@ namespace Shared.Models.Nodes
         /// <summary>
         ///     Birthday (ticks).
         /// </summary>
-        [TickToYearCompare(Values.MinimumAllowedYear, Comparision = 1, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidBirthyear")]
+        //[TickToYearCompare(Values.MinimumAllowedYear, Comparision = 1, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidBirthyear")]
         public long? Birthday { get; set; }
 
         /// <summary>

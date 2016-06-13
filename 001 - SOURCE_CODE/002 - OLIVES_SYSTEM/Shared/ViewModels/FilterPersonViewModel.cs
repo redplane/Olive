@@ -28,13 +28,13 @@ namespace Shared.ViewModels
         /// <summary>
         ///     Time after which account was modified.
         /// </summary>
-        [TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMinLastModified")]
+        //[TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMinLastModified")]
         public long? MinLastModified { get; set; }
 
         /// <summary>
         ///     Time before which account had been modified.
         /// </summary>
-        [TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMaxLastModified")]
+        //[TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMaxLastModified")]
         public long? MaxLastModified { get; set; }
 
         /// <summary>
@@ -54,13 +54,13 @@ namespace Shared.ViewModels
         /// <summary>
         ///     Date after that person was born
         /// </summary>
-        [TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMinBirthday")]
+        //[TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMinBirthday")]
         public long? MinBirthday { get; set; }
 
         /// <summary>
         ///     Date before which that person had been born
         /// </summary>
-        [TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMaxBirthday")]
+        //[TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMaxBirthday")]
         public long? MaxBirthday { get; set; }
 
         /// <summary>
@@ -78,10 +78,10 @@ namespace Shared.ViewModels
         /// </summary>
         public double? MaxMoney { get; set; }
         
-        [TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMinCreated")]
+        //[TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMinCreated")]
         public long? MinCreated { get; set; }
 
-        [TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMaxCreated")]
+        //[TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMaxCreated")]
         public long? MaxCreated { get; set; }
 
         /// <summary>

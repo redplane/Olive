@@ -69,7 +69,7 @@ namespace Shared.ViewModels
             ErrorMessageResourceName = "InvalidIdentityCard")]
         public string IdentityCardNo { get; set; }
         
-        [TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidIdentityCardIssueDate")]
+        //[TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidIdentityCardIssueDate")]
         public long IdentityCardIssueDate { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "RequireIdentityCardIssuePlace")]
