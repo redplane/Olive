@@ -73,7 +73,7 @@ namespace Shared.Attributes
                 return ValidationResult.Success;
 
             // Convert value to int.
-            var convertedValue = (long) value;
+            var convertedValue = Convert.ToInt64(value);
 
             switch (Comparision)
             {

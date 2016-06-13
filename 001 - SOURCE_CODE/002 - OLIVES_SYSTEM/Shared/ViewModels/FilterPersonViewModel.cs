@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
@@ -94,7 +95,7 @@ namespace Shared.ViewModels
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language),
             ErrorMessageResourceName = "InvalidPageIndex")]
         public int Page { get; set; }
-
+        
         [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidPageRecords")]
         public int Records { get; set; } = FieldLength.RecordMax;
