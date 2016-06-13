@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Shared.Attributes;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Resources;
 
 namespace Shared.ViewModels
@@ -22,11 +23,11 @@ namespace Shared.ViewModels
         [MaxLength(FieldLength.LastNameMaxLength, ErrorMessageResourceType = typeof(Language),
             ErrorMessageResourceName = "InvalidLastName")]
         public string LastName { get; set; }
-        
+
         /// <summary>
         ///     Birthday (ticks).
         /// </summary>
-        //[TickToYearCompare(Values.MinimumAllowedYear, Comparision = 1, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidBirthyear")]
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public long? Birthday { get; set; }
 
         /// <summary>

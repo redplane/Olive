@@ -700,6 +700,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} must be after {1}.
+        /// </summary>
+        public static string ValueMustBeAfterYear {
+            get {
+                return ResourceManager.GetString("ValueMustBeAfterYear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please wait for admin confirmation.
         /// </summary>
         public static string WaitForAdminConfirmation {

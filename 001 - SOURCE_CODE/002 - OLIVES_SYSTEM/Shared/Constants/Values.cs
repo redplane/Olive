@@ -1,10 +1,10 @@
-﻿namespace Shared.Constants
+﻿using System;
+using System.Dynamic;
+
+namespace Shared.Constants
 {
     public class Values
     {
-        public const long MinimumSelectionTime = -2177452801;
-
-
         /// <summary>
         ///     Minimum body temperature (celsius degrees)
         /// </summary>
@@ -46,6 +46,5 @@
         /// The longest length password can be.
         /// </summary>
         public const int MaxPasswordLength = 16;
-
     }
 }

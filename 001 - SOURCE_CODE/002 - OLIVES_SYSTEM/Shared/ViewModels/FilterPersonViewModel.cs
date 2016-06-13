@@ -28,13 +28,13 @@ namespace Shared.ViewModels
         /// <summary>
         ///     Time after which account was modified.
         /// </summary>
-        //[TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMinLastModified")]
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public long? MinLastModified { get; set; }
 
         /// <summary>
         ///     Time before which account had been modified.
         /// </summary>
-        //[TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMaxLastModified")]
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public long? MaxLastModified { get; set; }
 
         /// <summary>
@@ -54,13 +54,13 @@ namespace Shared.ViewModels
         /// <summary>
         ///     Date after that person was born
         /// </summary>
-        //[TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMinBirthday")]
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public long? MinBirthday { get; set; }
 
         /// <summary>
         ///     Date before which that person had been born
         /// </summary>
-        //[TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMaxBirthday")]
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public long? MaxBirthday { get; set; }
 
         /// <summary>
@@ -77,11 +77,11 @@ namespace Shared.ViewModels
         /// Amount of money user's must be lower than.
         /// </summary>
         public double? MaxMoney { get; set; }
-        
-        //[TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMinCreated")]
+
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public long? MinCreated { get; set; }
 
-        //[TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMaxCreated")]
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public long? MaxCreated { get; set; }
 
         /// <summary>

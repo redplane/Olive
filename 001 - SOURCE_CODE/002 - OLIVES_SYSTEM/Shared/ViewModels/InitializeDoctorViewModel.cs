@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Shared.Attributes;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Models;
 using Shared.Models.Nodes;
 using Shared.Resources;
@@ -68,8 +69,8 @@ namespace Shared.ViewModels
         [RegexMatch(Regexes.IdentityCard, ErrorMessageResourceType = typeof(Language),
             ErrorMessageResourceName = "InvalidIdentityCard")]
         public string IdentityCardNo { get; set; }
-        
-        //[TickToYearCompare(Values.MinimumAllowedYear, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidIdentityCardIssueDate")]
+
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public long IdentityCardIssueDate { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "RequireIdentityCardIssuePlace")]

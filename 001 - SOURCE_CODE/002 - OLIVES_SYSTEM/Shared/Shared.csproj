@@ -62,9 +62,9 @@
   <ItemGroup>
     <Compile Include="Attributes\CoordinateValidateAttribute.cs" />
     <Compile Include="Attributes\DateTimeCompareAttribute.cs" />
+    <Compile Include="Attributes\EpochTimeCompareAttribute.cs" />
     <Compile Include="Attributes\InNumericArrayAttribute.cs" />
     <Compile Include="Attributes\PropertyValidationAttribute.cs" />
-    <Compile Include="Attributes\TickToYearCompare.cs" />
     <Compile Include="Attributes\NumericCompareAttribute.cs" />
     <Compile Include="Attributes\RegexMatchAttribute.cs" />
     <Compile Include="Constants\AccountStatus.cs" />

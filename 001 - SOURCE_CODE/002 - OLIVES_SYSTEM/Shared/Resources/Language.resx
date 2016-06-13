@@ -333,4 +333,7 @@
   <data name="WaitForAdminConfirmation" xml:space="preserve">
     <value>Please wait for admin confirmation</value>
   </data>
+  <data name="ValueMustBeAfterYear" xml:space="preserve">
+    <value>{0} must be after {1}</value>
+  </data>
 </root>

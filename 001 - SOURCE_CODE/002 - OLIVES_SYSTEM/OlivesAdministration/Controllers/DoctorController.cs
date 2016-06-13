@@ -199,7 +199,7 @@ namespace OlivesAdministration.Controllers
             var doctor = results[0];
             doctor.FirstName = info.FirstName;
             doctor.LastName = info.LastName;
-            doctor.Birthday = info.Birthday ?? Values.MinimumSelectionTime;
+            doctor.Birthday = info.Birthday;
             doctor.Gender = info.Gender;
 
             if (!string.IsNullOrEmpty(info.Password))
