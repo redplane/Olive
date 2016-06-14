@@ -117,9 +117,9 @@ namespace OlivesAdministration.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Actives = summaryResult.Where(x => x.Status == AccountStatus.Active).Sum(x => x.Total),
-                Pendings = summaryResult.Where(x => x.Status == AccountStatus.Pending).Sum(x => x.Total),
-                Disables = summaryResult.Where(x => x.Status == AccountStatus.Inactive).Sum(x => x.Total),
+                ActiveAccounts = summaryResult.Where(x => x.Status == AccountStatus.Active).Sum(x => x.Total),
+                PendingAcounts = summaryResult.Where(x => x.Status == AccountStatus.Pending).Sum(x => x.Total),
+                DeactiveAccounts = summaryResult.Where(x => x.Status == AccountStatus.Inactive).Sum(x => x.Total),
                 Total = summaryResult.Sum(x => x.Total)
             });
         }
