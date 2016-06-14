@@ -10,7 +10,7 @@ namespace Shared.Attributes
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter)]
     public abstract class PropertyValidationAttribute : ValidationAttribute
     {
-        #region Ctor 
+        #region Constructor 
 
         /// <summary>
         ///     Initializes new instance of the <see cref="PropertyValidationAttribute" /> class.
@@ -19,6 +19,7 @@ namespace Shared.Attributes
         /// <exception cref="ArgumentNullException">If <paramref name="propertyName" /> is <c>null</c>, empty or whitespace.</exception>
         protected PropertyValidationAttribute(string propertyName)
         {
+            // Cannot find the property, throw the exception.
             if (string.IsNullOrWhiteSpace(propertyName))
                 throw new ArgumentNullException("propertyName");
 
@@ -29,7 +30,10 @@ namespace Shared.Attributes
 
         #region Fields 
 
-        private object value;
+        /// <summary>
+        /// The target property which is used for comparing with source element.
+        /// </summary>
+        private object _comparedValue;
 
         #endregion
 
@@ -75,17 +79,21 @@ namespace Shared.Attributes
 
             if (IsIndexerProperty(property))
                 throw new NotSupportedException("Property with indexer parameters is not supported.");
-
-            value = property.GetValue(validationContext.ObjectInstance);
-
-            return value;
+            
+            _comparedValue = property.GetValue(validationContext.ObjectInstance);
+            return _comparedValue;
         }
 
+        /// <summary>
+        /// Check whether property is indexer or not.
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
         private bool IsIndexerProperty(PropertyInfo property)
         {
             var parameters = property.GetIndexParameters();
 
-            return parameters != null && parameters.Length > 0;
+            return parameters.Length > 0;
         }
 
         #endregion

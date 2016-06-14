@@ -69,7 +69,7 @@ namespace Shared.ViewModels
         [RegexMatch(Regexes.IdentityCard, ErrorMessageResourceType = typeof(Language),
             ErrorMessageResourceName = "InvalidIdentityCard")]
         public string IdentityCardNo { get; set; }
-
+        
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public long IdentityCardIssueDate { get; set; }
 
