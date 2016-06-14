@@ -10,17 +10,17 @@ namespace Shared.Attributes
         #region Properties
 
         /// <summary>
-        /// Date which is needed to be compared.
+        ///     Date which is needed to be compared.
         /// </summary>
         private readonly double? _milliseconds;
 
         /// <summary>
-        /// Date which is similar to millisecond.
+        ///     Date which is similar to millisecond.
         /// </summary>
         private readonly DateTime _date;
 
         /// <summary>
-        /// Comparision mode.
+        ///     Comparision mode.
         /// </summary>
         public Comparision Comparision { get; set; } = Comparision.Equal;
 
@@ -29,7 +29,7 @@ namespace Shared.Attributes
         #region Constructors
 
         /// <summary>
-        /// Initialize an instance of EpochTimeCompareAttribute with given information.
+        ///     Initialize an instance of EpochTimeCompareAttribute with given information.
         /// </summary>
         /// <param name="year"></param>
         /// <param name="month"></param>
@@ -48,11 +48,10 @@ namespace Shared.Attributes
                 _date.ToUniversalTime()
                     .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
                     .TotalMilliseconds;
-
         }
 
         /// <summary>
-        /// Initialize an instance of EpochTimeCompareAttribute with given information.
+        ///     Initialize an instance of EpochTimeCompareAttribute with given information.
         /// </summary>
         /// <param name="date"></param>
         public EpochTimeCompareAttribute(DateTime date)
@@ -72,15 +71,15 @@ namespace Shared.Attributes
         }
 
         /// <summary>
-        /// Initialize an instance of EpochTimeCompareAttribute with given information.
+        ///     Initialize an instance of EpochTimeCompareAttribute with given information.
         /// </summary>
         /// <param name="year"></param>
         public EpochTimeCompareAttribute(int year)
         {
             _date = new DateTime(year, 12, 31, 23, 59, 59, 999);
             _milliseconds = _date.ToUniversalTime()
-                        .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
-                        .TotalMilliseconds;
+                .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
+                .TotalMilliseconds;
         }
 
         #endregion
@@ -88,7 +87,7 @@ namespace Shared.Attributes
         #region Methods
 
         /// <summary>
-        /// Check whether the validation is valid or not.
+        ///     Check whether the validation is valid or not.
         /// </summary>
         /// <param name="value"></param>
         /// <param name="validationContext"></param>
@@ -108,7 +107,7 @@ namespace Shared.Attributes
             // Cast value to date time.
             if (value is DateTime)
             {
-                var castedDate = (DateTime)value;
+                var castedDate = (DateTime) value;
                 milliseconds =
                     castedDate.ToUniversalTime()
                         .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
@@ -161,7 +160,8 @@ namespace Shared.Attributes
         /// <returns></returns>
         public override string FormatErrorMessage(string name)
         {
-            return string.Format(CultureInfo.CurrentCulture, ErrorMessageString, name, _date.Year, _date.Month, _date.Day);
+            return string.Format(CultureInfo.CurrentCulture, ErrorMessageString, name, _date.Year, _date.Month,
+                _date.Day);
         }
 
         #endregion

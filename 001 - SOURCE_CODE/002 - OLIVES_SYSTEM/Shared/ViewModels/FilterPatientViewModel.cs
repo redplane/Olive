@@ -1,21 +1,31 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Shared.Attributes;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Resources;
 
 namespace Shared.ViewModels
 {
     public class FilterPatientViewModel : FilterPersonViewModel
     {
-        [Range(Values.MinBodyWeight, Values.MaxBodyWeight, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMinWeight")]
+        [NumericPropertyCompare("MaxWeight", Comparision = Comparision.LowerEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+        [Range(Values.MinBodyWeight, Values.MaxBodyWeight, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "InvalidMinWeight")]
         public float? MinWeight { get; set; }
 
-        [Range(Values.MinBodyWeight, Values.MaxBodyWeight, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMaxWeight")]
+        [NumericPropertyCompare("MinWeight", Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+        [Range(Values.MinBodyWeight, Values.MaxBodyWeight, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "InvalidMaxWeight")]
         public float? MaxWeight { get; set; }
-        
-        [Range(Values.MinBodyHeight, Values.MaxBodyHeight, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMinHeight")]
+
+        [NumericPropertyCompare("MaxHeight", Comparision = Comparision.LowerEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+        [Range(Values.MinBodyHeight, Values.MaxBodyHeight, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "InvalidMinHeight")]
         public float? MinHeight { get; set; }
 
-        [Range(Values.MinBodyHeight, Values.MaxBodyHeight, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidMaxHeight")]
+        [NumericPropertyCompare("MinHeight", Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+        [Range(Values.MinBodyHeight, Values.MaxBodyHeight, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "InvalidMaxHeight")]
         public float? MaxHeight { get; set; }
     }
 }

@@ -24,8 +24,10 @@ namespace OlivesAdministration.Controllers
                 return null;
 
             var response = new ResponseErrror();
-            response.Errors = new List<string>(modelState.Keys.SelectMany(key => modelState[key].Errors.Select(error => error.ErrorMessage)));
-            
+            response.Errors =
+                new List<string>(
+                    modelState.Keys.SelectMany(key => modelState[key].Errors.Select(error => error.ErrorMessage)));
+
             return response;
         }
 

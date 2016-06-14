@@ -46,7 +46,7 @@ namespace OlivesAdministration.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] { Roles.Admin })]
+        [OlivesAuthorize(new[] {Roles.Admin})]
         public async Task<HttpResponseMessage> Get([FromUri] FindPatientViewModel info)
         {
             #region ModelState validation
@@ -79,11 +79,11 @@ namespace OlivesAdministration.Controllers
                 responseError.Errors.Add(Language.RecordIsNotUnique);
                 return Request.CreateResponse(HttpStatusCode.Conflict, responseError);
             }
-            
+
             #endregion
 
             // Respond to client.
-            return Request.CreateResponse(HttpStatusCode.OK, new { User = patients[0] });
+            return Request.CreateResponse(HttpStatusCode.OK, new {User = patients[0]});
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace OlivesAdministration.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPost]
-        [OlivesAuthorize(new[] { Roles.Admin })]
+        [OlivesAuthorize(new[] {Roles.Admin})]
         public async Task<HttpResponseMessage> Post([FromBody] InitializePersonViewModel info)
         {
             #region ModelState validation
@@ -245,7 +245,7 @@ namespace OlivesAdministration.Controllers
 
         [Route("api/patient/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Roles.Admin })]
+        [OlivesAuthorize(new[] {Roles.Admin})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterPatientViewModel filter)
         {
             #region ModelState validation
@@ -269,7 +269,7 @@ namespace OlivesAdministration.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 Users = results.Data,
-                Total = results.Total
+                results.Total
             });
         }
     }

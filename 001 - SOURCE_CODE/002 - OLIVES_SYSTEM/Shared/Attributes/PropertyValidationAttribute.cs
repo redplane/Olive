@@ -10,6 +10,15 @@ namespace Shared.Attributes
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter)]
     public abstract class PropertyValidationAttribute : ValidationAttribute
     {
+        #region Fields 
+
+        /// <summary>
+        ///     The target property which is used for comparing with source element.
+        /// </summary>
+        private object _comparedValue;
+
+        #endregion
+
         #region Constructor 
 
         /// <summary>
@@ -25,15 +34,6 @@ namespace Shared.Attributes
 
             PropertyName = propertyName;
         }
-
-        #endregion
-
-        #region Fields 
-
-        /// <summary>
-        /// The target property which is used for comparing with source element.
-        /// </summary>
-        private object _comparedValue;
 
         #endregion
 
@@ -79,13 +79,13 @@ namespace Shared.Attributes
 
             if (IsIndexerProperty(property))
                 throw new NotSupportedException("Property with indexer parameters is not supported.");
-            
+
             _comparedValue = property.GetValue(validationContext.ObjectInstance);
             return _comparedValue;
         }
 
         /// <summary>
-        /// Check whether property is indexer or not.
+        ///     Check whether property is indexer or not.
         /// </summary>
         /// <param name="property"></param>
         /// <returns></returns>

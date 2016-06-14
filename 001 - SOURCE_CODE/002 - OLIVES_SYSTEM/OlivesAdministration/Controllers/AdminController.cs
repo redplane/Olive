@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using System.Web.Razor.Generator;
 using Shared.Constants;
 using Shared.Interfaces;
 using Shared.Resources;
@@ -45,7 +44,7 @@ namespace OlivesAdministration.Controllers
             var response = new HttpResponseMessage(HttpStatusCode.OK);
             var viewPath = HttpContext.Current.Server.MapPath(@"~/Views/Index.html");
             var info = File.ReadAllText(viewPath);
-            
+
             response.Content = new StringContent(info);
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
             return response;
@@ -59,7 +58,7 @@ namespace OlivesAdministration.Controllers
         /// </summary>
         /// <param name="loginViewModel"></param>
         /// <returns></returns>
-        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        [EnableCors("*", "*", "*")]
         [HttpPost]
         public async Task<HttpResponseMessage> Login([FromBody] LoginViewModel loginViewModel)
         {
@@ -80,7 +79,7 @@ namespace OlivesAdministration.Controllers
                 return Request.CreateResponse(HttpStatusCode.NotFound, RetrieveValidationErrors(ModelState));
             }
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { User = result});
+            return Request.CreateResponse(HttpStatusCode.OK, new {User = result});
         }
 
         #endregion

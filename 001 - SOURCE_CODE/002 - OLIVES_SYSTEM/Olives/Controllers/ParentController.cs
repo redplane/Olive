@@ -54,9 +54,9 @@ namespace Olives.Controllers
             base.Initialize(controllerContext);
         }
 
-        //protected override IAsyncResult BeginExecuteCore(AsyncCallback callback, object state)
-
         //{
+
+        //protected override IAsyncResult BeginExecuteCore(AsyncCallback callback, object state)
         //    // By default, english will be used.
         //    var acceptLanguage = "en-US";
 

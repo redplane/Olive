@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography.X509Certificates;
-
-namespace Shared.Interfaces
+﻿namespace Shared.Interfaces
 {
     public interface IPerson
     {
@@ -78,9 +76,9 @@ namespace Shared.Interfaces
         ///     When account has been modified lastly.
         /// </summary>
         long LastModified { get; set; }
-        
+
         /// <summary>
-        /// Status of person.
+        ///     Status of person.
         /// </summary>
         byte Status { get; set; }
     }

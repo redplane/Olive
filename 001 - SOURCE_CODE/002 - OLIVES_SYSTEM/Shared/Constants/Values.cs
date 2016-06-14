@@ -1,7 +1,4 @@
-﻿using System;
-using System.Dynamic;
-
-namespace Shared.Constants
+﻿namespace Shared.Constants
 {
     public class Values
     {
@@ -18,32 +15,32 @@ namespace Shared.Constants
         public const int MinimumAllowedYear = 1916;
 
         /// <summary>
-        /// Minimum body weight
+        ///     Minimum body weight
         /// </summary>
         public const int MinBodyWeight = 1;
 
         /// <summary>
-        /// Maximum body weight
+        ///     Maximum body weight
         /// </summary>
         public const int MaxBodyWeight = 500;
 
         /// <summary>
-        /// The lowest height body can be.
+        ///     The lowest height body can be.
         /// </summary>
         public const int MinBodyHeight = 30;
 
         /// <summary>
-        /// The longest height body can be.
+        ///     The longest height body can be.
         /// </summary>
         public const int MaxBodyHeight = 400;
 
         /// <summary>
-        /// The shortest length password can be.
+        ///     The shortest length password can be.
         /// </summary>
         public const int MinPasswordLength = 8;
 
         /// <summary>
-        /// The longest length password can be.
+        ///     The longest length password can be.
         /// </summary>
         public const int MaxPasswordLength = 16;
     }

@@ -26,7 +26,6 @@ namespace OlivesAdministration
         {
             #region Route configuration
 
-            
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
@@ -163,7 +162,7 @@ namespace OlivesAdministration
                 doctor.Rank = i;
                 doctor.Speciality = $"Speciality[{i}]";
                 doctor.Voters = i;
-                doctor.Status = (i > 25) ? AccountStatus.Inactive : AccountStatus.Active;
+                doctor.Status = i > 25 ? AccountStatus.Inactive : AccountStatus.Active;
 
                 await graphClient.Cypher
                     .Merge($"(n:Person {{ Id: '{doctor.Id}'}})")

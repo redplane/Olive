@@ -77,7 +77,7 @@ namespace Olives
                 .As<IRepositoryAccount>()
                 .OnActivating(e => e.ReplaceInstance(repositoryAccount))
                 .SingleInstance();
-            
+
             // OlivesAuthorize attribute registration (to access dependency)
             builder.RegisterType<OlivesAuthorize>().PropertiesAutowired();
 
@@ -86,7 +86,7 @@ namespace Olives
 
             // Web api dependency registration.
             builder.RegisterWebApiFilterProvider(GlobalConfiguration.Configuration);
-            
+
             var container = builder.Build();
             GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
 

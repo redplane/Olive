@@ -66,7 +66,7 @@ namespace Shared.Interfaces
         /// <param name="identityCardNo"></param>
         /// <returns></returns>
         Task<bool> IsDoctorAbleToRegister(string id, string identityCardNo);
-        
+
         /// <summary>
         ///     Filter doctors by using specific conditions.
         /// </summary>
@@ -86,7 +86,7 @@ namespace Shared.Interfaces
         Task<Node<string>> InitializePerson(IPerson info);
 
         /// <summary>
-        /// Initialize a person attached with activation code.
+        ///     Initialize a person attached with activation code.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="code"></param>
@@ -141,14 +141,14 @@ namespace Shared.Interfaces
         IPerson FindPerson(string email, string password, byte? role);
 
         /// <summary>
-        /// Find person by using specific id.
+        ///     Find person by using specific id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Person> FindPerson(string id);
 
         /// <summary>
-        /// Statistic people by using role.
+        ///     Statistic people by using role.
         /// </summary>
         /// <param name="role"></param>
         /// <returns></returns>

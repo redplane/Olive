@@ -709,6 +709,33 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} must be equal to or greater than {1}.
+        /// </summary>
+        public static string ValueMustBeEqualGreaterThan {
+            get {
+                return ResourceManager.GetString("ValueMustBeEqualGreaterThan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} must be equal to or lower than {1}.
+        /// </summary>
+        public static string ValueMustBeEqualLowerThan {
+            get {
+                return ResourceManager.GetString("ValueMustBeEqualLowerThan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} must be greater than {1}.
+        /// </summary>
+        public static string ValueMustBeGreaterThan {
+            get {
+                return ResourceManager.GetString("ValueMustBeGreaterThan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please wait for admin confirmation.
         /// </summary>
         public static string WaitForAdminConfirmation {

@@ -3,22 +3,22 @@
     public class Allergy
     {
         /// <summary>
-        /// Which agent causes patient be allergic with.
+        ///     Which agent causes patient be allergic with.
         /// </summary>
         public string Cause { get; set; }
-        
+
         /// <summary>
-        /// Note content.
+        ///     Note content.
         /// </summary>
         public string Note { get; set; }
 
         /// <summary>
-        /// Date when allergy was created.
+        ///     Date when allergy was created.
         /// </summary>
         public long Created { get; set; }
 
         /// <summary>
-        /// Date when note was lastly modified.
+        ///     Date when note was lastly modified.
         /// </summary>
         public long LastModified { get; set; }
     }

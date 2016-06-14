@@ -10,19 +10,21 @@ namespace OlivesAdministration.ViewModels
         public double Money { get; set; }
 
         /// <summary>
-        /// Patient weight.
+        ///     Patient weight.
         /// </summary>
-        [Range(Values.MinBodyWeight, Values.MaxBodyWeight, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidHeight")]
+        [Range(Values.MinBodyWeight, Values.MaxBodyWeight, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "InvalidHeight")]
         public float? Weight { get; set; }
 
         /// <summary>
-        /// Patient height.
+        ///     Patient height.
         /// </summary>
-        [Range(Values.MinBodyHeight, Values.MaxBodyHeight, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidWeight")]
+        [Range(Values.MinBodyHeight, Values.MaxBodyHeight, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "InvalidWeight")]
         public float? Height { get; set; }
-        
+
         /// <summary>
-        /// Patient anamneses.
+        ///     Patient anamneses.
         /// </summary>
         public string[] Anamneses { get; set; }
     }

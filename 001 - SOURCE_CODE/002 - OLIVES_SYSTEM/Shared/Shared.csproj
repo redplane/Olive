@@ -52,6 +52,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -64,6 +65,7 @@
     <Compile Include="Attributes\DateTimeCompareAttribute.cs" />
     <Compile Include="Attributes\EpochTimeCompareAttribute.cs" />
     <Compile Include="Attributes\InNumericArrayAttribute.cs" />
+    <Compile Include="Attributes\NumericPropertyCompareAttribute.cs" />
     <Compile Include="Attributes\PropertyValidationAttribute.cs" />
     <Compile Include="Attributes\NumericCompareAttribute.cs" />
     <Compile Include="Attributes\RegexMatchAttribute.cs" />

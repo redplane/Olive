@@ -1,17 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web.Http;
-using Newtonsoft.Json;
-using OlivesAdministration.Attributes;
-using OlivesAdministration.ViewModels;
-using Shared.Constants;
+﻿using System.Web.Http;
 using Shared.Interfaces;
-using Shared.Models.Nodes;
-using Shared.Resources;
-using Shared.ViewModels;
 
 namespace OlivesAdministration.Controllers
 {
@@ -39,11 +27,10 @@ namespace OlivesAdministration.Controllers
         }
 
         #endregion
-        
+
         [Route("api/statistic/doctor/status")]
         public void SummaryDoctorStatus()
         {
-            
         }
     }
 }

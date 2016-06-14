@@ -47,8 +47,8 @@ namespace Shared.ViewModels
         /// </summary>
         [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "RequireAddress")]
         public string Address { get; set; }
-        
-        [Required(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "RequireSpecialization")]
+
+        [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "RequireSpecialization")]
         public string Speciality { get; set; }
 
         /// <summary>
@@ -61,20 +61,22 @@ namespace Shared.ViewModels
         /// </summary>
         public double? Longitude { get; set; }
 
-
         #region Identity card
 
-        [MaxLength(FieldLength.IdentityCardNoMaxLength, ErrorMessageResourceType = typeof(Language),
+        [MaxLength(FieldLength.IdentityCardNoMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidIdentityCardMaxLength")]
-        [RegexMatch(Regexes.IdentityCard, ErrorMessageResourceType = typeof(Language),
+        [RegexMatch(Regexes.IdentityCard, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidIdentityCard")]
         public string IdentityCardNo { get; set; }
-        
-        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public long IdentityCardIssueDate { get; set; }
 
-        [Required(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "RequireIdentityCardIssuePlace")]
-        [CoordinateValidate(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidIdentityCardIssuePlace")]
+        [Required(ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "RequireIdentityCardIssuePlace")]
+        [CoordinateValidate(ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "InvalidIdentityCardIssuePlace")]
         public Coordinate IdentityCardIssuePlace { get; set; }
 
         #endregion

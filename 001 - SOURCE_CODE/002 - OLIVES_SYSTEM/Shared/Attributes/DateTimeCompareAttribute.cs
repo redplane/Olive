@@ -26,7 +26,6 @@ namespace Shared.Attributes
 
             _comparedProperty = otherProperty;
             _comparison = comparison;
-            
         }
 
         #endregion
@@ -34,7 +33,7 @@ namespace Shared.Attributes
         #region Overrides 
 
         /// <summary>
-        /// Override IsValid function to check whether the comparision is valid or not.
+        ///     Override IsValid function to check whether the comparision is valid or not.
         /// </summary>
         /// <param name="value"></param>
         /// <param name="validationContext"></param>
@@ -46,7 +45,7 @@ namespace Shared.Attributes
                 return ValidationResult.Success;
 
             #region First element
-            
+
             // Retrieve date time instance of object.
             var date = GetDate(value);
 
@@ -82,7 +81,7 @@ namespace Shared.Attributes
         }
 
         /// <summary>
-        /// Override this function to support muli-parameters and multilingual.
+        ///     Override this function to support muli-parameters and multilingual.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -96,12 +95,12 @@ namespace Shared.Attributes
         #region Fields 
 
         /// <summary>
-        /// Which comparision the attribute should do to compare 2 properties.
+        ///     Which comparision the attribute should do to compare 2 properties.
         /// </summary>
         private readonly Comparision _comparison;
 
         /// <summary>
-        /// Property name which is used for comparing with the source one.
+        ///     Property name which is used for comparing with the source one.
         /// </summary>
         private readonly string _comparedProperty;
 
@@ -118,7 +117,7 @@ namespace Shared.Attributes
         {
             return (DateTime?) value;
         }
-        
+
         /// <summary>
         ///     Check whether the comparision is valid or not.
         /// </summary>

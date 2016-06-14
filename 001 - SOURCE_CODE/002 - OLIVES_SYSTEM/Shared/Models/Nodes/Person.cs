@@ -10,14 +10,14 @@ namespace Shared.Models.Nodes
     public class Person : IPerson
     {
         /// <summary>
-        ///     Status of account [0 - Disabled | 1 - Pending | 2 - Active].
-        /// </summary>
-        public byte Status { get; set; }
-
-        /// <summary>
         ///     Photo link of avatar
         /// </summary>
         public string Photo { get; set; }
+
+        /// <summary>
+        ///     Status of account [0 - Disabled | 1 - Pending | 2 - Active].
+        /// </summary>
+        public byte Status { get; set; }
 
         /// <summary>
         ///     Person GUID.
@@ -27,7 +27,7 @@ namespace Shared.Models.Nodes
         /// <summary>
         ///     Person first name.
         /// </summary>
-        [MaxLength(FieldLength.LastNameMaxLength, ErrorMessageResourceType = typeof(Language),
+        [MaxLength(FieldLength.LastNameMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidFirstName")]
         public string FirstName { get; set; }
 
@@ -41,7 +41,8 @@ namespace Shared.Models.Nodes
         /// <summary>
         ///     Birthday (ticks).
         /// </summary>
-        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public long? Birthday { get; set; }
 
         /// <summary>

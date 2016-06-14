@@ -336,4 +336,13 @@
   <data name="ValueMustBeAfterYear" xml:space="preserve">
     <value>{0} must be after {1}</value>
   </data>
+  <data name="ValueMustBeEqualGreaterThan" xml:space="preserve">
+    <value>{0} must be equal to or greater than {1}</value>
+  </data>
+  <data name="ValueMustBeEqualLowerThan" xml:space="preserve">
+    <value>{0} must be equal to or lower than {1}</value>
+  </data>
+  <data name="ValueMustBeGreaterThan" xml:space="preserve">
+    <value>{0} must be greater than {1}</value>
+  </data>
 </root>

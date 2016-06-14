@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -44,7 +43,7 @@ namespace OlivesAdministration.Controllers
 
         [Route("api/person/status")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Roles.Admin })]
+        [OlivesAuthorize(new[] {Roles.Admin})]
         public async Task<HttpResponseMessage> Status(EditStatusViewModel info)
         {
             #region Model validation
@@ -85,19 +84,19 @@ namespace OlivesAdministration.Controllers
             if (info.Status == AccountStatus.Active)
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
-                    Message = new[] { Language.AccountHasBeenActivated }
+                    Message = new[] {Language.AccountHasBeenActivated}
                 });
-            
+
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Message = new[] { Language.AccountHasBeenDisabled }
+                Message = new[] {Language.AccountHasBeenDisabled}
             });
         }
 
         [Route("api/person/statistic/status")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Roles.Admin })]
-        public async Task<HttpResponseMessage> Statistic([FromBody]StatusStatisticViewModel info)
+        [OlivesAuthorize(new[] {Roles.Admin})]
+        public async Task<HttpResponseMessage> Statistic([FromBody] StatusStatisticViewModel info)
         {
             #region Model validation
 
@@ -115,7 +114,7 @@ namespace OlivesAdministration.Controllers
 
             // Find the person from database using unique identity.
             var summaryResult = await _repositoryAccount.SummarizePersonRole(info.Role);
-            
+
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 Actives = summaryResult.Where(x => x.Status == AccountStatus.Active).Sum(x => x.Total),
@@ -124,7 +123,6 @@ namespace OlivesAdministration.Controllers
                 Total = summaryResult.Sum(x => x.Total)
             });
         }
-
 
         #endregion
     }
