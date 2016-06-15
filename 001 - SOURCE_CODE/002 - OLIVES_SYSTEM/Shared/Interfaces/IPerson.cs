@@ -27,7 +27,7 @@ namespace Shared.Interfaces
         /// <summary>
         ///     Person gender.
         /// </summary>
-        AccountGender Gender { get; set; }
+        int Gender { get; set; }
 
         /// <summary>
         ///     Email address which is used for registration or for contacting.
@@ -72,7 +72,7 @@ namespace Shared.Interfaces
         /// <summary>
         ///     Role of person [0 - Admin | 1 - Patient | 2 - Doctor]
         /// </summary>
-        AccountRole Role { get; set; }
+        int Role { get; set; }
 
         /// <summary>
         ///     When account has been modified lastly.
@@ -82,6 +82,6 @@ namespace Shared.Interfaces
         /// <summary>
         ///     Status of person.
         /// </summary>
-        AccountStatus Status { get; set; }
+        int Status { get; set; }
     }
 }

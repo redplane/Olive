@@ -91,7 +91,7 @@ namespace OlivesAdministration
 
             #endregion
 
-            //InitializeDemoData(graphClient);
+            InitializeDemoData(graphClient);
 
             XmlConfigurator.Configure();
         }
@@ -125,11 +125,10 @@ namespace OlivesAdministration
             admin.FirstName = "Trong";
             admin.LastName = "Bui";
             admin.Email = "trong.buiquoc@gmail.com";
-            admin.Password = "redplane";
+            admin.Password = "buiquoctrong199x";
             admin.Created = DateTime.Now.Ticks;
             admin.Birthday = DateTime.Now.Ticks;
             admin.Id = "adeb011a01a44db08b09dcf0bf2fcd5c";
-            admin.Password = "b453133b7ee466c6dc500ed30b5fd75a";
             admin.Role = AccountRole.Admin;
             admin.Gender = AccountGender.Male;
 

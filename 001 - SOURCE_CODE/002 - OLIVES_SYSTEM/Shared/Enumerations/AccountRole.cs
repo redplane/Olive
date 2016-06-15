@@ -1,9 +1,11 @@
 ﻿namespace Shared.Enumerations
 {
-    public enum AccountRole
+    public class AccountRole
     {
-        Admin = 1,
-        Patient,
-        Doctor
+        public const int Admin = 1;
+
+        public const int Patient = 2;
+
+        public const int Doctor = 3;
     }
 }

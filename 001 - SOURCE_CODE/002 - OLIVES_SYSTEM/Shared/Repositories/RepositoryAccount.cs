@@ -723,7 +723,7 @@ namespace Shared.Repositories
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public async Task<bool> EditPersonStatus(string id, AccountStatus status)
+        public async Task<bool> EditPersonStatus(string id, int status)
         {
             try
             {
@@ -931,7 +931,7 @@ namespace Shared.Repositories
         /// <param name="password"></param>
         /// <param name="role"></param>
         /// <returns></returns>
-        public IPerson FindPerson(string email, string password, AccountRole? role)
+        public IPerson FindPerson(string email, string password, int? role)
         {
             // No email has been specified.
             if (string.IsNullOrEmpty(email))
@@ -998,7 +998,7 @@ namespace Shared.Repositories
         /// </summary>
         /// <param name="role">Role of person</param>
         /// <returns></returns>
-        public async Task<IList<StatusStatisticViewModel>> SummarizePersonRole(AccountRole? role)
+        public async Task<IList<StatusStatisticViewModel>> SummarizePersonRole(int? role)
         {
             // Query initialization.
             var query = _graphClient.Cypher.Match("(p:Person)");

@@ -35,7 +35,7 @@ namespace Shared.ViewModels
         ///     Person gender.
         /// </summary>
         [InNumericArray(new[] { (int)AccountGender.Female, (int)AccountGender.Male }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidGender")]
-        public AccountGender Gender { get; set; }
+        public int Gender { get; set; }
 
         /// <summary>
         ///     Email address which is used for registration or for contacting.

@@ -6,6 +6,6 @@ namespace OlivesAdministration.ViewModels
     {
         public string Id { get; set; }
 
-        public AccountStatus Status { get; set; }
+        public int Status { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace Shared.Models.Nodes
         /// <summary>
         ///     Status of account [0 - Disabled | 1 - Pending | 2 - Active].
         /// </summary>
-        public AccountStatus Status { get; set; }
+        public int Status { get; set; }
 
         /// <summary>
         ///     Person GUID.
@@ -42,7 +42,7 @@ namespace Shared.Models.Nodes
         /// <summary>
         ///     Person gender.
         /// </summary>
-        public AccountGender Gender { get; set; }
+        public int Gender { get; set; }
 
         /// <summary>
         ///     Email address which is used for registration or for contacting.
@@ -88,7 +88,7 @@ namespace Shared.Models.Nodes
         /// <summary>
         ///     Role of person [0 - Admin | 1 - Patient | 2 - Doctor]
         /// </summary>
-        public AccountRole Role { get; set; }
+        public int Role { get; set; }
 
         /// <summary>
         ///     Time when accout has been modified.

@@ -1,8 +1,9 @@
 ﻿namespace Shared.Enumerations
 {
-    public enum AccountGender
+    public class AccountGender
     {
-        Male,
-        Female
+        public const int Male = 0;
+
+        public const int Female = 1;
     }
 }

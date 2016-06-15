@@ -8,9 +8,9 @@ namespace Shared.ViewModels
     {
         [InNumericArray(new[] {(int)AccountRole.Patient, (int)AccountRole.Doctor}, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidRole")]
-        public AccountRole? Role { get; set; }
+        public int? Role { get; set; }
 
-        public AccountStatus Status { get; set; }
+        public int Status { get; set; }
 
         public long Total { get; set; }
     }

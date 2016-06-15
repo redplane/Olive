@@ -1,9 +1,11 @@
 ﻿namespace Shared.Enumerations
 {
-    public enum AccountStatus
+    public class AccountStatus
     {
-        Inactive,
-        Pending,
-        Active
+        public const int Inactive = 0;
+
+        public const int Pending = 1;
+
+        public const int Active = 2;
     }
 }

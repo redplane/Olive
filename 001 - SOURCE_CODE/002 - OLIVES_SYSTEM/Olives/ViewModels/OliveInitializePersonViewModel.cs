@@ -13,6 +13,6 @@ namespace Olives.ViewModels
         /// </summary>
         [InNumericArray(new[] {(int)AccountRole.Patient, (int)AccountRole.Doctor}, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidRole")]
-        public AccountRole Role { get; set; }
+        public int Role { get; set; }
     }
 }

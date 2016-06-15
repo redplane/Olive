@@ -116,7 +116,7 @@ namespace Shared.Interfaces
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        Task<bool> EditPersonStatus(string id, AccountStatus status);
+        Task<bool> EditPersonStatus(string id, int status);
 
         /// <summary>
         ///     Filter person by using specific conditions.
@@ -139,7 +139,7 @@ namespace Shared.Interfaces
         /// <param name="password"></param>
         /// <param name="role"></param>
         /// <returns></returns>
-        IPerson FindPerson(string email, string password, AccountRole? role);
+        IPerson FindPerson(string email, string password, int? role);
 
         /// <summary>
         ///     Find person by using specific id.
@@ -153,7 +153,7 @@ namespace Shared.Interfaces
         /// </summary>
         /// <param name="role"></param>
         /// <returns></returns>
-        Task<IList<StatusStatisticViewModel>> SummarizePersonRole(AccountRole? role);
+        Task<IList<StatusStatisticViewModel>> SummarizePersonRole(int? role);
 
         #endregion
     }

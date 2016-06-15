@@ -19,7 +19,7 @@ namespace OlivesAdministration.Attributes
         ///     Initialize an instance of OlivesAuthorize attribute with allowed roles.
         /// </summary>
         /// <param name="roles"></param>
-        public OlivesAuthorize(AccountRole[] roles)
+        public OlivesAuthorize(int[] roles)
         {
             Roles = roles;
         }
@@ -32,7 +32,7 @@ namespace OlivesAdministration.Attributes
         /// <summary>
         ///     Which roles can access this function.
         /// </summary>
-        public new AccountRole[] Roles { get; }
+        public new int[] Roles { get; }
 
         /// <summary>
         ///     This function is for handling authorization handling.

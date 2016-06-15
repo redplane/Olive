@@ -27,6 +27,6 @@ namespace Shared.ViewModels
             ErrorMessageResourceName = "RegexPassword")]
         public string Password { get; set; }
 
-        public AccountRole? Role { get; set; }
+        public int? Role { get; set; }
     }
 }
