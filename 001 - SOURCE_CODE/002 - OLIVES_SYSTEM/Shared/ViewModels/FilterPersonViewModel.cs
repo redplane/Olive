@@ -11,10 +11,9 @@ namespace Shared.ViewModels
         /// <summary>
         ///     Email address which is used for registration or for contacting.
         /// </summary>
+        [RegexMatch(Regexes.EmailFilter, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidEmailFormat")]
         [MaxLength(FieldLength.EmailMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidEmailMaximumLength")]
-        [RegularExpression(Regexes.Email, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidEmailFormat")]
         public string Email { get; set; }
 
         /// <summary>
@@ -92,7 +91,7 @@ namespace Shared.ViewModels
         /// <summary>
         ///     Status of account [0 - Disabled | 1 - Pending | 2 - Active].
         /// </summary>
-        public byte Status { get; set; }
+        public byte? Status { get; set; }
 
         [Range(Constants.Gender.Male, Constants.Gender.Female, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidGender")]

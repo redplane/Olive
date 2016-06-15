@@ -186,7 +186,7 @@ namespace OlivesAdministration
                 patient.LastName = $"PatientLastName[{i}]";
                 patient.Birthday = DateTime.Now.Ticks;
                 patient.Gender = Gender.Male;
-                patient.Email = $"linhdse031{i}@fpt.edu.vn";
+                patient.Email = $"linhdse031{i}{(i%2 == 0 ? "@fpt.edu.vn" : "@yahoo.com.vn")}";
                 patient.Password = $"PatientPassword";
                 patient.Phone = $"01234567{i}";
                 patient.Money = i;

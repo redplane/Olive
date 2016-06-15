@@ -130,7 +130,7 @@ namespace Shared.Repositories
             FilterPerson(filter, out query, out isWhereConditionUsed);
 
             // Calculate the number of records should be skip over.
-            var skippedRecords = filter.Page*filter.Records;
+            var skippedRecords = filter.Page * filter.Records;
 
             // Execute query asynchronously.
             var results = await query.Return(n => n.As<Node<string>>())
@@ -211,14 +211,14 @@ namespace Shared.Repositories
             // Count total records.
             var cypherCountAsync = await query.Return(n => n.Count())
                 .ResultsAsync;
-            result.Total = (int) cypherCountAsync.SingleOrDefault();
+            result.Total = (int)cypherCountAsync.SingleOrDefault();
 
             // No record has been retrieved.
             if (result.Total < 1)
                 return result;
 
             // Calculate the number of records should be skip over.
-            var skippedRecords = filter.Page*filter.Records;
+            var skippedRecords = filter.Page * filter.Records;
 
             // Execute query asynchronously.
             var resultsAsync = await query.Return(n => n.As<Patient>())
@@ -308,14 +308,14 @@ namespace Shared.Repositories
             // Count total records.
             var cypherCountAsync = await query.Return(n => n.Count())
                 .ResultsAsync;
-            result.Total = (int) cypherCountAsync.SingleOrDefault();
+            result.Total = (int)cypherCountAsync.SingleOrDefault();
 
             // No record has been retrieved.
             if (result.Total < 1)
                 return result;
 
             // Calculate the number of records should be skip over.
-            var skippedRecords = filter.Page*filter.Records;
+            var skippedRecords = filter.Page * filter.Records;
 
             // Execute query asynchronously.
             var resultsAsync = await query.Return(n => n.As<Doctor>())
@@ -755,6 +755,30 @@ namespace Shared.Repositories
             query = _graphClient.Cypher
                 .Match("(n:Person)");
 
+            #region Email
+
+            // Filter by email.
+            if (!string.IsNullOrEmpty(filter.Email))
+            {
+                var queryEmail = $"n.Email =~'(?i).*{filter.Email}.*'";
+                query = (!isWhereUnavailable) ? query.Where(queryEmail) : query.AndWhere(queryEmail);
+                isWhereUnavailable = true;
+            }
+
+            #endregion
+
+            #region Phone
+
+            // Filter by phone.
+            if (!string.IsNullOrEmpty(filter.Phone))
+            {
+                var queryPhone = $"n.Phone =~'(?i).*{filter.Phone}.*'";
+                query = (!isWhereUnavailable) ? query.Where(queryPhone) : query.AndWhere(queryPhone);
+                isWhereUnavailable = true;
+            }
+
+            #endregion
+            
             #region First name
 
             // Filter by first name.
@@ -863,8 +887,19 @@ namespace Shared.Repositories
             {
                 query = !isWhereUnavailable
                     ? query.Where<IPerson>(n => n.Role == filter.Role)
-                    : query.Where<IPerson>(n => n.Role == filter.Role);
+                    : query.AndWhere<IPerson>(n => n.Role == filter.Role);
                 isWhereUnavailable = true;
+            }
+
+            #endregion
+
+            #region Status
+
+            if (filter.Status != null)
+            {
+                query = !isWhereUnavailable
+                    ? query.Where<IPerson>(n => n.Status == filter.Status)
+                    : query.AndWhere<IPerson>(n => n.Status == filter.Status);
             }
 
             #endregion
