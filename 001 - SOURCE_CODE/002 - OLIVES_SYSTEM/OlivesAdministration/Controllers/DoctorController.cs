@@ -82,7 +82,7 @@ namespace OlivesAdministration.Controllers
 
             #endregion
 
-            return Request.CreateResponse(HttpStatusCode.OK, new {User = result});
+            return Request.CreateResponse(HttpStatusCode.OK, new {User = result.FirstOrDefault()});
         }
 
         /// <summary>
