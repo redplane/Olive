@@ -1,12 +1,13 @@
 ﻿using Shared.Attributes;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Resources;
 
 namespace OlivesAdministration.ViewModels
 {
     public class EditPatientStatusViewModel : FindPatientViewModel
     {
-        [InNumericArray(new[] {AccountStatus.Inactive, AccountStatus.Active},
+        [InNumericArray(new[] {(int)AccountStatus.Inactive, (int)AccountStatus.Active},
             ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidAccountStatus")]
         public byte Status { get; set; }

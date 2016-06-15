@@ -723,7 +723,7 @@ namespace Shared.Repositories
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public async Task<bool> EditPersonStatus(string id, byte status)
+        public async Task<bool> EditPersonStatus(string id, AccountStatus status)
         {
             try
             {

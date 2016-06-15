@@ -69,7 +69,7 @@
     <Compile Include="Attributes\PropertyValidationAttribute.cs" />
     <Compile Include="Attributes\NumericCompareAttribute.cs" />
     <Compile Include="Attributes\RegexMatchAttribute.cs" />
-    <Compile Include="Constants\AccountStatus.cs" />
+    <Compile Include="Enumerations\AccountStatus.cs" />
     <Compile Include="Constants\HeaderFields.cs" />
     <Compile Include="Constants\FieldLength.cs" />
     <Compile Include="Constants\Regexes.cs" />

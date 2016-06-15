@@ -17,7 +17,7 @@ namespace Shared.Models.Nodes
         /// <summary>
         ///     Status of account [0 - Disabled | 1 - Pending | 2 - Active].
         /// </summary>
-        public byte Status { get; set; }
+        public AccountStatus Status { get; set; }
 
         /// <summary>
         ///     Person GUID.

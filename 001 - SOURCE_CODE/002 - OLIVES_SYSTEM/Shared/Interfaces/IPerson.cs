@@ -82,6 +82,6 @@ namespace Shared.Interfaces
         /// <summary>
         ///     Status of person.
         /// </summary>
-        byte Status { get; set; }
+        AccountStatus Status { get; set; }
     }
 }

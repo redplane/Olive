@@ -91,7 +91,7 @@ namespace Shared.ViewModels
         /// <summary>
         ///     Status of account [0 - Disabled | 1 - Pending | 2 - Active].
         /// </summary>
-        public byte? Status { get; set; }
+        public AccountStatus? Status { get; set; }
 
         [InNumericArray(new [] { (int) AccountGender.Female, (int) AccountGender.Male}, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidGender")]
         public AccountRole? Role { get; set; }

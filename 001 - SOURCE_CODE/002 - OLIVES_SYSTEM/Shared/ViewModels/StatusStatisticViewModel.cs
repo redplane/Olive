@@ -10,7 +10,7 @@ namespace Shared.ViewModels
             ErrorMessageResourceName = "InvalidRole")]
         public AccountRole? Role { get; set; }
 
-        public byte Status { get; set; }
+        public AccountStatus Status { get; set; }
 
         public long Total { get; set; }
     }

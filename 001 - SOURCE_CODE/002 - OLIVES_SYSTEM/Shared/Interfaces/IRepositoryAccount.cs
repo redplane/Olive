@@ -116,7 +116,7 @@ namespace Shared.Interfaces
         /// <param name="id"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        Task<bool> EditPersonStatus(string id, byte status);
+        Task<bool> EditPersonStatus(string id, AccountStatus status);
 
         /// <summary>
         ///     Filter person by using specific conditions.
