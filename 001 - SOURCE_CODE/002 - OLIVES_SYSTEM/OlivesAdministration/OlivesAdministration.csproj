@@ -181,7 +181,6 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Attributes\OlivesAuthorizeAtrribute.cs" />
     <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\StatisticController.cs" />
     <Compile Include="Controllers\DoctorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ParentController.cs" />
