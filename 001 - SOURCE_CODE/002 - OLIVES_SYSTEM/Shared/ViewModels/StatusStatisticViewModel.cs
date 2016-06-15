@@ -6,7 +6,7 @@ namespace Shared.ViewModels
 {
     public class StatusStatisticViewModel
     {
-        [InNumericArray(new[] {(int)AccountRole.Patient, (int)AccountRole.Doctor}, ErrorMessageResourceType = typeof (Language),
+        [InNumericArray(new[] {AccountRole.Patient, AccountRole.Doctor}, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidRole")]
         public int? Role { get; set; }
 

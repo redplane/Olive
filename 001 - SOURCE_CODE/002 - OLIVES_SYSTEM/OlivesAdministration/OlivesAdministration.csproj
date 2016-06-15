@@ -166,12 +166,11 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
-    <None Include="Scripts\jquery-2.2.3.intellisense.js" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\jquery-2.2.3.js" />
-    <Content Include="Scripts\jquery-2.2.3.min.js" />
-    <Content Include="Scripts\modernizr-2.8.3.js" />
+    <None Include="Properties\PublishProfiles\olivesadministrator - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\olivesadministrator - Web Deploy.pubxml" />
+    <Content Include="Scripts\app.js" />
+    <Content Include="Scripts\polyfills.js" />
+    <Content Include="Scripts\vendor.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -204,7 +203,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Web.config" />
-    <Content Include="Scripts\jquery-2.2.3.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

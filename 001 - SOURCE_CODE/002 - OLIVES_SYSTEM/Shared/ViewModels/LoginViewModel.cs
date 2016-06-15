@@ -17,8 +17,7 @@ namespace Shared.ViewModels
         [MaxLength(FieldLength.EmailMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidEmailMaximumLength")]
         public string Email { get; set; }
-
-        // TODO: Uncomment attributes below.
+        
         /// <summary>
         ///     Password of account.
         /// </summary>
@@ -27,6 +26,7 @@ namespace Shared.ViewModels
             ErrorMessageResourceName = "RegexPassword")]
         public string Password { get; set; }
 
+        [InNumericArray(new [] {AccountRole.Patient, AccountRole.Admin, AccountRole.Doctor}, ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "InvalidRole")]
         public int? Role { get; set; }
     }
 }
