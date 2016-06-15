@@ -68,7 +68,7 @@ namespace Shared.ViewModels
         /// <summary>
         ///     Gender of person
         /// </summary>
-        public byte? Gender { get; set; }
+        public AccountGender? Gender { get; set; }
 
         /// <summary>
         ///     Amount of money user's must be higher than.
@@ -93,9 +93,8 @@ namespace Shared.ViewModels
         /// </summary>
         public byte? Status { get; set; }
 
-        [Range(Constants.Gender.Male, Constants.Gender.Female, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidGender")]
-        public byte? Role { get; set; }
+        [InNumericArray(new [] { (int) AccountGender.Female, (int) AccountGender.Male}, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidGender")]
+        public AccountRole? Role { get; set; }
 
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language),

@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using OlivesAdministration.Attributes;
 using OlivesAdministration.Controllers;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Models.Nodes;
@@ -109,8 +110,8 @@ namespace OlivesAdministration
             admin.Birthday = DateTime.Now.Ticks;
             admin.Id = "2f28d661db9449fdb90d0879f5231fde";
             admin.Password = "redplane_dt@yahoo.com.vn";
-            admin.Role = Roles.Admin;
-            admin.Gender = Gender.Male;
+            admin.Role = AccountRole.Admin;
+            admin.Gender = AccountGender.Male;
 
             graphClient.Cypher
                 .Merge($"(n:Person {{ Id: '{admin.Id}'}})")
@@ -129,8 +130,8 @@ namespace OlivesAdministration
             admin.Birthday = DateTime.Now.Ticks;
             admin.Id = "adeb011a01a44db08b09dcf0bf2fcd5c";
             admin.Password = "b453133b7ee466c6dc500ed30b5fd75a";
-            admin.Role = Roles.Admin;
-            admin.Gender = Gender.Male;
+            admin.Role = AccountRole.Admin;
+            admin.Gender = AccountGender.Male;
 
             graphClient.Cypher
                 .Merge($"(n:Person {{ Id: '{admin.Id}'}})")
@@ -156,8 +157,8 @@ namespace OlivesAdministration
                 doctor.Created = DateTime.Now.Ticks;
                 doctor.Password = $"doctorpassword{i}";
                 doctor.Phone = $"00000{i}";
-                doctor.Gender = Gender.Female;
-                doctor.Role = Roles.Doctor;
+                doctor.Gender = (i % 2 == 0) ? AccountGender.Male : AccountGender.Female;
+                doctor.Role = AccountRole.Doctor;
                 doctor.Photo = string.Format("https://imageshack.com?photo={0}", i);
                 doctor.Rank = i;
                 doctor.Speciality = $"Speciality[{i}]";
@@ -185,7 +186,7 @@ namespace OlivesAdministration
                 patient.FirstName = $"PatientFirstName[{i}]";
                 patient.LastName = $"PatientLastName[{i}]";
                 patient.Birthday = DateTime.Now.Ticks;
-                patient.Gender = Gender.Male;
+                patient.Gender = AccountGender.Male;
                 patient.Email = $"linhdse031{i}{(i%2 == 0 ? "@fpt.edu.vn" : "@yahoo.com.vn")}";
                 patient.Password = $"PatientPassword";
                 patient.Phone = $"01234567{i}";
@@ -193,7 +194,7 @@ namespace OlivesAdministration
                 patient.Created = DateTime.Now.Ticks;
                 patient.Latitude = i;
                 patient.Longitude = i;
-                patient.Role = Roles.Patient;
+                patient.Role = AccountRole.Patient;
                 patient.Height = i;
                 patient.Weight = i;
 

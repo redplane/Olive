@@ -1,5 +1,6 @@
 ﻿using Shared.Attributes;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Resources;
 using Shared.ViewModels;
 
@@ -10,8 +11,8 @@ namespace Olives.ViewModels
         /// <summary>
         ///     Role of account.
         /// </summary>
-        [InNumericArray(new[] {Roles.Patient, Roles.Doctor}, ErrorMessageResourceType = typeof (Language),
+        [InNumericArray(new[] {(int)AccountRole.Patient, (int)AccountRole.Doctor}, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidRole")]
-        public byte Role { get; set; }
+        public AccountRole Role { get; set; }
     }
 }

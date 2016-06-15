@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -18,7 +19,7 @@ namespace OlivesAdministration.Attributes
         ///     Initialize an instance of OlivesAuthorize attribute with allowed roles.
         /// </summary>
         /// <param name="roles"></param>
-        public OlivesAuthorize(byte[] roles)
+        public OlivesAuthorize(AccountRole[] roles)
         {
             Roles = roles;
         }
@@ -31,7 +32,7 @@ namespace OlivesAdministration.Attributes
         /// <summary>
         ///     Which roles can access this function.
         /// </summary>
-        public new byte[] Roles { get; }
+        public new AccountRole[] Roles { get; }
 
         /// <summary>
         ///     This function is for handling authorization handling.

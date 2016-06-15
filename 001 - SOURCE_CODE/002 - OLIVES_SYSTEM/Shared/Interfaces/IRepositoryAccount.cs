@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Neo4jClient;
+using Shared.Enumerations;
 using Shared.Models;
 using Shared.Models.Nodes;
 using Shared.ViewModels;
@@ -138,7 +139,7 @@ namespace Shared.Interfaces
         /// <param name="password"></param>
         /// <param name="role"></param>
         /// <returns></returns>
-        IPerson FindPerson(string email, string password, byte? role);
+        IPerson FindPerson(string email, string password, AccountRole? role);
 
         /// <summary>
         ///     Find person by using specific id.
@@ -152,7 +153,7 @@ namespace Shared.Interfaces
         /// </summary>
         /// <param name="role"></param>
         /// <returns></returns>
-        Task<IList<StatusStatisticViewModel>> SummarizePersonRole(byte? role);
+        Task<IList<StatusStatisticViewModel>> SummarizePersonRole(AccountRole? role);
 
         #endregion
     }

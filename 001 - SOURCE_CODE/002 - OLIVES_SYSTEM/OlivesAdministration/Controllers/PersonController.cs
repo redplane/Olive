@@ -7,6 +7,7 @@ using System.Web.Http;
 using OlivesAdministration.Attributes;
 using OlivesAdministration.ViewModels;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -43,7 +44,7 @@ namespace OlivesAdministration.Controllers
 
         [Route("api/person/status")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Roles.Admin})]
+        [OlivesAuthorize(new[] {AccountRole.Admin})]
         public async Task<HttpResponseMessage> Status(EditStatusViewModel info)
         {
             #region Model validation
@@ -95,7 +96,7 @@ namespace OlivesAdministration.Controllers
 
         [Route("api/person/statistic/status")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Roles.Admin})]
+        [OlivesAuthorize(new[] {AccountRole.Admin})]
         public async Task<HttpResponseMessage> Statistic([FromBody] StatusStatisticViewModel info)
         {
             #region Model validation
@@ -118,7 +119,7 @@ namespace OlivesAdministration.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 ActiveAccounts = summaryResult.Where(x => x.Status == AccountStatus.Active).Sum(x => x.Total),
-                PendingAcounts = summaryResult.Where(x => x.Status == AccountStatus.Pending).Sum(x => x.Total),
+                PendingAccounts = summaryResult.Where(x => x.Status == AccountStatus.Pending).Sum(x => x.Total),
                 DeactiveAccounts = summaryResult.Where(x => x.Status == AccountStatus.Inactive).Sum(x => x.Total),
                 Total = summaryResult.Sum(x => x.Total)
             });

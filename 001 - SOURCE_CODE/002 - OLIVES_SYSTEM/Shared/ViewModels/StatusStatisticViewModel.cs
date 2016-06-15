@@ -1,14 +1,14 @@
 ﻿using Shared.Attributes;
-using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Resources;
 
 namespace Shared.ViewModels
 {
     public class StatusStatisticViewModel
     {
-        [InNumericArray(new[] {Roles.Patient, Roles.Doctor}, ErrorMessageResourceType = typeof (Language),
+        [InNumericArray(new[] {(int)AccountRole.Patient, (int)AccountRole.Doctor}, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidRole")]
-        public byte? Role { get; set; }
+        public AccountRole? Role { get; set; }
 
         public byte Status { get; set; }
 

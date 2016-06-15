@@ -7,6 +7,7 @@ using System.Web.Http;
 using OlivesAdministration.Attributes;
 using OlivesAdministration.ViewModels;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Models.Nodes;
@@ -46,7 +47,7 @@ namespace OlivesAdministration.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] {Roles.Admin})]
+        [OlivesAuthorize(new[] {AccountRole.Admin})]
         public async Task<HttpResponseMessage> Get([FromUri] FindPatientViewModel info)
         {
             #region ModelState validation
@@ -92,7 +93,7 @@ namespace OlivesAdministration.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPost]
-        [OlivesAuthorize(new[] {Roles.Admin})]
+        [OlivesAuthorize(new[] {AccountRole.Admin})]
         public async Task<HttpResponseMessage> Post([FromBody] InitializePersonViewModel info)
         {
             #region ModelState validation
@@ -139,7 +140,7 @@ namespace OlivesAdministration.Controllers
             patient.Phone = info.Phone;
             patient.Money = 0;
             patient.Created = DateTime.Now.Ticks;
-            patient.Role = Roles.Patient;
+            patient.Role = AccountRole.Patient;
             patient.Status = AccountStatus.Active;
 
             #endregion
@@ -245,7 +246,7 @@ namespace OlivesAdministration.Controllers
 
         [Route("api/patient/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Roles.Admin})]
+        [OlivesAuthorize(new[] {AccountRole.Admin})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterPatientViewModel filter)
         {
             #region ModelState validation

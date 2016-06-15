@@ -10,6 +10,7 @@ using System.Web.Http;
 using log4net;
 using Olives.ViewModels;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Models.Nodes;
@@ -89,7 +90,7 @@ namespace Olives.Controllers
             account.Phone = info.Phone;
             account.Money = 0;
             account.Created = DateTime.Now.Ticks;
-            account.Role = Roles.Patient;
+            account.Role = AccountRole.Patient;
             account.Status = AccountStatus.Active;
             account.Role = info.Role;
 
@@ -98,7 +99,7 @@ namespace Olives.Controllers
 
             #region Initialize patient
 
-            if (account.Role == Roles.Patient)
+            if (account.Role == AccountRole.Patient)
             {
                 var activationCode = new ActivationCode();
                 activationCode.Code = Guid.NewGuid().ToString();
@@ -204,7 +205,7 @@ namespace Olives.Controllers
                 return Request.CreateResponse(HttpStatusCode.NotFound, RetrieveValidationErrors(ModelState));
             }
             // Requested user is not a patient or a doctor.
-            if (result.Role != Roles.Patient && result.Role != Roles.Doctor)
+            if (result.Role != AccountRole.Patient && result.Role != AccountRole.Doctor)
             {
                 _log.Error($"{loginViewModel.Email} is a admin, therefore, it cannot be used here.");
                 ModelState.AddModelError("Credential", Language.InvalidLoginInfo);
@@ -214,7 +215,7 @@ namespace Olives.Controllers
             if (result.Status == AccountStatus.Pending)
             {
                 // Tell doctor to contact admin for account verification.
-                if (result.Role == Roles.Doctor)
+                if (result.Role == AccountRole.Doctor)
                 {
                     _log.Error($"Access is forbidden because {loginViewModel.Email} is waiting for admin confirmation");
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new

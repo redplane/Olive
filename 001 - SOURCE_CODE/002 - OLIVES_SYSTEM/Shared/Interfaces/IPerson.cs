@@ -1,4 +1,6 @@
-﻿namespace Shared.Interfaces
+﻿using Shared.Enumerations;
+
+namespace Shared.Interfaces
 {
     public interface IPerson
     {
@@ -25,7 +27,7 @@
         /// <summary>
         ///     Person gender.
         /// </summary>
-        byte Gender { get; set; }
+        AccountGender Gender { get; set; }
 
         /// <summary>
         ///     Email address which is used for registration or for contacting.
@@ -70,7 +72,7 @@
         /// <summary>
         ///     Role of person [0 - Admin | 1 - Patient | 2 - Doctor]
         /// </summary>
-        byte Role { get; set; }
+        AccountRole Role { get; set; }
 
         /// <summary>
         ///     When account has been modified lastly.

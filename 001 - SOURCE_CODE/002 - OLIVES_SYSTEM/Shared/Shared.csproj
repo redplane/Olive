@@ -72,9 +72,9 @@
     <Compile Include="Constants\AccountStatus.cs" />
     <Compile Include="Constants\HeaderFields.cs" />
     <Compile Include="Constants\FieldLength.cs" />
-    <Compile Include="Constants\Gender.cs" />
     <Compile Include="Constants\Regexes.cs" />
-    <Compile Include="Constants\Roles.cs" />
+    <Compile Include="Enumerations\AccountGender.cs" />
+    <Compile Include="Enumerations\AccountRole.cs" />
     <Compile Include="Constants\Values.cs" />
     <Compile Include="Enumerations\Comparision.cs" />
     <Compile Include="Interfaces\IDbSetting.cs" />

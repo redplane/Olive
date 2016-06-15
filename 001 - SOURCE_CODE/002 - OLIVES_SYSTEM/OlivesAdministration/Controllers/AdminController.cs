@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Resources;
 using Shared.ViewModels;
@@ -67,7 +68,7 @@ namespace OlivesAdministration.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
 
             // Update role Admin to login view model.
-            loginViewModel.Role = Roles.Admin;
+            loginViewModel.Role = AccountRole.Admin;
 
             // Pass parameter to login function. 
             var result = await _repositoryAccount.LoginAsync(loginViewModel);

@@ -27,38 +27,26 @@ namespace Shared.Models.Nodes
         /// <summary>
         ///     Person first name.
         /// </summary>
-        [MaxLength(FieldLength.LastNameMaxLength, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidFirstName")]
         public string FirstName { get; set; }
 
         /// <summary>
         ///     Person last name.
         /// </summary>
-        [MaxLength(FieldLength.LastNameMaxLength, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidLastName")]
         public string LastName { get; set; }
 
         /// <summary>
         ///     Birthday (ticks).
         /// </summary>
-        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public long? Birthday { get; set; }
 
         /// <summary>
         ///     Person gender.
         /// </summary>
-        [Range(Constants.Gender.Male, Constants.Gender.Female, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidGender")]
-        public byte Gender { get; set; }
+        public AccountGender Gender { get; set; }
 
         /// <summary>
         ///     Email address which is used for registration or for contacting.
         /// </summary>
-        [MaxLength(FieldLength.EmailMaxLength, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidEmailMaximumLength")]
-        [RegularExpression(Regexes.Email, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidEmailFormat")]
         public string Email { get; set; }
 
         /// <summary>
@@ -70,8 +58,6 @@ namespace Shared.Models.Nodes
         /// <summary>
         ///     Phone number which is used for contacting.
         /// </summary>
-        [RegexMatch(Regexes.Phone, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidPhone")]
         public string Phone { get; set; }
 
         /// <summary>
@@ -102,7 +88,7 @@ namespace Shared.Models.Nodes
         /// <summary>
         ///     Role of person [0 - Admin | 1 - Patient | 2 - Doctor]
         /// </summary>
-        public byte Role { get; set; }
+        public AccountRole Role { get; set; }
 
         /// <summary>
         ///     Time when accout has been modified.

@@ -6,6 +6,7 @@ using Neo4jClient;
 using Neo4jClient.Cypher;
 using Neo4jClient.Transactions;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
@@ -56,7 +57,7 @@ namespace Shared.Repositories
         {
             var resultAsync = await _graphClient.Cypher.Match("(n:Person)")
                 .Where<IPerson>(n => n.Id == id)
-                .AndWhere<IPerson>(n => n.Role == Roles.Doctor)
+                .AndWhere<IPerson>(n => n.Role == AccountRole.Doctor)
                 .Return(n => n.As<Doctor>())
                 .ResultsAsync;
 
@@ -152,7 +153,7 @@ namespace Shared.Repositories
             ICypherFluentQuery query;
 
             // Filter must contain specific role.
-            filter.Role = Roles.Patient;
+            filter.Role = AccountRole.Patient;
 
             // Firstly, filter general information.
             FilterPerson(filter, out query, out isWhereConditionUsed);
@@ -245,7 +246,7 @@ namespace Shared.Repositories
             ICypherFluentQuery query;
 
             // Filter must contain specific role.
-            filter.Role = Roles.Doctor;
+            filter.Role = AccountRole.Doctor;
 
             // Firstly, filter general information.
             FilterPerson(filter, out query, out isWhereConditionUsed);
@@ -441,7 +442,7 @@ namespace Shared.Repositories
         {
             // Initialize match query.
             var query = _graphClient.Cypher.Match("(n:Person)")
-                .Where<IPerson>(n => n.Role == Roles.Patient);
+                .Where<IPerson>(n => n.Role == AccountRole.Patient);
 
             var isWhereAvailable = true;
 
@@ -493,7 +494,7 @@ namespace Shared.Repositories
                     transactClient.Cypher
                         .Match("(p:Person)")
                         .Where<IPerson>(p => p.Id == id)
-                        .AndWhere<IPerson>(p => p.Role == Roles.Admin)
+                        .AndWhere<IPerson>(p => p.Role == AccountRole.Admin)
                         .Create("(p)-[:NOTES]->(a:PersonalNote {note})")
                         .WithParam("note", note)
                         .ExecuteWithoutResults();
@@ -529,7 +530,7 @@ namespace Shared.Repositories
                     transactClient.Cypher
                         .Match("(p:Person)")
                         .Where<IPerson>(p => p.Id == id)
-                        .AndWhere<IPerson>(p => p.Role == Roles.Admin)
+                        .AndWhere<IPerson>(p => p.Role == AccountRole.Admin)
                         .Create("(p)-[:IS_ALLERGIC_WITH]->(a:Allergy {allergy})")
                         .WithParam("allergy", allergy)
                         .ExecuteWithoutResults();
@@ -566,7 +567,7 @@ namespace Shared.Repositories
                     transactClient.Cypher
                         .Match("(p:Person)")
                         .Where<IPerson>(p => p.Id == id)
-                        .AndWhere<IPerson>(p => p.Role == Roles.Admin)
+                        .AndWhere<IPerson>(p => p.Role == AccountRole.Admin)
                         .Create("(p)-[:ADDICTS_WITH]->(a:Addiction {addiction})")
                         .WithParam("addiction", addiction)
                         .ExecuteWithoutResults();
@@ -930,7 +931,7 @@ namespace Shared.Repositories
         /// <param name="password"></param>
         /// <param name="role"></param>
         /// <returns></returns>
-        public IPerson FindPerson(string email, string password, byte? role)
+        public IPerson FindPerson(string email, string password, AccountRole? role)
         {
             // No email has been specified.
             if (string.IsNullOrEmpty(email))
@@ -997,7 +998,7 @@ namespace Shared.Repositories
         /// </summary>
         /// <param name="role">Role of person</param>
         /// <returns></returns>
-        public async Task<IList<StatusStatisticViewModel>> SummarizePersonRole(byte? role)
+        public async Task<IList<StatusStatisticViewModel>> SummarizePersonRole(AccountRole? role)
         {
             // Query initialization.
             var query = _graphClient.Cypher.Match("(p:Person)");

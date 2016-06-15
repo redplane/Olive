@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using OlivesAdministration.Attributes;
 using OlivesAdministration.ViewModels;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models.Nodes;
 using Shared.Resources;
@@ -46,7 +47,7 @@ namespace OlivesAdministration.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] {Roles.Admin})]
+        [OlivesAuthorize(new[] {AccountRole.Admin})]
         public async Task<HttpResponseMessage> Get([FromUri] RetrieveDoctorViewModel info)
         {
             #region ModelState validation
@@ -91,7 +92,7 @@ namespace OlivesAdministration.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPut]
-        [OlivesAuthorize(new[] {Roles.Admin})]
+        [OlivesAuthorize(new[] {AccountRole.Admin})]
         public async Task<HttpResponseMessage> Put(EditDoctorViewModel info)
         {
             #region ModelState validation
@@ -194,7 +195,7 @@ namespace OlivesAdministration.Controllers
         /// <returns></returns>
         [Route("api/doctor/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Roles.Admin})]
+        [OlivesAuthorize(new[] {AccountRole.Admin})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterDoctorViewModel info)
         {
             // Information hasn't been initialize.
@@ -212,7 +213,7 @@ namespace OlivesAdministration.Controllers
             #endregion
 
             // Set filter role to Doctor.
-            info.Role = Roles.Doctor;
+            info.Role = AccountRole.Doctor;
 
             // Retrieve result from server.
             var results = await _repositoryAccount.FilterDoctorAsync(info);

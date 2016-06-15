@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Shared.Attributes;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Resources;
 
 namespace Shared.ViewModels
@@ -21,10 +23,10 @@ namespace Shared.ViewModels
         ///     Password of account.
         /// </summary>
         [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "RequirePassword")]
-        //[RegularExpression(Regexes.Password, ErrorMessage = ErrorCodes.InvalidPasswordFormat)]
-        //[MaxLength(Constants.Constants.PasswordMaxLength, ErrorMessage = ErrorCodes.InvalidPasswordLength)]
+        [RegexMatch(Regexes.Password, ErrorMessageResourceType = typeof(Language),
+            ErrorMessageResourceName = "RegexPassword")]
         public string Password { get; set; }
 
-        public int? Role { get; set; }
+        public AccountRole? Role { get; set; }
     }
 }

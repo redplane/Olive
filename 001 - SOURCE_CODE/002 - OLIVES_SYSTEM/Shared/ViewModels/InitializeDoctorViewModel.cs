@@ -22,9 +22,8 @@ namespace Shared.ViewModels
         [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "RequireBirthday")]
         public long? Birthday { get; set; }
 
-        [Range(Constants.Gender.Male, Constants.Gender.Female, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidGender")]
-        public byte Gender { get; set; }
+        [InNumericArray(new[] { (int)AccountGender.Female, (int)AccountGender.Male }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidGender")]
+        public AccountGender Gender { get; set; }
 
         [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "RequireEmail")]
         public string Email { get; set; }
