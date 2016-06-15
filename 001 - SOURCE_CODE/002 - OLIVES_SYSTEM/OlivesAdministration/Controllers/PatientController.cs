@@ -267,6 +267,10 @@ namespace OlivesAdministration.Controllers
 
             // Filter patient by using specific conditions.
             var results = await _repositoryAccount.FilterPatientAsync(filter);
+
+            if (results.Data == null)
+                results.Data = new List<IPerson>();
+
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 Users = results.Data,

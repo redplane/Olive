@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -217,6 +218,9 @@ namespace OlivesAdministration.Controllers
 
             // Retrieve result from server.
             var results = await _repositoryAccount.FilterDoctorAsync(info);
+
+            if (results.Data == null)
+                results.Data = new List<IPerson>();
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
