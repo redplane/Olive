@@ -82,13 +82,13 @@ namespace Olives
             var graphClient = new GraphClient(new Uri(database.Url), database.Username, database.Password);
             graphClient.Connect();
 
-            
+
             /*
              *  Email
              */
             // Stmp setting is invalid
-            //if (applicationSetting.SmtpSetting == null || !applicationSetting.SmtpSetting.IsValid())
-            //    throw new NotImplementedException("Email configuration hasn't been configured.");
+            if (applicationSetting.SmtpSetting == null || !applicationSetting.SmtpSetting.IsValid())
+                throw new NotImplementedException("Email configuration hasn't been configured.");
 
             #endregion
 
@@ -107,15 +107,15 @@ namespace Olives
              var emailService = new EmailService(applicationSetting.SmtpSetting);
 
             // Load email templates.
-            //if (applicationSetting.SmtpSetting.EmailSettings != null &&
-            //    applicationSetting.SmtpSetting.EmailSettings.Length > 0)
-            //{
-            //    foreach (var emailSetting in applicationSetting.SmtpSetting.EmailSettings)
-            //    {
-            //        var path = Server.MapPath($"~/{emailSetting.Path}");
-            //        emailService.LoadEmailTemplate(emailSetting.Name, path);
-            //    }
-            //}
+            if (applicationSetting.SmtpSetting.EmailTemplates != null &&
+                applicationSetting.SmtpSetting.EmailTemplates.Length > 0)
+            {
+                foreach (var email in applicationSetting.SmtpSetting.EmailTemplates)
+                {
+                    var path = Server.MapPath($"~/{email.Path}");
+                    emailService.LoadEmailTemplate(email.Name, path);
+                }
+            }
 
             builder.RegisterType<EmailService>()
                 .As<IEmailService>()

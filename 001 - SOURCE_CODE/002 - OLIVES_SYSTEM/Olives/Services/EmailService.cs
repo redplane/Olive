@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Text;
 using Nustache.Core;
+using Olives.Constants;
 using Olives.Interfaces;
 using Olives.Models;
 using Shared.Models;
@@ -45,17 +46,17 @@ namespace Olives.Services
         /// <param name="config"></param>
         public EmailService(SmtpSetting config)
         {
-            //_smtpClient = new SmtpClient();
-            //_smtpClient.Port = config.Port;
-            //_smtpClient.Host = config.Host;
-            //_smtpClient.EnableSsl = config.EnableSsl;
-            //_smtpClient.Timeout = config.Timeout;
-            //_smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-            //_smtpClient.UseDefaultCredentials = false;
-            //_smtpClient.Credentials = new NetworkCredential(config.Email, config.Password);
+            _smtpClient = new SmtpClient();
+            _smtpClient.Port = config.Port;
+            _smtpClient.Host = config.Host;
+            _smtpClient.EnableSsl = config.EnableSsl;
+            _smtpClient.Timeout = config.Timeout;
+            _smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+            _smtpClient.UseDefaultCredentials = false;
+            _smtpClient.Credentials = new NetworkCredential(config.Email, config.Password);
 
-            //Templates = new Dictionary<string, string>();
-            //_stmpConfiguration = config;
+            Templates = new Dictionary<string, string>();
+            _stmpConfiguration = config;
         }
 
         #endregion
@@ -135,16 +136,17 @@ namespace Olives.Services
             };
 
             //// Render email body from template with given information.
-            //var render = Render.StringToString(Templates[EmailTemplates.Activation], data);
+            var render = Render.StringToString(Templates[EmailType.Activation], data);
 
-            //// Initialize mail message.
-            //var mailMessage = new MailMessage();
-            //mailMessage.From = new MailAddress(_stmpConfiguration.From, _stmpConfiguration.DisplayName);
-            //mailMessage.Body = render;
-            //mailMessage.BodyEncoding = Encoding.UTF8;
-            //mailMessage.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
-            
-            //SendEmail(mailMessage);
+            // Initialize mail message.
+            var mailMessage = new MailMessage();
+            mailMessage.From = new MailAddress(_stmpConfiguration.From, _stmpConfiguration.DisplayName);
+            mailMessage.To.Add(new MailAddress(to));
+            mailMessage.Body = render;
+            mailMessage.BodyEncoding = Encoding.UTF8;
+            mailMessage.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
+            mailMessage.IsBodyHtml = true;
+            SendEmail(mailMessage);
         }
 
         #endregion

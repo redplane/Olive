@@ -348,4 +348,7 @@
   <data name="OliveActivationCodeEmailTitle" xml:space="preserve">
     <value>Olive account activation code</value>
   </data>
+  <data name="InvalidRequestParameters" xml:space="preserve">
+    <value>Request parameters are invalid</value>
+  </data>
 </root>

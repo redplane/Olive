@@ -7,12 +7,6 @@ namespace Olives.Interfaces
     public interface IEmailService
     {
         /// <summary>
-        /// Collection of email templates.
-        /// </summary>
-        Dictionary<string, string> Templates { get; }
-
-
-        /// <summary>
         /// Send email with specific information.
         /// </summary>
         /// <param name="from"></param>

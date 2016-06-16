@@ -1,7 +1,23 @@
 {
-  "Database": {
+  "database": {
     "url": "http://olivesdb.sb05.stations.graphenedb.com:24789/db/data/",
     "account": "OlivesDb",
     "password": "L9oMnhaCKCjfehES8YES"
+  },
+  "smtpSetting": {
+    "host": "smtp.gmail.com",
+    "port": 587,
+    "enableSSL": true,
+    "timeout": 30000,
+    "email": "oliveshealth@gmail.com",
+    "password": "Redplane1",
+    "from": "noreply@oliveshealth.com",
+    "displayName":  "Olives Health",
+    "emailTemplates": [
+      {
+        "name": "Activation",
+        "path": "Emails/Activation.txt"
+      }
+    ]
   }
 }

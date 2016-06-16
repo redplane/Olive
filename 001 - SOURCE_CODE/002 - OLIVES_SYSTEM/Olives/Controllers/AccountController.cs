@@ -152,16 +152,16 @@ namespace Olives.Controllers
             #endregion
         }
 
-        //[Route("api/account/code")]
-        //[HttpPost]
-        //public void SendActivationCode([FromBody] ActivationSendViewModel info)
-        //{
-        //    var activationCode = new ActivationCode();
-        //    activationCode.Expire = DateTime.Now.AddDays(24).Millisecond;
-        //    activationCode.Code = Guid.NewGuid().ToString("N");
+        [Route("api/account/code")]
+        [HttpPost]
+        public void SendActivationCode([FromBody] ActivationSendViewModel info)
+        {
+            var activationCode = new ActivationCode();
+            activationCode.Expire = DateTime.Now.AddDays(24).Millisecond;
+            activationCode.Code = Guid.NewGuid().ToString("N");
 
-        //    _emailService.SendActivationCode(info.To, Language.OliveActivationCodeEmailTitle, info.FirstName, info.LastName, activationCode);
-        //}
+            _emailService.SendActivationCode(info.To, Language.OliveActivationCodeEmailTitle, info.FirstName, info.LastName, activationCode);
+        }
         #endregion
 
         #region Properties

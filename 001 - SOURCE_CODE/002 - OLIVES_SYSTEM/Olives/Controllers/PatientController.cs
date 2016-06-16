@@ -55,9 +55,8 @@ namespace Olives.Controllers
             // Information hasn't been initialize.
             if (info == null)
             {
-                // Initialize the default instance and do the validation.
-                info = new OliveInitializePersonViewModel();
-                Validate(info);
+                responseError.Errors.Add(Language.InvalidRequestParameters);
+                return Request.CreateResponse(HttpStatusCode.BadRequest, responseError);
             }
 
             // Invalid model state.
@@ -90,12 +89,12 @@ namespace Olives.Controllers
             account.Phone = info.Phone;
             account.Money = 0;
             account.Created = DateTime.Now.Ticks;
-            account.Status = AccountStatus.Active;
             account.Role = AccountRole.Patient;
 
             // TODO : Change status to Pending.
             account.Status = AccountStatus.Active;
 
+            // Activation code initialization.
             var activationCode = new ActivationCode();
             activationCode.Code = Guid.NewGuid().ToString();
             activationCode.Expire = DateTime.Now.AddHours(24).Ticks;

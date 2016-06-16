@@ -484,6 +484,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Request parameters are invalid.
+        /// </summary>
+        public static string InvalidRequestParameters {
+            get {
+                return ResourceManager.GetString("InvalidRequestParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Role should be : {1}.
         /// </summary>
         public static string InvalidRole {
