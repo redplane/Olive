@@ -3,7 +3,6 @@ using System.Configuration;
 using System.IO;
 using System.Web;
 using System.Web.Http;
-using System.Web.UI.WebControls;
 using Autofac;
 using Autofac.Integration.WebApi;
 using log4net.Config;
@@ -16,9 +15,7 @@ using Olives.Models;
 using Olives.Module;
 using Olives.Services;
 using Shared.Interfaces;
-using Shared.Models;
 using Shared.Repositories;
-using Olives.ViewModels;
 
 namespace Olives
 {
@@ -104,7 +101,7 @@ namespace Olives
                 .SingleInstance();
 
             // Email service.
-             var emailService = new EmailService(applicationSetting.SmtpSetting);
+            var emailService = new EmailService(applicationSetting.SmtpSetting);
 
             // Load email templates.
             if (applicationSetting.SmtpSetting.EmailTemplates != null &&

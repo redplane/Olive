@@ -184,19 +184,7 @@ namespace Olives.Controllers
         #endregion
 
         #region Login
-
-        [Route("api/account/index")]
-        [HttpGet]
-        public HttpResponseMessage Index()
-        {
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
-            var viewPath = HttpContext.Current.Server.MapPath(@"~/Views/Account/Index.html");
-            var info = File.ReadAllText(viewPath);
-            response.Content = new StringContent(info);
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
-            return response;
-        }
-
+        
         /// <summary>
         ///     This function is for authenticate an user account.
         /// </summary>

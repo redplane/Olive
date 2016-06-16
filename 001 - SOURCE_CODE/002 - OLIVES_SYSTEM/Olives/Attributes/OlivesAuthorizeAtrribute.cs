@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using Shared.Constants;
-using Shared.Enumerations;
 using Shared.Interfaces;
 
 namespace Olives.Attributes

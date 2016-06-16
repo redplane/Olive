@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Interfaces;
-using Olives.ViewModels;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;

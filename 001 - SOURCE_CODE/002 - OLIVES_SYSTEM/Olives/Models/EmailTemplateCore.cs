@@ -1,5 +1,4 @@
-﻿
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Olives.Models
 {
@@ -7,11 +6,11 @@ namespace Olives.Models
     {
         [JsonProperty("content")]
         public string Content { get; set; }
-        
+
         [JsonProperty("isHtml")]
         public bool IsHtml { get; set; }
-        
+
         [JsonProperty("subject")]
-        public string Subject { get; set; } 
+        public string Subject { get; set; }
     }
 }
