@@ -9,5 +9,8 @@ namespace Olives.Models
 
         [JsonProperty("path")]
         public string Path { get; set; }
+
+        [JsonProperty("core")]
+        public EmailTemplateCore Core { get; set; }
     }
 }

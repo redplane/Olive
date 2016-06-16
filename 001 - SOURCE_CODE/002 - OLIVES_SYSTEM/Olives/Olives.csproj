@@ -126,6 +126,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Emails\Activation.html" />
     <Content Include="Global.asax" />
     <Content Include="Views\Account\Index.html" />
     <Content Include="Views\Index.html" />
@@ -144,6 +145,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\EmailTemplate.cs" />
+    <Compile Include="Models\EmailTemplateCore.cs" />
     <Compile Include="Models\SmtpSetting.cs" />
     <Compile Include="Module\Log4NetModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -113,7 +113,7 @@ namespace Olives
                 foreach (var email in applicationSetting.SmtpSetting.EmailTemplates)
                 {
                     var path = Server.MapPath($"~/{email.Path}");
-                    emailService.LoadEmailTemplate(email.Name, path);
+                    emailService.LoadEmailTemplate(email.Name, path, email.Core);
                 }
             }
 

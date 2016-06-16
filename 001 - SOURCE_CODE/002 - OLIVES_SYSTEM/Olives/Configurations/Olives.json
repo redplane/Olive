@@ -16,7 +16,11 @@
     "emailTemplates": [
       {
         "name": "Activation",
-        "path": "Emails/Activation.txt"
+        "path": "Emails/Activation.html",
+        "core": {
+          "isHtml": true,
+          "subject": "Activation code"
+        }
       }
     ]
   }

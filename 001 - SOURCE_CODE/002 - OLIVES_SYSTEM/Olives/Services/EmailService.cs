@@ -29,7 +29,7 @@ namespace Olives.Services
         /// <summary>
         /// Collection of email templates.
         /// </summary>
-        public Dictionary<string, string> Templates { get; }
+        public Dictionary<string, EmailTemplateCore> Templates { get; }
 
         #endregion
 
@@ -55,7 +55,7 @@ namespace Olives.Services
             _smtpClient.UseDefaultCredentials = false;
             _smtpClient.Credentials = new NetworkCredential(config.Email, config.Password);
 
-            Templates = new Dictionary<string, string>();
+            Templates = new Dictionary<string, EmailTemplateCore>();
             _stmpConfiguration = config;
         }
 
@@ -94,8 +94,9 @@ namespace Olives.Services
         /// </summary>
         /// <param name="name"></param>
         /// <param name="file"></param>
+        /// <param name="core"></param>
         /// <returns></returns>
-        public bool LoadEmailTemplate(string name, string file)
+        public bool LoadEmailTemplate(string name, string file, EmailTemplateCore core)
         {
             // File doesn't exist.
             if (!File.Exists(file))
@@ -104,7 +105,8 @@ namespace Olives.Services
             try
             {
                 var info = File.ReadAllText(file);
-                Templates[name] = info;
+                core.Content = info;
+                Templates[name] = core;
                 return true;
             }
             catch (Exception exception)
@@ -136,16 +138,17 @@ namespace Olives.Services
             };
 
             //// Render email body from template with given information.
-            var render = Render.StringToString(Templates[EmailType.Activation], data);
+            var render = Render.StringToString(Templates[EmailType.Activation].Content, data);
 
             // Initialize mail message.
             var mailMessage = new MailMessage();
             mailMessage.From = new MailAddress(_stmpConfiguration.From, _stmpConfiguration.DisplayName);
             mailMessage.To.Add(new MailAddress(to));
+            mailMessage.Subject = Templates[EmailType.Activation].Subject;
             mailMessage.Body = render;
             mailMessage.BodyEncoding = Encoding.UTF8;
             mailMessage.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
-            mailMessage.IsBodyHtml = true;
+            mailMessage.IsBodyHtml = Templates[EmailType.Activation].IsHtml;
             SendEmail(mailMessage);
         }
 

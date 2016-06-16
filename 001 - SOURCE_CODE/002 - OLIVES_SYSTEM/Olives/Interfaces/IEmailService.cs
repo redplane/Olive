@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Net.Mail;
+using Olives.Models;
 using Shared.Models;
 
 namespace Olives.Interfaces
@@ -38,8 +39,6 @@ namespace Olives.Interfaces
         /// <param name="name"></param>
         /// <param name="file"></param>
         /// <returns></returns>
-        bool LoadEmailTemplate(string name, string file);
-
-
+        bool LoadEmailTemplate(string name, string file, EmailTemplateCore core);
     }
 }
