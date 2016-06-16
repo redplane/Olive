@@ -45,17 +45,17 @@ namespace Olives.Services
         /// <param name="config"></param>
         public EmailService(SmtpSetting config)
         {
-            _smtpClient = new SmtpClient();
-            _smtpClient.Port = config.Port;
-            _smtpClient.Host = config.Host;
-            _smtpClient.EnableSsl = config.EnableSsl;
-            _smtpClient.Timeout = config.Timeout;
-            _smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-            _smtpClient.UseDefaultCredentials = false;
-            _smtpClient.Credentials = new NetworkCredential(config.Email, config.Password);
+            //_smtpClient = new SmtpClient();
+            //_smtpClient.Port = config.Port;
+            //_smtpClient.Host = config.Host;
+            //_smtpClient.EnableSsl = config.EnableSsl;
+            //_smtpClient.Timeout = config.Timeout;
+            //_smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+            //_smtpClient.UseDefaultCredentials = false;
+            //_smtpClient.Credentials = new NetworkCredential(config.Email, config.Password);
 
-            Templates = new Dictionary<string, string>();
-            _stmpConfiguration = config;
+            //Templates = new Dictionary<string, string>();
+            //_stmpConfiguration = config;
         }
 
         #endregion

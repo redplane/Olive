@@ -87,8 +87,8 @@ namespace Olives
              *  Email
              */
             // Stmp setting is invalid
-            if (applicationSetting.SmtpSetting == null || !applicationSetting.SmtpSetting.IsValid())
-                throw new NotImplementedException("Email configuration hasn't been configured.");
+            //if (applicationSetting.SmtpSetting == null || !applicationSetting.SmtpSetting.IsValid())
+            //    throw new NotImplementedException("Email configuration hasn't been configured.");
 
             #endregion
 
