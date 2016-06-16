@@ -345,4 +345,7 @@
   <data name="ValueMustBeGreaterThan" xml:space="preserve">
     <value>{0} must be greater than {1}</value>
   </data>
+  <data name="OliveActivationCodeEmailTitle" xml:space="preserve">
+    <value>Olive account activation code</value>
+  </data>
 </root>

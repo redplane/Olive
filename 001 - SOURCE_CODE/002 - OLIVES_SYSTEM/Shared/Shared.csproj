@@ -79,7 +79,6 @@
     <Compile Include="Constants\Values.cs" />
     <Compile Include="Enumerations\Comparision.cs" />
     <Compile Include="Interfaces\IDbSetting.cs" />
-    <Compile Include="Interfaces\IEmailService.cs" />
     <Compile Include="Interfaces\IPerson.cs" />
     <Compile Include="Interfaces\IRepositoryAccount.cs" />
     <Compile Include="Models\ActivationCode.cs" />
@@ -115,7 +114,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Language.vi.resx</DependentUpon>
     </Compile>
-    <Compile Include="Services\EmailService.cs" />
     <Compile Include="ViewModels\FilterPatientViewModel.cs" />
     <Compile Include="ViewModels\ResponsePersonCode.cs" />
     <Compile Include="ViewModels\StatusStatisticViewModel.cs" />
@@ -140,6 +138,9 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

@@ -633,7 +633,7 @@ namespace Shared.Repositories
                     .DetachDelete("a")
                     .Set("p = {person}")
                     .WithParam("person", info)
-                    .Create("(p)-[:HAS_ACTIVATION_CODE]->(c:ActivationCode {code}")
+                    .Create("(p)-[:HAS_ACTIVATION_CODE]->(c:ActivationCode {code})")
                     .WithParam("code", code)
                     .Return((p, c) =>
                         new ResponsePersonCode
@@ -650,7 +650,7 @@ namespace Shared.Repositories
 
                 return result;
             }
-            catch (Exception)
+            catch (Exception exception)
             {
                 return null;
             }

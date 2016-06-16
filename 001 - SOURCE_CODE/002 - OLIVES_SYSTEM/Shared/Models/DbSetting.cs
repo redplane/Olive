@@ -5,13 +5,13 @@ namespace Shared.Models
 {
     public class DbSetting : IDbSetting
     {
-        [JsonProperty("db_url")]
+        [JsonProperty("url")]
         public string Url { get; set; }
 
-        [JsonProperty("db_account")]
+        [JsonProperty("account")]
         public string Username { get; set; }
 
-        [JsonProperty("db_password")]
+        [JsonProperty("password")]
         public string Password { get; set; }
     }
 }

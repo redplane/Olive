@@ -72,6 +72,10 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1-beta1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Nustache.Core, Version=1.16.0.1, Culture=neutral, PublicKeyToken=efd6f3d8f76ecd9f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nustache.1.16.0.1\lib\net20\Nustache.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -130,13 +134,18 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Attributes\OlivesAuthorizeAtrribute.cs" />
+    <Compile Include="Controllers\PatientController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ParentController.cs" />
+    <Compile Include="Interfaces\IEmailService.cs" />
+    <Compile Include="Models\ApplicationSetting.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\SmtpSetting.cs" />
     <Compile Include="Module\Log4NetModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\EmailService.cs" />
     <Compile Include="ViewModels\EditDoctorViewModel.cs" />
     <Compile Include="ViewModels\FindPatientViewModel.cs" />
     <Compile Include="ViewModels\EditPatientStatusViewModel.cs" />
@@ -145,7 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <Content Include="Configurations\OlivesGraphDb.json" />
+    <Content Include="Configurations\Olives.json" />
     <None Include="Properties\PublishProfiles\oliveshealth - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\oliveshealth - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
@@ -160,6 +169,9 @@
       <Project>{5227a0f6-c8cd-4a8b-b8bb-870bde42f88b}</Project>
       <Name>Shared</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Enumerations\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

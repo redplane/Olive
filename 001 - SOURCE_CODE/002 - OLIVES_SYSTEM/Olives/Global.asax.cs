@@ -3,6 +3,7 @@ using System.Configuration;
 using System.IO;
 using System.Web;
 using System.Web.Http;
+using System.Web.UI.WebControls;
 using Autofac;
 using Autofac.Integration.WebApi;
 using log4net.Config;
@@ -10,10 +11,14 @@ using Neo4jClient;
 using Newtonsoft.Json;
 using Olives.Attributes;
 using Olives.Controllers;
+using Olives.Interfaces;
+using Olives.Models;
 using Olives.Module;
+using Olives.Services;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Repositories;
+using Olives.ViewModels;
 
 namespace Olives
 {
@@ -36,40 +41,60 @@ namespace Olives
 
             //// ...or you can register individual controlllers manually.
             //builder.RegisterType<AdminController>().InstancePerRequest();
-            //builder.RegisterType<DoctorController>().InstancePerRequest();
+            builder.RegisterType<PatientController>().InstancePerRequest();
             builder.RegisterType<AccountController>().InstancePerRequest();
 
             #endregion
 
-            #region Database connection
+            #region General application configuration
+
+            // Initialize an instance of application setting.
+            var applicationSetting = new ApplicationSetting();
 
             // Retrieve file name which stores database configuration.
-            var olivesDbFile = ConfigurationManager.AppSettings["GraphDbConfigFile"];
+            var applicationConfig = ConfigurationManager.AppSettings["ApplicationConfigFile"];
 
             // Find the file on physical path.
-            var dbConfigsFile = Server.MapPath($"~/{olivesDbFile}.json");
+            var applicationConfigFile = Server.MapPath($"~/{applicationConfig}.json");
 
             // Invalid database configuration file.
-            if (!File.Exists(dbConfigsFile))
+            if (File.Exists(applicationConfigFile))
             {
-                var exception = new Exception($"Invalid database file. {dbConfigsFile} doesn't exist.");
-                throw exception;
+                var info = File.ReadAllText(applicationConfigFile);
+                applicationSetting = JsonConvert.DeserializeObject<ApplicationSetting>(info);
             }
 
-            var fileInfo = File.ReadAllText(dbConfigsFile);
-            var dbSetting = JsonConvert.DeserializeObject<DbSetting>(fileInfo);
+            #endregion
 
-            // Invalid databse configuration.
-            if (dbSetting == null)
-                throw new Exception("Invalid database configuration.");
+            #region Application settings check
+
+            /* 
+             * Graph database 
+             */
+            // No graph database has been configured.
+            if (applicationSetting.Database == null || string.IsNullOrEmpty(applicationSetting.Database.Url))
+                throw new NotImplementedException("No graph database has been configured.");
+
+            // Retrieve the database configuration.
+            var database = applicationSetting.Database;
 
             // Graphdabase client connection construction.
-            var graphClient = new GraphClient(new Uri(dbSetting.Url), dbSetting.Username, dbSetting.Password);
+            var graphClient = new GraphClient(new Uri(database.Url), database.Username, database.Password);
             graphClient.Connect();
+
+            
+            /*
+             *  Email
+             */
+            // Stmp setting is invalid
+            if (applicationSetting.SmtpSetting == null || !applicationSetting.SmtpSetting.IsValid())
+                throw new NotImplementedException("Email configuration hasn't been configured.");
 
             #endregion
 
             #region IoC registration
+
+            #region Repository & Services
 
             // Repository account registration.
             var repositoryAccount = new RepositoryAccount(graphClient);
@@ -78,8 +103,33 @@ namespace Olives
                 .OnActivating(e => e.ReplaceInstance(repositoryAccount))
                 .SingleInstance();
 
+            // Email service.
+             var emailService = new EmailService(applicationSetting.SmtpSetting);
+
+            // Load email templates.
+            //if (applicationSetting.SmtpSetting.EmailSettings != null &&
+            //    applicationSetting.SmtpSetting.EmailSettings.Length > 0)
+            //{
+            //    foreach (var emailSetting in applicationSetting.SmtpSetting.EmailSettings)
+            //    {
+            //        var path = Server.MapPath($"~/{emailSetting.Path}");
+            //        emailService.LoadEmailTemplate(emailSetting.Name, path);
+            //    }
+            //}
+
+            builder.RegisterType<EmailService>()
+                .As<IEmailService>()
+                .OnActivating(e => e.ReplaceInstance(emailService))
+                .SingleInstance();
+
+            #endregion
+
+            #region Attributes
+
             // OlivesAuthorize attribute registration (to access dependency)
             builder.RegisterType<OlivesAuthorize>().PropertiesAutowired();
+
+            #endregion
 
             // Log4net module registration (this is for logging)
             builder.RegisterModule<Log4NetModule>();

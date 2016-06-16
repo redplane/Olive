@@ -547,6 +547,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Olive account activation code.
+        /// </summary>
+        public static string OliveActivationCodeEmailTitle {
+            get {
+                return ResourceManager.GetString("OliveActivationCodeEmailTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please access your email to verify this account.
         /// </summary>
         public static string PatientAccountPending {

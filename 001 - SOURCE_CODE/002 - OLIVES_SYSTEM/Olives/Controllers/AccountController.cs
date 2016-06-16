@@ -16,6 +16,7 @@ using Shared.Models;
 using Shared.Models.Nodes;
 using Shared.Resources;
 using Shared.ViewModels;
+using Olives.Interfaces;
 
 namespace Olives.Controllers
 {
@@ -27,10 +28,13 @@ namespace Olives.Controllers
         ///     Initialize an instance of AccountController with Dependency injections.
         /// </summary>
         /// <param name="repositoryAccount"></param>
-        public AccountController(IRepositoryAccount repositoryAccount, ILog log)
+        /// <param name="log"></param>
+        /// <param name="emailService"></param>
+        public AccountController(IRepositoryAccount repositoryAccount, ILog log, IEmailService emailService)
         {
             _repositoryAccount = repositoryAccount;
             _log = log;
+            _emailService = emailService;
         }
 
         #endregion
@@ -90,7 +94,7 @@ namespace Olives.Controllers
             account.Phone = info.Phone;
             account.Money = 0;
             account.Created = DateTime.Now.Ticks;
-            account.Role = AccountRole.Patient;
+            account.Role = info.Role;
             account.Status = AccountStatus.Active;
             account.Role = info.Role;
 
@@ -114,6 +118,7 @@ namespace Olives.Controllers
                 }
 
                 // TODO: Send mail with activation code to client.
+
                 // Tell client to check his/her email to verify this account.
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -147,6 +152,16 @@ namespace Olives.Controllers
             #endregion
         }
 
+        //[Route("api/account/code")]
+        //[HttpPost]
+        //public void SendActivationCode([FromBody] ActivationSendViewModel info)
+        //{
+        //    var activationCode = new ActivationCode();
+        //    activationCode.Expire = DateTime.Now.AddDays(24).Millisecond;
+        //    activationCode.Code = Guid.NewGuid().ToString("N");
+
+        //    _emailService.SendActivationCode(info.To, Language.OliveActivationCodeEmailTitle, info.FirstName, info.LastName, activationCode);
+        //}
         #endregion
 
         #region Properties
@@ -160,6 +175,11 @@ namespace Olives.Controllers
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
+
+        /// <summary>
+        /// Service which is used for sending emails.
+        /// </summary>
+        private readonly IEmailService _emailService;
 
         #endregion
 
@@ -190,7 +210,7 @@ namespace Olives.Controllers
             if (!ModelState.IsValid)
             {
                 _log.Error("Invalid login request parameters");
-                return Request.CreateResponse(HttpStatusCode.BadGateway, RetrieveValidationErrors(ModelState));
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
 
             // Pass parameter to login function. 
