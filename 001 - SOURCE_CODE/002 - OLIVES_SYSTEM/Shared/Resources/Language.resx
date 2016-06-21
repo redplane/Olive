@@ -324,9 +324,6 @@
   <data name="AccessEmailForVerification" xml:space="preserve">
     <value>Please access your email for account verification</value>
   </data>
-  <data name="DoctorAccountPending" xml:space="preserve">
-    <value>Please contact administrators to verify this account</value>
-  </data>
   <data name="PatientAccountPending" xml:space="preserve">
     <value>Please access your email to verify this account</value>
   </data>
@@ -353,5 +350,13 @@
   </data>
   <data name="LoginConflict" xml:space="preserve">
     <value>Login information is conflicted</value>
+  </data>
+  <data name="WarnPendingAccount" xml:space="preserve">
+    <value>W001</value>
+    <comment>Warn front-end that account is pending</comment>
+  </data>
+  <data name="WarnDisabledAccount" xml:space="preserve">
+    <value>W002</value>
+    <comment>Warn front-end that account is disabled</comment>
   </data>
 </root>

@@ -5,7 +5,9 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Interfaces;
+using Shared.Resources;
 
 namespace Olives.Attributes
 {
@@ -61,7 +63,7 @@ namespace Olives.Attributes
             }
 
             // Retrieve person whose properties match conditions.
-            var person = AccountsRepository.FindPerson(accountEmail, accountPassword, null);
+            var person = AccountsRepository.FindPerson(null, accountEmail, accountPassword, null);
 
             // No person has been found.
             if (person == null)
@@ -70,6 +72,28 @@ namespace Olives.Attributes
                 return;
             }
 
+            // Account has been disabled.
+            if (person.Status == AccountStatus.Inactive)
+            {
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
+                {
+                    Errors = new[] { Language.WarnDisabledAccount }
+                });
+
+                return;
+            }
+
+            // Account is still pending.
+            if (person.Status == AccountStatus.Pending)
+            {
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
+                {
+                    Errors = new[] { Language.WarnPendingAccount }
+                });
+
+                return;
+            }
+            
             if (!Roles.Any(x => x == person.Role))
             {
                 // Role isn't valid. Tell the client the access is forbidden.

@@ -88,15 +88,6 @@ namespace Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please contact administrators to verify this account.
-        /// </summary>
-        public static string DoctorAccountPending {
-            get {
-                return ResourceManager.GetString("DoctorAccountPending", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Doctor doesn&apos;t exist.
         /// </summary>
         public static string DoctorDoesNotExist {
@@ -768,6 +759,24 @@ namespace Shared.Resources {
         public static string WaitForAdminConfirmation {
             get {
                 return ResourceManager.GetString("WaitForAdminConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W002.
+        /// </summary>
+        public static string WarnDisabledAccount {
+            get {
+                return ResourceManager.GetString("WarnDisabledAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W001.
+        /// </summary>
+        public static string WarnPendingAccount {
+            get {
+                return ResourceManager.GetString("WarnPendingAccount", resourceCulture);
             }
         }
     }

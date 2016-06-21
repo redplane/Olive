@@ -43,7 +43,6 @@ namespace OlivesAdministration.Controllers
         /// </summary>
         /// <param name="loginViewModel"></param>
         /// <returns></returns>
-        [EnableCors("*", "*", "*")]
         [HttpPost]
         public async Task<HttpResponseMessage> Login([FromBody] LoginViewModel loginViewModel)
         {

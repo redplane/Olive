@@ -38,7 +38,7 @@ namespace Olives
 
             //// ...or you can register individual controlllers manually.
             //builder.RegisterType<AdminController>().InstancePerRequest();
-            builder.RegisterType<PatientController>().InstancePerRequest();
+            //builder.RegisterType<PatientController>().InstancePerRequest();
             builder.RegisterType<AccountController>().InstancePerRequest();
 
             #endregion
@@ -64,22 +64,7 @@ namespace Olives
             #endregion
 
             #region Application settings check
-
-            /* 
-             * Graph database 
-             */
-            // No graph database has been configured.
-            if (applicationSetting.Database == null || string.IsNullOrEmpty(applicationSetting.Database.Url))
-                throw new NotImplementedException("No graph database has been configured.");
-
-            // Retrieve the database configuration.
-            var database = applicationSetting.Database;
-
-            // Graphdabase client connection construction.
-            var graphClient = new GraphClient(new Uri(database.Url), database.Username, database.Password);
-            graphClient.Connect();
-
-
+            
             /*
              *  Email
              */
@@ -94,10 +79,8 @@ namespace Olives
             #region Repository & Services
 
             // Repository account registration.
-            var repositoryAccount = new RepositoryAccount(graphClient);
             builder.RegisterType<RepositoryAccount>()
                 .As<IRepositoryAccount>()
-                .OnActivating(e => e.ReplaceInstance(repositoryAccount))
                 .SingleInstance();
 
             // Email service.
