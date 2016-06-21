@@ -171,13 +171,6 @@
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <EntityDeploy Include="Models\OlivesDatabase.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>OlivesDatabase.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\OlivesDatabase.edmx.diagram">
-      <DependentUpon>OlivesDatabase.edmx</DependentUpon>
-    </Content>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
@@ -188,16 +181,6 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Properties\PublishProfiles\olivesadministrator - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\olivesadministrator - Web Deploy.pubxml" />
-    <Content Include="Models\OlivesDatabase.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>OlivesDatabase.edmx</DependentUpon>
-      <LastGenOutput>OlivesDatabase.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\OlivesDatabase.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>OlivesDatabase.edmx</DependentUpon>
-      <LastGenOutput>OlivesDatabase.cs</LastGenOutput>
-    </Content>
     <Content Include="Scripts\app.js" />
     <None Include="Scripts\jquery-2.2.4.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -223,42 +206,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Interfaces\IRepositoryAccount.cs" />
-    <Compile Include="Models\Doctor.cs">
-      <DependentUpon>OlivesDatabase.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\OlivesDatabase.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>OlivesDatabase.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\OlivesDatabase.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>OlivesDatabase.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\OlivesDatabase.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>OlivesDatabase.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Patient.cs">
-      <DependentUpon>OlivesDatabase.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Person.cs">
-      <DependentUpon>OlivesDatabase.tt</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\RepositoryAccount.cs" />
-    <Compile Include="ViewModels\EditDoctorViewModel.cs" />
     <Compile Include="ViewModels\FindPatientViewModel.cs" />
     <Compile Include="ViewModels\InitializePatientViewModel.cs" />
     <Compile Include="ViewModels\EditPatientStatusViewModel.cs" />
     <Compile Include="ViewModels\EditStatusViewModel.cs" />
-    <Compile Include="ViewModels\DoctorViewModel.cs" />
-    <Compile Include="ViewModels\PatientViewModel.cs" />
-    <Compile Include="ViewModels\ResponsePatientFilter.cs" />
-    <Compile Include="ViewModels\ResponseDoctorFilter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -283,6 +235,9 @@
       <Project>{5227A0F6-C8CD-4A8B-B8BB-870BDE42F88B}</Project>
       <Name>Shared</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

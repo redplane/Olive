@@ -5,9 +5,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using OlivesAdministration.Attributes;
-using OlivesAdministration.Interfaces;
 using OlivesAdministration.ViewModels;
 using Shared.Enumerations;
+using Shared.Interfaces;
 using Shared.Resources;
 using Shared.ViewModels;
 

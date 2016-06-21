@@ -4,8 +4,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using OlivesAdministration.Interfaces;
 using Shared.Enumerations;
+using Shared.Interfaces;
 using Shared.Resources;
 using Shared.ViewModels;
 

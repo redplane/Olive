@@ -6,12 +6,9 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using Shared.Constants;
-using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
-using IRepositoryAccount = OlivesAdministration.Interfaces.IRepositoryAccount;
-
 namespace OlivesAdministration.Attributes
 {
     public class OlivesAuthorize : AuthorizeAttribute
