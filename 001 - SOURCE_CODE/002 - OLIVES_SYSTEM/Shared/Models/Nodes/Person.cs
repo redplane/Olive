@@ -7,7 +7,7 @@ using Shared.Resources;
 
 namespace Shared.Models.Nodes
 {
-    public class Person : IPerson
+    public class Person
     {
         /// <summary>
         ///     Photo link of avatar

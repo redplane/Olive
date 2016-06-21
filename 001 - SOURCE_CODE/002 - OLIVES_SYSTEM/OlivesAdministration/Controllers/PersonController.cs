@@ -5,10 +5,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using OlivesAdministration.Attributes;
+using OlivesAdministration.Interfaces;
 using OlivesAdministration.ViewModels;
-using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels;
@@ -55,7 +54,7 @@ namespace OlivesAdministration.Controllers
             #endregion
 
             // Find the person from database using unique identity.
-            var person = await _repositoryAccount.FindPerson(info.Id);
+            var person = await _repositoryAccount.FindPersonAsync(info.Id, null, null, null);
 
             // No person has been found.
             if (person == null)
@@ -69,10 +68,10 @@ namespace OlivesAdministration.Controllers
             }
 
             // Change account status and retrieve the process result.
-            var result = await _repositoryAccount.EditPersonStatus(info.Id, info.Status);
+            var result = await _repositoryAccount.EditPersonStatusAsync(info.Id, info.Status);
 
             // Error happens while changing account status.
-            if (!result)
+            if (result == null)
             {
                 // Response error construction.
                 var responseError = new ResponseErrror();
@@ -97,14 +96,14 @@ namespace OlivesAdministration.Controllers
         [Route("api/person/statistic/status")]
         [HttpPost]
         [OlivesAuthorize(new[] {AccountRole.Admin})]
-        public async Task<HttpResponseMessage> Statistic([FromBody] StatusStatisticViewModel info)
+        public async Task<HttpResponseMessage> Statistic([FromBody] StatusSummaryViewModel info)
         {
             #region Model validation
 
             // Information hasn't been initialized. Initialize and validate it.
             if (info == null)
             {
-                info = new StatusStatisticViewModel();
+                info = new StatusSummaryViewModel();
                 Validate(info);
             }
 

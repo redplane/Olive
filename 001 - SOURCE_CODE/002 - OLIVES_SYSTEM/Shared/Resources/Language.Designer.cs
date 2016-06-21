@@ -529,6 +529,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Login information is conflicted.
+        /// </summary>
+        public static string LoginConflict {
+            get {
+                return ResourceManager.GetString("LoginConflict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password can only contain at most 16 alphanumeric characters.
         /// </summary>
         public static string MaxLengthPassword {

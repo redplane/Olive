@@ -10,6 +10,7 @@ using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
+using IRepositoryAccount = OlivesAdministration.Interfaces.IRepositoryAccount;
 
 namespace OlivesAdministration.Attributes
 {
@@ -68,7 +69,7 @@ namespace OlivesAdministration.Attributes
             }
 
             // Retrieve person whose properties match conditions.
-            var person = AccountsRepository.FindPerson(accountEmail, accountPassword, null);
+            var person = AccountsRepository.FindPerson(null, accountEmail, accountPassword, null);
 
             // No person has been found.
             if (person == null)
@@ -86,8 +87,6 @@ namespace OlivesAdministration.Attributes
                 responseError.Errors = new List<string> {Language.RequestForbidden};
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Forbidden, responseError);
             }
-
-            //base.OnAuthorization(actionContext);
         }
     }
 }

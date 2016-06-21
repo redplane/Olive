@@ -1,14 +1,11 @@
-﻿using System.IO;
+﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using Shared.Constants;
+using OlivesAdministration.Interfaces;
 using Shared.Enumerations;
-using Shared.Interfaces;
 using Shared.Resources;
 using Shared.ViewModels;
 
@@ -38,19 +35,6 @@ namespace OlivesAdministration.Controllers
 
         #endregion
 
-        [HttpGet]
-        [Route("admin/index")]
-        public HttpResponseMessage Index()
-        {
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
-            var viewPath = HttpContext.Current.Server.MapPath(@"~/Views/Index.html");
-            var info = File.ReadAllText(viewPath);
-
-            response.Content = new StringContent(info);
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
-            return response;
-        }
-
         #region Login
 
         /// <summary>
@@ -71,14 +55,41 @@ namespace OlivesAdministration.Controllers
             loginViewModel.Role = AccountRole.Admin;
 
             // Pass parameter to login function. 
-            var result = await _repositoryAccount.LoginAsync(loginViewModel);
+            var results = await _repositoryAccount.LoginAsync(loginViewModel);
 
             // If no result return, that means no account.
-            if (result == null)
+            if (results == null)
             {
                 ModelState.AddModelError("Credential", Language.InvalidLoginInfo);
                 return Request.CreateResponse(HttpStatusCode.NotFound, RetrieveValidationErrors(ModelState));
             }
+
+            // Results conflict with each other.
+            if (results.Count != 1)
+            {
+                ModelState.AddModelError("Credential", Language.LoginConflict);
+                return Request.CreateResponse(HttpStatusCode.Conflict, RetrieveValidationErrors(ModelState));
+            }
+
+            var result = results.Select(x => new
+            {
+                x.Id,
+                x.LastName,
+                x.FirstName,
+                x.Birthday,
+                x.Gender,
+                x.Email,
+                x.Password,
+                x.Phone,
+                x.Created,
+                x.Latitude,
+                x.Longitude,
+                x.Address,
+                x.Role,
+                x.Status,
+                x.Photo,
+                x.LastModified
+            }).FirstOrDefault();
 
             return Request.CreateResponse(HttpStatusCode.OK, new {User = result});
         }

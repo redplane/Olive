@@ -1,10 +1,13 @@
-﻿using Shared.Attributes;
+﻿using System.ComponentModel.DataAnnotations;
+using Shared.Attributes;
+using Shared.Constants;
 using Shared.Enumerations;
+using Shared.Interfaces;
 using Shared.Resources;
 
 namespace Shared.ViewModels
 {
-    public class FilterDoctorViewModel : FilterPersonViewModel
+    public class FilterDoctorViewModel : FilterPersonViewModel, IPagination
     {
         public string Speciality { get; set; }
 
@@ -13,5 +16,14 @@ namespace Shared.ViewModels
 
         [NumericPropertyCompare("MinRank", Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public double? MaxRank { get; set; }
+
+        [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
+            ErrorMessageResourceType = typeof(Language),
+            ErrorMessageResourceName = "InvalidPageIndex")]
+        public int Page { get; set; }
+
+        [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof(Language),
+            ErrorMessageResourceName = "InvalidPageRecords")]
+        public int Records { get; set; } = FieldLength.RecordMax;
     }
 }

@@ -105,14 +105,5 @@ namespace Shared.ViewModels
 
         [InNumericArray(new[] { AccountRole.Admin, AccountRole.Doctor, AccountRole.Patient }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidGender")]
         public int? Role { get; set; }
-
-        [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof(Language),
-            ErrorMessageResourceName = "InvalidPageIndex")]
-        public int Page { get; set; }
-
-        [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof(Language),
-            ErrorMessageResourceName = "InvalidPageRecords")]
-        public int Records { get; set; } = FieldLength.RecordMax;
     }
 }
