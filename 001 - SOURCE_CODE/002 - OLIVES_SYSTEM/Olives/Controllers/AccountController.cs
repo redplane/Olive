@@ -16,7 +16,7 @@ using Shared.ViewModels;
 
 namespace Olives.Controllers
 {
-    public class AccountController : ParentController
+    public class AccountController : ApiParentController
     {
         #region Constructors
 

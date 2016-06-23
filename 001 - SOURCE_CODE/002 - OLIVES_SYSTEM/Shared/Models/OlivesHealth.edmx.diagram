@@ -5,9 +5,14 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="416fdc2382f3419997398975e4f66c79" Name="Diagram1">
-        <EntityTypeShape EntityType="OlivesHealthModel.Doctor" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Patient" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Person" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Allergy" Width="1.5" PointX="3" PointY="5.875" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Doctor" Width="1.5" PointX="3" PointY="0.875" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Patient" Width="1.5" PointX="5.75" PointY="0.75" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Person" Width="1.5" PointX="0.75" PointY="5" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Specialty" Width="1.5" PointX="0.75" PointY="1.25" />
+        <EntityTypeShape EntityType="OlivesHealthModel.sysdiagram" Width="1.5" PointX="5.75" PointY="3.75" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Allergy__Owner__0B91BA14" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Doctor__Money__0E6E26BF" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

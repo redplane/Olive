@@ -15,7 +15,7 @@ using Shared.ViewModels;
 namespace OlivesAdministration.Controllers
 {
     [Route("api/person")]
-    public class PersonController : ParentController
+    public class PersonController : ApiParentController
     {
         #region Dependency injections
 

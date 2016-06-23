@@ -7,17 +7,21 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DataInitializer.Models
+namespace Shared.Models
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class Doctor
+    public partial class Allergy
     {
-        public string Email { get; set; }
-        public Nullable<double> Rank { get; set; }
-        public string Specialty { get; set; }
-        public int Voters { get; set; }
-        public int Money { get; set; }
+        public int Id { get; set; }
+        public int Owner { get; set; }
+        public string Name { get; set; }
+        public string Cause { get; set; }
+        public string Note { get; set; }
+        public double Created { get; set; }
+        public Nullable<double> LastModified { get; set; }
+    
+        public virtual Person Person { get; set; }
     }
 }

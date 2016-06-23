@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Shared.ViewModels
+namespace Shared.ViewModels.Response
 {
     public class ResponsePatientFilter
     {

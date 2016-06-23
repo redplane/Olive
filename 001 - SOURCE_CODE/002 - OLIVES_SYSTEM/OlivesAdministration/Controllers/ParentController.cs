@@ -10,7 +10,7 @@ using Shared.Models;
 
 namespace OlivesAdministration.Controllers
 {
-    public class ParentController : ApiController
+    public class ApiParentController : ApiController
     {
         /// <summary>
         ///     Retrieve validation errors and bind 'em to list.

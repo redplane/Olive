@@ -54,55 +54,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Doctor.cs">
-      <DependentUpon>OlivesDatabase.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\OlivesDatabase.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>OlivesDatabase.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\OlivesDatabase.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>OlivesDatabase.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\OlivesDatabase.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>OlivesDatabase.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Patient.cs">
-      <DependentUpon>OlivesDatabase.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Person.cs">
-      <DependentUpon>OlivesDatabase.tt</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <EntityDeploy Include="Models\OlivesDatabase.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>OlivesDatabase.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="Models\OlivesDatabase.edmx.diagram">
-      <DependentUpon>OlivesDatabase.edmx</DependentUpon>
-    </None>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Models\OlivesDatabase.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>OlivesDatabase.edmx</DependentUpon>
-      <LastGenOutput>OlivesDatabase.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\OlivesDatabase.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>OlivesDatabase.edmx</DependentUpon>
-      <LastGenOutput>OlivesDatabase.cs</LastGenOutput>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

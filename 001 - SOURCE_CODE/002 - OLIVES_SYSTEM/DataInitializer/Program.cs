@@ -1,5 +1,5 @@
-﻿using DataInitializer.Models;
-using Shared.Enumerations;
+﻿using Shared.Enumerations;
+using Shared.Models;
 
 namespace DataInitializer
 {
@@ -9,11 +9,24 @@ namespace DataInitializer
 
         private static void Main(string[] args)
         {
+            InitializeSpecialties(0, 50);
             InitializeDoctor(0, 50);
             InitializePatient(0, 50);
             InitializeAdmin(0, 50);
         }
 
+        private static void InitializeSpecialties(int startIndex, int max)
+        {
+            for (var i = 0; i < max; i++)
+            {
+                var specialty = new Specialty();
+                specialty.Name = $"specialty[{i}]";
+
+                Context.Specialties.Add(specialty);
+            }
+
+            Context.SaveChanges();
+        }
         private static void InitializeDoctor(int startIndex, int max)
         {
             for (var i = 0; i < max; i++)
@@ -28,14 +41,16 @@ namespace DataInitializer
                 person.Role = AccountRole.Doctor;
                 person.Created = 3;
 
-                if (i >= 25)
+                if (i > 25)
                     person.Status = AccountStatus.Active;
+                else if (i == 25)
+                    person.Status = AccountStatus.Pending;
                 else
                     person.Status = AccountStatus.Inactive;
 
                 var doctor = new Doctor();
                 doctor.Email = person.Email;
-                doctor.Specialty = $"Specialty[{pIndex}]";
+                doctor.SpecialtyId = 1;
 
                 Context.People.Add(person);
                 Context.Doctors.Add(doctor);
@@ -58,10 +73,12 @@ namespace DataInitializer
                 person.Role = AccountRole.Patient;
                 person.Created = 3;
 
-                if (i >= 25)
+                if (i > 25)
                     person.Status = AccountStatus.Active;
-                else
+                else if (i == 25)
                     person.Status = AccountStatus.Pending;
+                else
+                    person.Status = AccountStatus.Inactive;
 
                 var patient = new Patient();
                 patient.Email = person.Email;
@@ -87,16 +104,17 @@ namespace DataInitializer
                 person.Role = 1;
                 person.Created = 3;
 
-                if (i >= 25)
-                    person.Status = 2;
+                if (i > 25)
+                    person.Status = AccountStatus.Active;
+                else if (i == 25)
+                    person.Status = AccountStatus.Pending;
                 else
-                    person.Status = 0;
+                    person.Status = AccountStatus.Inactive;
 
                 var patient = new Patient();
                 patient.Email = person.Email;
 
                 Context.People.Add(person);
-                Context.Patients.Add(patient);
             }
 
             Context.SaveChanges();

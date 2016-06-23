@@ -14,6 +14,12 @@ namespace Shared.Models
     
     public partial class Person
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Person()
+        {
+            this.Allergies = new HashSet<Allergy>();
+        }
+    
         public int Id { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
@@ -30,5 +36,8 @@ namespace Shared.Models
         public Nullable<double> Longitude { get; set; }
         public Nullable<double> Latitude { get; set; }
         public string Photo { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Allergy> Allergies { get; set; }
     }
 }

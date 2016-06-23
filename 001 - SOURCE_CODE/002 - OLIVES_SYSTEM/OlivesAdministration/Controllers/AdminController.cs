@@ -11,7 +11,7 @@ using Shared.ViewModels;
 
 namespace OlivesAdministration.Controllers
 {
-    public class AdminController : ParentController
+    public class AdminController : ApiParentController
     {
         #region Properties
 

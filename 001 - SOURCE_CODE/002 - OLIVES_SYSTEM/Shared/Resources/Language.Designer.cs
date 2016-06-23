@@ -556,6 +556,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to W003.
+        /// </summary>
+        public static string NoRecordHasBeenFound {
+            get {
+                return ResourceManager.GetString("NoRecordHasBeenFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Olive account activation code.
         /// </summary>
         public static string OliveActivationCodeEmailTitle {
@@ -772,11 +781,38 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to W004.
+        /// </summary>
+        public static string WarnNotAuthorizedAccount {
+            get {
+                return ResourceManager.GetString("WarnNotAuthorizedAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to W001.
         /// </summary>
         public static string WarnPendingAccount {
             get {
                 return ResourceManager.GetString("WarnPendingAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W005.
+        /// </summary>
+        public static string WarnRecordConflict {
+            get {
+                return ResourceManager.GetString("WarnRecordConflict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W006.
+        /// </summary>
+        public static string WarnRecordNotFound {
+            get {
+                return ResourceManager.GetString("WarnRecordNotFound", resourceCulture);
             }
         }
     }

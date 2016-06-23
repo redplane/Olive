@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Shared.Interfaces;
 
-namespace Shared.ViewModels
+namespace Shared.ViewModels.Response
 {
     public class ResponsePersonFilter
     {

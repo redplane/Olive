@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -43,7 +42,7 @@ namespace Olives.Attributes
                 actionContext.Request.Headers.Where(
                     x =>
                         !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountEmail, StringComparison.InvariantCultureIgnoreCase))
+                        x.Key.Equals(HeaderFields.RequestAccountEmail))
                     .Select(x => x.Value.FirstOrDefault())
                     .FirstOrDefault();
 
@@ -51,7 +50,7 @@ namespace Olives.Attributes
                 actionContext.Request.Headers.Where(
                     x =>
                         !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountPassword, StringComparison.InvariantCultureIgnoreCase))
+                        x.Key.Equals(HeaderFields.RequestAccountPassword))
                     .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
 
             // Invalid account name or password.

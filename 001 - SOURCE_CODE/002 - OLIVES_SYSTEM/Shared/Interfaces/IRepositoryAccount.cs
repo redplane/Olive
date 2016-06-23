@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Shared.Models;
 using Shared.ViewModels;
+using Shared.ViewModels.Response;
 
 namespace Shared.Interfaces
 {
@@ -67,7 +68,7 @@ namespace Shared.Interfaces
         /// <param name="filter"></param>
         /// <returns></returns>
         Task<ResponseDoctorFilter> FilterDoctorAsync(FilterDoctorViewModel filter);
-
+        
         #endregion
 
         #region Patient
@@ -85,7 +86,7 @@ namespace Shared.Interfaces
         /// <param name="filter"></param>
         /// <returns></returns>
         Task<ResponsePatientFilter> FilterPatientAsync(FilterPatientViewModel filter);
-
+        
         #endregion
     }
 }

@@ -359,4 +359,20 @@
     <value>W002</value>
     <comment>Warn front-end that account is disabled</comment>
   </data>
+  <data name="NoRecordHasBeenFound" xml:space="preserve">
+    <value>W003</value>
+    <comment>Warn front-end that no record has been found</comment>
+  </data>
+  <data name="WarnNotAuthorizedAccount" xml:space="preserve">
+    <value>W004</value>
+    <comment>Warn front-end that account isn't authorized.</comment>
+  </data>
+  <data name="WarnRecordConflict" xml:space="preserve">
+    <value>W005</value>
+    <comment>Warn front-end that record is duplicated</comment>
+  </data>
+  <data name="WarnRecordNotFound" xml:space="preserve">
+    <value>W006</value>
+    <comment>Warn front-end that no records has been found</comment>
+  </data>
 </root>

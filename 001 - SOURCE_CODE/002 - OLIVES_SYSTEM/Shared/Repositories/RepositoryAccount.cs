@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
@@ -8,6 +7,7 @@ using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels;
+using Shared.ViewModels.Response;
 
 namespace Shared.Repositories
 {
@@ -185,6 +185,7 @@ namespace Shared.Repositories
 
             var results = from person in context.People
                 join doctor in context.Doctors on person.Email equals doctor.Email
+                join specialty in context.Specialties on doctor.SpecialtyId equals specialty.Id
                 where person.Id == id
                 select new DoctorViewModel
                 {
@@ -204,7 +205,7 @@ namespace Shared.Repositories
                     Photo = person.Photo,
                     Rank = doctor.Rank ?? 0,
                     Role = person.Role,
-                    Specialty = doctor.Specialty,
+                    Specialty = specialty.Name,
                     Status = person.Status,
                     Voters = doctor.Voters
                 };
@@ -219,16 +220,20 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<ResponseDoctorFilter> FilterDoctorAsync(FilterDoctorViewModel filter)
         {
+            // Database connection context initialization.
             var context = new OlivesHealthEntities();
 
-            // Join the table first.
-            var results = context.People.Join(context.Doctors, p => p.Email, d => d.Email,
-                (p, d) => new
-                {
-                    Person = p,
-                    Doctor = d
-                });
-
+            // Join the tables first.
+            var results = (from p in context.People 
+                          join d in context.Doctors on p.Email equals d.Email
+                          join s in context.Specialties on d.SpecialtyId equals s.Id
+                          select new
+                          {
+                              Person = p,
+                              Doctor = d,
+                              TrainedSpecialty = s
+                          });
+            
             #region Result filter
 
             // Filter doctor by using email.
@@ -322,7 +327,7 @@ namespace Shared.Repositories
                     Status = x.Person.Status,
                     Photo = x.Person.Photo,
                     Voters = x.Doctor.Voters,
-                    Specialty = x.Doctor.Specialty
+                    Specialty = x.TrainedSpecialty.Name
                 });
 
             responseFilter.Users = await filteredResults.ToListAsync();
@@ -343,6 +348,7 @@ namespace Shared.Repositories
         /// <returns></returns>
         public Person FindPerson(int? id, string email, string password, byte? role)
         {
+            // Database context intialize.
             var context = new OlivesHealthEntities();
             // By default, take all people in database.
             IQueryable<Person> result = context.People;

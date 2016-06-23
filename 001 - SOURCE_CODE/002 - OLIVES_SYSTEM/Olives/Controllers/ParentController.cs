@@ -9,7 +9,7 @@ using System.Web.Http.ModelBinding;
 
 namespace Olives.Controllers
 {
-    public class ParentController : ApiController
+    public class ApiParentController : ApiController
     {
         /// <summary>
         ///     Retrieve validation errors and bind 'em to list.

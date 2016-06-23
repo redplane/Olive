@@ -38,8 +38,10 @@ namespace Olives
 
             //// ...or you can register individual controlllers manually.
             //builder.RegisterType<AdminController>().InstancePerRequest();
-            //builder.RegisterType<PatientController>().InstancePerRequest();
+            
             builder.RegisterType<AccountController>().InstancePerRequest();
+            builder.RegisterType<SpecialtyController>().InstancePerRequest();
+            builder.RegisterType<AllergyController>().InstancePerRequest();
 
             #endregion
 
@@ -81,6 +83,16 @@ namespace Olives
             // Repository account registration.
             builder.RegisterType<RepositoryAccount>()
                 .As<IRepositoryAccount>()
+                .SingleInstance();
+
+            // Repository specialty registration.
+            builder.RegisterType<RepositorySpecialty>()
+                .As<IRepositorySpecialty>()
+                .SingleInstance();
+
+            // Repository allergy registration.
+            builder.RegisterType<RepositoryAllergy>()
+                .As<IRepositoryAllergy>()
                 .SingleInstance();
 
             // Email service.
