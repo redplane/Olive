@@ -1,4 +1,4 @@
-﻿namespace Shared.ViewModels.RequestCreate
+﻿namespace Shared.ViewModels.Request
 {
     public class InitializeAllergyViewModel
     {

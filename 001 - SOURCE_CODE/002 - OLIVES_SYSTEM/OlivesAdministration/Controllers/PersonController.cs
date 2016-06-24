@@ -54,7 +54,7 @@ namespace OlivesAdministration.Controllers
             #endregion
 
             // Find the person from database using unique identity.
-            var person = await _repositoryAccount.FindPersonAsync(info.Id, null, null, null);
+            var person = await _repositoryAccount.FindPersonAsync(info.Id, null, null, null, null);
 
             // No person has been found.
             if (person == null)
@@ -81,7 +81,7 @@ namespace OlivesAdministration.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, responseError);
             }
 
-            if (info.Status == AccountStatus.Active)
+            if ((AccountStatus)info.Status == AccountStatus.Active)
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     Message = new[] {Language.AccountHasBeenActivated}
@@ -117,9 +117,9 @@ namespace OlivesAdministration.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                ActiveAccounts = summaryResult.Where(x => x.Status == AccountStatus.Active).Sum(x => x.Total),
-                PendingAccounts = summaryResult.Where(x => x.Status == AccountStatus.Pending).Sum(x => x.Total),
-                DeactiveAccounts = summaryResult.Where(x => x.Status == AccountStatus.Inactive).Sum(x => x.Total),
+                ActiveAccounts = summaryResult.Where(x => (AccountStatus)x.Status == AccountStatus.Active).Sum(x => x.Total),
+                PendingAccounts = summaryResult.Where(x => (AccountStatus)x.Status == AccountStatus.Pending).Sum(x => x.Total),
+                DeactiveAccounts = summaryResult.Where(x => (AccountStatus)x.Status == AccountStatus.Inactive).Sum(x => x.Total),
                 Total = summaryResult.Sum(x => x.Total)
             });
         }

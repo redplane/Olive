@@ -10,6 +10,7 @@ using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Resources;
 using Shared.ViewModels;
+using Shared.ViewModels.Filter;
 
 namespace OlivesAdministration.Controllers
 {

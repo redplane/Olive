@@ -1,12 +1,11 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Resources;
 
-namespace Shared.ViewModels
+namespace Shared.ViewModels.Filter
 {
     public class FilterPatientViewModel : FilterPersonViewModel, IPagination
     {

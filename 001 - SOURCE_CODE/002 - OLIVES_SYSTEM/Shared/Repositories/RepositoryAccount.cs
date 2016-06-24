@@ -7,6 +7,7 @@ using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels;
+using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
 namespace Shared.Repositories
@@ -350,6 +351,7 @@ namespace Shared.Repositories
         {
             // Database context intialize.
             var context = new OlivesHealthEntities();
+
             // By default, take all people in database.
             IQueryable<Person> result = context.People;
 
@@ -379,9 +381,11 @@ namespace Shared.Repositories
         /// <param name="email">Email which is used for filtering.</param>
         /// <param name="password">Password of account.</param>
         /// <param name="role">As role is specified. Find account by role.</param>
+        /// <param name="status"></param>
         /// <returns></returns>
-        public async Task<Person> FindPersonAsync(int? id, string email, string password, byte? role)
+        public async Task<Person> FindPersonAsync(int? id, string email, string password, byte? role, AccountStatus? status)
         {
+            // Database context initialization.
             var context = new OlivesHealthEntities();
 
             // By default, take all people in database.
@@ -403,6 +407,13 @@ namespace Shared.Repositories
             if (role != null)
                 result = result.Where(x => x.Role == role);
 
+            // Status has been specified.
+            if (status != null)
+            {
+                var castedStatus = (byte) status;
+                result = result.Where(x => x.Status == castedStatus);
+            }
+
             return await result.FirstOrDefaultAsync();
         }
 
@@ -415,7 +426,7 @@ namespace Shared.Repositories
         public async Task<Person> EditPersonStatusAsync(int id, byte status)
         {
             // Find person by using specific id.
-            var person = await FindPersonAsync(id, null, null, null);
+            var person = await FindPersonAsync(id, null, null, null, AccountStatus.Active);
 
             // Cannot find the person.
             if (person == null)

@@ -84,7 +84,7 @@ namespace Olives.Controllers
             }
             
             // Login is failed because of account is pending.
-            if (result.Status == AccountStatus.Pending)
+            if ((AccountStatus)result.Status == AccountStatus.Pending)
             {
                 // Tell doctor to contact admin for account verification.
                 if (result.Role == AccountRole.Doctor)
@@ -105,7 +105,7 @@ namespace Olives.Controllers
             }
 
             // Login is failed because of account has been disabled.
-            if (result.Status == AccountStatus.Inactive)
+            if ((AccountStatus)result.Status == AccountStatus.Inactive)
             {
                 _log.Error($"Access is forbidden because {loginViewModel.Email} has been disabled");
                 // Tell patient to access his/her email to verify the account.

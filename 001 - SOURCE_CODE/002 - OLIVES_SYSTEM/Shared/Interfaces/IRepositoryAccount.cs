@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Shared.Enumerations;
 using Shared.Models;
 using Shared.ViewModels;
+using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
 namespace Shared.Interfaces
@@ -34,8 +36,9 @@ namespace Shared.Interfaces
         /// <param name="email">Email of person</param>
         /// <param name="password">Password of person</param>
         /// <param name="role"></param>
+        /// <param name="status"></param>
         /// <returns></returns>
-        Task<Person> FindPersonAsync(int? id, string email, string password, byte? role);
+        Task<Person> FindPersonAsync(int? id, string email, string password, byte? role, AccountStatus? status);
 
         /// <summary>
         ///     Edit person status asynchronously.

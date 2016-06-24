@@ -57,7 +57,11 @@ namespace Olives.Attributes
             if (string.IsNullOrEmpty(accountEmail) || string.IsNullOrEmpty(accountPassword))
             {
                 // Treat this request is unauthorized.
-                actionContext.Response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
+                {
+                    Error = new { Language.WarnAccountNotLogin }
+                });
+                
                 return;
             }
 
@@ -67,27 +71,30 @@ namespace Olives.Attributes
             // No person has been found.
             if (person == null)
             {
-                actionContext.Response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
+                {
+                    Error = new { Language.WarnAccountNotLogin }
+                });
                 return;
             }
-
+            
             // Account has been disabled.
-            if (person.Status == AccountStatus.Inactive)
+            if ((AccountStatus)person.Status == AccountStatus.Inactive)
             {
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
                 {
-                    Errors = new[] { Language.WarnDisabledAccount }
+                    Error = new { Language.WarnDisabledAccount }
                 });
 
                 return;
             }
 
             // Account is still pending.
-            if (person.Status == AccountStatus.Pending)
+            if ((AccountStatus)person.Status == AccountStatus.Pending)
             {
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
                 {
-                    Errors = new[] { Language.WarnPendingAccount }
+                    Error = new { Language.WarnPendingAccount }
                 });
 
                 return;
@@ -96,10 +103,11 @@ namespace Olives.Attributes
             if (!Roles.Any(x => x == person.Role))
             {
                 // Role isn't valid. Tell the client the access is forbidden.
-                actionContext.Response = new HttpResponseMessage(HttpStatusCode.Forbidden);
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Forbidden, new
+                {
+                    Error = new {Language.WarnForbiddenAccessMethod }
+                });
             }
-
-            //base.OnAuthorization(actionContext);
         }
     }
 }

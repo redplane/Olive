@@ -28,9 +28,11 @@ namespace Shared.Models
         }
     
         public virtual DbSet<Allergy> Allergies { get; set; }
+        public virtual DbSet<Appointment> Appointments { get; set; }
         public virtual DbSet<Doctor> Doctors { get; set; }
         public virtual DbSet<Patient> Patients { get; set; }
         public virtual DbSet<Person> People { get; set; }
+        public virtual DbSet<Relation> Relations { get; set; }
         public virtual DbSet<Specialty> Specialties { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
     

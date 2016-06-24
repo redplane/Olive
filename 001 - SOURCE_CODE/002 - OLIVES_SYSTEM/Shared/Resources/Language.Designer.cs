@@ -763,6 +763,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} must be in the list {1}.
+        /// </summary>
+        public static string ValueMustBeOneOfArray {
+            get {
+                return ResourceManager.GetString("ValueMustBeOneOfArray", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please wait for admin confirmation.
         /// </summary>
         public static string WaitForAdminConfirmation {
@@ -772,11 +781,65 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to W012.
+        /// </summary>
+        public static string WarnAccountNotLogin {
+            get {
+                return ResourceManager.GetString("WarnAccountNotLogin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W009.
+        /// </summary>
+        public static string WarnDaterInvalidRole {
+            get {
+                return ResourceManager.GetString("WarnDaterInvalidRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W008.
+        /// </summary>
+        public static string WarnDaterNotFound {
+            get {
+                return ResourceManager.GetString("WarnDaterNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W010.
+        /// </summary>
+        public static string WarnDaterNotSelf {
+            get {
+                return ResourceManager.GetString("WarnDaterNotSelf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W011.
+        /// </summary>
+        public static string WarnDaterSameRole {
+            get {
+                return ResourceManager.GetString("WarnDaterSameRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to W002.
         /// </summary>
         public static string WarnDisabledAccount {
             get {
                 return ResourceManager.GetString("WarnDisabledAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W013.
+        /// </summary>
+        public static string WarnForbiddenAccessMethod {
+            get {
+                return ResourceManager.GetString("WarnForbiddenAccessMethod", resourceCulture);
             }
         }
         
@@ -813,6 +876,15 @@ namespace Shared.Resources {
         public static string WarnRecordNotFound {
             get {
                 return ResourceManager.GetString("WarnRecordNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W007.
+        /// </summary>
+        public static string WarnRelationNotExist {
+            get {
+                return ResourceManager.GetString("WarnRelationNotExist", resourceCulture);
             }
         }
     }

@@ -17,6 +17,24 @@
           <Property Name="Created" Type="float" Nullable="false" />
           <Property Name="LastModified" Type="float" />
         </EntityType>
+        <EntityType Name="Appointment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Maker" Type="int" Nullable="false" />
+          <Property Name="MakerFirstName" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="MakerLastName" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="Dater" Type="int" Nullable="false" />
+          <Property Name="DaterFirstName" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="DaterLastName" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="From" Type="float" Nullable="false" />
+          <Property Name="To" Type="float" Nullable="false" />
+          <Property Name="Note" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Created" Type="float" Nullable="false" />
+          <Property Name="LastModified" Type="float" />
+          <Property Name="Status" Type="tinyint" Nullable="false" />
+        </EntityType>
         <EntityType Name="Doctor">
           <Key>
             <PropertyRef Name="Email" />
@@ -57,6 +75,14 @@
           <Property Name="Latitude" Type="float" />
           <Property Name="Photo" Type="varchar" MaxLength="32" />
         </EntityType>
+        <EntityType Name="Relation">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Owner" Type="int" Nullable="false" />
+          <Property Name="Relative" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="Specialty">
           <Key>
             <PropertyRef Name="Id" />
@@ -74,7 +100,7 @@
           <Property Name="version" Type="int" />
           <Property Name="definition" Type="varbinary(max)" />
         </EntityType>
-        <Association Name="FK__Allergy__Owner__0B91BA14">
+        <Association Name="FK__Allergy__Owner__2B0A656D">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="Allergy" Type="Self.Allergy" Multiplicity="*" />
           <ReferentialConstraint>
@@ -86,7 +112,31 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Doctor__Money__0E6E26BF">
+        <Association Name="FK__Appointme__Dater__339FAB6E">
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="Appointment" Type="Self.Appointment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Appointment">
+              <PropertyRef Name="Dater" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Appointme__Statu__32AB8735">
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="Appointment" Type="Self.Appointment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Appointment">
+              <PropertyRef Name="Maker" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Doctor__Money__2DE6D218">
           <End Role="Specialty" Type="Self.Specialty" Multiplicity="0..1" />
           <End Role="Doctor" Type="Self.Doctor" Multiplicity="*" />
           <ReferentialConstraint>
@@ -95,6 +145,30 @@
             </Principal>
             <Dependent Role="Doctor">
               <PropertyRef Name="SpecialtyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Relation__Owner__2739D489">
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="Relation" Type="Self.Relation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Relation">
+              <PropertyRef Name="Owner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Relation__Relati__282DF8C2">
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="Relation" Type="Self.Relation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Relation">
+              <PropertyRef Name="Relative" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -131,18 +205,36 @@
         <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="OlivesHealthModelStoreContainer">
           <EntitySet Name="Allergy" EntityType="Self.Allergy" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Appointment" EntityType="Self.Appointment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Doctor" EntityType="Self.Doctor" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Patient" EntityType="Self.Patient" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Person" EntityType="Self.Person" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Relation" EntityType="Self.Relation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Specialty" EntityType="Self.Specialty" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__Allergy__Owner__0B91BA14" Association="Self.FK__Allergy__Owner__0B91BA14">
+          <AssociationSet Name="FK__Allergy__Owner__2B0A656D" Association="Self.FK__Allergy__Owner__2B0A656D">
             <End Role="Person" EntitySet="Person" />
             <End Role="Allergy" EntitySet="Allergy" />
           </AssociationSet>
-          <AssociationSet Name="FK__Doctor__Money__0E6E26BF" Association="Self.FK__Doctor__Money__0E6E26BF">
+          <AssociationSet Name="FK__Appointme__Dater__339FAB6E" Association="Self.FK__Appointme__Dater__339FAB6E">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="Appointment" EntitySet="Appointment" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Appointme__Statu__32AB8735" Association="Self.FK__Appointme__Statu__32AB8735">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="Appointment" EntitySet="Appointment" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Doctor__Money__2DE6D218" Association="Self.FK__Doctor__Money__2DE6D218">
             <End Role="Specialty" EntitySet="Specialty" />
             <End Role="Doctor" EntitySet="Doctor" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Relation__Owner__2739D489" Association="Self.FK__Relation__Owner__2739D489">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="Relation" EntitySet="Relation" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Relation__Relati__282DF8C2" Association="Self.FK__Relation__Relati__282DF8C2">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="Relation" EntitySet="Relation" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -181,18 +273,36 @@
           </FunctionImport>
           <FunctionImport Name="sp_upgraddiagrams" />
           <EntitySet Name="Allergies" EntityType="OlivesHealthModel.Allergy" />
+          <EntitySet Name="Appointments" EntityType="OlivesHealthModel.Appointment" />
           <EntitySet Name="Doctors" EntityType="OlivesHealthModel.Doctor" />
           <EntitySet Name="Patients" EntityType="OlivesHealthModel.Patient" />
           <EntitySet Name="People" EntityType="OlivesHealthModel.Person" />
+          <EntitySet Name="Relations" EntityType="OlivesHealthModel.Relation" />
           <EntitySet Name="Specialties" EntityType="OlivesHealthModel.Specialty" />
           <EntitySet Name="sysdiagrams" EntityType="OlivesHealthModel.sysdiagram" />
-          <AssociationSet Name="FK__Allergy__Owner__0B91BA14" Association="OlivesHealthModel.FK__Allergy__Owner__0B91BA14">
+          <AssociationSet Name="FK__Allergy__Owner__2B0A656D" Association="OlivesHealthModel.FK__Allergy__Owner__2B0A656D">
             <End Role="Person" EntitySet="People" />
             <End Role="Allergy" EntitySet="Allergies" />
           </AssociationSet>
-          <AssociationSet Name="FK__Doctor__Money__0E6E26BF" Association="OlivesHealthModel.FK__Doctor__Money__0E6E26BF">
+          <AssociationSet Name="FK__Appointme__Dater__339FAB6E" Association="OlivesHealthModel.FK__Appointme__Dater__339FAB6E">
+            <End Role="Person" EntitySet="People" />
+            <End Role="Appointment" EntitySet="Appointments" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Appointme__Statu__32AB8735" Association="OlivesHealthModel.FK__Appointme__Statu__32AB8735">
+            <End Role="Person" EntitySet="People" />
+            <End Role="Appointment" EntitySet="Appointments" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Doctor__Money__2DE6D218" Association="OlivesHealthModel.FK__Doctor__Money__2DE6D218">
             <End Role="Specialty" EntitySet="Specialties" />
             <End Role="Doctor" EntitySet="Doctors" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Relation__Owner__2739D489" Association="OlivesHealthModel.FK__Relation__Owner__2739D489">
+            <End Role="Person" EntitySet="People" />
+            <End Role="Relation" EntitySet="Relations" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Relation__Relati__282DF8C2" Association="OlivesHealthModel.FK__Relation__Relati__282DF8C2">
+            <End Role="Person" EntitySet="People" />
+            <End Role="Relation" EntitySet="Relations" />
           </AssociationSet>
           </EntityContainer>
         <ComplexType Name="sp_helpdiagramdefinition_Result">
@@ -217,7 +327,27 @@
           <Property Name="Note" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Allergy__Owner__0B91BA14" FromRole="Allergy" ToRole="Person" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Allergy__Owner__2B0A656D" FromRole="Allergy" ToRole="Person" />
+        </EntityType>
+        <EntityType Name="Appointment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Maker" Type="Int32" Nullable="false" />
+          <Property Name="MakerFirstName" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="MakerLastName" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="Dater" Type="Int32" Nullable="false" />
+          <Property Name="DaterFirstName" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="DaterLastName" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="From" Type="Double" Nullable="false" />
+          <Property Name="To" Type="Double" Nullable="false" />
+          <Property Name="Note" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Created" Type="Double" Nullable="false" />
+          <Property Name="LastModified" Type="Double" />
+          <Property Name="Status" Type="Byte" Nullable="false" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Appointme__Dater__339FAB6E" FromRole="Appointment" ToRole="Person" />
+          <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__Appointme__Statu__32AB8735" FromRole="Appointment" ToRole="Person" />
         </EntityType>
         <EntityType Name="Doctor">
           <Key>
@@ -228,7 +358,7 @@
           <Property Name="SpecialtyId" Type="Int32" />
           <Property Name="Voters" Type="Int32" Nullable="false" />
           <Property Name="Money" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Specialty" Relationship="OlivesHealthModel.FK__Doctor__Money__0E6E26BF" FromRole="Doctor" ToRole="Specialty" />
+          <NavigationProperty Name="Specialty" Relationship="OlivesHealthModel.FK__Doctor__Money__2DE6D218" FromRole="Doctor" ToRole="Specialty" />
         </EntityType>
         <EntityType Name="Patient">
           <Key>
@@ -259,7 +389,21 @@
           <Property Name="Longitude" Type="Double" />
           <Property Name="Latitude" Type="Double" />
           <Property Name="Photo" Type="String" MaxLength="32" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Allergies" Relationship="OlivesHealthModel.FK__Allergy__Owner__0B91BA14" FromRole="Person" ToRole="Allergy" />
+          <NavigationProperty Name="Allergies" Relationship="OlivesHealthModel.FK__Allergy__Owner__2B0A656D" FromRole="Person" ToRole="Allergy" />
+          <NavigationProperty Name="Appointments" Relationship="OlivesHealthModel.FK__Appointme__Dater__339FAB6E" FromRole="Person" ToRole="Appointment" />
+          <NavigationProperty Name="Appointments1" Relationship="OlivesHealthModel.FK__Appointme__Statu__32AB8735" FromRole="Person" ToRole="Appointment" />
+          <NavigationProperty Name="Relations" Relationship="OlivesHealthModel.FK__Relation__Owner__2739D489" FromRole="Person" ToRole="Relation" />
+          <NavigationProperty Name="Relations1" Relationship="OlivesHealthModel.FK__Relation__Relati__282DF8C2" FromRole="Person" ToRole="Relation" />
+        </EntityType>
+        <EntityType Name="Relation">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Owner" Type="Int32" Nullable="false" />
+          <Property Name="Relative" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Relation__Owner__2739D489" FromRole="Relation" ToRole="Person" />
+          <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__Relation__Relati__282DF8C2" FromRole="Relation" ToRole="Person" />
         </EntityType>
         <EntityType Name="Specialty">
           <Key>
@@ -267,7 +411,7 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Doctors" Relationship="OlivesHealthModel.FK__Doctor__Money__0E6E26BF" FromRole="Specialty" ToRole="Doctor" />
+          <NavigationProperty Name="Doctors" Relationship="OlivesHealthModel.FK__Doctor__Money__2DE6D218" FromRole="Specialty" ToRole="Doctor" />
         </EntityType>
         <EntityType Name="sysdiagram">
           <Key>
@@ -279,7 +423,7 @@
           <Property Name="version" Type="Int32" />
           <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
-        <Association Name="FK__Allergy__Owner__0B91BA14">
+        <Association Name="FK__Allergy__Owner__2B0A656D">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.Allergy" Role="Allergy" Multiplicity="*" />
           <ReferentialConstraint>
@@ -291,7 +435,31 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Doctor__Money__0E6E26BF">
+        <Association Name="FK__Appointme__Dater__339FAB6E">
+          <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="OlivesHealthModel.Appointment" Role="Appointment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Appointment">
+              <PropertyRef Name="Dater" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Appointme__Statu__32AB8735">
+          <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="OlivesHealthModel.Appointment" Role="Appointment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Appointment">
+              <PropertyRef Name="Maker" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Doctor__Money__2DE6D218">
           <End Type="OlivesHealthModel.Specialty" Role="Specialty" Multiplicity="0..1" />
           <End Type="OlivesHealthModel.Doctor" Role="Doctor" Multiplicity="*" />
           <ReferentialConstraint>
@@ -300,6 +468,30 @@
             </Principal>
             <Dependent Role="Doctor">
               <PropertyRef Name="SpecialtyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Relation__Owner__2739D489">
+          <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="OlivesHealthModel.Relation" Role="Relation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Relation">
+              <PropertyRef Name="Owner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Relation__Relati__282DF8C2">
+          <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="OlivesHealthModel.Relation" Role="Relation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Relation">
+              <PropertyRef Name="Relative" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -346,6 +538,25 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Appointments">
+            <EntityTypeMapping TypeName="OlivesHealthModel.Appointment">
+              <MappingFragment StoreEntitySet="Appointment">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="To" ColumnName="To" />
+                <ScalarProperty Name="From" ColumnName="From" />
+                <ScalarProperty Name="DaterLastName" ColumnName="DaterLastName" />
+                <ScalarProperty Name="DaterFirstName" ColumnName="DaterFirstName" />
+                <ScalarProperty Name="Dater" ColumnName="Dater" />
+                <ScalarProperty Name="MakerLastName" ColumnName="MakerLastName" />
+                <ScalarProperty Name="MakerFirstName" ColumnName="MakerFirstName" />
+                <ScalarProperty Name="Maker" ColumnName="Maker" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Doctors">
             <EntityTypeMapping TypeName="OlivesHealthModel.Doctor">
               <MappingFragment StoreEntitySet="Doctor">
@@ -385,6 +596,15 @@
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Relations">
+            <EntityTypeMapping TypeName="OlivesHealthModel.Relation">
+              <MappingFragment StoreEntitySet="Relation">
+                <ScalarProperty Name="Relative" ColumnName="Relative" />
+                <ScalarProperty Name="Owner" ColumnName="Owner" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

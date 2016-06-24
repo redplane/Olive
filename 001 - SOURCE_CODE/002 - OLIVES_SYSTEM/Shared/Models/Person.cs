@@ -18,6 +18,10 @@ namespace Shared.Models
         public Person()
         {
             this.Allergies = new HashSet<Allergy>();
+            this.Appointments = new HashSet<Appointment>();
+            this.Appointments1 = new HashSet<Appointment>();
+            this.Relations = new HashSet<Relation>();
+            this.Relations1 = new HashSet<Relation>();
         }
     
         public int Id { get; set; }
@@ -39,5 +43,13 @@ namespace Shared.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Allergy> Allergies { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Appointment> Appointments { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Appointment> Appointments1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Relation> Relations { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Relation> Relations1 { get; set; }
     }
 }

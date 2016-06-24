@@ -375,4 +375,35 @@
     <value>W006</value>
     <comment>Warn front-end that no records has been found</comment>
   </data>
+  <data name="WarnDaterInvalidRole" xml:space="preserve">
+    <value>W009</value>
+    <comment>Warn front-end that the dater has invalid role.</comment>
+  </data>
+  <data name="WarnDaterNotFound" xml:space="preserve">
+    <value>W008</value>
+    <comment>Warn front-end that dater isn't found</comment>
+  </data>
+  <data name="WarnDaterNotSelf" xml:space="preserve">
+    <value>W010</value>
+    <comment>Warn front-end that person cannot date himself/herself</comment>
+  </data>
+  <data name="WarnDaterSameRole" xml:space="preserve">
+    <value>W011</value>
+    <comment>Warn front-end that doctor can date the patient and vice versa. In short, roles must be different</comment>
+  </data>
+  <data name="WarnRelationNotExist" xml:space="preserve">
+    <value>W007</value>
+    <comment>Warn front-end that relation doesn't exist.</comment>
+  </data>
+  <data name="ValueMustBeOneOfArray" xml:space="preserve">
+    <value>{0} must be in the list {1}</value>
+  </data>
+  <data name="WarnAccountNotLogin" xml:space="preserve">
+    <value>W012</value>
+    <comment>Warn front-end that account doesn't login successfully.</comment>
+  </data>
+  <data name="WarnForbiddenAccessMethod" xml:space="preserve">
+    <value>W013</value>
+    <comment>Warn front-end that account is allowed to login.</comment>
+  </data>
 </root>

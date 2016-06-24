@@ -4,7 +4,7 @@ using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Resources;
 
-namespace Shared.ViewModels
+namespace Shared.ViewModels.Filter
 {
     public class FilterPersonViewModel
     {
@@ -100,7 +100,7 @@ namespace Shared.ViewModels
         /// <summary>
         ///     Status of account [0 - Disabled | 1 - Pending | 2 - Active].
         /// </summary>
-        [InNumericArray(new[] { AccountStatus.Active, AccountStatus.Inactive, AccountStatus.Pending }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidAccountStatus")]
+        [InAccountStatus(new[] { AccountStatus.Active, AccountStatus.Inactive, AccountStatus.Pending }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidAccountStatus")]
         public int? Status { get; set; }
 
         [InNumericArray(new[] { AccountRole.Admin, AccountRole.Doctor, AccountRole.Patient }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidGender")]

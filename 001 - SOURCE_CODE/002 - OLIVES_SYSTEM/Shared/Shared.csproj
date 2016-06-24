@@ -73,6 +73,8 @@
   <ItemGroup>
     <Compile Include="Attributes\DateTimeCompareAttribute.cs" />
     <Compile Include="Attributes\EpochTimeCompareAttribute.cs" />
+    <Compile Include="Attributes\InAccountStatusAttribute.cs" />
+    <Compile Include="Attributes\InEnumerationsArray.cs" />
     <Compile Include="Attributes\InNumericArrayAttribute.cs" />
     <Compile Include="Attributes\NumericPropertyCompareAttribute.cs" />
     <Compile Include="Attributes\PropertyValidationAttribute.cs" />
@@ -85,6 +87,8 @@
     <Compile Include="Enumerations\AccountGender.cs" />
     <Compile Include="Enumerations\AccountRole.cs" />
     <Compile Include="Constants\Values.cs" />
+    <Compile Include="Enumerations\AppointmentFilterMode.cs" />
+    <Compile Include="Enumerations\AppointmentStatus.cs" />
     <Compile Include="Enumerations\Comparision.cs" />
     <Compile Include="Helpers\EpochTimeHelper.cs" />
     <Compile Include="Interfaces\IDbSetting.cs" />
@@ -94,8 +98,12 @@
     <Compile Include="Interfaces\IPerson.cs" />
     <Compile Include="Interfaces\IRepositoryAccount.cs" />
     <Compile Include="Interfaces\IRepositoryAllergy.cs" />
+    <Compile Include="Interfaces\IRepositoryAppointment.cs" />
     <Compile Include="Interfaces\IRepositorySpecialty.cs" />
     <Compile Include="Models\Allergy.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Appointment.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Doctor.cs">
@@ -122,6 +130,9 @@
     <Compile Include="Models\Person.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Relation.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\ResponseErrror.cs" />
     <Compile Include="Models\Specialty.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
@@ -139,6 +150,7 @@
     <Compile Include="Helpers\MethodHelper.cs" />
     <Compile Include="Repositories\RepositoryAccount.cs" />
     <Compile Include="Repositories\RepositoryAllergy.cs" />
+    <Compile Include="Repositories\RepositoryAppointment.cs" />
     <Compile Include="Repositories\RepositorySpecialty.cs" />
     <Compile Include="Resources\Language.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -152,18 +164,23 @@
     </Compile>
     <Compile Include="ViewModels\AllergyGetViewModel.cs" />
     <Compile Include="ViewModels\DoctorViewModel.cs" />
-    <Compile Include="ViewModels\FilterPatientViewModel.cs" />
-    <Compile Include="ViewModels\RequestCreate\InitializeAllergyViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterPatientViewModel.cs" />
+    <Compile Include="ViewModels\Request\InitializeAllergyViewModel.cs" />
+    <Compile Include="ViewModels\Request\InitializeAppointmentViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseAllergyFilter.cs" />
+    <Compile Include="ViewModels\Filter\FilterAppointmentViewModel.cs" />
+    <Compile Include="ViewModels\Response\ResponseAppointment.cs" />
+    <Compile Include="ViewModels\Response\ResponseAppointmentFilter.cs" />
+    <Compile Include="ViewModels\PersonViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseSpecialtyFilter.cs" />
     <Compile Include="ViewModels\PatientViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseDoctorFilter.cs" />
     <Compile Include="ViewModels\Response\ResponsePatientFilter.cs" />
     <Compile Include="ViewModels\SpecialtyGetViewModel.cs" />
     <Compile Include="ViewModels\StatusSummaryViewModel.cs" />
-    <Compile Include="ViewModels\FilterDoctorViewModel.cs" />
-    <Compile Include="ViewModels\FilterPersonViewModel.cs" />
-    <Compile Include="ViewModels\InitializePersonViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterDoctorViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterPersonViewModel.cs" />
+    <Compile Include="ViewModels\Request\InitializePersonViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponsePersonFilter.cs" />
   </ItemGroup>

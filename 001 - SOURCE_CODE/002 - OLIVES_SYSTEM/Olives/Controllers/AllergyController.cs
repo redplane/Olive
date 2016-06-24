@@ -15,7 +15,7 @@ using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels;
-using Shared.ViewModels.RequestCreate;
+using Shared.ViewModels.Request;
 
 namespace Olives.Controllers
 {
