@@ -24,11 +24,10 @@ namespace Shared.Interfaces
         /// <summary>
         /// Find allergy by using id and owner id.
         /// </summary>
-        /// <param name="account">Account name</param>
-        /// <param name="password">Account password</param>
-        /// <param name="id">Id of allergy</param>
+        /// <param name="id">Allergy Id</param>
+        /// <param name="owner">Allergy owner</param>
         /// <returns></returns>
-        Task<IList<Allergy>> FindAllergyAsync(string account, string password, int id);
+        Task<IList<Allergy>> FindAllergyAsync(int id, int owner);
 
         /// <summary>
         /// Delete an allergy synchronously.

@@ -42,11 +42,11 @@ namespace DataInitializer
                 person.Created = 3;
 
                 if (i > 25)
-                    person.Status = AccountStatus.Active;
+                    person.Status = (byte)AccountStatus.Active;
                 else if (i == 25)
-                    person.Status = AccountStatus.Pending;
+                    person.Status = (byte)AccountStatus.Pending;
                 else
-                    person.Status = AccountStatus.Inactive;
+                    person.Status = (byte)AccountStatus.Inactive;
 
                 var doctor = new Doctor();
                 doctor.Email = person.Email;
@@ -74,11 +74,11 @@ namespace DataInitializer
                 person.Created = 3;
 
                 if (i > 25)
-                    person.Status = AccountStatus.Active;
+                    person.Status = (byte)AccountStatus.Active;
                 else if (i == 25)
-                    person.Status = AccountStatus.Pending;
+                    person.Status = (byte)AccountStatus.Pending;
                 else
-                    person.Status = AccountStatus.Inactive;
+                    person.Status = (byte)AccountStatus.Inactive;
 
                 var patient = new Patient();
                 patient.Email = person.Email;
@@ -105,11 +105,11 @@ namespace DataInitializer
                 person.Created = 3;
 
                 if (i > 25)
-                    person.Status = AccountStatus.Active;
+                    person.Status = (byte)AccountStatus.Active;
                 else if (i == 25)
-                    person.Status = AccountStatus.Pending;
+                    person.Status = (byte)AccountStatus.Pending;
                 else
-                    person.Status = AccountStatus.Inactive;
+                    person.Status = (byte)AccountStatus.Inactive;
 
                 var patient = new Patient();
                 patient.Email = person.Email;

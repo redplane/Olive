@@ -95,21 +95,16 @@ namespace Shared.Repositories
         /// <summary>
         /// Find allergy by using id and owner id.
         /// </summary>
-        /// <param name="account">Account name</param>
-        /// <param name="password">Account password</param>
-        /// <param name="id">Id of allergy</param>
+        /// <param name="id">Allergy Id</param>
+        /// <param name="owner">Allergy owner</param>
         /// <returns></returns>
-        public async Task<IList<Allergy>> FindAllergyAsync(string account, string password, int id)
+        public async Task<IList<Allergy>> FindAllergyAsync(int id, int owner)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
             
             // Find allergy with given conditions.
-            var results = from p in context.People
-                          join a in context.Allergies on p.Id equals a.Id
-                          where p.Email.Equals(account) && p.Password.Equals(password)
-                          select a;
-
+            var results = context.Allergies.Where(x => x.Id == id && x.Owner == owner);
             return await results.ToListAsync();
         }
 

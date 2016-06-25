@@ -52,30 +52,13 @@ namespace Olives.Controllers
         [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
-            #region Email & password of owners.
-
-            var accountEmail = Request.Headers.Where(
-                    x =>
-                        !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountEmail))
-                    .Select(x => x.Value.FirstOrDefault())
-                    .FirstOrDefault();
-
-            var accountPassword = Request.Headers.Where(
-                    x =>
-                        !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountPassword))
-                    .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
-
-            // Filter person by email & password.
-            var person = _repositoryAccount.FindPerson(null, accountEmail, accountPassword, null);
-
-            #endregion
-
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            
             // Only filter and receive the first result.
             var filter = new AllergyGetViewModel();
             filter.Id = id;
-            filter.Owner = person.Id;
+            filter.Owner = requester.Id;
             filter.Page = 0;
             filter.Records = 1;
 
@@ -141,36 +124,12 @@ namespace Olives.Controllers
 
             #endregion
 
-            #region Email & password of owners.
-
-            var accountEmail = Request.Headers.Where(
-                    x =>
-                        !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountEmail))
-                    .Select(x => x.Value.FirstOrDefault())
-                    .FirstOrDefault();
-
-            var accountPassword = Request.Headers.Where(
-                    x =>
-                        !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountPassword))
-                    .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
-
-            // Filter person by email & password.
-            var person = _repositoryAccount.FindPerson(null, accountEmail, accountPassword, null);
-            if (person == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.Unauthorized, new
-                {
-                    Errors = new[] { Language.WarnNotAuthorizedAccount }
-                });
-            }
-
-            #endregion
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Only filter and receive the first result.
             var allergy = new Allergy();
-            allergy.Owner = person.Id;
+            allergy.Owner = requester.Id;
             allergy.Name = info.Name;
             allergy.Cause = info.Cause;
             allergy.Note = info.Note;
@@ -224,27 +183,11 @@ namespace Olives.Controllers
 
             #endregion
 
-            #region Header sections
-
-            // Retrieve email from header.
-            var accountEmail = Request.Headers.Where(
-                    x =>
-                        !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountEmail))
-                    .Select(x => x.Value.FirstOrDefault())
-                    .FirstOrDefault();
-
-            // Retrieve password from header.
-            var accountPassword = Request.Headers.Where(
-                    x =>
-                        !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountPassword))
-                    .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
-
-            #endregion
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find allergy by using allergy id and owner id.
-            var allergies = await _repositoryAllergy.FindAllergyAsync(accountEmail, accountPassword, id);
+            var allergies = await _repositoryAllergy.FindAllergyAsync(id, requester.Id);
 
             // Not record has been found.
             if (allergies == null || allergies.Count < 1)
@@ -310,27 +253,11 @@ namespace Olives.Controllers
         [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
         public async Task<HttpResponseMessage> Delete([FromUri] int id)
         {
-            #region Header sections
-
-            // Retrieve email from header.
-            var accountEmail = Request.Headers.Where(
-                    x =>
-                        !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountEmail))
-                    .Select(x => x.Value.FirstOrDefault())
-                    .FirstOrDefault();
-
-            // Retrieve password from header.
-            var accountPassword = Request.Headers.Where(
-                    x =>
-                        !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountPassword))
-                    .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
-
-            #endregion
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find allergy by using allergy id and owner id.
-            var allergies = await _repositoryAllergy.FindAllergyAsync(accountEmail, accountPassword, id);
+            var allergies = await _repositoryAllergy.FindAllergyAsync(id, requester.Id);
 
             // Not record has been found.
             if (allergies == null || allergies.Count < 1)

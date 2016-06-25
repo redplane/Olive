@@ -52,14 +52,18 @@ namespace Olives.Attributes
                         !string.IsNullOrEmpty(x.Key) &&
                         x.Key.Equals(HeaderFields.RequestAccountPassword))
                     .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
-
+            
             // Invalid account name or password.
             if (string.IsNullOrEmpty(accountEmail) || string.IsNullOrEmpty(accountPassword))
             {
                 // Treat this request is unauthorized.
+                var errorCode = $"{Language.WarnAccountNotLogin}";
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
                 {
-                    Error = new { Language.WarnAccountNotLogin }
+                    Error = new
+                    {
+                        errorCode
+                    }
                 });
                 
                 return;
@@ -71,9 +75,11 @@ namespace Olives.Attributes
             // No person has been found.
             if (person == null)
             {
+                // Treat this request is unauthorized.
+                var errorCode = $"{Language.WarnAccountNotLogin}";
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
                 {
-                    Error = new { Language.WarnAccountNotLogin }
+                    Error = new { errorCode }
                 });
                 return;
             }
@@ -81,9 +87,11 @@ namespace Olives.Attributes
             // Account has been disabled.
             if ((AccountStatus)person.Status == AccountStatus.Inactive)
             {
+                // Treat the login isn't successful because of disabled account.
+                var errorCode = $"{Language.WarnDisabledAccount}";
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
                 {
-                    Error = new { Language.WarnDisabledAccount }
+                    Error = new { errorCode }
                 });
 
                 return;
@@ -92,22 +100,31 @@ namespace Olives.Attributes
             // Account is still pending.
             if ((AccountStatus)person.Status == AccountStatus.Pending)
             {
+                // Treat the login isn't successful because of pending account.
+                var errorCode = $"{Language.WarnPendingAccount}";
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
                 {
-                    Error = new { Language.WarnPendingAccount }
+                    Error = new { errorCode }
                 });
 
                 return;
             }
             
+            // Account role isn't enough to access the function.
             if (!Roles.Any(x => x == person.Role))
             {
+                // Treat the request is forbidden.
+                var errorCode = $"{Language.WarnForbiddenAccessMethod}";
+
                 // Role isn't valid. Tell the client the access is forbidden.
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    Error = new {Language.WarnForbiddenAccessMethod }
+                    Error = new { errorCode }
                 });
             }
+
+            // Store the requester information in action argument.
+            actionContext.ActionArguments["Account"] = person;
         }
     }
 }
