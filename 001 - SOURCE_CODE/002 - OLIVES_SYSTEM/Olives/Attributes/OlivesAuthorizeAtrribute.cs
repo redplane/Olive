@@ -1,11 +1,12 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Interfaces;
+using Shared.Resources;
 
 namespace Olives.Attributes
 {
@@ -41,7 +42,7 @@ namespace Olives.Attributes
                 actionContext.Request.Headers.Where(
                     x =>
                         !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountEmail, StringComparison.InvariantCultureIgnoreCase))
+                        x.Key.Equals(HeaderFields.RequestAccountEmail))
                     .Select(x => x.Value.FirstOrDefault())
                     .FirstOrDefault();
 
@@ -49,34 +50,64 @@ namespace Olives.Attributes
                 actionContext.Request.Headers.Where(
                     x =>
                         !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountPassword, StringComparison.InvariantCultureIgnoreCase))
+                        x.Key.Equals(HeaderFields.RequestAccountPassword))
                     .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
 
             // Invalid account name or password.
             if (string.IsNullOrEmpty(accountEmail) || string.IsNullOrEmpty(accountPassword))
             {
                 // Treat this request is unauthorized.
-                actionContext.Response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
+                {
+                    Error = new { Language.WarnAccountNotLogin }
+                });
+                
                 return;
             }
 
             // Retrieve person whose properties match conditions.
-            var person = AccountsRepository.FindPerson(accountEmail, accountPassword, null);
+            var person = AccountsRepository.FindPerson(null, accountEmail, accountPassword, null);
 
             // No person has been found.
             if (person == null)
             {
-                actionContext.Response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
+                {
+                    Error = new { Language.WarnAccountNotLogin }
+                });
+                return;
+            }
+            
+            // Account has been disabled.
+            if ((AccountStatus)person.Status == AccountStatus.Inactive)
+            {
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
+                {
+                    Error = new { Language.WarnDisabledAccount }
+                });
+
                 return;
             }
 
+            // Account is still pending.
+            if ((AccountStatus)person.Status == AccountStatus.Pending)
+            {
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
+                {
+                    Error = new { Language.WarnPendingAccount }
+                });
+
+                return;
+            }
+            
             if (!Roles.Any(x => x == person.Role))
             {
                 // Role isn't valid. Tell the client the access is forbidden.
-                actionContext.Response = new HttpResponseMessage(HttpStatusCode.Forbidden);
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Forbidden, new
+                {
+                    Error = new {Language.WarnForbiddenAccessMethod }
+                });
             }
-
-            //base.OnAuthorization(actionContext);
         }
     }
 }

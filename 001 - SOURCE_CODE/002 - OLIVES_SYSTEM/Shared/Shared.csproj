@@ -32,6 +32,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Neo4jClient, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Neo4jClient.1.1.0.40-DT\lib\net45\Neo4jClient.dll</HintPath>
       <Private>True</Private>
@@ -52,6 +60,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -61,15 +71,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\CoordinateValidateAttribute.cs" />
     <Compile Include="Attributes\DateTimeCompareAttribute.cs" />
     <Compile Include="Attributes\EpochTimeCompareAttribute.cs" />
+    <Compile Include="Attributes\InAccountStatusAttribute.cs" />
+    <Compile Include="Attributes\InEnumerationsArray.cs" />
     <Compile Include="Attributes\InNumericArrayAttribute.cs" />
     <Compile Include="Attributes\NumericPropertyCompareAttribute.cs" />
     <Compile Include="Attributes\PropertyValidationAttribute.cs" />
     <Compile Include="Attributes\NumericCompareAttribute.cs" />
     <Compile Include="Attributes\RegexMatchAttribute.cs" />
-    <Compile Include="Constants\NodeConnection.cs" />
     <Compile Include="Enumerations\AccountStatus.cs" />
     <Compile Include="Constants\HeaderFields.cs" />
     <Compile Include="Constants\FieldLength.cs" />
@@ -77,33 +87,71 @@
     <Compile Include="Enumerations\AccountGender.cs" />
     <Compile Include="Enumerations\AccountRole.cs" />
     <Compile Include="Constants\Values.cs" />
+    <Compile Include="Enumerations\AppointmentFilterMode.cs" />
+    <Compile Include="Enumerations\AppointmentStatus.cs" />
     <Compile Include="Enumerations\Comparision.cs" />
+    <Compile Include="Helpers\EpochTimeHelper.cs" />
     <Compile Include="Interfaces\IDbSetting.cs" />
+    <Compile Include="Interfaces\IDoctor.cs" />
+    <Compile Include="Interfaces\IPagination.cs" />
+    <Compile Include="Interfaces\IPatient.cs" />
     <Compile Include="Interfaces\IPerson.cs" />
     <Compile Include="Interfaces\IRepositoryAccount.cs" />
-    <Compile Include="Models\ActivationCode.cs" />
-    <Compile Include="Models\Connections\HasAppointment.cs" />
-    <Compile Include="Models\Connections\ProvidesTreatment.cs" />
-    <Compile Include="Models\DbSetting.cs" />
-    <Compile Include="Models\MedicalExamPackage.cs" />
-    <Compile Include="Models\Medicine.cs" />
-    <Compile Include="Models\Nodes\Addiction.cs" />
-    <Compile Include="Models\Nodes\Allergy.cs" />
-    <Compile Include="Models\Coordinate.cs" />
-    <Compile Include="Models\Nodes\Appointment.cs" />
-    <Compile Include="Models\Nodes\Doctor.cs" />
-    <Compile Include="Models\Nodes\IdentityCard.cs" />
-    <Compile Include="Models\Nodes\InternalMedicine.cs" />
-    <Compile Include="Models\Nodes\MedicalRecord.cs" />
-    <Compile Include="Models\Nodes\Patient.cs" />
-    <Compile Include="Models\Nodes\Person.cs" />
-    <Compile Include="Models\Nodes\PersonalNote.cs" />
-    <Compile Include="Models\Nodes\Prescription.cs" />
-    <Compile Include="Models\Nodes\Transaction.cs" />
+    <Compile Include="Interfaces\IRepositoryAllergy.cs" />
+    <Compile Include="Interfaces\IRepositoryAppointment.cs" />
+    <Compile Include="Interfaces\IRepositorySpecialty.cs" />
+    <Compile Include="Models\Allergy.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Appointment.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Doctor.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\OlivesHealth.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OlivesHealth.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\OlivesHealth.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\OlivesHealth.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OlivesHealth.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Patient.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Person.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Relation.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\ResponseErrror.cs" />
+    <Compile Include="Models\Specialty.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\sp_helpdiagramdefinition_Result.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\sp_helpdiagrams_Result.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\sysdiagram.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\RepositoryAccount.cs" />
     <Compile Include="Helpers\MethodHelper.cs" />
+    <Compile Include="Repositories\RepositoryAccount.cs" />
+    <Compile Include="Repositories\RepositoryAllergy.cs" />
+    <Compile Include="Repositories\RepositoryAppointment.cs" />
+    <Compile Include="Repositories\RepositorySpecialty.cs" />
     <Compile Include="Resources\Language.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -114,15 +162,27 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Language.vi.resx</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\FilterPatientViewModel.cs" />
-    <Compile Include="ViewModels\ResponsePersonCode.cs" />
-    <Compile Include="ViewModels\StatusStatisticViewModel.cs" />
-    <Compile Include="ViewModels\InitializeDoctorViewModel.cs" />
-    <Compile Include="ViewModels\FilterDoctorViewModel.cs" />
-    <Compile Include="ViewModels\FilterPersonViewModel.cs" />
-    <Compile Include="ViewModels\InitializePersonViewModel.cs" />
+    <Compile Include="ViewModels\AllergyGetViewModel.cs" />
+    <Compile Include="ViewModels\DoctorViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterPatientViewModel.cs" />
+    <Compile Include="ViewModels\Request\InitializeAllergyViewModel.cs" />
+    <Compile Include="ViewModels\Request\InitializeAppointmentViewModel.cs" />
+    <Compile Include="ViewModels\Response\ResponseAllergyFilter.cs" />
+    <Compile Include="ViewModels\Filter\FilterAppointmentViewModel.cs" />
+    <Compile Include="ViewModels\Response\ResponseAppointment.cs" />
+    <Compile Include="ViewModels\Response\ResponseAppointmentFilter.cs" />
+    <Compile Include="ViewModels\PersonViewModel.cs" />
+    <Compile Include="ViewModels\Response\ResponseSpecialtyFilter.cs" />
+    <Compile Include="ViewModels\PatientViewModel.cs" />
+    <Compile Include="ViewModels\Response\ResponseDoctorFilter.cs" />
+    <Compile Include="ViewModels\Response\ResponsePatientFilter.cs" />
+    <Compile Include="ViewModels\SpecialtyGetViewModel.cs" />
+    <Compile Include="ViewModels\StatusSummaryViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterDoctorViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterPersonViewModel.cs" />
+    <Compile Include="ViewModels\Request\InitializePersonViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
-    <Compile Include="ViewModels\ResponsePersonFilter.cs" />
+    <Compile Include="ViewModels\Response\ResponsePersonFilter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Language.resx">
@@ -137,11 +197,31 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <EntityDeploy Include="Models\OlivesHealth.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>OlivesHealth.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="Models\OlivesHealth.edmx.diagram">
+      <DependentUpon>OlivesHealth.edmx</DependentUpon>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Services\" />
+    <Content Include="Models\OlivesHealth.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>OlivesHealth.edmx</DependentUpon>
+      <LastGenOutput>OlivesHealth.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\OlivesHealth.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>OlivesHealth.edmx</DependentUpon>
+      <LastGenOutput>OlivesHealth.cs</LastGenOutput>
+    </Content>
   </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

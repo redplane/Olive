@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using OlivesAdministration.Attributes;
 using OlivesAdministration.ViewModels;
-using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
@@ -16,7 +15,7 @@ using Shared.ViewModels;
 namespace OlivesAdministration.Controllers
 {
     [Route("api/person")]
-    public class PersonController : ParentController
+    public class PersonController : ApiParentController
     {
         #region Dependency injections
 
@@ -55,7 +54,7 @@ namespace OlivesAdministration.Controllers
             #endregion
 
             // Find the person from database using unique identity.
-            var person = await _repositoryAccount.FindPerson(info.Id);
+            var person = await _repositoryAccount.FindPersonAsync(info.Id, null, null, null, null);
 
             // No person has been found.
             if (person == null)
@@ -69,10 +68,10 @@ namespace OlivesAdministration.Controllers
             }
 
             // Change account status and retrieve the process result.
-            var result = await _repositoryAccount.EditPersonStatus(info.Id, info.Status);
+            var result = await _repositoryAccount.EditPersonStatusAsync(info.Id, info.Status);
 
             // Error happens while changing account status.
-            if (!result)
+            if (result == null)
             {
                 // Response error construction.
                 var responseError = new ResponseErrror();
@@ -82,7 +81,7 @@ namespace OlivesAdministration.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, responseError);
             }
 
-            if (info.Status == AccountStatus.Active)
+            if ((AccountStatus)info.Status == AccountStatus.Active)
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     Message = new[] {Language.AccountHasBeenActivated}
@@ -97,14 +96,14 @@ namespace OlivesAdministration.Controllers
         [Route("api/person/statistic/status")]
         [HttpPost]
         [OlivesAuthorize(new[] {AccountRole.Admin})]
-        public async Task<HttpResponseMessage> Statistic([FromBody] StatusStatisticViewModel info)
+        public async Task<HttpResponseMessage> Statistic([FromBody] StatusSummaryViewModel info)
         {
             #region Model validation
 
             // Information hasn't been initialized. Initialize and validate it.
             if (info == null)
             {
-                info = new StatusStatisticViewModel();
+                info = new StatusSummaryViewModel();
                 Validate(info);
             }
 
@@ -118,9 +117,9 @@ namespace OlivesAdministration.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                ActiveAccounts = summaryResult.Where(x => x.Status == AccountStatus.Active).Sum(x => x.Total),
-                PendingAccounts = summaryResult.Where(x => x.Status == AccountStatus.Pending).Sum(x => x.Total),
-                DeactiveAccounts = summaryResult.Where(x => x.Status == AccountStatus.Inactive).Sum(x => x.Total),
+                ActiveAccounts = summaryResult.Where(x => (AccountStatus)x.Status == AccountStatus.Active).Sum(x => x.Total),
+                PendingAccounts = summaryResult.Where(x => (AccountStatus)x.Status == AccountStatus.Pending).Sum(x => x.Total),
+                DeactiveAccounts = summaryResult.Where(x => (AccountStatus)x.Status == AccountStatus.Inactive).Sum(x => x.Total),
                 Total = summaryResult.Sum(x => x.Total)
             });
         }

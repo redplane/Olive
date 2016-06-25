@@ -88,15 +88,6 @@ namespace Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please contact administrators to verify this account.
-        /// </summary>
-        public static string DoctorAccountPending {
-            get {
-                return ResourceManager.GetString("DoctorAccountPending", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Doctor doesn&apos;t exist.
         /// </summary>
         public static string DoctorDoesNotExist {
@@ -529,6 +520,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Login information is conflicted.
+        /// </summary>
+        public static string LoginConflict {
+            get {
+                return ResourceManager.GetString("LoginConflict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password can only contain at most 16 alphanumeric characters.
         /// </summary>
         public static string MaxLengthPassword {
@@ -552,6 +552,15 @@ namespace Shared.Resources {
         public static string MustAuthorize {
             get {
                 return ResourceManager.GetString("MustAuthorize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W003.
+        /// </summary>
+        public static string NoRecordHasBeenFound {
+            get {
+                return ResourceManager.GetString("NoRecordHasBeenFound", resourceCulture);
             }
         }
         
@@ -754,11 +763,128 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} must be in the list {1}.
+        /// </summary>
+        public static string ValueMustBeOneOfArray {
+            get {
+                return ResourceManager.GetString("ValueMustBeOneOfArray", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please wait for admin confirmation.
         /// </summary>
         public static string WaitForAdminConfirmation {
             get {
                 return ResourceManager.GetString("WaitForAdminConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W012.
+        /// </summary>
+        public static string WarnAccountNotLogin {
+            get {
+                return ResourceManager.GetString("WarnAccountNotLogin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W009.
+        /// </summary>
+        public static string WarnDaterInvalidRole {
+            get {
+                return ResourceManager.GetString("WarnDaterInvalidRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W008.
+        /// </summary>
+        public static string WarnDaterNotFound {
+            get {
+                return ResourceManager.GetString("WarnDaterNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W010.
+        /// </summary>
+        public static string WarnDaterNotSelf {
+            get {
+                return ResourceManager.GetString("WarnDaterNotSelf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W011.
+        /// </summary>
+        public static string WarnDaterSameRole {
+            get {
+                return ResourceManager.GetString("WarnDaterSameRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W002.
+        /// </summary>
+        public static string WarnDisabledAccount {
+            get {
+                return ResourceManager.GetString("WarnDisabledAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W013.
+        /// </summary>
+        public static string WarnForbiddenAccessMethod {
+            get {
+                return ResourceManager.GetString("WarnForbiddenAccessMethod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W004.
+        /// </summary>
+        public static string WarnNotAuthorizedAccount {
+            get {
+                return ResourceManager.GetString("WarnNotAuthorizedAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W001.
+        /// </summary>
+        public static string WarnPendingAccount {
+            get {
+                return ResourceManager.GetString("WarnPendingAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W005.
+        /// </summary>
+        public static string WarnRecordConflict {
+            get {
+                return ResourceManager.GetString("WarnRecordConflict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W006.
+        /// </summary>
+        public static string WarnRecordNotFound {
+            get {
+                return ResourceManager.GetString("WarnRecordNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W007.
+        /// </summary>
+        public static string WarnRelationNotExist {
+            get {
+                return ResourceManager.GetString("WarnRelationNotExist", resourceCulture);
             }
         }
     }

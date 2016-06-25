@@ -5,7 +5,7 @@
         /// <summary>
         ///     Maximum length of Email address.
         /// </summary>
-        public const int EmailMaxLength = 128;
+        public const int EmailMaxLength = 64;
 
         /// <summary>
         ///     Maximum length of Password.

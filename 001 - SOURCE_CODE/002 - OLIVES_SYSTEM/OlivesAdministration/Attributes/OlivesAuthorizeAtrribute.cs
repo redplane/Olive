@@ -6,11 +6,9 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using Shared.Constants;
-using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
-
 namespace OlivesAdministration.Attributes
 {
     public class OlivesAuthorize : AuthorizeAttribute
@@ -68,7 +66,7 @@ namespace OlivesAdministration.Attributes
             }
 
             // Retrieve person whose properties match conditions.
-            var person = AccountsRepository.FindPerson(accountEmail, accountPassword, null);
+            var person = AccountsRepository.FindPerson(null, accountEmail, accountPassword, null);
 
             // No person has been found.
             if (person == null)
@@ -86,8 +84,6 @@ namespace OlivesAdministration.Attributes
                 responseError.Errors = new List<string> {Language.RequestForbidden};
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Forbidden, responseError);
             }
-
-            //base.OnAuthorization(actionContext);
         }
     }
 }

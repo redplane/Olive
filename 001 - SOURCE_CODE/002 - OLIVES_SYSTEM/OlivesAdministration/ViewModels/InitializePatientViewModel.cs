@@ -2,6 +2,7 @@
 using Shared.Constants;
 using Shared.Resources;
 using Shared.ViewModels;
+using Shared.ViewModels.Request;
 
 namespace OlivesAdministration.ViewModels
 {

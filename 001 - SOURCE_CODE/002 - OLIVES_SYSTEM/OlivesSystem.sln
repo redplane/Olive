@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OlivesAdministration", "OlivesAdministration\OlivesAdministration.csproj", "{C7E1E007-46DE-424C-82AE-018086DD43B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataInitializer", "DataInitializer\DataInitializer.csproj", "{23992EFE-D28D-44CC-84C5-06108FDF1A4A}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olives", "Olives\Olives.csproj", "{0ADE9646-30D3-48CE-BCDE-8A1684401973}"
 EndProject
 Global
@@ -23,6 +25,10 @@ Global
 		{C7E1E007-46DE-424C-82AE-018086DD43B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7E1E007-46DE-424C-82AE-018086DD43B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7E1E007-46DE-424C-82AE-018086DD43B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23992EFE-D28D-44CC-84C5-06108FDF1A4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23992EFE-D28D-44CC-84C5-06108FDF1A4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23992EFE-D28D-44CC-84C5-06108FDF1A4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23992EFE-D28D-44CC-84C5-06108FDF1A4A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0ADE9646-30D3-48CE-BCDE-8A1684401973}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0ADE9646-30D3-48CE-BCDE-8A1684401973}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0ADE9646-30D3-48CE-BCDE-8A1684401973}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -324,9 +324,6 @@
   <data name="AccessEmailForVerification" xml:space="preserve">
     <value>Please access your email for account verification</value>
   </data>
-  <data name="DoctorAccountPending" xml:space="preserve">
-    <value>Please contact administrators to verify this account</value>
-  </data>
   <data name="PatientAccountPending" xml:space="preserve">
     <value>Please access your email to verify this account</value>
   </data>
@@ -350,5 +347,63 @@
   </data>
   <data name="InvalidRequestParameters" xml:space="preserve">
     <value>Request parameters are invalid</value>
+  </data>
+  <data name="LoginConflict" xml:space="preserve">
+    <value>Login information is conflicted</value>
+  </data>
+  <data name="WarnPendingAccount" xml:space="preserve">
+    <value>W001</value>
+    <comment>Warn front-end that account is pending</comment>
+  </data>
+  <data name="WarnDisabledAccount" xml:space="preserve">
+    <value>W002</value>
+    <comment>Warn front-end that account is disabled</comment>
+  </data>
+  <data name="NoRecordHasBeenFound" xml:space="preserve">
+    <value>W003</value>
+    <comment>Warn front-end that no record has been found</comment>
+  </data>
+  <data name="WarnNotAuthorizedAccount" xml:space="preserve">
+    <value>W004</value>
+    <comment>Warn front-end that account isn't authorized.</comment>
+  </data>
+  <data name="WarnRecordConflict" xml:space="preserve">
+    <value>W005</value>
+    <comment>Warn front-end that record is duplicated</comment>
+  </data>
+  <data name="WarnRecordNotFound" xml:space="preserve">
+    <value>W006</value>
+    <comment>Warn front-end that no records has been found</comment>
+  </data>
+  <data name="WarnDaterInvalidRole" xml:space="preserve">
+    <value>W009</value>
+    <comment>Warn front-end that the dater has invalid role.</comment>
+  </data>
+  <data name="WarnDaterNotFound" xml:space="preserve">
+    <value>W008</value>
+    <comment>Warn front-end that dater isn't found</comment>
+  </data>
+  <data name="WarnDaterNotSelf" xml:space="preserve">
+    <value>W010</value>
+    <comment>Warn front-end that person cannot date himself/herself</comment>
+  </data>
+  <data name="WarnDaterSameRole" xml:space="preserve">
+    <value>W011</value>
+    <comment>Warn front-end that doctor can date the patient and vice versa. In short, roles must be different</comment>
+  </data>
+  <data name="WarnRelationNotExist" xml:space="preserve">
+    <value>W007</value>
+    <comment>Warn front-end that relation doesn't exist.</comment>
+  </data>
+  <data name="ValueMustBeOneOfArray" xml:space="preserve">
+    <value>{0} must be in the list {1}</value>
+  </data>
+  <data name="WarnAccountNotLogin" xml:space="preserve">
+    <value>W012</value>
+    <comment>Warn front-end that account doesn't login successfully.</comment>
+  </data>
+  <data name="WarnForbiddenAccessMethod" xml:space="preserve">
+    <value>W013</value>
+    <comment>Warn front-end that account is allowed to login.</comment>
   </data>
 </root>

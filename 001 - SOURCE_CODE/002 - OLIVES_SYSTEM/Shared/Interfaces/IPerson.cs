@@ -1,87 +1,37 @@
-﻿using Shared.Enumerations;
-
-namespace Shared.Interfaces
+﻿namespace Shared.Interfaces
 {
     public interface IPerson
     {
-        /// <summary>
-        ///     Person GUID.
-        /// </summary>
-        string Id { get; set; }
+        int Id { get; set; }
 
-        /// <summary>
-        ///     Person last name.
-        /// </summary>
-        string LastName { get; set; }
-
-        /// <summary>
-        ///     Person first name.
-        /// </summary>
         string FirstName { get; set; }
 
-        /// <summary>
-        ///     Birthday (ticks).
-        /// </summary>
-        long? Birthday { get; set; }
+        string LastName { get; set; }
 
-        /// <summary>
-        ///     Person gender.
-        /// </summary>
-        int Gender { get; set; }
-
-        /// <summary>
-        ///     Email address which is used for registration or for contacting.
-        /// </summary>
         string Email { get; set; }
 
-        /// <summary>
-        ///     Password of account.
-        /// </summary>
         string Password { get; set; }
 
-        /// <summary>
-        ///     Phone number which is used for contacting.
-        /// </summary>
+        long? Birthday { get; set; }
+
+        byte? Gender { get; set; }
+
         string Phone { get; set; }
 
-        /// <summary>
-        ///     Money in wallet.
-        /// </summary>
-        double Money { get; set; }
+        byte Role { get; set; }
 
-        /// <summary>
-        ///     Time when account has been registered.
-        /// </summary>
         long Created { get; set; }
 
-        /// <summary>
-        ///     Latitude of place where person lives.
-        /// </summary>
-        double? Latitude { get; set; }
+        long? LastModified { get; set; }
 
-        /// <summary>
-        ///     Longitude of place where person lives.
-        /// </summary>
-        double? Longitude { get; set; }
+        byte Status { get; set; }
 
-        /// <summary>
-        ///     Address of person
-        /// </summary>
         string Address { get; set; }
 
-        /// <summary>
-        ///     Role of person [0 - Admin | 1 - Patient | 2 - Doctor]
-        /// </summary>
-        int Role { get; set; }
+        double? Longitude { get; set; }
 
-        /// <summary>
-        ///     When account has been modified lastly.
-        /// </summary>
-        long LastModified { get; set; }
+        double? Latitude { get; set; }
 
-        /// <summary>
-        ///     Status of person.
-        /// </summary>
-        int Status { get; set; }
+        string Photo { get; set; }
     }
 }
