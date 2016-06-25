@@ -11,40 +11,40 @@ using Shared.ViewModels.Response;
 
 namespace Shared.Repositories
 {
-    public class RepositoryHeartbeat : IRepositoryHeartbeat
+    public class RepositorySugarblood : IRepositorySugarblood
     {
         /// <summary>
-        /// Initialize heartbeat note to database.
+        /// Initialize sugarblood note to database.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        public async Task<Heartbeat> InitializeHeartbeatNoteAsync(Heartbeat info)
+        public async Task<SugarBlood> InitializeSugarbloodNoteAsync(SugarBlood info)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
             // Add allergy to database context.
-            context.Heartbeats.AddOrUpdate(info);
+            context.SugarBloods.AddOrUpdate(info);
 
             // Submit allergy.
             await context.SaveChangesAsync();
 
             return info;
         }
-
+        
         /// <summary>
-        /// Find heartbeat note by using id and owner id.
+        /// Find sugarblood note by using id and owner id.
         /// </summary>
         /// <param name="id">Allergy Id</param>
         /// <param name="owner">Allergy owner</param>
         /// <returns></returns>
-        public async Task<IList<Heartbeat>> FindHeartbeatAsync(int id, int? owner)
+        public async Task<IList<SugarBlood>> FindSugarbloodNoteAsync(int id, int? owner)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-            
+
             // Find heartbeat note by using id.
-            var results = context.Heartbeats.Where(x => x.Id == id);
+            var results = context.SugarBloods.Where(x => x.Id == id);
 
             // Owner has been specified.
             if (owner != null)
@@ -52,7 +52,7 @@ namespace Shared.Repositories
 
             return await results.ToListAsync();
         }
-
+        
         /// <summary>
         /// Delete a heartbeat note asynchrounously.
         /// </summary>
@@ -71,23 +71,29 @@ namespace Shared.Repositories
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<ResponseHeartbeatFilter> FilterHeartbeatAsync(FilterHeatbeatViewModel filter)
+        public async Task<ResponseSugarbloodFilter> FilterSugarbloodNoteAsync(FilterSugarbloodViewModel filter)
         {
             // Data context initialization.
             var context = new OlivesHealthEntities();
 
             // By default, take all information.
-            IQueryable<Heartbeat> results = context.Heartbeats;
+            IQueryable<SugarBlood> results = context.SugarBloods;
 
             // Owner has been specified.
             if (filter.Owner != null)
                 results = results.Where(x => x.Owner == filter.Owner);
 
-            // Rate has been specified.
-            if (filter.MinRate != null)
-                results = results.Where(x => x.Rate >= filter.MinRate);
-            if (filter.MaxRate != null)
-                results = results.Where(x => x.Rate <= filter.MaxRate);
+            // Value has been specified.
+            if (filter.MinValue != null)
+                results = results.Where(x => x.Value >= filter.MinValue);
+            if (filter.MinValue != null)
+                results = results.Where(x => x.Value <= filter.MaxValue);
+
+            // Time has been specified.
+            if (filter.MinTime != null)
+                results = results.Where(x => x.Time >= filter.MinTime);
+            if (filter.MaxTime != null)
+                results = results.Where(x => x.Time <= filter.MaxTime);
 
             // Created has been specified.
             if (filter.MinCreated != null)
@@ -109,25 +115,38 @@ namespace Shared.Repositories
             results = results.OrderByDescending(x => x.LastModified);
 
             // Initialize response and throw result back.
-            var response = new ResponseHeartbeatFilter();
+            var response = new ResponseSugarbloodFilter();
             response.Total = await results.CountAsync();
 
             // Calculate what records should be shown up.
             var skippedRecords = filter.Page*filter.Records;
-            response.Heartbeats = await results.Skip(skippedRecords)
+            response.Sugarbloods = await results.Skip(skippedRecords)
                 .Take(filter.Records)
-                .Select(x => new HeartbeatViewModel()
+                .Select(x => new SugarbloodViewModel()
                 {
-                    Created = x.Created,
                     Id = x.Id,
+                    Created = x.Created,
                     LastModified = x.LastModified,
                     Note = x.Note,
-                    Rate = x.Rate
+                    Time = x.Time,
+                    Value = x.Value
                 })
                 .ToListAsync();
 
             // Return filtered result.
             return response;
+        }
+
+        /// <summary>
+        /// Delete a sugarblood note asynchronously.
+        /// </summary>
+        /// <param name="info"></param>
+        public async void DeleteSugarbloodNoteAsync(SugarBlood info)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+            context.SugarBloods.Remove(info);
+            await context.SaveChangesAsync();
         }
     }
 }

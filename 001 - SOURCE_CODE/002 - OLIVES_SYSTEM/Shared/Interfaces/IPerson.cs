@@ -12,7 +12,7 @@
 
         string Password { get; set; }
 
-        long? Birthday { get; set; }
+        double? Birthday { get; set; }
 
         byte? Gender { get; set; }
 
@@ -20,9 +20,9 @@
 
         byte Role { get; set; }
 
-        long Created { get; set; }
+        double Created { get; set; }
 
-        long? LastModified { get; set; }
+        double? LastModified { get; set; }
 
         byte Status { get; set; }
 

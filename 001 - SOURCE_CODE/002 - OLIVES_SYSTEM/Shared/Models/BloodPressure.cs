@@ -12,11 +12,12 @@ namespace Shared.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Heartbeat
+    public partial class BloodPressure
     {
         public int Id { get; set; }
         public int Owner { get; set; }
-        public double Rate { get; set; }
+        public int Systolic { get; set; }
+        public int Diastolic { get; set; }
         public double Time { get; set; }
         public string Note { get; set; }
         public double Created { get; set; }

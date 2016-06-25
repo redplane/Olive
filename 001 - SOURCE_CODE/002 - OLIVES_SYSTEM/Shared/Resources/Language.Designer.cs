@@ -736,6 +736,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} is required.
+        /// </summary>
+        public static string ValueIsRequired {
+            get {
+                return ResourceManager.GetString("ValueIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} must be after {1}.
         /// </summary>
         public static string ValueMustBeAfterYear {

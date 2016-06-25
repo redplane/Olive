@@ -15,9 +15,9 @@ namespace Shared.ViewModels
 
         public string Address { get; set; }
 
-        public long? Birthday { get; set; }
+        public double? Birthday { get; set; }
 
-        public long Created { get; set; }
+        public double Created { get; set; }
 
         public string Email { get; set; }
 
@@ -25,7 +25,7 @@ namespace Shared.ViewModels
 
         public byte? Gender { get; set; }
 
-        public long? LastModified { get; set; }
+        public double? LastModified { get; set; }
 
         public string LastName { get; set; }
 

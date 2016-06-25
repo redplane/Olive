@@ -1,4 +1,6 @@
-﻿using Shared.Enumerations;
+﻿using System;
+using Shared.Enumerations;
+using Shared.Helpers;
 using Shared.Models;
 
 namespace DataInitializer
@@ -40,7 +42,10 @@ namespace DataInitializer
                 person.Gender = 0;
                 person.Role = AccountRole.Doctor;
                 person.Created = 3;
-
+                person.Address = "New York, NY, USA";
+                person.Latitude = 40.7127837;
+                person.Longitude = -74.00594130000002;
+                person.Birthday = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
                 if (i > 25)
                     person.Status = (byte)AccountStatus.Active;
                 else if (i == 25)

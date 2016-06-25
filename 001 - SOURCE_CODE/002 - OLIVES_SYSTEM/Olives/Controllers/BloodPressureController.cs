@@ -19,9 +19,9 @@ using Shared.ViewModels.Initialize;
 
 namespace Olives.Controllers
 {
-    [Route("api/heartbeat")]
+    [Route("api/bloodpressure")]
     [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
-    public class HeartbeatController : ApiParentController
+    public class BloodPressureController : ApiParentController
     {
         #region Constructors
 
@@ -29,13 +29,13 @@ namespace Olives.Controllers
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
         /// <param name="repositoryAccount"></param>
-        /// <param name="repositoryHeartbeat"></param>
+        /// <param name="repositoryBloodPressure"></param>
         /// <param name="log"></param>
         /// <param name="emailService"></param>
-        public HeartbeatController(IRepositoryAccount repositoryAccount, IRepositoryHeartbeat repositoryHeartbeat, ILog log, IEmailService emailService)
+        public BloodPressureController(IRepositoryAccount repositoryAccount, IRepositoryBloodPressure repositoryBloodPressure, ILog log, IEmailService emailService)
         {
             _repositoryAccount = repositoryAccount;
-            _repositoryHeartbeat = repositoryHeartbeat;
+            _repositoryBloodPressure = repositoryBloodPressure;
             _log = log;
             _emailService = emailService;
         }
@@ -56,7 +56,7 @@ namespace Olives.Controllers
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
             
             // Retrieve the results list.
-            var results = await _repositoryHeartbeat.FindHeartbeatAsync(id, requester.Id);
+            var results = await _repositoryBloodPressure.FindBloodPressureNoteAsync(id, requester.Id);
 
             // No result has been received.
             if (results == null || results.Count != 1)
@@ -69,19 +69,22 @@ namespace Olives.Controllers
 
             // Retrieve the 1st queried result.
             var result = results
-                .Select(x => new HeartbeatViewModel()
+                .Select(x => new BloodPressureViewModel()
                 {
                     Id = x.Id,
                     Created = x.Created,
+                    Diastolic = x.Diastolic,
                     LastModified = x.LastModified,
                     Note = x.Note,
-                    Rate = x.Rate
+                    Owner = x.Owner,
+                    Systolic = x.Systolic,
+                    Time = x.Time
                 })
                 .FirstOrDefault();
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Heartbeat = result
+                BloodPressure = result
             });
         }
 
@@ -91,7 +94,7 @@ namespace Olives.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<HttpResponseMessage> Post([FromBody] InitializeHeartbeatViewModel info)
+        public async Task<HttpResponseMessage> Post([FromBody] InitializeBloodPressureViewModel info)
         {
             #region ModelState result
 
@@ -118,21 +121,23 @@ namespace Olives.Controllers
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Only filter and receive the first result.
-            var heartbeat = new Heartbeat();
-            heartbeat.Owner = requester.Id;
-            heartbeat.Rate = info.Rate;
-            heartbeat.Note = info.Note;
-            heartbeat.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            var bloodPressure = new BloodPressure();
+            bloodPressure.Diastolic = info.Diastolic;
+            bloodPressure.Systolic = info.Systolic;
+            bloodPressure.Time = info.Time;
+            bloodPressure.Note = info.Note;
+            bloodPressure.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
 
             // Insert a new allergy to database.
-            var result = await _repositoryHeartbeat.InitializeHeartbeatNoteAsync(heartbeat);
+            var result = await _repositoryBloodPressure.InitializeBloodPressureNoteAsync(bloodPressure);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Heartbeat = new
+                BloodPressure = new
                 {
                     result.Id,
-                    result.Rate,
+                    result.Systolic,
+                    result.Diastolic,
                     result.Time,
                     result.Note,
                     result.Created
@@ -147,7 +152,7 @@ namespace Olives.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] InitializeHeartbeatViewModel info)
+        public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] InitializeBloodPressureViewModel info)
         {
             #region ModelState result
 
@@ -174,7 +179,7 @@ namespace Olives.Controllers
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find allergy by using allergy id and owner id.
-            var results = await _repositoryHeartbeat.FindHeartbeatAsync(id, requester.Id);
+            var results = await _repositoryBloodPressure.FindBloodPressureNoteAsync(id, requester.Id);
 
             // Not record has been found.
             if (results == null || results.Count < 1)
@@ -208,22 +213,26 @@ namespace Olives.Controllers
             }
 
             // Confirm edit.
-            result.Rate = info.Rate;
+            result.Diastolic = info.Diastolic;
+            result.Systolic = info.Systolic;
             result.Time = info.Time;
             result.Note = info.Note;
-            
+            result.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+
             // Update allergy.
-            result = await _repositoryHeartbeat.InitializeHeartbeatNoteAsync(result);
+            result = await _repositoryBloodPressure.InitializeBloodPressureNoteAsync(result);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Heartbeat = new HeartbeatViewModel()
+                BloodPressure = new BloodPressureViewModel()
                 {
                     Id = result.Id,
-                    Created = result.Created,
-                    LastModified = result.LastModified,
+                    Systolic = result.Systolic,
+                    Diastolic = result.Diastolic,
+                    Time = result.Time,
                     Note = result.Note,
-                    Rate = result.Rate
+                    Created = result.Created,
+                    LastModified = result.LastModified
                 }
             });
         }
@@ -240,7 +249,7 @@ namespace Olives.Controllers
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find allergy by using allergy id and owner id.
-            var result = await _repositoryHeartbeat.FindHeartbeatAsync(id, requester.Id);
+            var result = await _repositoryBloodPressure.FindBloodPressureNoteAsync(id, requester.Id);
 
             // Not record has been found.
             if (result == null || result.Count < 1)
@@ -274,7 +283,7 @@ namespace Olives.Controllers
             }
 
             // Remove the found allergy.
-            _repositoryHeartbeat.DeleteHeartbeatNoteAsync(heartbeat);
+            _repositoryBloodPressure.DeleteBloodPressureNoteAsync(heartbeat);
 
             return Request.CreateResponse(HttpStatusCode.OK);
         }
@@ -287,7 +296,7 @@ namespace Olives.Controllers
         [Route("api/heartbeat/filter")]
         [HttpPost]
         [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
-        public async Task<HttpResponseMessage> Filter([FromBody] FilterHeatbeatViewModel info)
+        public async Task<HttpResponseMessage> Filter([FromBody] FilterBloodPressureViewModel info)
         {
             #region ModelState result
 
@@ -317,10 +326,10 @@ namespace Olives.Controllers
             info.Owner = requester.Id;
             
             // Retrieve the results list.
-            var results = await _repositoryHeartbeat.FilterHeartbeatAsync(info);
+            var results = await _repositoryBloodPressure.FilterBloodPressureNoteAsync(info);
 
             // No result has been received.
-            if (results == null || results.Heartbeats == null || results.Heartbeats.Count < 1)
+            if (results == null || results.BloodPressures == null || results.BloodPressures.Count < 1)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
@@ -343,7 +352,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of heartbeats
         /// </summary>
-        private readonly IRepositoryHeartbeat _repositoryHeartbeat;
+        private readonly IRepositoryBloodPressure _repositoryBloodPressure;
 
         /// <summary>
         ///     Instance of module which is used for logging.

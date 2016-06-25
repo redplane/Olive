@@ -12,6 +12,9 @@
         /// </summary>
         public const int MaxBodyTemperature = 45;
 
+        /// <summary>
+        /// By default, time cannot be earlier than 1916.
+        /// </summary>
         public const int MinimumAllowedYear = 1916;
 
         /// <summary>
@@ -58,5 +61,39 @@
         /// Maximum length of a note.
         /// </summary>
         public const int NoteMaxLength = 128;
+
+        /// <summary>
+        /// Minimum mol of sugar in one 1 litre of blood
+        /// </summary>
+        public const double MinSugarBloodMmol = 3;
+
+        /// <summary>
+        /// Maximum mol of sugar in one 1 litre of blood
+        /// </summary>
+        public const double MaxSugarBloodMmol = 20;
+
+        #region Blood pressure
+
+        /// <summary>
+        /// Minimum value that diastolic can be assigned.
+        /// </summary>
+        public const int MinDiastolic = 60;
+
+        /// <summary>
+        /// Maximum value that diastolic can be assigned.
+        /// </summary>
+        public const int MaxDiastolic = 140;
+
+        /// <summary>
+        /// Minimum value that systolic can be assigned.
+        /// </summary>
+        public const int MinSystolic = 90;
+
+        /// <summary>
+        /// Maximum value that systolic can be assigned.
+        /// </summary>
+        public const int MaxSystolic = 250;
+
+        #endregion
     }
 }

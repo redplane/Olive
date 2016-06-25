@@ -6,16 +6,17 @@ using Shared.Resources;
 
 namespace Shared.ViewModels.Initialize
 {
-    public class InitializeHeartbeatViewModel
+    public class InitializeSugarbloodViewModel
     {
         /// <summary>
-        /// Heart rate.
+        /// Value of sugar in blood.
+        /// Unit : mmol/L
         /// </summary>
-        [Range(Values.MinHeartRate, Values.MaxHeartRate, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeFromTo")]
-        public double Rate { get; set; }
+        [Range(Values.MinSugarBloodMmol, Values.MaxSugarBloodMmol, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeFromTo")]
+        public double Value { get; set; }
 
         /// <summary>
-        /// Time when measurement was done.
+        /// Time when measurement was made.
         /// </summary>
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]

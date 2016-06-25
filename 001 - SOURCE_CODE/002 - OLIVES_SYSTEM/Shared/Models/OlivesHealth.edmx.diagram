@@ -5,21 +5,26 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="416fdc2382f3419997398975e4f66c79" Name="Diagram1">
-        <EntityTypeShape EntityType="OlivesHealthModel.Allergy" Width="1.5" PointX="3" PointY="6" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Appointment" Width="1.5" PointX="3" PointY="1.375" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Allergy" Width="1.5" PointX="3" PointY="8.625" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Appointment" Width="1.5" PointX="3" PointY="12" />
+        <EntityTypeShape EntityType="OlivesHealthModel.BloodPressure" Width="1.5" PointX="3" PointY="5.125" />
         <EntityTypeShape EntityType="OlivesHealthModel.Doctor" Width="1.5" PointX="8" PointY="0.875" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Heartbeat" Width="1.5" PointX="5.75" PointY="4.75" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Patient" Width="1.5" PointX="7.75" PointY="4.75" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Person" Width="1.5" PointX="0.75" PointY="3.75" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Relation" Width="1.5" PointX="3" PointY="9.25" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Heartbeat" Width="1.5" PointX="3" PointY="19.375" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Patient" Width="1.5" PointX="5.75" PointY="4.75" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Person" Width="1.5" PointX="0.75" PointY="9" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Relation" Width="1.5" PointX="3" PointY="16.625" />
         <EntityTypeShape EntityType="OlivesHealthModel.Specialty" Width="1.5" PointX="5.75" PointY="1.25" />
-        <EntityTypeShape EntityType="OlivesHealthModel.sysdiagram" Width="1.5" PointX="5.75" PointY="7.75" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Allergy__Owner__2B0A656D" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Appointme__Dater__339FAB6E" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Appointme__Statu__32AB8735" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Doctor__Money__2DE6D218" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Relation__Owner__2739D489" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Relation__Relati__282DF8C2" />
+        <EntityTypeShape EntityType="OlivesHealthModel.SugarBlood" Width="1.5" PointX="3" PointY="1.875" />
+        <EntityTypeShape EntityType="OlivesHealthModel.sysdiagram" Width="1.5" PointX="7.75" PointY="4.75" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Allergy__Owner__76619304" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Appointme__Dater__6FB49575" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Appointme__Statu__6EC0713C" />
+        <AssociationConnector Association="OlivesHealthModel.FK__BloodPres__LastM__00DF2177" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Doctor__Money__793DFFAF" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Heartbeat__LastM__690797E6" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Relation__Owner__72910220" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Relation__Relati__73852659" />
+        <AssociationConnector Association="OlivesHealthModel.FK__SugarBloo__LastM__6BE40491" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

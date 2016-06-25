@@ -6,13 +6,19 @@ using Shared.Resources;
 
 namespace Shared.ViewModels.Initialize
 {
-    public class InitializeHeartbeatViewModel
+    public class InitializeBloodPressureViewModel
     {
         /// <summary>
-        /// Heart rate.
+        /// Minimum pressure of blood.
         /// </summary>
-        [Range(Values.MinHeartRate, Values.MaxHeartRate, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeFromTo")]
-        public double Rate { get; set; }
+        [Range(Values.MinDiastolic, Values.MaxDiastolic, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeFromTo")]
+        public int Diastolic { get; set; }
+
+        /// <summary>
+        /// Maximum pressure of blood.
+        /// </summary>
+        [Range(Values.MinSystolic, Values.MaxSystolic, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeFromTo")]
+        public int Systolic { get; set; }
 
         /// <summary>
         /// Time when measurement was done.

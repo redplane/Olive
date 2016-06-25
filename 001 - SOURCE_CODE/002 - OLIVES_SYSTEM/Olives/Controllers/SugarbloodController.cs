@@ -19,9 +19,9 @@ using Shared.ViewModels.Initialize;
 
 namespace Olives.Controllers
 {
-    [Route("api/heartbeat")]
+    [Route("api/")]
     [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
-    public class HeartbeatController : ApiParentController
+    public class SugarbloodController : ApiParentController
     {
         #region Constructors
 
@@ -29,13 +29,13 @@ namespace Olives.Controllers
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
         /// <param name="repositoryAccount"></param>
-        /// <param name="repositoryHeartbeat"></param>
+        /// <param name="repositorySugarblood"></param>
         /// <param name="log"></param>
         /// <param name="emailService"></param>
-        public HeartbeatController(IRepositoryAccount repositoryAccount, IRepositoryHeartbeat repositoryHeartbeat, ILog log, IEmailService emailService)
+        public SugarbloodController(IRepositoryAccount repositoryAccount, IRepositorySugarblood repositorySugarblood, ILog log, IEmailService emailService)
         {
             _repositoryAccount = repositoryAccount;
-            _repositoryHeartbeat = repositoryHeartbeat;
+            _repositorySugarblood = repositorySugarblood;
             _log = log;
             _emailService = emailService;
         }
@@ -56,7 +56,7 @@ namespace Olives.Controllers
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
             
             // Retrieve the results list.
-            var results = await _repositoryHeartbeat.FindHeartbeatAsync(id, requester.Id);
+            var results = await _repositorySugarblood.FindSugarbloodNoteAsync(id, requester.Id);
 
             // No result has been received.
             if (results == null || results.Count != 1)
@@ -69,13 +69,14 @@ namespace Olives.Controllers
 
             // Retrieve the 1st queried result.
             var result = results
-                .Select(x => new HeartbeatViewModel()
+                .Select(x => new
                 {
-                    Id = x.Id,
-                    Created = x.Created,
-                    LastModified = x.LastModified,
-                    Note = x.Note,
-                    Rate = x.Rate
+                    x.Id,
+                    x.Value,
+                    x.Time,
+                    x.Note,
+                    x.Created,
+                    x.LastModified
                 })
                 .FirstOrDefault();
 
@@ -91,7 +92,7 @@ namespace Olives.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<HttpResponseMessage> Post([FromBody] InitializeHeartbeatViewModel info)
+        public async Task<HttpResponseMessage> Post([FromBody] InitializeSugarbloodViewModel info)
         {
             #region ModelState result
 
@@ -118,24 +119,25 @@ namespace Olives.Controllers
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Only filter and receive the first result.
-            var heartbeat = new Heartbeat();
-            heartbeat.Owner = requester.Id;
-            heartbeat.Rate = info.Rate;
-            heartbeat.Note = info.Note;
-            heartbeat.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            var sugarblood = new SugarBlood();
+            sugarblood.Owner = requester.Id;
+            sugarblood.Value = info.Value;
+            sugarblood.Note = info.Note;
+            sugarblood.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            sugarblood.Time = info.Time;
 
             // Insert a new allergy to database.
-            var result = await _repositoryHeartbeat.InitializeHeartbeatNoteAsync(heartbeat);
+            var result = await _repositorySugarblood.InitializeSugarbloodNoteAsync(sugarblood);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Heartbeat = new
+                Sugarblood = new SugarbloodViewModel()
                 {
-                    result.Id,
-                    result.Rate,
-                    result.Time,
-                    result.Note,
-                    result.Created
+                    Id = result.Id,
+                    Created = result.Created,
+                    Note = result.Note,
+                    Time = result.Time,
+                    Value = result.Value
                 }
             });
         }
@@ -147,7 +149,7 @@ namespace Olives.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] InitializeHeartbeatViewModel info)
+        public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] InitializeSugarbloodViewModel info)
         {
             #region ModelState result
 
@@ -174,7 +176,7 @@ namespace Olives.Controllers
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find allergy by using allergy id and owner id.
-            var results = await _repositoryHeartbeat.FindHeartbeatAsync(id, requester.Id);
+            var results = await _repositorySugarblood.FindSugarbloodNoteAsync(id, requester.Id);
 
             // Not record has been found.
             if (results == null || results.Count < 1)
@@ -208,22 +210,24 @@ namespace Olives.Controllers
             }
 
             // Confirm edit.
-            result.Rate = info.Rate;
             result.Time = info.Time;
             result.Note = info.Note;
+            result.Value = info.Value;
+            result.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
             
             // Update allergy.
-            result = await _repositoryHeartbeat.InitializeHeartbeatNoteAsync(result);
+            result = await _repositorySugarblood.InitializeSugarbloodNoteAsync(result);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Heartbeat = new HeartbeatViewModel()
+                Sugarblood = new SugarbloodViewModel()
                 {
                     Id = result.Id,
                     Created = result.Created,
                     LastModified = result.LastModified,
                     Note = result.Note,
-                    Rate = result.Rate
+                    Time = result.Time,
+                    Value = result.Value
                 }
             });
         }
@@ -240,10 +244,10 @@ namespace Olives.Controllers
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find allergy by using allergy id and owner id.
-            var result = await _repositoryHeartbeat.FindHeartbeatAsync(id, requester.Id);
+            var results = await _repositorySugarblood.FindSugarbloodNoteAsync(id, requester.Id);
 
             // Not record has been found.
-            if (result == null || result.Count < 1)
+            if (results == null || results.Count < 1)
             {
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -253,7 +257,7 @@ namespace Olives.Controllers
             }
 
             // Records are conflict.
-            if (result.Count != 1)
+            if (results.Count != 1)
             {
                 // Tell front-end that records are conflict.
                 return Request.CreateResponse(HttpStatusCode.Conflict, new
@@ -263,8 +267,8 @@ namespace Olives.Controllers
             }
 
             // Retrieve the first record.
-            var heartbeat = result.FirstOrDefault();
-            if (heartbeat == null)
+            var result = results.FirstOrDefault();
+            if (result == null)
             {
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -274,7 +278,7 @@ namespace Olives.Controllers
             }
 
             // Remove the found allergy.
-            _repositoryHeartbeat.DeleteHeartbeatNoteAsync(heartbeat);
+            _repositorySugarblood.DeleteSugarbloodNoteAsync(result);
 
             return Request.CreateResponse(HttpStatusCode.OK);
         }
@@ -287,7 +291,7 @@ namespace Olives.Controllers
         [Route("api/heartbeat/filter")]
         [HttpPost]
         [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
-        public async Task<HttpResponseMessage> Filter([FromBody] FilterHeatbeatViewModel info)
+        public async Task<HttpResponseMessage> Filter([FromBody] FilterSugarbloodViewModel info)
         {
             #region ModelState result
 
@@ -317,10 +321,10 @@ namespace Olives.Controllers
             info.Owner = requester.Id;
             
             // Retrieve the results list.
-            var results = await _repositoryHeartbeat.FilterHeartbeatAsync(info);
+            var results = await _repositorySugarblood.FilterSugarbloodNoteAsync(info);
 
             // No result has been received.
-            if (results == null || results.Heartbeats == null || results.Heartbeats.Count < 1)
+            if (results == null || results.Sugarbloods == null || results.Sugarbloods.Count < 1)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
@@ -341,9 +345,9 @@ namespace Olives.Controllers
         private readonly IRepositoryAccount _repositoryAccount;
 
         /// <summary>
-        ///     Repository of heartbeats
+        ///     Repository of sugarblood notes.
         /// </summary>
-        private readonly IRepositoryHeartbeat _repositoryHeartbeat;
+        private readonly IRepositorySugarblood _repositorySugarblood;
 
         /// <summary>
         ///     Instance of module which is used for logging.
