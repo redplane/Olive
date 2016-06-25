@@ -46,6 +46,7 @@ namespace DataInitializer
                 person.Latitude = 40.7127837;
                 person.Longitude = -74.00594130000002;
                 person.Birthday = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+                
                 if (i > 25)
                     person.Status = (byte)AccountStatus.Active;
                 else if (i == 25)
@@ -108,7 +109,7 @@ namespace DataInitializer
                 person.Gender = 0;
                 person.Role = 1;
                 person.Created = 3;
-
+                
                 if (i > 25)
                     person.Status = (byte)AccountStatus.Active;
                 else if (i == 25)

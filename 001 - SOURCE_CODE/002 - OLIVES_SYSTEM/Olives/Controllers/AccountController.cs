@@ -116,7 +116,28 @@ namespace Olives.Controllers
             }
 
             _log.Info($"{loginViewModel.Email} has logged in successfully");
-            return Request.CreateResponse(HttpStatusCode.OK, new {User = result});
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                User = new
+                {
+                    result.Id,
+                    result.Email,
+                    result.Password,
+                    result.FirstName,
+                    result.LastName,
+                    result.Birthday,
+                    result.Phone,
+                    result.Gender,
+                    result.Role,
+                    result.Created,
+                    result.LastModified,
+                    result.Status,
+                    result.Address,
+                    result.Longitude,
+                    result.Latitude,
+                    result.Photo      
+                }
+            });
         }
 
         #endregion
