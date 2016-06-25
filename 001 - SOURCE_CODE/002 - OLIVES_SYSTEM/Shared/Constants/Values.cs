@@ -43,5 +43,20 @@
         ///     The longest length password can be.
         /// </summary>
         public const int MaxPasswordLength = 16;
+        
+        /// <summary>
+        /// Minimum heart rate.
+        /// </summary>
+        public const double MinHeartRate = 0;
+
+        /// <summary>
+        /// Maximum heart rate.
+        /// </summary>
+        public const double MaxHeartRate = 208;
+
+        /// <summary>
+        /// Maximum length of a note.
+        /// </summary>
+        public const int NoteMaxLength = 128;
     }
 }

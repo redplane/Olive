@@ -42,6 +42,7 @@ namespace Olives
             builder.RegisterType<AccountController>().InstancePerRequest();
             builder.RegisterType<SpecialtyController>().InstancePerRequest();
             builder.RegisterType<AllergyController>().InstancePerRequest();
+            builder.RegisterType<HeartbeatController>().InstancePerRequest();
 
             #endregion
 

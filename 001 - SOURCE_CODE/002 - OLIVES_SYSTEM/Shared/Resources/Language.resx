@@ -406,4 +406,10 @@
     <value>W013</value>
     <comment>Warn front-end that account is allowed to login.</comment>
   </data>
+  <data name="ValueCanOnlyContainCharacter" xml:space="preserve">
+    <value>{0} can only {1} character(s)</value>
+  </data>
+  <data name="ValueMustBeFromTo" xml:space="preserve">
+    <value>{0} must be from {1} to {2}</value>
+  </data>
 </root>

@@ -99,6 +99,7 @@
     <Compile Include="Interfaces\IRepositoryAccount.cs" />
     <Compile Include="Interfaces\IRepositoryAllergy.cs" />
     <Compile Include="Interfaces\IRepositoryAppointment.cs" />
+    <Compile Include="Interfaces\IRepositoryHeartbeat.cs" />
     <Compile Include="Interfaces\IRepositorySpecialty.cs" />
     <Compile Include="Models\Allergy.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
@@ -107,6 +108,9 @@
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Doctor.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Heartbeat.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\OlivesHealth.Context.cs">
@@ -149,6 +153,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\MethodHelper.cs" />
     <Compile Include="Repositories\RepositoryAccount.cs" />
+    <Compile Include="Repositories\RepositoryHeartbeat.cs" />
     <Compile Include="Repositories\RepositoryAllergy.cs" />
     <Compile Include="Repositories\RepositoryAppointment.cs" />
     <Compile Include="Repositories\RepositorySpecialty.cs" />
@@ -164,14 +169,18 @@
     </Compile>
     <Compile Include="ViewModels\AllergyGetViewModel.cs" />
     <Compile Include="ViewModels\DoctorViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterHeatbeatViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPatientViewModel.cs" />
-    <Compile Include="ViewModels\Request\InitializeAllergyViewModel.cs" />
-    <Compile Include="ViewModels\Request\InitializeAppointmentViewModel.cs" />
+    <Compile Include="ViewModels\HeartbeatViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializeAllergyViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializeAppointmentViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializeHeartbeatViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseAllergyFilter.cs" />
     <Compile Include="ViewModels\Filter\FilterAppointmentViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseAppointment.cs" />
     <Compile Include="ViewModels\Response\ResponseAppointmentFilter.cs" />
     <Compile Include="ViewModels\PersonViewModel.cs" />
+    <Compile Include="ViewModels\Response\ResponseHeartbeatFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseSpecialtyFilter.cs" />
     <Compile Include="ViewModels\PatientViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseDoctorFilter.cs" />
@@ -180,7 +189,7 @@
     <Compile Include="ViewModels\StatusSummaryViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterDoctorViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPersonViewModel.cs" />
-    <Compile Include="ViewModels\Request\InitializePersonViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializePersonViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponsePersonFilter.cs" />
   </ItemGroup>

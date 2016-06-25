@@ -14,11 +14,14 @@ using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels;
+using Shared.ViewModels.Filter;
 using Shared.ViewModels.Initialize;
 
 namespace Olives.Controllers
 {
-    public class AllergyController : ApiParentController
+    [Route("api/heartbeat")]
+    [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
+    public class HeartbeatController : ApiParentController
     {
         #region Constructors
 
@@ -26,13 +29,13 @@ namespace Olives.Controllers
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
         /// <param name="repositoryAccount"></param>
-        /// <param name="repositoryAllergy"></param>
+        /// <param name="repositoryHeartbeat"></param>
         /// <param name="log"></param>
         /// <param name="emailService"></param>
-        public AllergyController(IRepositoryAccount repositoryAccount, IRepositoryAllergy repositoryAllergy, ILog log, IEmailService emailService)
+        public HeartbeatController(IRepositoryAccount repositoryAccount, IRepositoryHeartbeat repositoryHeartbeat, ILog log, IEmailService emailService)
         {
             _repositoryAccount = repositoryAccount;
-            _repositoryAllergy = repositoryAllergy;
+            _repositoryHeartbeat = repositoryHeartbeat;
             _log = log;
             _emailService = emailService;
         }
@@ -46,26 +49,17 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Route("api/allergy")]
         [HttpGet]
-        [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
             // Retrieve information of person who sent request.
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
             
-            // Only filter and receive the first result.
-            var filter = new AllergyGetViewModel();
-            filter.Id = id;
-            filter.Owner = requester.Id;
-            filter.Page = 0;
-            filter.Records = 1;
-
             // Retrieve the results list.
-            var results = await _repositoryAllergy.FilterAllergy(filter);
+            var results = await _repositoryHeartbeat.FindHeartbeatAsync(id, requester.Id);
 
             // No result has been received.
-            if (results == null || results.Allergies == null || results.Allergies.Count != 1)
+            if (results == null || results.Count != 1)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
@@ -74,12 +68,11 @@ namespace Olives.Controllers
             }
 
             // Retrieve the 1st queried result.
-            var result = results.Allergies
+            var result = results
                 .Select(x => new
                 {
                     x.Id,
-                    x.Name,
-                    x.Cause,
+                    x.Rate,
                     x.Note,
                     x.Created,
                     x.LastModified
@@ -88,7 +81,7 @@ namespace Olives.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Allergy = result
+                Heartbeat = result
             });
         }
 
@@ -97,10 +90,8 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        [Route("api/allergy")]
         [HttpPost]
-        [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
-        public async Task<HttpResponseMessage> Post([FromBody] InitializeAllergyViewModel info)
+        public async Task<HttpResponseMessage> Post([FromBody] InitializeHeartbeatViewModel info)
         {
             #region ModelState result
 
@@ -127,23 +118,21 @@ namespace Olives.Controllers
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Only filter and receive the first result.
-            var allergy = new Allergy();
-            allergy.Owner = requester.Id;
-            allergy.Name = info.Name;
-            allergy.Cause = info.Cause;
-            allergy.Note = info.Note;
-            allergy.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            var heartbeat = new Heartbeat();
+            heartbeat.Owner = requester.Id;
+            heartbeat.Rate = info.Rate;
+            heartbeat.Note = info.Note;
+            heartbeat.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
 
             // Insert a new allergy to database.
-            var result = await _repositoryAllergy.InitializeAllergyAsync(allergy);
+            var result = await _repositoryHeartbeat.InitializeHeartbeatNoteAsync(heartbeat);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Allergy = new
+                Heartbeat = new
                 {
                     result.Id,
-                    result.Name,
-                    result.Cause,
+                    result.Rate,
                     result.Note,
                     result.Created
                 }
@@ -156,10 +145,8 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <param name="info"></param>
         /// <returns></returns>
-        [Route("api/allergy")]
         [HttpPut]
-        [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
-        public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] InitializeAllergyViewModel info)
+        public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] InitializeHeartbeatViewModel info)
         {
             #region ModelState result
 
@@ -186,10 +173,10 @@ namespace Olives.Controllers
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find allergy by using allergy id and owner id.
-            var allergies = await _repositoryAllergy.FindAllergyAsync(id, requester.Id);
+            var result = await _repositoryHeartbeat.FindHeartbeatAsync(id, requester.Id);
 
             // Not record has been found.
-            if (allergies == null || allergies.Count < 1)
+            if (result == null || result.Count < 1)
             {
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -199,7 +186,7 @@ namespace Olives.Controllers
             }
             
             // Records are conflict.
-            if (allergies.Count != 1)
+            if (result.Count != 1)
             {
                 // Tell front-end that records are conflict.
                 return Request.CreateResponse(HttpStatusCode.Conflict, new
@@ -209,8 +196,8 @@ namespace Olives.Controllers
             }
 
             // Retrieve the first record.
-            var allergy = allergies.FirstOrDefault();
-            if (allergy == null)
+            var heartbeat = result.FirstOrDefault();
+            if (heartbeat == null)
             {
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -220,24 +207,26 @@ namespace Olives.Controllers
             }
 
             // Confirm edit.
-            allergy.Name = info.Name;
-            allergy.Cause = info.Cause;
-            allergy.Note = info.Note;
-            allergy.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
-
+            var heartbeatNote = new Heartbeat();
+            heartbeatNote.Id = heartbeat.Id;
+            heartbeatNote.Created = heartbeat.Created;
+            heartbeatNote.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            heartbeatNote.Note = info.Note ?? heartbeat.Note;
+            heartbeatNote.Owner = requester.Id;
+            heartbeatNote.Rate = info.Rate;
+            
             // Update allergy.
-            allergy = await _repositoryAllergy.InitializeAllergyAsync(allergy);
+            heartbeatNote = await _repositoryHeartbeat.InitializeHeartbeatNoteAsync(heartbeatNote);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Allergy = new
+                Heartbeat = new HeartbeatViewModel()
                 {
-                    allergy.Id,
-                    allergy.Name,
-                    allergy.Cause,
-                    allergy.Note,
-                    allergy.Created,
-                    allergy.LastModified
+                    Id = heartbeatNote.Id,
+                    Created = heartbeatNote.Created,
+                    LastModified = heartbeatNote.LastModified,
+                    Note = heartbeatNote.Note,
+                    Rate = heartbeatNote.Rate
                 }
             });
         }
@@ -247,19 +236,17 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Route("api/allergy")]
         [HttpDelete]
-        [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
         public async Task<HttpResponseMessage> Delete([FromUri] int id)
         {
             // Retrieve information of person who sent request.
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find allergy by using allergy id and owner id.
-            var allergies = await _repositoryAllergy.FindAllergyAsync(id, requester.Id);
+            var result = await _repositoryHeartbeat.FindHeartbeatAsync(id, requester.Id);
 
             // Not record has been found.
-            if (allergies == null || allergies.Count < 1)
+            if (result == null || result.Count < 1)
             {
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -269,7 +256,7 @@ namespace Olives.Controllers
             }
 
             // Records are conflict.
-            if (allergies.Count != 1)
+            if (result.Count != 1)
             {
                 // Tell front-end that records are conflict.
                 return Request.CreateResponse(HttpStatusCode.Conflict, new
@@ -279,8 +266,8 @@ namespace Olives.Controllers
             }
 
             // Retrieve the first record.
-            var allergy = allergies.FirstOrDefault();
-            if (allergy == null)
+            var heartbeat = result.FirstOrDefault();
+            if (heartbeat == null)
             {
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -290,7 +277,7 @@ namespace Olives.Controllers
             }
 
             // Remove the found allergy.
-            _repositoryAllergy.DeleteAllergy(allergy);
+            _repositoryHeartbeat.DeleteHeartbeatNoteAsync(heartbeat);
 
             return Request.CreateResponse(HttpStatusCode.OK);
         }
@@ -300,10 +287,10 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        [Route("api/allergy/filter")]
+        [Route("api/heartbeat/filter")]
         [HttpPost]
         [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
-        public async Task<HttpResponseMessage> Filter([FromBody] AllergyGetViewModel info)
+        public async Task<HttpResponseMessage> Filter([FromBody] FilterHeatbeatViewModel info)
         {
             #region ModelState result
 
@@ -326,58 +313,25 @@ namespace Olives.Controllers
 
             #endregion
 
-            #region Email & password of owners.
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
-            var accountEmail = Request.Headers.Where(
-                    x =>
-                        !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountEmail))
-                    .Select(x => x.Value.FirstOrDefault())
-                    .FirstOrDefault();
-
-            var accountPassword = Request.Headers.Where(
-                    x =>
-                        !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountPassword))
-                    .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
-
-            // Filter person by email & password.
-            var person = _repositoryAccount.FindPerson(null, accountEmail, accountPassword, null);
-
-            #endregion
-
-            // Only see his/her own allergy.
-            info.Owner = person.Id;
-
+            // Person can only see his/her notes.
+            info.Owner = requester.Id;
+            
             // Retrieve the results list.
-            var results = await _repositoryAllergy.FilterAllergy(info);
+            var results = await _repositoryHeartbeat.FilterHeartbeatAsync(info);
 
             // No result has been received.
-            if (results == null || results.Allergies == null || results.Allergies.Count < 1)
+            if (results == null || results.Heartbeats == null || results.Heartbeats.Count < 1)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
                     Errors = new[] { Language.NoRecordHasBeenFound }
                 });
             }
-
-            // Filter allergies.
-            var result = results.Allergies
-                .Select(x => new
-                {
-                    x.Id,
-                    x.Name,
-                    x.Cause,
-                    x.Note,
-                    x.Created,
-                    x.LastModified
-                });
-
-            return Request.CreateResponse(HttpStatusCode.OK, new
-            {
-                Allergies = result,
-                results.Total
-            });
+            
+            return Request.CreateResponse(HttpStatusCode.OK, results);
         }
 
         #endregion
@@ -390,9 +344,9 @@ namespace Olives.Controllers
         private readonly IRepositoryAccount _repositoryAccount;
 
         /// <summary>
-        ///     Repository of allergies
+        ///     Repository of heartbeats
         /// </summary>
-        private readonly IRepositoryAllergy _repositoryAllergy;
+        private readonly IRepositoryHeartbeat _repositoryHeartbeat;
 
         /// <summary>
         ///     Instance of module which is used for logging.

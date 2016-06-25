@@ -113,11 +113,12 @@ namespace Shared.Repositories
         /// </summary>
         /// <param name="allergy"></param>
         /// <returns></returns>
-        public void DeleteAllergy(Allergy allergy)
+        public async void DeleteAllergy(Allergy allergy)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
             context.Allergies.Remove(allergy);
+            await context.SaveChangesAsync();
         } 
     }
 }

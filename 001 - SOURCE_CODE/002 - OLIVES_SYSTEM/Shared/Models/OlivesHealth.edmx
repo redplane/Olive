@@ -45,6 +45,17 @@
           <Property Name="Voters" Type="int" Nullable="false" />
           <Property Name="Money" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="Heartbeat">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Owner" Type="int" Nullable="false" />
+          <Property Name="Rate" Type="float" Nullable="false" />
+          <Property Name="Created" Type="float" Nullable="false" />
+          <Property Name="LastModified" Type="float" />
+          <Property Name="Note" Type="nvarchar" MaxLength="128" />
+        </EntityType>
         <EntityType Name="Patient">
           <Key>
             <PropertyRef Name="Email" />
@@ -207,6 +218,7 @@
           <EntitySet Name="Allergy" EntityType="Self.Allergy" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Appointment" EntityType="Self.Appointment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Doctor" EntityType="Self.Doctor" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Heartbeat" EntityType="Self.Heartbeat" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Patient" EntityType="Self.Patient" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Person" EntityType="Self.Person" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Relation" EntityType="Self.Relation" Schema="dbo" store:Type="Tables" />
@@ -275,6 +287,7 @@
           <EntitySet Name="Allergies" EntityType="OlivesHealthModel.Allergy" />
           <EntitySet Name="Appointments" EntityType="OlivesHealthModel.Appointment" />
           <EntitySet Name="Doctors" EntityType="OlivesHealthModel.Doctor" />
+          <EntitySet Name="Heartbeats" EntityType="OlivesHealthModel.Heartbeat" />
           <EntitySet Name="Patients" EntityType="OlivesHealthModel.Patient" />
           <EntitySet Name="People" EntityType="OlivesHealthModel.Person" />
           <EntitySet Name="Relations" EntityType="OlivesHealthModel.Relation" />
@@ -359,6 +372,17 @@
           <Property Name="Voters" Type="Int32" Nullable="false" />
           <Property Name="Money" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Specialty" Relationship="OlivesHealthModel.FK__Doctor__Money__2DE6D218" FromRole="Doctor" ToRole="Specialty" />
+        </EntityType>
+        <EntityType Name="Heartbeat">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Owner" Type="Int32" Nullable="false" />
+          <Property Name="Rate" Type="Double" Nullable="false" />
+          <Property Name="Created" Type="Double" Nullable="false" />
+          <Property Name="LastModified" Type="Double" />
+          <Property Name="Note" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Patient">
           <Key>
@@ -565,6 +589,18 @@
                 <ScalarProperty Name="SpecialtyId" ColumnName="SpecialtyId" />
                 <ScalarProperty Name="Rank" ColumnName="Rank" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Heartbeats">
+            <EntityTypeMapping TypeName="OlivesHealthModel.Heartbeat">
+              <MappingFragment StoreEntitySet="Heartbeat">
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="Rate" ColumnName="Rate" />
+                <ScalarProperty Name="Owner" ColumnName="Owner" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

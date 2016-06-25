@@ -727,6 +727,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} can only {1} character(s).
+        /// </summary>
+        public static string ValueCanOnlyContainCharacter {
+            get {
+                return ResourceManager.GetString("ValueCanOnlyContainCharacter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} must be after {1}.
         /// </summary>
         public static string ValueMustBeAfterYear {
@@ -750,6 +759,15 @@ namespace Shared.Resources {
         public static string ValueMustBeEqualLowerThan {
             get {
                 return ResourceManager.GetString("ValueMustBeEqualLowerThan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} must be from {1} to {2}.
+        /// </summary>
+        public static string ValueMustBeFromTo {
+            get {
+                return ResourceManager.GetString("ValueMustBeFromTo", resourceCulture);
             }
         }
         

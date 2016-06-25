@@ -4,7 +4,7 @@ using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Resources;
 
-namespace Shared.ViewModels.Request
+namespace Shared.ViewModels.Initialize
 {
     public class InitializePersonViewModel
     {

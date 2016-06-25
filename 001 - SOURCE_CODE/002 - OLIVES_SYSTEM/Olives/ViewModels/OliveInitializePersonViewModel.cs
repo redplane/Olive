@@ -2,7 +2,7 @@
 using Shared.Enumerations;
 using Shared.Resources;
 using Shared.ViewModels;
-using Shared.ViewModels.Request;
+using Shared.ViewModels.Initialize;
 
 namespace Olives.ViewModels
 {
