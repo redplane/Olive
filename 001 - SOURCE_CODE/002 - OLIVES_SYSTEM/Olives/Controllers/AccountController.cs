@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Interfaces;
-using Olives.ViewModels;
 using Shared.Enumerations;
 using Shared.Interfaces;
-using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels;
 
@@ -76,23 +72,23 @@ namespace Olives.Controllers
             }
 
             // Requested user is not a patient or a doctor.
-            if (result.Role != AccountRole.Patient && result.Role != AccountRole.Doctor)
+            if (result.Role != (byte) Role.Patient && result.Role != (byte) Role.Doctor)
             {
                 _log.Error($"{loginViewModel.Email} is a admin, therefore, it cannot be used here.");
                 ModelState.AddModelError("Credential", Language.InvalidLoginInfo);
                 return Request.CreateResponse(HttpStatusCode.NotFound, RetrieveValidationErrors(ModelState));
             }
-            
+
             // Login is failed because of account is pending.
-            if ((AccountStatus)result.Status == AccountStatus.Pending)
+            if ((StatusAccount) result.Status == StatusAccount.Pending)
             {
                 // Tell doctor to contact admin for account verification.
-                if (result.Role == AccountRole.Doctor)
+                if (result.Role == (byte) Role.Doctor)
                 {
                     _log.Error($"Access is forbidden because {loginViewModel.Email} is waiting for admin confirmation");
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
-                        Errors = new[] {Language.WarnPendingAccount }
+                        Errors = new[] {Language.WarnPendingAccount}
                     });
                 }
 
@@ -100,18 +96,18 @@ namespace Olives.Controllers
                 // Tell patient to access his/her email to verify the account.
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    Errors = new[] {Language.WarnPendingAccount }
+                    Errors = new[] {Language.WarnPendingAccount}
                 });
             }
 
             // Login is failed because of account has been disabled.
-            if ((AccountStatus)result.Status == AccountStatus.Inactive)
+            if ((StatusAccount) result.Status == StatusAccount.Inactive)
             {
                 _log.Error($"Access is forbidden because {loginViewModel.Email} has been disabled");
                 // Tell patient to access his/her email to verify the account.
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    Errors = new[] { Language.WarnDisabledAccount }
+                    Errors = new[] {Language.WarnDisabledAccount}
                 });
             }
 
@@ -135,7 +131,7 @@ namespace Olives.Controllers
                     result.Address,
                     result.Longitude,
                     result.Latitude,
-                    result.Photo      
+                    result.Photo
                 }
             });
         }

@@ -29,7 +29,8 @@ namespace Olives.Controllers
         /// <param name="repositoryAppointment"></param>
         /// <param name="log"></param>
         /// <param name="emailService"></param>
-        public AppointmentController(IRepositoryAccount repositoryAccount, IRepositoryAppointment repositoryAppointment, ILog log, IEmailService emailService)
+        public AppointmentController(IRepositoryAccount repositoryAccount, IRepositoryAppointment repositoryAppointment,
+            ILog log, IEmailService emailService)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryAppointment = repositoryAppointment;
@@ -43,7 +44,7 @@ namespace Olives.Controllers
 
         [Route("api/appointment")]
         [HttpPost]
-        [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Post([FromBody] InitializeAppointmentViewModel info)
         {
             #region ModelState result
@@ -54,7 +55,7 @@ namespace Olives.Controllers
                 _log.Error("Invalid appointment filter request parameters");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new
                 {
-                    Errors = new[] { Language.InvalidRequestParameters }
+                    Errors = new[] {Language.InvalidRequestParameters}
                 });
             }
 
@@ -71,26 +72,28 @@ namespace Olives.Controllers
 
             // Account email.
             var accountEmail = Request.Headers.Where(
-                    x =>
-                        !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountEmail))
-                    .Select(x => x.Value.FirstOrDefault())
-                    .FirstOrDefault();
+                x =>
+                    !string.IsNullOrEmpty(x.Key) &&
+                    x.Key.Equals(HeaderFields.RequestAccountEmail))
+                .Select(x => x.Value.FirstOrDefault())
+                .FirstOrDefault();
 
             // Account password.
             var accountPassword = Request.Headers.Where(
-                    x =>
-                        !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountPassword))
-                    .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
+                x =>
+                    !string.IsNullOrEmpty(x.Key) &&
+                    x.Key.Equals(HeaderFields.RequestAccountPassword))
+                .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
 
             // Filter person by email & password.
-            var person = await _repositoryAccount.FindPersonAsync(null, accountEmail, accountPassword, null, AccountStatus.Active);
+            var person =
+                await
+                    _repositoryAccount.FindPersonAsync(null, accountEmail, accountPassword, null, StatusAccount.Active);
             if (person == null)
             {
                 return Request.CreateResponse(HttpStatusCode.Unauthorized, new
                 {
-                    Errors = new[] { Language.WarnNotAuthorizedAccount }
+                    Errors = new[] {Language.WarnNotAuthorizedAccount}
                 });
             }
 
@@ -99,23 +102,23 @@ namespace Olives.Controllers
             #region Dater validation
 
             // Find the dater by using id.
-            var dater = await _repositoryAccount.FindPersonAsync(info.Dater, null, null, null, AccountStatus.Active);
+            var dater = await _repositoryAccount.FindPersonAsync(info.Dater, null, null, null, StatusAccount.Active);
 
             // No information has been found.
             if (dater == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] { Language.WarnDaterNotFound }
+                    Errors = new[] {Language.WarnDaterNotFound}
                 });
             }
 
             // Only patients and doctor can date each other.
-            if (dater.Role != AccountRole.Doctor && dater.Role != AccountRole.Patient)
+            if (dater.Role != (byte) Role.Doctor && dater.Role != (byte) Role.Patient)
             {
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    Errors = new[] { Language.WarnDaterInvalidRole }
+                    Errors = new[] {Language.WarnDaterInvalidRole}
                 });
             }
 
@@ -124,10 +127,10 @@ namespace Olives.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.Conflict, new
                 {
-                    Errors = new[] { Language.WarnDaterSameRole }
+                    Errors = new[] {Language.WarnDaterSameRole}
                 });
             }
-            
+
             #endregion
 
             // Check whether 2 people have relation with each other or not.
@@ -139,7 +142,7 @@ namespace Olives.Controllers
                     Errors = new[] {Language.WarnRelationNotExist}
                 });
             }
-            
+
             var appointment = new Appointment();
             appointment.Maker = person.Id;
             appointment.MakerFirstName = person.FirstName;
@@ -151,7 +154,7 @@ namespace Olives.Controllers
             appointment.To = info.To;
             appointment.Note = info.Note;
             appointment.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
-            appointment.Status = (byte) AppointmentStatus.Pending;
+            appointment.Status = (byte) StatusAppointment.Pending;
 
             var result = await _repositoryAppointment.InitializeAppointment(appointment);
             return Request.CreateResponse(HttpStatusCode.OK, new
@@ -182,7 +185,7 @@ namespace Olives.Controllers
 
         [Route("api/appointment/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterAppointmentViewModel filter)
         {
             #region ModelState result
@@ -193,7 +196,7 @@ namespace Olives.Controllers
                 _log.Error("Invalid appointment filter request parameters");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new
                 {
-                    Errors = new[] { Language.InvalidRequestParameters }
+                    Errors = new[] {Language.InvalidRequestParameters}
                 });
             }
 
@@ -205,31 +208,33 @@ namespace Olives.Controllers
             }
 
             #endregion
-            
+
             #region Request email & password
 
             // Account email.
             var accountEmail = Request.Headers.Where(
-                    x =>
-                        !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountEmail))
-                    .Select(x => x.Value.FirstOrDefault())
-                    .FirstOrDefault();
+                x =>
+                    !string.IsNullOrEmpty(x.Key) &&
+                    x.Key.Equals(HeaderFields.RequestAccountEmail))
+                .Select(x => x.Value.FirstOrDefault())
+                .FirstOrDefault();
 
             // Account password.
             var accountPassword = Request.Headers.Where(
-                    x =>
-                        !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountPassword))
-                    .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
+                x =>
+                    !string.IsNullOrEmpty(x.Key) &&
+                    x.Key.Equals(HeaderFields.RequestAccountPassword))
+                .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
 
             // Filter person by email & password.
-            var person = await _repositoryAccount.FindPersonAsync(null, accountEmail, accountPassword, null, AccountStatus.Active);
+            var person =
+                await
+                    _repositoryAccount.FindPersonAsync(null, accountEmail, accountPassword, null, StatusAccount.Active);
             if (person == null)
             {
                 return Request.CreateResponse(HttpStatusCode.Unauthorized, new
                 {
-                    Errors = new[] { Language.WarnNotAuthorizedAccount }
+                    Errors = new[] {Language.WarnNotAuthorizedAccount}
                 });
             }
 
@@ -262,6 +267,5 @@ namespace Olives.Controllers
         private readonly IEmailService _emailService;
 
         #endregion
-
     }
 }

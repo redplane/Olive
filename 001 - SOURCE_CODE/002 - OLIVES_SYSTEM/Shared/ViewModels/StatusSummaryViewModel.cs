@@ -6,7 +6,7 @@ namespace Shared.ViewModels
 {
     public class StatusSummaryViewModel
     {
-        [InNumericArray(new[] {AccountRole.Patient, AccountRole.Doctor}, ErrorMessageResourceType = typeof (Language),
+        [InEnumerationsArray(new object[] { Enumerations.Role.Patient, Enumerations.Role.Doctor}, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidRole")]
         public byte? Role { get; set; }
 

@@ -26,7 +26,7 @@ namespace Shared.ViewModels
             ErrorMessageResourceName = "RegexPassword")]
         public string Password { get; set; }
 
-        [InNumericArray(new [] {AccountRole.Patient, AccountRole.Admin, AccountRole.Doctor}, ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "InvalidRole")]
+        [InEnumerationsArray(new object[] { Enumerations.Role.Patient, Enumerations.Role.Admin, Enumerations.Role.Doctor}, ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "InvalidRole")]
         public int? Role { get; set; }
     }
 }

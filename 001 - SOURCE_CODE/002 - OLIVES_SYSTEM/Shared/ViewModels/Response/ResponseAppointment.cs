@@ -18,7 +18,7 @@ namespace Shared.ViewModels.Response
         
         public double Created { get; set; }
 
-        public AccountStatus Status { get; set; }
+        public StatusAccount Status { get; set; }
 
         public double? LastModified { get; set; }
     }

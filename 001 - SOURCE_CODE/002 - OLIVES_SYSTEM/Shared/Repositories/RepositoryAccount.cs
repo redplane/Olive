@@ -63,7 +63,7 @@ namespace Shared.Repositories
 
             // Join the table first.
             var results = context.People
-                .Where(x => x.Role == AccountRole.Patient)
+                .Where(x => x.Role == (byte)Role.Patient)
                 .Join(context.Patients, p => p.Email, d => d.Email,
                     (p, d) => new
                     {
@@ -158,7 +158,7 @@ namespace Shared.Repositories
                     LastName = x.Person.LastName,
                     Money = x.Patient.Money,
                     Phone = x.Person.Phone,
-                    Role = AccountRole.Doctor,
+                    Role = (byte)Role.Doctor,
                     Longitude = x.Person.Longitude,
                     Password = x.Person.Password,
                     Status = x.Person.Status,
@@ -290,7 +290,7 @@ namespace Shared.Repositories
                 results = results.Where(x => x.Person.Status == filter.Status);
 
             // Filter by role.
-            results = results.Where(x => x.Person.Role == AccountRole.Doctor);
+            results = results.Where(x => x.Person.Role == (byte)Role.Doctor);
 
             // Filter by rank.
             if (filter.MinRank != null) results = results.Where(x => x.Doctor.Rank >= filter.MinRank);
@@ -322,7 +322,7 @@ namespace Shared.Repositories
                     Money = x.Doctor.Money,
                     Rank = x.Doctor.Rank ?? 0,
                     Phone = x.Person.Phone,
-                    Role = AccountRole.Doctor,
+                    Role = (byte)Role.Doctor,
                     Longitude = x.Person.Longitude,
                     Password = x.Person.Password,
                     Status = x.Person.Status,
@@ -383,7 +383,7 @@ namespace Shared.Repositories
         /// <param name="role">As role is specified. Find account by role.</param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public async Task<Person> FindPersonAsync(int? id, string email, string password, byte? role, AccountStatus? status)
+        public async Task<Person> FindPersonAsync(int? id, string email, string password, byte? role, StatusAccount? status)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -426,7 +426,7 @@ namespace Shared.Repositories
         public async Task<Person> EditPersonStatusAsync(int id, byte status)
         {
             // Find person by using specific id.
-            var person = await FindPersonAsync(id, null, null, null, AccountStatus.Active);
+            var person = await FindPersonAsync(id, null, null, null, StatusAccount.Active);
 
             // Cannot find the person.
             if (person == null)

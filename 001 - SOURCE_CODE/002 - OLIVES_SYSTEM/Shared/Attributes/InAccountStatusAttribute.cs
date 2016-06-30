@@ -11,7 +11,7 @@ namespace Shared.Attributes
         /// <summary>
         ///     Values collection in which data must be equal.
         /// </summary>
-        private readonly AccountStatus[] _milesStone;
+        private readonly StatusAccount[] _milesStone;
 
         /// <summary>
         ///     Check whether property is valid or not.
@@ -25,7 +25,7 @@ namespace Shared.Attributes
             if (value == null)
                 return ValidationResult.Success;
 
-            if (!(value is AccountStatus))
+            if (!(value is StatusAccount))
                 throw new Exception("Invalid account status");
 
             // Invalid milestone.
@@ -33,7 +33,7 @@ namespace Shared.Attributes
                 throw new Exception("Invalid milestones.");
 
             // Cast value to status.
-            var status = (AccountStatus) value;
+            var status = (StatusAccount) value;
 
             if (!_milesStone.Any(x => x == status))
                 return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
@@ -58,7 +58,7 @@ namespace Shared.Attributes
         ///     Initialize an instance of IntsMatchAttribute class.
         /// </summary>
         /// <param name="milestones"></param>
-        public InAccountStatusAttribute(AccountStatus[] milestones)
+        public InAccountStatusAttribute(StatusAccount[] milestones)
         {
             _milesStone = milestones;
         }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -16,9 +17,9 @@ namespace Olives.Attributes
         ///     Initialize an instance of OlivesAuthorize attribute with allowed roles.
         /// </summary>
         /// <param name="roles"></param>
-        public OlivesAuthorize(int[] roles)
+        public OlivesAuthorize(Role[] roles)
         {
-            Roles = roles;
+            Roles = Array.ConvertAll(roles, x => (int)x);
         }
 
         /// <summary>
@@ -85,7 +86,7 @@ namespace Olives.Attributes
             }
             
             // Account has been disabled.
-            if ((AccountStatus)person.Status == AccountStatus.Inactive)
+            if ((StatusAccount)person.Status == StatusAccount.Inactive)
             {
                 // Treat the login isn't successful because of disabled account.
                 var errorCode = $"{Language.WarnDisabledAccount}";
@@ -98,7 +99,7 @@ namespace Olives.Attributes
             }
 
             // Account is still pending.
-            if ((AccountStatus)person.Status == AccountStatus.Pending)
+            if ((StatusAccount)person.Status == StatusAccount.Pending)
             {
                 // Treat the login isn't successful because of pending account.
                 var errorCode = $"{Language.WarnPendingAccount}";

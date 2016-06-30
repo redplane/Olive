@@ -34,7 +34,7 @@ namespace Shared.ViewModels.Initialize
         /// <summary>
         ///     Person gender.
         /// </summary>
-        [InNumericArray(new[] { AccountGender.Female, AccountGender.Male }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidGender")]
+        [InEnumerationsArray(new object[] { Enumerations.Gender.Female, Enumerations.Gender.Male }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidGender")]
         public int Gender { get; set; }
 
         /// <summary>

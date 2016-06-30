@@ -1,6 +1,5 @@
 ﻿using System.Net.Mail;
 using Olives.Models;
-using Shared.Models;
 
 namespace Olives.Interfaces
 {

@@ -72,7 +72,7 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         ///     Gender of person
         /// </summary>
-        [InNumericArray(new[] { AccountGender.Female, AccountGender.Male }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidGender")]
+        [InEnumerationsArray(new object[] { Enumerations.Gender.Female, Enumerations.Gender.Male }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidGender")]
         public int? Gender { get; set; }
 
         /// <summary>
@@ -100,10 +100,10 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         ///     Status of account [0 - Disabled | 1 - Pending | 2 - Active].
         /// </summary>
-        [InAccountStatus(new[] { AccountStatus.Active, AccountStatus.Inactive, AccountStatus.Pending }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidAccountStatus")]
+        [InAccountStatus(new[] { Enumerations.StatusAccount.Active, Enumerations.StatusAccount.Inactive, Enumerations.StatusAccount.Pending }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidAccountStatus")]
         public int? Status { get; set; }
 
-        [InNumericArray(new[] { AccountRole.Admin, AccountRole.Doctor, AccountRole.Patient }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidGender")]
+        [InEnumerationsArray(new object[] { Enumerations.Role.Admin, Enumerations.Role.Doctor, Enumerations.Role.Patient }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidRole")]
         public int? Role { get; set; }
     }
 }

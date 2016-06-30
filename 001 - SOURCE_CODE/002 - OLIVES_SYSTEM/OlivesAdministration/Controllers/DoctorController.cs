@@ -46,7 +46,7 @@ namespace OlivesAdministration.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] {AccountRole.Admin})]
+        [OlivesAuthorize(new[] {Role.Admin})]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
             #region ModelState validation
@@ -95,7 +95,7 @@ namespace OlivesAdministration.Controllers
         /// <returns></returns>
         [Route("api/doctor/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {AccountRole.Admin})]
+        [OlivesAuthorize(new[] {Role.Admin})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterDoctorViewModel info)
         {
             #region ModelState validation

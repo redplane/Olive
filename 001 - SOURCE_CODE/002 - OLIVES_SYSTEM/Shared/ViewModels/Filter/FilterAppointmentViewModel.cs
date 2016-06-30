@@ -32,8 +32,8 @@ namespace Shared.ViewModels.Filter
         [NumericPropertyCompare("MinTo", Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public double? MaxTo { get; set; }
 
-        [InEnumerationsArray(new object[] { AppointmentStatus.Pending, AppointmentStatus.Active, AppointmentStatus.Cancelled, AppointmentStatus.Done }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
-        public AppointmentStatus? Status { get; set; }
+        [InEnumerationsArray(new object[] { StatusAppointment.Pending, StatusAppointment.Active, StatusAppointment.Cancelled, StatusAppointment.Done }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
+        public StatusAppointment? Status { get; set; }
 
         [NumericPropertyCompare("MaxLastModified", Comparision = Comparision.LowerEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         public double? MinLastModified { get; set; }

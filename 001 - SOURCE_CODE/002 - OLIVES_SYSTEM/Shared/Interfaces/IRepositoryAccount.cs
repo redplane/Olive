@@ -38,7 +38,7 @@ namespace Shared.Interfaces
         /// <param name="role"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        Task<Person> FindPersonAsync(int? id, string email, string password, byte? role, AccountStatus? status);
+        Task<Person> FindPersonAsync(int? id, string email, string password, byte? role, StatusAccount? status);
 
         /// <summary>
         ///     Edit person status asynchronously.

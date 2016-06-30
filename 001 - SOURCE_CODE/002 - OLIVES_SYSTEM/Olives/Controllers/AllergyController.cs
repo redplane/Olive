@@ -29,7 +29,8 @@ namespace Olives.Controllers
         /// <param name="repositoryAllergy"></param>
         /// <param name="log"></param>
         /// <param name="emailService"></param>
-        public AllergyController(IRepositoryAccount repositoryAccount, IRepositoryAllergy repositoryAllergy, ILog log, IEmailService emailService)
+        public AllergyController(IRepositoryAccount repositoryAccount, IRepositoryAllergy repositoryAllergy, ILog log,
+            IEmailService emailService)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryAllergy = repositoryAllergy;
@@ -42,18 +43,18 @@ namespace Olives.Controllers
         #region Methods
 
         /// <summary>
-        /// Find a specialty by using specialty id.
+        ///     Find a specialty by using specialty id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [Route("api/allergy")]
         [HttpGet]
-        [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
             // Only filter and receive the first result.
             var filter = new AllergyGetViewModel();
             filter.Id = id;
@@ -69,7 +70,7 @@ namespace Olives.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] { Language.NoRecordHasBeenFound }
+                    Errors = new[] {Language.NoRecordHasBeenFound}
                 });
             }
 
@@ -93,13 +94,13 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        /// Insert an allergy asyncrhonously.
+        ///     Insert an allergy asyncrhonously.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
         [Route("api/allergy")]
         [HttpPost]
-        [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Post([FromBody] InitializeAllergyViewModel info)
         {
             #region ModelState result
@@ -110,7 +111,7 @@ namespace Olives.Controllers
                 _log.Error("Invalid allergies filter request parameters");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new
                 {
-                    Errors = new[] { Language.InvalidRequestParameters }
+                    Errors = new[] {Language.InvalidRequestParameters}
                 });
             }
 
@@ -124,7 +125,7 @@ namespace Olives.Controllers
             #endregion
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Only filter and receive the first result.
             var allergy = new Allergy();
@@ -151,14 +152,14 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        /// Edit an allergy.
+        ///     Edit an allergy.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="info"></param>
         /// <returns></returns>
         [Route("api/allergy")]
         [HttpPut]
-        [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] InitializeAllergyViewModel info)
         {
             #region ModelState result
@@ -169,7 +170,7 @@ namespace Olives.Controllers
                 _log.Error("Invalid allergies filter request parameters");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new
                 {
-                    Errors = new[] { Language.InvalidRequestParameters }
+                    Errors = new[] {Language.InvalidRequestParameters}
                 });
             }
 
@@ -183,7 +184,7 @@ namespace Olives.Controllers
             #endregion
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find allergy by using allergy id and owner id.
             var allergies = await _repositoryAllergy.FindAllergyAsync(id, requester.Id);
@@ -194,17 +195,17 @@ namespace Olives.Controllers
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] { Language.WarnRecordNotFound }
+                    Errors = new[] {Language.WarnRecordNotFound}
                 });
             }
-            
+
             // Records are conflict.
             if (allergies.Count != 1)
             {
                 // Tell front-end that records are conflict.
                 return Request.CreateResponse(HttpStatusCode.Conflict, new
                 {
-                    Errors = new[] { Language.WarnRecordConflict }
+                    Errors = new[] {Language.WarnRecordConflict}
                 });
             }
 
@@ -215,7 +216,7 @@ namespace Olives.Controllers
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] { Language.WarnRecordNotFound }
+                    Errors = new[] {Language.WarnRecordNotFound}
                 });
             }
 
@@ -243,17 +244,17 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        /// Delete an allergy.
+        ///     Delete an allergy.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [Route("api/allergy")]
         [HttpDelete]
-        [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Delete([FromUri] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find allergy by using allergy id and owner id.
             var allergies = await _repositoryAllergy.FindAllergyAsync(id, requester.Id);
@@ -264,7 +265,7 @@ namespace Olives.Controllers
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] { Language.WarnRecordNotFound }
+                    Errors = new[] {Language.WarnRecordNotFound}
                 });
             }
 
@@ -274,7 +275,7 @@ namespace Olives.Controllers
                 // Tell front-end that records are conflict.
                 return Request.CreateResponse(HttpStatusCode.Conflict, new
                 {
-                    Errors = new[] { Language.WarnRecordConflict }
+                    Errors = new[] {Language.WarnRecordConflict}
                 });
             }
 
@@ -285,7 +286,7 @@ namespace Olives.Controllers
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] { Language.WarnRecordNotFound }
+                    Errors = new[] {Language.WarnRecordNotFound}
                 });
             }
 
@@ -294,15 +295,15 @@ namespace Olives.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK);
         }
-        
+
         /// <summary>
-        /// Filter specialties by using specific conditions.
+        ///     Filter specialties by using specific conditions.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
         [Route("api/allergy/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Filter([FromBody] AllergyGetViewModel info)
         {
             #region ModelState result
@@ -313,7 +314,7 @@ namespace Olives.Controllers
                 _log.Error("Invalid allergies filter request parameters");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new
                 {
-                    Errors = new[] { Language.InvalidRequestParameters }
+                    Errors = new[] {Language.InvalidRequestParameters}
                 });
             }
 
@@ -329,17 +330,17 @@ namespace Olives.Controllers
             #region Email & password of owners.
 
             var accountEmail = Request.Headers.Where(
-                    x =>
-                        !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountEmail))
-                    .Select(x => x.Value.FirstOrDefault())
-                    .FirstOrDefault();
+                x =>
+                    !string.IsNullOrEmpty(x.Key) &&
+                    x.Key.Equals(HeaderFields.RequestAccountEmail))
+                .Select(x => x.Value.FirstOrDefault())
+                .FirstOrDefault();
 
             var accountPassword = Request.Headers.Where(
-                    x =>
-                        !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountPassword))
-                    .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
+                x =>
+                    !string.IsNullOrEmpty(x.Key) &&
+                    x.Key.Equals(HeaderFields.RequestAccountPassword))
+                .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
 
             // Filter person by email & password.
             var person = _repositoryAccount.FindPerson(null, accountEmail, accountPassword, null);
@@ -357,7 +358,7 @@ namespace Olives.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] { Language.NoRecordHasBeenFound }
+                    Errors = new[] {Language.NoRecordHasBeenFound}
                 });
             }
 
@@ -405,6 +406,5 @@ namespace Olives.Controllers
         private readonly IEmailService _emailService;
 
         #endregion
-
     }
 }

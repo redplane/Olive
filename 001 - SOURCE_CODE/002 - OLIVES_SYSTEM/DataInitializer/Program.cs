@@ -40,7 +40,7 @@ namespace DataInitializer
                 person.FirstName = $"FirstName[{pIndex}]";
                 person.LastName = $"LastName[{pIndex}]";
                 person.Gender = 0;
-                person.Role = AccountRole.Doctor;
+                person.Role = (byte)Role.Doctor;
                 person.Created = 3;
                 person.Address = "New York, NY, USA";
                 person.Latitude = 40.7127837;
@@ -48,11 +48,11 @@ namespace DataInitializer
                 person.Birthday = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
                 
                 if (i > 25)
-                    person.Status = (byte)AccountStatus.Active;
+                    person.Status = (byte)StatusAccount.Active;
                 else if (i == 25)
-                    person.Status = (byte)AccountStatus.Pending;
+                    person.Status = (byte)StatusAccount.Pending;
                 else
-                    person.Status = (byte)AccountStatus.Inactive;
+                    person.Status = (byte)StatusAccount.Inactive;
 
                 var doctor = new Doctor();
                 doctor.Email = person.Email;
@@ -76,15 +76,15 @@ namespace DataInitializer
                 person.FirstName = $"FirstName[{pIndex}]";
                 person.LastName = $"LastName[{pIndex}]";
                 person.Gender = 0;
-                person.Role = AccountRole.Patient;
+                person.Role = (byte)Role.Patient;
                 person.Created = 3;
 
                 if (i > 25)
-                    person.Status = (byte)AccountStatus.Active;
+                    person.Status = (byte)StatusAccount.Active;
                 else if (i == 25)
-                    person.Status = (byte)AccountStatus.Pending;
+                    person.Status = (byte)StatusAccount.Pending;
                 else
-                    person.Status = (byte)AccountStatus.Inactive;
+                    person.Status = (byte)StatusAccount.Inactive;
 
                 var patient = new Patient();
                 patient.Email = person.Email;
@@ -111,11 +111,11 @@ namespace DataInitializer
                 person.Created = 3;
                 
                 if (i > 25)
-                    person.Status = (byte)AccountStatus.Active;
+                    person.Status = (byte)StatusAccount.Active;
                 else if (i == 25)
-                    person.Status = (byte)AccountStatus.Pending;
+                    person.Status = (byte)StatusAccount.Pending;
                 else
-                    person.Status = (byte)AccountStatus.Inactive;
+                    person.Status = (byte)StatusAccount.Inactive;
 
                 var patient = new Patient();
                 patient.Email = person.Email;

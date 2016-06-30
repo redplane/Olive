@@ -35,13 +35,13 @@ namespace Olives.Controllers
         #region Methods
 
         /// <summary>
-        /// Find a specialty by using specialty id.
+        ///     Find a specialty by using specialty id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [Route("api/specialty")]
         [HttpGet]
-        [OlivesAuthorize(new []{AccountRole.Doctor, AccountRole.Patient})]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
             // Only filter and receive the first result.
@@ -78,13 +78,13 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        /// Filter specialties by using specific conditions.
+        ///     Filter specialties by using specific conditions.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
         [Route("api/specialty/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Filter([FromBody] SpecialtyGetViewModel info)
         {
             // Model hasn't been initialized.
@@ -93,7 +93,7 @@ namespace Olives.Controllers
                 _log.Error("Invalid specialties filter request parameters");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new
                 {
-                    Errors = new [] {Language.InvalidRequestParameters}
+                    Errors = new[] {Language.InvalidRequestParameters}
                 });
             }
 
@@ -112,7 +112,7 @@ namespace Olives.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] { Language.NoRecordHasBeenFound }
+                    Errors = new[] {Language.NoRecordHasBeenFound}
                 });
             }
 
@@ -130,7 +130,7 @@ namespace Olives.Controllers
                 results.Total
             });
         }
-        
+
         #endregion
 
         #region Properties
@@ -151,6 +151,5 @@ namespace Olives.Controllers
         private readonly IEmailService _emailService;
 
         #endregion
-        
     }
 }

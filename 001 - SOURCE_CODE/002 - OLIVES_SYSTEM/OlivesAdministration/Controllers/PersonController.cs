@@ -43,7 +43,7 @@ namespace OlivesAdministration.Controllers
 
         [Route("api/person/status")]
         [HttpPost]
-        [OlivesAuthorize(new[] {AccountRole.Admin})]
+        [OlivesAuthorize(new[] {Role.Admin})]
         public async Task<HttpResponseMessage> Status(EditStatusViewModel info)
         {
             #region Model validation
@@ -81,10 +81,10 @@ namespace OlivesAdministration.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, responseError);
             }
 
-            if ((AccountStatus)info.Status == AccountStatus.Active)
+            if ((StatusAccount)info.Status == Shared.Enumerations.StatusAccount.Active)
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
-                    Message = new[] {Language.AccountHasBeenActivated}
+                    Message = new[] { Language.AccountHasBeenActivated}
                 });
 
             return Request.CreateResponse(HttpStatusCode.OK, new
@@ -95,7 +95,7 @@ namespace OlivesAdministration.Controllers
 
         [Route("api/person/statistic/status")]
         [HttpPost]
-        [OlivesAuthorize(new[] {AccountRole.Admin})]
+        [OlivesAuthorize(new[] {Role.Admin})]
         public async Task<HttpResponseMessage> Statistic([FromBody] StatusSummaryViewModel info)
         {
             #region Model validation
@@ -117,9 +117,9 @@ namespace OlivesAdministration.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                ActiveAccounts = summaryResult.Where(x => (AccountStatus)x.Status == AccountStatus.Active).Sum(x => x.Total),
-                PendingAccounts = summaryResult.Where(x => (AccountStatus)x.Status == AccountStatus.Pending).Sum(x => x.Total),
-                DeactiveAccounts = summaryResult.Where(x => (AccountStatus)x.Status == AccountStatus.Inactive).Sum(x => x.Total),
+                ActiveAccounts = summaryResult.Where(x => x.Status == (byte)StatusAccount.Active).Sum(x => x.Total),
+                PendingAccounts = summaryResult.Where(x => x.Status == (byte)StatusAccount.Pending).Sum(x => x.Total),
+                DeactiveAccounts = summaryResult.Where(x => x.Status == (byte)StatusAccount.Inactive).Sum(x => x.Total),
                 Total = summaryResult.Sum(x => x.Total)
             });
         }

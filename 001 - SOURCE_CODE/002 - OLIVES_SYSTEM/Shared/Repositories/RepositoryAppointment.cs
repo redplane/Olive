@@ -141,7 +141,7 @@ namespace Shared.Repositories
                     To = x.To,
                     LastModified = x.LastModified,
                     Note = x.Note,
-                    Status = (AccountStatus)x.Status
+                    Status = (StatusAccount)x.Status
                 })
                 .ToListAsync();
 

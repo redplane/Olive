@@ -20,7 +20,7 @@ using Shared.ViewModels.Initialize;
 namespace Olives.Controllers
 {
     [Route("api/bloodpressure")]
-    [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
+    [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
     public class BloodPressureController : ApiParentController
     {
         #region Constructors
@@ -32,7 +32,8 @@ namespace Olives.Controllers
         /// <param name="repositoryBloodPressure"></param>
         /// <param name="log"></param>
         /// <param name="emailService"></param>
-        public BloodPressureController(IRepositoryAccount repositoryAccount, IRepositoryBloodPressure repositoryBloodPressure, ILog log, IEmailService emailService)
+        public BloodPressureController(IRepositoryAccount repositoryAccount,
+            IRepositoryBloodPressure repositoryBloodPressure, ILog log, IEmailService emailService)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryBloodPressure = repositoryBloodPressure;
@@ -45,7 +46,7 @@ namespace Olives.Controllers
         #region Methods
 
         /// <summary>
-        /// Find a specialty by using specialty id.
+        ///     Find a specialty by using specialty id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -53,8 +54,8 @@ namespace Olives.Controllers
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
             // Retrieve the results list.
             var results = await _repositoryBloodPressure.FindBloodPressureNoteAsync(id, requester.Id);
 
@@ -63,13 +64,13 @@ namespace Olives.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] { Language.NoRecordHasBeenFound }
+                    Errors = new[] {Language.NoRecordHasBeenFound}
                 });
             }
 
             // Retrieve the 1st queried result.
             var result = results
-                .Select(x => new BloodPressureViewModel()
+                .Select(x => new BloodPressureViewModel
                 {
                     Id = x.Id,
                     Created = x.Created,
@@ -89,7 +90,7 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        /// Insert an allergy asyncrhonously.
+        ///     Insert an allergy asyncrhonously.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
@@ -104,7 +105,7 @@ namespace Olives.Controllers
                 _log.Error("Invalid allergies filter request parameters");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new
                 {
-                    Errors = new[] { Language.InvalidRequestParameters }
+                    Errors = new[] {Language.InvalidRequestParameters}
                 });
             }
 
@@ -118,7 +119,7 @@ namespace Olives.Controllers
             #endregion
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Only filter and receive the first result.
             var bloodPressure = new BloodPressure();
@@ -146,7 +147,7 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        /// Edit an allergy.
+        ///     Edit an allergy.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="info"></param>
@@ -162,7 +163,7 @@ namespace Olives.Controllers
                 _log.Error("Invalid allergies filter request parameters");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new
                 {
-                    Errors = new[] { Language.InvalidRequestParameters }
+                    Errors = new[] {Language.InvalidRequestParameters}
                 });
             }
 
@@ -176,7 +177,7 @@ namespace Olives.Controllers
             #endregion
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find allergy by using allergy id and owner id.
             var results = await _repositoryBloodPressure.FindBloodPressureNoteAsync(id, requester.Id);
@@ -187,17 +188,17 @@ namespace Olives.Controllers
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] { Language.WarnRecordNotFound }
+                    Errors = new[] {Language.WarnRecordNotFound}
                 });
             }
-            
+
             // Records are conflict.
             if (results.Count != 1)
             {
                 // Tell front-end that records are conflict.
                 return Request.CreateResponse(HttpStatusCode.Conflict, new
                 {
-                    Errors = new[] { Language.WarnRecordConflict }
+                    Errors = new[] {Language.WarnRecordConflict}
                 });
             }
 
@@ -208,7 +209,7 @@ namespace Olives.Controllers
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] { Language.WarnRecordNotFound }
+                    Errors = new[] {Language.WarnRecordNotFound}
                 });
             }
 
@@ -224,7 +225,7 @@ namespace Olives.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                BloodPressure = new BloodPressureViewModel()
+                BloodPressure = new BloodPressureViewModel
                 {
                     Id = result.Id,
                     Systolic = result.Systolic,
@@ -238,7 +239,7 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        /// Delete an allergy.
+        ///     Delete an allergy.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -246,7 +247,7 @@ namespace Olives.Controllers
         public async Task<HttpResponseMessage> Delete([FromUri] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find allergy by using allergy id and owner id.
             var result = await _repositoryBloodPressure.FindBloodPressureNoteAsync(id, requester.Id);
@@ -257,7 +258,7 @@ namespace Olives.Controllers
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] { Language.WarnRecordNotFound }
+                    Errors = new[] {Language.WarnRecordNotFound}
                 });
             }
 
@@ -267,7 +268,7 @@ namespace Olives.Controllers
                 // Tell front-end that records are conflict.
                 return Request.CreateResponse(HttpStatusCode.Conflict, new
                 {
-                    Errors = new[] { Language.WarnRecordConflict }
+                    Errors = new[] {Language.WarnRecordConflict}
                 });
             }
 
@@ -278,7 +279,7 @@ namespace Olives.Controllers
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] { Language.WarnRecordNotFound }
+                    Errors = new[] {Language.WarnRecordNotFound}
                 });
             }
 
@@ -287,15 +288,15 @@ namespace Olives.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK);
         }
-        
+
         /// <summary>
-        /// Filter specialties by using specific conditions.
+        ///     Filter specialties by using specific conditions.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
         [Route("api/heartbeat/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { AccountRole.Doctor, AccountRole.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterBloodPressureViewModel info)
         {
             #region ModelState result
@@ -306,7 +307,7 @@ namespace Olives.Controllers
                 _log.Error("Invalid allergies filter request parameters");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new
                 {
-                    Errors = new[] { Language.InvalidRequestParameters }
+                    Errors = new[] {Language.InvalidRequestParameters}
                 });
             }
 
@@ -320,11 +321,11 @@ namespace Olives.Controllers
             #endregion
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Person can only see his/her notes.
             info.Owner = requester.Id;
-            
+
             // Retrieve the results list.
             var results = await _repositoryBloodPressure.FilterBloodPressureNoteAsync(info);
 
@@ -333,10 +334,10 @@ namespace Olives.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] { Language.NoRecordHasBeenFound }
+                    Errors = new[] {Language.NoRecordHasBeenFound}
                 });
             }
-            
+
             return Request.CreateResponse(HttpStatusCode.OK, results);
         }
 
@@ -365,6 +366,5 @@ namespace Olives.Controllers
         private readonly IEmailService _emailService;
 
         #endregion
-
     }
 }

@@ -4,11 +4,8 @@ using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
-using Nustache.Core;
-using Olives.Constants;
 using Olives.Interfaces;
 using Olives.Models;
-using Shared.Models;
 
 namespace Olives.Services
 {

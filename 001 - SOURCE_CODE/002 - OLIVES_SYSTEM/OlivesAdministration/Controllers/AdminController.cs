@@ -51,7 +51,7 @@ namespace OlivesAdministration.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
 
             // Update role Admin to login view model.
-            loginViewModel.Role = AccountRole.Admin;
+            loginViewModel.Role = (byte)Role.Admin;
 
             // Pass parameter to login function. 
             var results = await _repositoryAccount.LoginAsync(loginViewModel);

@@ -1,6 +1,6 @@
 ﻿namespace Shared.Enumerations
 {
-    public enum AccountStatus
+    public enum StatusAccount
     {
         Inactive,
         Pending,

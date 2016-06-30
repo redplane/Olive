@@ -1,6 +1,6 @@
 ﻿namespace Shared.Enumerations
 {
-    public enum AppointmentStatus
+    public enum StatusAppointment
     {
         Cancelled,
         Pending,
