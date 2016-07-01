@@ -72,6 +72,11 @@
         /// </summary>
         public const double MaxSugarBloodMmol = 20;
 
+        /// <summary>
+        /// Activation code will last for 24 hours.
+        /// </summary>
+        public const int ActivationCodeHourDuration = 24;
+
         #region Blood pressure
 
         /// <summary>

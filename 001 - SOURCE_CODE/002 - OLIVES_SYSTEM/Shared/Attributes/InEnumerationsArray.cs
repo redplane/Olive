@@ -23,14 +23,15 @@ namespace Shared.Attributes
             // Value is null. This mean no validation is specified.
             if (value == null)
                 return ValidationResult.Success;
-
+            
             // Invalid milestone.
             if (_milesStone == null || _milesStone.Length < 1)
                 throw new Exception("Invalid milestones.");
 
             // Convert value to int.
+            var casted = (int) value;
 
-            if (!_milesStone.Any(x => x.Equals(value)))
+            if (!_milesStone.Any(x => x.Equals(casted)))
                 return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
 
             return ValidationResult.Success;

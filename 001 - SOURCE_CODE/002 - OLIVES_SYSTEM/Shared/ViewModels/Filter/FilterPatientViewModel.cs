@@ -11,22 +11,22 @@ namespace Shared.ViewModels.Filter
     {
         [NumericPropertyCompare("MaxWeight", Comparision = Comparision.LowerEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         [Range(Values.MinBodyWeight, Values.MaxBodyWeight, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidMinWeight")]
+            ErrorMessageResourceName = "ValueMustBeFromTo")]
         public float? MinWeight { get; set; }
 
         [NumericPropertyCompare("MinWeight", Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         [Range(Values.MinBodyWeight, Values.MaxBodyWeight, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidMaxWeight")]
+            ErrorMessageResourceName = "ValueMustBeFromTo")]
         public float? MaxWeight { get; set; }
 
         [NumericPropertyCompare("MaxHeight", Comparision = Comparision.LowerEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         [Range(Values.MinBodyHeight, Values.MaxBodyHeight, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidMinHeight")]
+            ErrorMessageResourceName = "ValueMustBeFromTo")]
         public float? MinHeight { get; set; }
 
         [NumericPropertyCompare("MinHeight", Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         [Range(Values.MinBodyHeight, Values.MaxBodyHeight, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidMaxHeight")]
+            ErrorMessageResourceName = "ValueMustBeFromTo")]
         public float? MaxHeight { get; set; }
 
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
@@ -35,7 +35,7 @@ namespace Shared.ViewModels.Filter
         public int Page { get; set; }
 
         [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof(Language),
-            ErrorMessageResourceName = "InvalidPageRecords")]
+            ErrorMessageResourceName = "ValueMustBeFromTo")]
         public int Records { get; set; } = FieldLength.RecordMax;
     }
 }

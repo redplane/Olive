@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
+using System.Management.Instrumentation;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Interfaces;
@@ -24,8 +27,8 @@ namespace Shared.Repositories
         public async Task<IList<PatientViewModel>> FindPatientAsync(int id)
         {
             var context = new OlivesHealthEntities();
-            var results = from person in context.People
-                join patient in context.Patients on person.Email equals patient.Email
+            var results = from person in context.People.Where(x => x.Id == id)
+                join patient in context.Patients.Where(x => x.Id == id) on person.Id equals patient.Id
                 where person.Id == id
                 select new PatientViewModel
                 {
@@ -34,17 +37,15 @@ namespace Shared.Repositories
                     Created = person.Created,
                     Email = person.Email,
                     FirstName = person.FirstName,
-                    Gender = person.Gender,
+                    Gender = (Gender)person.Gender,
                     LastModified = person.LastModified,
                     LastName = person.LastName,
-                    Latitude = person.Latitude,
-                    Longitude = person.Longitude,
                     Money = 0,
                     Password = person.Password,
                     Phone = person.Phone,
                     Photo = person.Photo,
                     Role = person.Role,
-                    Status = person.Status,
+                    Status = (StatusAccount)person.Status,
                     Height = patient.Height,
                     Weight = patient.Weight
                 };
@@ -64,7 +65,7 @@ namespace Shared.Repositories
             // Join the table first.
             var results = context.People
                 .Where(x => x.Role == (byte)Role.Patient)
-                .Join(context.Patients, p => p.Email, d => d.Email,
+                .Join(context.Patients, p => p.Id, d => d.Id,
                     (p, d) => new
                     {
                         Person = p,
@@ -151,17 +152,15 @@ namespace Shared.Repositories
                     Created = x.Person.Created,
                     Email = x.Person.Email,
                     FirstName = x.Person.FirstName,
-                    Gender = x.Person.Gender,
+                    Gender = (Gender)x.Person.Gender,
                     Id = x.Person.Id,
                     LastModified = x.Person.LastModified,
-                    Latitude = x.Person.Latitude,
                     LastName = x.Person.LastName,
                     Money = x.Patient.Money,
                     Phone = x.Person.Phone,
                     Role = (byte)Role.Doctor,
-                    Longitude = x.Person.Longitude,
                     Password = x.Person.Password,
-                    Status = x.Person.Status,
+                    Status = (StatusAccount)x.Person.Status,
                     Photo = x.Person.Photo,
                     Height = x.Patient.Height,
                     Weight = x.Patient.Weight
@@ -169,6 +168,92 @@ namespace Shared.Repositories
 
             responseFilter.Users = await filteredResults.ToListAsync();
             return responseFilter;
+        }
+
+        /// <summary>
+        /// Initialize a patient to database.
+        /// </summary>
+        /// <param name="patient"></param>
+        /// <returns></returns>
+        public async Task<Patient> InitializePatientAsync(Patient patient)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    context.Patients.Add(patient);
+                    await context.SaveChangesAsync();
+                    transaction.Commit();
+                    return patient;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }   
+        }
+
+        /// <summary>
+        /// Find and activate patient's account and remove the activation code.
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public async Task<bool> ActivatePatientAccount(string code)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var results = from p in context.People
+                        join c in context.ActivationCodes.Where(x => x.Code.Equals(code)) on p.Id equals c.Owner
+                        select new
+                        {
+                            Person = p,
+                            Code = c
+                        };
+
+                    // Retrieve the total matched result.
+                    var resultsCount = await results.CountAsync();
+
+                    // No result has been returned.
+                    if (resultsCount < 1)
+                        throw new InstanceNotFoundException($"Couldn't find person whose code is : {code}");
+                    
+                    // Not only one result has been returned.
+                    if (resultsCount > 1)
+                        throw new Exception($"There are too many people whose code is : {code}");
+
+                    // Retrieve the first queried result.
+                    var result = await results.FirstOrDefaultAsync();
+                    if (result == null)
+                        throw new InstanceNotFoundException($"Couldn't find person whose code is : {code}");
+
+                    // Update the person status and remove the activation code.
+                    var person = result.Person;
+                    var activationCode = result.Code;
+                    person.Status = (byte)StatusAccount.Active;
+                    context.People.AddOrUpdate(person);
+                    context.ActivationCodes.Remove(activationCode);
+                    await context.SaveChangesAsync();
+                    // Commit the transaction.
+                    transaction.Commit();
+                    return true;
+                }
+                catch
+                {
+                    // Something happens, roll the transaction back.
+                    transaction.Rollback();
+                    throw;
+                }
+                
+            }
         }
 
         #endregion
@@ -184,8 +269,9 @@ namespace Shared.Repositories
         {
             var context = new OlivesHealthEntities();
 
-            var results = from person in context.People
-                join doctor in context.Doctors on person.Email equals doctor.Email
+            var results = from person in context.People.Where(x => x.Id == id)
+                join doctor in context.Doctors.Where(x => x.Id == id)
+                on person.Id equals doctor.Id
                 join specialty in context.Specialties on doctor.SpecialtyId equals specialty.Id
                 where person.Id == id
                 select new DoctorViewModel
@@ -198,8 +284,6 @@ namespace Shared.Repositories
                     Gender = person.Gender,
                     LastModified = person.LastModified,
                     LastName = person.LastName,
-                    Latitude = person.Latitude,
-                    Longitude = person.Longitude,
                     Money = 0,
                     Password = person.Password,
                     Phone = person.Phone,
@@ -226,7 +310,7 @@ namespace Shared.Repositories
 
             // Join the tables first.
             var results = (from p in context.People 
-                          join d in context.Doctors on p.Email equals d.Email
+                          join d in context.Doctors on p.Id equals d.Id
                           join s in context.Specialties on d.SpecialtyId equals s.Id
                           select new
                           {
@@ -317,13 +401,11 @@ namespace Shared.Repositories
                     Gender = x.Person.Gender,
                     Id = x.Person.Id,
                     LastModified = x.Person.LastModified,
-                    Latitude = x.Person.Latitude,
                     LastName = x.Person.LastName,
                     Money = x.Doctor.Money,
                     Rank = x.Doctor.Rank ?? 0,
                     Phone = x.Person.Phone,
                     Role = (byte)Role.Doctor,
-                    Longitude = x.Person.Longitude,
                     Password = x.Person.Password,
                     Status = x.Person.Status,
                     Photo = x.Person.Photo,
@@ -333,6 +415,33 @@ namespace Shared.Repositories
 
             responseFilter.Users = await filteredResults.ToListAsync();
             return responseFilter;
+        }
+
+        /// <summary>
+        /// Initialize a doctor asynchronously.
+        /// </summary>
+        /// <param name="doctor"></param>
+        /// <returns></returns>
+        public async Task<Doctor> InitializeDoctorAsync(Doctor doctor)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    context.Doctors.Add(doctor);
+                    await context.SaveChangesAsync();
+                    transaction.Commit();
+                    return doctor;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
         }
 
         #endregion
@@ -418,6 +527,32 @@ namespace Shared.Repositories
         }
 
         /// <summary>
+        /// Find a person asynchronously by using activation code.
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public async Task<Person> FindPersonAsync(string code)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // Find the person whose activation code matches the condition.
+            var results = from p in context.People
+                join a in context.ActivationCodes.Where(x => x.Code.Equals(code)) on p.Id equals a.Owner
+                select p;
+
+            // Count the number of matched records.
+            var records = await results.CountAsync();
+
+            // Result is not unique.
+            if (records != 1)
+                return null;
+
+            return await results.FirstOrDefaultAsync();
+
+        }
+
+        /// <summary>
         ///     Edit person status.
         /// </summary>
         /// <param name="id"></param>
@@ -480,7 +615,7 @@ namespace Shared.Repositories
 
             return await filteredResult.ToListAsync();
         }
-
+        
         #endregion
     }
 }

@@ -27,9 +27,12 @@ namespace Shared.Models
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<ActivationCode> ActivationCodes { get; set; }
         public virtual DbSet<Allergy> Allergies { get; set; }
         public virtual DbSet<Appointment> Appointments { get; set; }
         public virtual DbSet<BloodPressure> BloodPressures { get; set; }
+        public virtual DbSet<City> Cities { get; set; }
+        public virtual DbSet<Country> Countries { get; set; }
         public virtual DbSet<Doctor> Doctors { get; set; }
         public virtual DbSet<Heartbeat> Heartbeats { get; set; }
         public virtual DbSet<Patient> Patients { get; set; }

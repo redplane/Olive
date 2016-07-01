@@ -168,14 +168,8 @@
   <data name="InvalidLastName" xml:space="preserve">
     <value>Last name can only contains {1} characters(s)</value>
   </data>
-  <data name="InvalidLatitude" xml:space="preserve">
-    <value>Latitude must be from {1} to {2}</value>
-  </data>
   <data name="InvalidLoginInfo" xml:space="preserve">
     <value>Invalid account or password</value>
-  </data>
-  <data name="InvalidLongitude" xml:space="preserve">
-    <value>Longitude must be from {1} to {2}</value>
   </data>
   <data name="InvalidMaxBirthday" xml:space="preserve">
     <value>Max birthday is invalid</value>
@@ -183,20 +177,11 @@
   <data name="InvalidMaxDate" xml:space="preserve">
     <value>Max date is invalid</value>
   </data>
-  <data name="InvalidMinBirthday" xml:space="preserve">
-    <value>Min birthday is invalid</value>
-  </data>
-  <data name="InvalidMinDate" xml:space="preserve">
-    <value>Min date is invalid</value>
-  </data>
   <data name="InvalidNoteId" xml:space="preserve">
     <value>Note ID is invalid</value>
   </data>
   <data name="InvalidPageIndex" xml:space="preserve">
     <value>Page index must be from 0</value>
-  </data>
-  <data name="InvalidPageRecords" xml:space="preserve">
-    <value>Records must be from {1} to {2}</value>
   </data>
   <data name="InvalidPersonalId" xml:space="preserve">
     <value>Id is invalid</value>
@@ -273,18 +258,6 @@
   <data name="InternalServerError" xml:space="preserve">
     <value>There is something wrong with server. Process cannot be completed</value>
   </data>
-  <data name="InvalidMinWeight" xml:space="preserve">
-    <value>Min weight should be from {1} to {2} kg(s)</value>
-  </data>
-  <data name="InvalidMaxHeight" xml:space="preserve">
-    <value>Max height should be from {1} to {2} cms(s)</value>
-  </data>
-  <data name="InvalidMaxWeight" xml:space="preserve">
-    <value>Max weight should be from {1} to {2} kg(s)</value>
-  </data>
-  <data name="InvalidMinHeight" xml:space="preserve">
-    <value>Min height should be from {1} to {2} cm(s)</value>
-  </data>
   <data name="InvalidBirthyear" xml:space="preserve">
     <value>Birthyear must be after {1}</value>
   </data>
@@ -297,18 +270,6 @@
   <data name="RegexPassword" xml:space="preserve">
     <value>Password can only contain alphanumeric characters</value>
   </data>
-  <data name="InvalidMaxLastModified" xml:space="preserve">
-    <value>MaxLastModified must be after {2}</value>
-  </data>
-  <data name="InvalidMinLastModified" xml:space="preserve">
-    <value>MinLastModified must be after {1}</value>
-  </data>
-  <data name="InvalidMaxCreated" xml:space="preserve">
-    <value>MaxCreated must be after {1}</value>
-  </data>
-  <data name="InvalidMinCreated" xml:space="preserve">
-    <value>MinCreated must be after {1}</value>
-  </data>
   <data name="InvalidPatient" xml:space="preserve">
     <value>Patient is invalid</value>
   </data>
@@ -317,9 +278,6 @@
   </data>
   <data name="InvalidRole" xml:space="preserve">
     <value>Role should be : {1}</value>
-  </data>
-  <data name="EmailExistInSystem" xml:space="preserve">
-    <value>Email does exist in system.</value>
   </data>
   <data name="AccessEmailForVerification" xml:space="preserve">
     <value>Please access your email for account verification</value>
@@ -414,5 +372,21 @@
   </data>
   <data name="ValueIsRequired" xml:space="preserve">
     <value>{0} is required</value>
+  </data>
+  <data name="InvalidActivationCode" xml:space="preserve">
+    <value>Activation code is invalid</value>
+  </data>
+  <data name="MessageInvalidActivationCode" xml:space="preserve">
+    <value>Activation code is invalid</value>
+  </data>
+  <data name="MessageAccountActivatedSuccessfully" xml:space="preserve">
+    <value>Welcome to Olives Health. Your account has been activated successfully.</value>
+  </data>
+  <data name="WarnAccountAlreadyExists" xml:space="preserve">
+    <value>W014</value>
+    <comment>Warn front-end that account already exists in database.</comment>
+  </data>
+  <data name="ValueIsInvalid" xml:space="preserve">
+    <value>{0} is invalid</value>
   </data>
 </root>

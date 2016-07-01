@@ -17,18 +17,18 @@ namespace Shared.Repositories
         /// <summary>
         /// Check whether the relation is available or not.
         /// </summary>
-        /// <param name="owner"></param>
-        /// <param name="relative"></param>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
         /// <returns></returns>
-        public async Task<bool> IsRelationAvailable(int owner, int relative)
+        public async Task<bool> IsRelationAvailable(int source, int target)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
             // Find the relation which is related to owner.
             var results = await (from p in context.People
-                                 join r in context.Relations on p.Id equals r.Owner
-                                 where r.Owner == owner && r.Relative == relative
+                                 join r in context.Relations on p.Id equals r.Source
+                                 where r.Source == source && r.Target == target
                                  select r).ToListAsync();
 
             // Relation already exists.

@@ -92,7 +92,7 @@ namespace Shared.ViewModels.Filter
         /// Number of records which can be shown up.
         /// </summary>
         [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof(Language),
-            ErrorMessageResourceName = "InvalidPageRecords")]
+            ErrorMessageResourceName = "ValueMustBeFromTo")]
         public int Records { get; set; } = FieldLength.RecordMax;
     }
 }

@@ -37,6 +37,15 @@
         /// </summary>
         public const int PageIndexMin = 0;
 
+        /// <summary>
+        /// Maximum length of an activation code.
+        /// </summary>
+        public const int ActivationCodeLength = 10;
+
+        /// <summary>
+        /// Maximum length of address.
+        /// </summary>
+        public const int MaxAddressLength = 128;
 
         public const int FirstNameMaxLength = 32;
 

@@ -14,12 +14,16 @@ namespace Shared.Models
     
     public partial class Doctor
     {
-        public string Email { get; set; }
+        public int Id { get; set; }
         public Nullable<double> Rank { get; set; }
-        public Nullable<int> SpecialtyId { get; set; }
+        public int SpecialtyId { get; set; }
+        public string SpecialtyName { get; set; }
         public int Voters { get; set; }
         public int Money { get; set; }
+        public int CityId { get; set; }
     
+        public virtual City City { get; set; }
+        public virtual Person Person { get; set; }
         public virtual Specialty Specialty { get; set; }
     }
 }

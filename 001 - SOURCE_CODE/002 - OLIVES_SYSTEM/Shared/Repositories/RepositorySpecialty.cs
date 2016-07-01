@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -48,6 +49,22 @@ namespace Shared.Repositories
             // Retrieve the specialty list.
             response.Specialties = await results.ToListAsync();
             return response;
+        }
+
+        /// <summary>
+        /// Find specialty by using id asynchronously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<IList<Specialty>> FindSpecialty(int id)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // Find the specialty by using id.
+            var result = context.Specialties.Where(x => x.Id == id);
+
+            return await result.ToListAsync();
         }
     }
 }

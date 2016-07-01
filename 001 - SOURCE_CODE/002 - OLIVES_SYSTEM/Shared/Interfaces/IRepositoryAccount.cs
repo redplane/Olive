@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Models;
@@ -41,6 +42,13 @@ namespace Shared.Interfaces
         Task<Person> FindPersonAsync(int? id, string email, string password, byte? role, StatusAccount? status);
 
         /// <summary>
+        /// Find a person asynchronously by using activation code.
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        Task<Person> FindPersonAsync(string code);
+
+        /// <summary>
         ///     Edit person status asynchronously.
         /// </summary>
         /// <param name="id"></param>
@@ -53,7 +61,7 @@ namespace Shared.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<IList<StatusSummaryViewModel>> SummarizePersonRole(byte? role);
-
+        
         #endregion
 
         #region Doctor
@@ -71,7 +79,14 @@ namespace Shared.Interfaces
         /// <param name="filter"></param>
         /// <returns></returns>
         Task<ResponseDoctorFilter> FilterDoctorAsync(FilterDoctorViewModel filter);
-        
+
+        /// <summary>
+        /// Initialize a doctor to database.
+        /// </summary>
+        /// <param name="doctor"></param>
+        /// <returns></returns>
+        Task<Doctor> InitializeDoctorAsync(Doctor doctor);
+
         #endregion
 
         #region Patient
@@ -89,7 +104,20 @@ namespace Shared.Interfaces
         /// <param name="filter"></param>
         /// <returns></returns>
         Task<ResponsePatientFilter> FilterPatientAsync(FilterPatientViewModel filter);
-        
+
+        /// <summary>
+        /// Initialize a patient to database.
+        /// </summary>
+        /// <param name="patient"></param>
+        /// <returns></returns>
+        Task<Patient> InitializePatientAsync(Patient patient);
+
+        /// <summary>
+        /// Activate patient's account by search person id.
+        /// </summary>
+        /// <param name="code"></param>
+        Task<bool> ActivatePatientAccount(string code);
+
         #endregion
     }
 }

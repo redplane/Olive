@@ -81,8 +81,6 @@ namespace OlivesAdministration.Controllers
                 x.Password,
                 x.Phone,
                 x.Created,
-                x.Latitude,
-                x.Longitude,
                 x.Address,
                 x.Role,
                 x.Status,

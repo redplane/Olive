@@ -14,9 +14,11 @@ namespace Shared.Models
     
     public partial class Patient
     {
-        public string Email { get; set; }
+        public int Id { get; set; }
         public int Money { get; set; }
         public Nullable<double> Weight { get; set; }
         public Nullable<double> Height { get; set; }
+    
+        public virtual Person Person { get; set; }
     }
 }

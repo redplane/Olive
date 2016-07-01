@@ -106,15 +106,6 @@ namespace Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Email does exist in system..
-        /// </summary>
-        public static string EmailExistInSystem {
-            get {
-                return ResourceManager.GetString("EmailExistInSystem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Result isn&apos;t unique.
         /// </summary>
         public static string FindResultConflict {
@@ -147,6 +138,15 @@ namespace Shared.Resources {
         public static string InvalidAccountStatus {
             get {
                 return ResourceManager.GetString("InvalidAccountStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Activation code is invalid.
+        /// </summary>
+        public static string InvalidActivationCode {
+            get {
+                return ResourceManager.GetString("InvalidActivationCode", resourceCulture);
             }
         }
         
@@ -277,29 +277,11 @@ namespace Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Latitude must be from {1} to {2}.
-        /// </summary>
-        public static string InvalidLatitude {
-            get {
-                return ResourceManager.GetString("InvalidLatitude", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Invalid account or password.
         /// </summary>
         public static string InvalidLoginInfo {
             get {
                 return ResourceManager.GetString("InvalidLoginInfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Longitude must be from {1} to {2}.
-        /// </summary>
-        public static string InvalidLongitude {
-            get {
-                return ResourceManager.GetString("InvalidLongitude", resourceCulture);
             }
         }
         
@@ -313,101 +295,11 @@ namespace Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MaxCreated must be after {1}.
-        /// </summary>
-        public static string InvalidMaxCreated {
-            get {
-                return ResourceManager.GetString("InvalidMaxCreated", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Max date is invalid.
         /// </summary>
         public static string InvalidMaxDate {
             get {
                 return ResourceManager.GetString("InvalidMaxDate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Max height should be from {1} to {2} cms(s).
-        /// </summary>
-        public static string InvalidMaxHeight {
-            get {
-                return ResourceManager.GetString("InvalidMaxHeight", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to MaxLastModified must be after {2}.
-        /// </summary>
-        public static string InvalidMaxLastModified {
-            get {
-                return ResourceManager.GetString("InvalidMaxLastModified", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Max weight should be from {1} to {2} kg(s).
-        /// </summary>
-        public static string InvalidMaxWeight {
-            get {
-                return ResourceManager.GetString("InvalidMaxWeight", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Min birthday is invalid.
-        /// </summary>
-        public static string InvalidMinBirthday {
-            get {
-                return ResourceManager.GetString("InvalidMinBirthday", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to MinCreated must be after {1}.
-        /// </summary>
-        public static string InvalidMinCreated {
-            get {
-                return ResourceManager.GetString("InvalidMinCreated", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Min date is invalid.
-        /// </summary>
-        public static string InvalidMinDate {
-            get {
-                return ResourceManager.GetString("InvalidMinDate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Min height should be from {1} to {2} cm(s).
-        /// </summary>
-        public static string InvalidMinHeight {
-            get {
-                return ResourceManager.GetString("InvalidMinHeight", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to MinLastModified must be after {1}.
-        /// </summary>
-        public static string InvalidMinLastModified {
-            get {
-                return ResourceManager.GetString("InvalidMinLastModified", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Min weight should be from {1} to {2} kg(s).
-        /// </summary>
-        public static string InvalidMinWeight {
-            get {
-                return ResourceManager.GetString("InvalidMinWeight", resourceCulture);
             }
         }
         
@@ -426,15 +318,6 @@ namespace Shared.Resources {
         public static string InvalidPageIndex {
             get {
                 return ResourceManager.GetString("InvalidPageIndex", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Records must be from {1} to {2}.
-        /// </summary>
-        public static string InvalidPageRecords {
-            get {
-                return ResourceManager.GetString("InvalidPageRecords", resourceCulture);
             }
         }
         
@@ -534,6 +417,24 @@ namespace Shared.Resources {
         public static string MaxLengthPassword {
             get {
                 return ResourceManager.GetString("MaxLengthPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome to Olives Health. Your account has been activated successfully..
+        /// </summary>
+        public static string MessageAccountActivatedSuccessfully {
+            get {
+                return ResourceManager.GetString("MessageAccountActivatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Activation code is invalid.
+        /// </summary>
+        public static string MessageInvalidActivationCode {
+            get {
+                return ResourceManager.GetString("MessageInvalidActivationCode", resourceCulture);
             }
         }
         
@@ -736,6 +637,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} is invalid.
+        /// </summary>
+        public static string ValueIsInvalid {
+            get {
+                return ResourceManager.GetString("ValueIsInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} is required.
         /// </summary>
         public static string ValueIsRequired {
@@ -804,6 +714,15 @@ namespace Shared.Resources {
         public static string WaitForAdminConfirmation {
             get {
                 return ResourceManager.GetString("WaitForAdminConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W014.
+        /// </summary>
+        public static string WarnAccountAlreadyExists {
+            get {
+                return ResourceManager.GetString("WarnAccountAlreadyExists", resourceCulture);
             }
         }
         

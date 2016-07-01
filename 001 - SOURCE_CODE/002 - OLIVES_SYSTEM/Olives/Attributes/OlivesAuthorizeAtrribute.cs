@@ -31,7 +31,7 @@ namespace Olives.Attributes
         ///     Which roles can access this function.
         /// </summary>
         public new int[] Roles { get; }
-
+        
         /// <summary>
         ///     This function is for handling authorization handling.
         /// </summary>

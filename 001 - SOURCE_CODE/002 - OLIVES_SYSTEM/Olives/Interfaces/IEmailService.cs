@@ -1,5 +1,7 @@
 ﻿using System.Net.Mail;
+using System.Threading.Tasks;
 using Olives.Models;
+using Shared.Models;
 
 namespace Olives.Interfaces
 {
@@ -20,16 +22,17 @@ namespace Olives.Interfaces
         /// <param name="mailMessage"></param>
         void SendEmail(MailMessage mailMessage);
 
-        ///// <summary>
-        /////     This function is for sending activation code to a specific client.
-        ///// </summary>
-        ///// <param name="to"></param>
-        ///// <param name="subject"></param>
-        ///// <param name="firstName"></param>
-        ///// <param name="lastName"></param>
-        ///// <param name="activationCode"></param>
-        //void SendActivationCode(string to, string subject, string firstName, string lastName,
-        //    ActivationCode activationCode);
+        /// <summary>
+        ///     This function is for sending activation code to a specific client.
+        /// </summary>
+        /// <param name="to"></param>
+        /// <param name="subject"></param>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
+        /// <param name="code"></param>
+        /// <param name="url"></param>
+        Task<bool> SendActivationCode(string to, string subject, string firstName, string lastName,
+            ActivationCode code, string url);
 
         /// <summary>
         ///     Load email template from specific files.

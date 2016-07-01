@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Configuration;
+using System.Drawing;
 using System.IO;
 using System.Web;
 using System.Web.Http;
+using System.Web.Mvc;
+using System.Web.Routing;
 using Autofac;
+using Autofac.Integration.Mvc;
 using Autofac.Integration.WebApi;
 using log4net.Config;
 using Neo4jClient;
@@ -26,6 +30,7 @@ namespace Olives
             #region Route configuration
 
             GlobalConfiguration.Configure(WebApiConfig.Register);
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
 
             #endregion
 
@@ -40,6 +45,7 @@ namespace Olives
             //builder.RegisterType<AdminController>().InstancePerRequest();
             
             builder.RegisterType<AccountController>().InstancePerRequest();
+            builder.RegisterType<AccountVerifyController>().InstancePerRequest();
             builder.RegisterType<SpecialtyController>().InstancePerRequest();
             builder.RegisterType<AllergyController>().InstancePerRequest();
             builder.RegisterType<HeartbeatController>().InstancePerRequest();
@@ -98,6 +104,16 @@ namespace Olives
                 .As<IRepositoryAllergy>()
                 .SingleInstance();
 
+            //  Repository activation code registration.
+            builder.RegisterType<RepositoryActivationCode>()
+                .As<IRepositoryActivationCode>()
+                .SingleInstance();
+
+            // Repository of place registration.
+            builder.RegisterType<RepositoryPlace>()
+                .As<IRepositoryPlace>()
+                .SingleInstance();
+
             // Email service.
             var emailService = new EmailService(applicationSetting.SmtpSetting);
 
@@ -128,13 +144,14 @@ namespace Olives
 
             // Log4net module registration (this is for logging)
             builder.RegisterModule<Log4NetModule>();
-
+            
             // Web api dependency registration.
             builder.RegisterWebApiFilterProvider(GlobalConfiguration.Configuration);
 
             var container = builder.Build();
             GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
-
+            DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
+            
             #endregion
 
             XmlConfigurator.Configure();

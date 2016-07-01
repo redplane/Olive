@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -6,9 +7,12 @@ using System.Web.Http;
 using log4net;
 using Olives.Interfaces;
 using Shared.Enumerations;
+using Shared.Helpers;
 using Shared.Interfaces;
+using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels;
+using Shared.ViewModels.Initialize;
 
 namespace Olives.Controllers
 {
@@ -20,13 +24,303 @@ namespace Olives.Controllers
         ///     Initialize an instance of AccountController with Dependency injections.
         /// </summary>
         /// <param name="repositoryAccount"></param>
+        /// <param name="repositoryActivationCode"></param>
+        /// <param name="repositorySpecialty"></param>
+        /// <param name="repositoryPlace"></param>
         /// <param name="log"></param>
         /// <param name="emailService"></param>
-        public AccountController(IRepositoryAccount repositoryAccount, ILog log, IEmailService emailService)
+        public AccountController(IRepositoryAccount repositoryAccount,
+            IRepositoryActivationCode repositoryActivationCode, IRepositorySpecialty repositorySpecialty, IRepositoryPlace repositoryPlace, ILog log, IEmailService emailService)
         {
             _repositoryAccount = repositoryAccount;
+            _repositoryActivationCode = repositoryActivationCode;
+            _repositorySpecialty = repositorySpecialty;
+            _repositoryPlace = repositoryPlace;
             _log = log;
             _emailService = emailService;
+        }
+
+        #endregion
+
+        #region Sign up
+
+        /// <summary>
+        ///     Sign up as a patient asynchronously.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        [Route("api/account/patient")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> RegisterPatient([FromBody] InitializePatientViewModel info)
+        {
+            // Information hasn't been initialize.
+            if (info == null)
+            {
+                // Initialize the default instance and do the validation.
+                info = new InitializePatientViewModel();
+                Validate(info);
+            }
+
+            // Invalid model state.
+            if (!ModelState.IsValid)
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+
+            // Check whether email has been used or not.
+            var result = await _repositoryAccount.FindPersonAsync(null, info.Email, null, null, null);
+
+            // Found a patient. This means email has been used before.
+            if (result != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.Conflict,
+                    new
+                    {
+                        Error = $"{Language.WarnAccountAlreadyExists}"
+                    });
+            }
+
+            // Account initialization.
+            var person = new Person();
+            person.FirstName = info.FirstName;
+            person.LastName = info.LastName;
+            person.Birthday = info.Birthday;
+            person.Gender = (byte)info.Gender;
+            person.Email = info.Email;
+            person.Password = info.Password;
+            person.Phone = info.Phone;
+            person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            person.Role = (byte)Role.Patient;
+            person.Status = (byte)StatusAccount.Pending;
+
+            var patient = new Patient();
+            patient.Height = info.Height;
+            patient.Weight = info.Weight;
+            patient.Money = 0;
+
+            // Assign personal information to patient.
+            patient.Person = person;
+
+            try
+            {
+                // Save patient data to database.
+                patient = await _repositoryAccount.InitializePatientAsync(patient);
+
+                // Initialize an activation code.
+                var activationCode =
+                    await _repositoryActivationCode.InitializeActivationCodeAsync(patient.Person.Id, DateTime.Now);
+
+                // Url construction.
+                var url = Url.Link("Default",
+                    new { controller = "AccountVerify", action = "Index", code = activationCode.Code });
+
+                // Send the activation code email.
+                await
+                    _emailService.SendActivationCode(person.Email, Language.OliveActivationCodeEmailTitle,
+                        person.FirstName, person.LastName, activationCode, url);
+
+                // Tell doctor to wait for admin confirmation.
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    Patient = new
+                    {
+                        patient.Id,
+                        patient.Person.FirstName,
+                        patient.Person.LastName,
+                        patient.Person.Email,
+                        patient.Person.Birthday,
+                        patient.Person.Gender,
+                        patient.Person.Address,
+                        patient.Person.Phone,
+                        patient.Person.Role,
+                        patient.Person.Status,
+                        patient.Person.Photo,
+                        patient.Money,
+                        patient.Weight,
+                        patient.Height,
+                        patient.Person.Created
+                    }
+                });
+            }
+            catch (Exception exception)
+            {
+                // There is something wrong with server.
+                // Log the error.
+                _log.Error($"Cannot create account: '{person.Email}'", exception);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+        }
+
+        /// <summary>
+        ///     Sign up as a patient asynchronously.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        [Route("api/account/doctor")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> RegisterDoctor([FromBody] InitializeDoctorViewModel info)
+        {
+            #region Information validation
+
+            #region ModelState validation
+
+            // Information hasn't been initialize.
+            if (info == null)
+            {
+                // Initialize the default instance and do the validation.
+                info = new InitializeDoctorViewModel();
+                Validate(info);
+            }
+
+            // Invalid model state.
+            if (!ModelState.IsValid)
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+
+            #endregion
+
+            #region Specialty validation
+
+            // Find the list of speciaties match with searched condition.
+            var specialties = await _repositorySpecialty.FindSpecialty(info.Specialty);
+
+            // Invalid results set.
+            if (specialties == null || specialties.Count != 1)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest,
+                    new
+                    {
+                        Errors = new[] { string.Format(Language.ValueIsInvalid, "Specialty") }
+                    });
+            }
+
+            // Retrieve the first queried result.
+            var specialty = specialties.FirstOrDefault();
+            if (specialty == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest,
+                    new
+                    {
+                        Errors = new[] { string.Format(Language.ValueIsInvalid, "Specialty") }
+                    });
+            }
+
+            #endregion
+
+            #region City validation
+
+            // Find the list of city match with condition.
+            var cities = await _repositoryPlace.FindCity(info.City);
+            if (cities == null || cities.Count != 1)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest,
+                    new
+                    {
+                        Errors = new[] { string.Format(Language.ValueIsInvalid, "City") }
+                    });
+            }
+            
+            // Retrieve the first queried result.
+            var city = cities.FirstOrDefault();
+            if (city == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest,
+                   new
+                   {
+                       Errors = new[] { string.Format(Language.ValueIsInvalid, "City") }
+                   });
+            }
+
+            #endregion
+
+            #region Person validation
+
+            // Check whether email has been used or not.
+            var result = await _repositoryAccount.FindPersonAsync(null, info.Email, null, null, null);
+
+            // Found a person. This means email has been used before.
+            if (result != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.Conflict,
+                    new
+                    {
+                        Error = $"{Language.WarnAccountAlreadyExists}"
+                    });
+            }
+
+            #endregion
+
+            #endregion
+            
+            // Account initialization.
+            var person = new Person();
+            person.FirstName = info.FirstName;
+            person.LastName = info.LastName;
+            person.Birthday = info.Birthday;
+            person.Gender = (byte)info.Gender;
+            person.Email = info.Email;
+            person.Password = info.Password;
+            person.Phone = info.Phone;
+            person.Address = info.Address;
+            person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            person.Role = (byte)Role.Doctor;
+            person.Status = (byte)StatusAccount.Pending;
+
+            var doctor = new Doctor();
+            doctor.SpecialtyId = specialty.Id;
+            doctor.SpecialtyName = specialty.Name;
+            doctor.CityId = city.Id;
+            
+            // Assign personal information to patient.
+            doctor.Person = person;
+
+            try
+            {
+                // Save patient data to database.
+                doctor = await _repositoryAccount.InitializeDoctorAsync(doctor);
+                
+                // Tell doctor to wait for admin confirmation.
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    Doctor = new
+                    {
+                        doctor.Id,
+                        doctor.Person.FirstName,
+                        doctor.Person.LastName,
+                        doctor.Person.Email,
+                        doctor.Person.Birthday,
+                        doctor.Person.Gender,
+                        doctor.Person.Address,
+                        doctor.Person.Phone,
+                        doctor.Person.Role,
+                        doctor.Person.Status,
+                        doctor.Person.Photo,
+                        doctor.Money,
+                        Specialty = new
+                        {
+                            specialty.Id,
+                            specialty.Name
+                        },
+                        City = new
+                        {
+                            city.Id,
+                            city.Name
+                        },
+                        Country = new
+                        {
+                            city.Country.Id,
+                            city.Country.Name
+                        },
+                        doctor.Rank,
+                        doctor.Voters,
+                        doctor.Person.Created
+                    }
+                });
+            }
+            catch (Exception exception)
+            {
+                // There is something wrong with server.
+                // Log the error.
+                _log.Error($"Cannot create account: '{person.Email}'", exception);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
         }
 
         #endregion
@@ -72,7 +366,7 @@ namespace Olives.Controllers
             }
 
             // Requested user is not a patient or a doctor.
-            if (result.Role != (byte) Role.Patient && result.Role != (byte) Role.Doctor)
+            if (result.Role != (byte)Role.Patient && result.Role != (byte)Role.Doctor)
             {
                 _log.Error($"{loginViewModel.Email} is a admin, therefore, it cannot be used here.");
                 ModelState.AddModelError("Credential", Language.InvalidLoginInfo);
@@ -80,15 +374,15 @@ namespace Olives.Controllers
             }
 
             // Login is failed because of account is pending.
-            if ((StatusAccount) result.Status == StatusAccount.Pending)
+            if ((StatusAccount)result.Status == StatusAccount.Pending)
             {
                 // Tell doctor to contact admin for account verification.
-                if (result.Role == (byte) Role.Doctor)
+                if (result.Role == (byte)Role.Doctor)
                 {
                     _log.Error($"Access is forbidden because {loginViewModel.Email} is waiting for admin confirmation");
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
-                        Errors = new[] {Language.WarnPendingAccount}
+                        Errors = new[] { Language.WarnPendingAccount }
                     });
                 }
 
@@ -96,18 +390,18 @@ namespace Olives.Controllers
                 // Tell patient to access his/her email to verify the account.
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    Errors = new[] {Language.WarnPendingAccount}
+                    Errors = new[] { Language.WarnPendingAccount }
                 });
             }
 
             // Login is failed because of account has been disabled.
-            if ((StatusAccount) result.Status == StatusAccount.Inactive)
+            if ((StatusAccount)result.Status == StatusAccount.Inactive)
             {
                 _log.Error($"Access is forbidden because {loginViewModel.Email} has been disabled");
                 // Tell patient to access his/her email to verify the account.
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    Errors = new[] {Language.WarnDisabledAccount}
+                    Errors = new[] { Language.WarnDisabledAccount }
                 });
             }
 
@@ -129,138 +423,76 @@ namespace Olives.Controllers
                     result.LastModified,
                     result.Status,
                     result.Address,
-                    result.Longitude,
-                    result.Latitude,
                     result.Photo
                 }
             });
         }
 
-        #endregion
+        /// <summary>
+        ///     Request an activation code for not activated account.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        [Route("api/account/code")]
+        [HttpGet]
+        public async Task<HttpResponseMessage> RequestActivationCode([FromUri] AccountViewModel info)
+        {
+            #region ModelState result
 
-        #region Sign up
+            // Model hasn't been initialized.
+            if (info == null)
+            {
+                _log.Error("Invalid account information");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new
+                {
+                    Errors = new[] { Language.InvalidRequestParameters }
+                });
+            }
 
-        ///// <summary>
-        /////     Register an account to Olive system.
-        ///// </summary>
-        ///// <param name="info"></param>
-        ///// <returns></returns>
-        //[Route("api/account/register")]
-        //[HttpPost]
-        //public async Task<HttpResponseMessage> Register([FromBody] OliveInitializePersonViewModel info)
-        //{
-        //    // Error response initialization.
-        //    var responseError = new ResponseErrror();
-        //    responseError.Errors = new List<string>();
+            // Invalid model state.
+            if (!ModelState.IsValid)
+            {
+                _log.Error("Invalid account information");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
 
-        //    #region ModelState validation
+            #endregion
 
-        //    // Information hasn't been initialize.
-        //    if (info == null)
-        //    {
-        //        // Initialize the default instance and do the validation.
-        //        info = new OliveInitializePersonViewModel();
-        //        Validate(info);
-        //    }
+            #region Account query
 
-        //    // Invalid model state.
-        //    if (!ModelState.IsValid)
-        //        return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            // Find the account whose email and password match with given conditions.
+            var account =
+                await _repositoryAccount.FindPersonAsync(null, info.Email, info.Password, (byte)Role.Patient, null);
+            if (account == null)
+            {
+                _log.Error($"Couldn't find account: '{info.Email}' : '{info.Password}'");
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+            }
 
-        //    #endregion
+            // Account is not waiting for being activated. Treat this as not found.
+            if (account.Status != (byte)StatusAccount.Pending)
+            {
+                _log.Error($"Couldn't create activation code for '{info.Email}' due to its status {account.Status}");
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+            }
 
-        //    #region Database record validation
+            #endregion
 
-        //    // Check whether email has been used or not.
-        //    var person = _repositoryAccount.FindPerson(info.Email, null, null);
-        //    if (person != null)
-        //    {
-        //        responseError.Errors.Add(Language.EmailExistInSystem);
-        //        return Request.CreateResponse(HttpStatusCode.Conflict, responseError);
-        //    }
+            // Initialize activation code.
+            var activationCode = await _repositoryActivationCode.InitializeActivationCodeAsync(account.Id, DateTime.Now);
 
-        //    #endregion
+            // Url construction.
+            var url = Url.Link("Default",
+                new { controller = "AccountVerify", action = "Index", code = activationCode.Code });
 
-        //    // Account initialization.
-        //    var account = new Person();
-        //    account.FirstName = info.FirstName;
-        //    account.LastName = info.LastName;
-        //    account.Birthday = info.Birthday;
-        //    account.Gender = info.Gender;
-        //    account.Email = info.Email;
-        //    account.Password = info.Password;
-        //    account.Phone = info.Phone;
-        //    account.Money = 0;
-        //    account.Created = DateTime.Now.Ticks;
-        //    account.Role = info.Role;
-        //    account.Status = AccountStatus.Active;
-        //    account.Role = info.Role;
+            // Write an email to user to notify him/her to activate account.
+            await
+                _emailService.SendActivationCode(info.Email, Language.OliveActivationCodeEmailTitle, account.FirstName,
+                    account.LastName, activationCode, url);
 
-        //    // TODO : Change status to Pending.
-        //    account.Status = AccountStatus.Active;
-
-        //    #region Initialize patient
-
-        //    if (account.Role == AccountRole.Patient)
-        //    {
-        //        var activationCode = new ActivationCode();
-        //        activationCode.Code = Guid.NewGuid().ToString();
-        //        activationCode.Expire = DateTime.Now.AddHours(24).Ticks;
-
-        //        var patientResult = await _repositoryAccount.InitializePerson(account, activationCode);
-        //        if (patientResult == null)
-        //        {
-        //            // Initialize error response to client.
-        //            responseError.Errors.Add(Language.InternalServerError);
-        //            return Request.CreateResponse(HttpStatusCode.InternalServerError, responseError);
-        //        }
-
-        //        // TODO: Send mail with activation code to client.
-
-        //        // Tell client to check his/her email to verify this account.
-        //        return Request.CreateResponse(HttpStatusCode.OK, new
-        //        {
-        //            User = patientResult.Person,
-        //            Messages = new[] {Language.AccessEmailForVerification}
-        //        });
-        //    }
-
-        //    #endregion
-
-        //    #region Initialize doctor
-
-        //    // Initialize person into database.
-        //    var result = await _repositoryAccount.InitializePerson(account);
-
-        //    // Cannot create an account to system.
-        //    if (result == null)
-        //    {
-        //        // Initialize error response to client.
-        //        responseError.Errors.Add(Language.InternalServerError);
-        //        return Request.CreateResponse(HttpStatusCode.InternalServerError, responseError);
-        //    }
-
-        //    // Tell doctor to wait for admin confirmation.
-        //    return Request.CreateResponse(HttpStatusCode.OK, new
-        //    {
-        //        User = result.Data,
-        //        Messages = new[] {Language.WaitForAdminConfirmation}
-        //    });
-
-        //    #endregion
-        //}
-
-        //[Route("api/account/code")]
-        //[HttpPost]
-        //public void SendActivationCode([FromBody] ActivationSendViewModel info)
-        //{
-        //    var activationCode = new ActivationCode();
-        //    activationCode.Expire = DateTime.Now.AddDays(24).Millisecond;
-        //    activationCode.Code = Guid.NewGuid().ToString("N");
-
-        //    _emailService.SendActivationCode(info.To, Language.OliveActivationCodeEmailTitle, info.FirstName,
-        //        info.LastName, activationCode);
-        //}
+            // Respond status 200 with no content to notify user to check email for activation code.
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
 
         #endregion
 
@@ -270,6 +502,21 @@ namespace Olives.Controllers
         ///     Repository of accounts
         /// </summary>
         private readonly IRepositoryAccount _repositoryAccount;
+
+        /// <summary>
+        ///     Repository of activation codes.
+        /// </summary>
+        private readonly IRepositoryActivationCode _repositoryActivationCode;
+
+        /// <summary>
+        /// Repository of specialty.
+        /// </summary>
+        private readonly IRepositorySpecialty _repositorySpecialty;
+
+        /// <summary>
+        /// Repository of places.
+        /// </summary>
+        private readonly IRepositoryPlace _repositoryPlace;
 
         /// <summary>
         ///     Instance of module which is used for logging.

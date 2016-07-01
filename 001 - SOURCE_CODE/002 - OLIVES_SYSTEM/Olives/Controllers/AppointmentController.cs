@@ -13,6 +13,7 @@ using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
+using Shared.ViewModels;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Initialize;
 
@@ -193,11 +194,8 @@ namespace Olives.Controllers
             // Model hasn't been initialized.
             if (filter == null)
             {
-                _log.Error("Invalid appointment filter request parameters");
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new
-                {
-                    Errors = new[] {Language.InvalidRequestParameters}
-                });
+                filter = new FilterAppointmentViewModel();
+                Validate(filter);
             }
 
             // Invalid model state.
@@ -242,7 +240,31 @@ namespace Olives.Controllers
 
             // Filter appointment by using specific conditions.
             var response = await _repositoryAppointment.FilterAppointmentAsync(filter, accountEmail, accountPassword);
-            return Request.CreateResponse(HttpStatusCode.OK, response);
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                Appointments = response.Appointments.Select(x => new
+                {
+                    x.Id,
+                    x.Created,
+                    Dater = new
+                    {
+                        x.Dater.Id,
+                        x.Dater.FirstName,
+                        x.Dater.LastName
+                    },
+                    Maker = new 
+                    {
+                        x.Maker.Id,
+                        x.Maker.FirstName,
+                        x.Maker.LastName
+                    },
+                    x.From,
+                    x.To,
+                    x.LastModified,
+                    x.Note,
+                    x.Status
+                })
+            });
         }
 
         #endregion
