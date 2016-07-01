@@ -317,7 +317,7 @@
     <value>W002</value>
     <comment>Warn front-end that account is disabled</comment>
   </data>
-  <data name="NoRecordHasBeenFound" xml:space="preserve">
+  <data name="WarnNoRecord" xml:space="preserve">
     <value>W003</value>
     <comment>Warn front-end that no record has been found</comment>
   </data>
@@ -388,5 +388,17 @@
   </data>
   <data name="ValueIsInvalid" xml:space="preserve">
     <value>{0} is invalid</value>
+  </data>
+  <data name="WarnTargetAccountNotFound" xml:space="preserve">
+    <value>W015</value>
+    <comment>Warn front-end that target account is not found.</comment>
+  </data>
+  <data name="WarnRelationshipAlreadyExist" xml:space="preserve">
+    <value>W016</value>
+    <comment>Warn front-end that the relationship already exists.</comment>
+  </data>
+  <data name="WarnRelationNotFound" xml:space="preserve">
+    <value>W017</value>
+    <comment>Warn front-end that the relation cannot be found.</comment>
   </data>
 </root>

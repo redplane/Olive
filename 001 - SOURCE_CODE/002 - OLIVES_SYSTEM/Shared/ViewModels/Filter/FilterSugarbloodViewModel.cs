@@ -2,6 +2,7 @@
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
+using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Resources;
 
@@ -50,6 +51,17 @@ namespace Shared.ViewModels.Filter
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? MaxLastModified { get; set; }
+
+
+        /// <summary>
+        /// Which property should be used for sorting.
+        /// </summary>
+        public NoteResultSort Sort { get; set; } = NoteResultSort.Time;
+
+        /// <summary>
+        /// Whether record should be sorted ascendingly or decendingly.
+        /// </summary>
+        public SortDirection Direction { get; set; } = SortDirection.Decending;
 
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof(Language),

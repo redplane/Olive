@@ -457,15 +457,6 @@ namespace Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to W003.
-        /// </summary>
-        public static string NoRecordHasBeenFound {
-            get {
-                return ResourceManager.GetString("NoRecordHasBeenFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Olive account activation code.
         /// </summary>
         public static string OliveActivationCodeEmailTitle {
@@ -790,6 +781,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to W003.
+        /// </summary>
+        public static string WarnNoRecord {
+            get {
+                return ResourceManager.GetString("WarnNoRecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to W004.
         /// </summary>
         public static string WarnNotAuthorizedAccount {
@@ -831,6 +831,33 @@ namespace Shared.Resources {
         public static string WarnRelationNotExist {
             get {
                 return ResourceManager.GetString("WarnRelationNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W017.
+        /// </summary>
+        public static string WarnRelationNotFound {
+            get {
+                return ResourceManager.GetString("WarnRelationNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W016.
+        /// </summary>
+        public static string WarnRelationshipAlreadyExist {
+            get {
+                return ResourceManager.GetString("WarnRelationshipAlreadyExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W015.
+        /// </summary>
+        public static string WarnTargetAccountNotFound {
+            get {
+                return ResourceManager.GetString("WarnTargetAccountNotFound", resourceCulture);
             }
         }
     }

@@ -99,7 +99,12 @@ namespace Olives
                 .As<IRepositorySpecialty>()
                 .SingleInstance();
 
-            // Repository allergy registration.
+            // Repository specialty registration.
+            builder.RegisterType<RepositoryHeartbeat>()
+                .As<IRepositoryHeartbeat>()
+                .SingleInstance();
+
+            // Repository heartbeat registration.
             builder.RegisterType<RepositoryAllergy>()
                 .As<IRepositoryAllergy>()
                 .SingleInstance();

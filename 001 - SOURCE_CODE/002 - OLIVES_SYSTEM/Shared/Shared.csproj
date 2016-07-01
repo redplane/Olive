@@ -81,6 +81,10 @@
     <Compile Include="Attributes\NumericCompareAttribute.cs" />
     <Compile Include="Attributes\RegexMatchAttribute.cs" />
     <Compile Include="Attributes\RequiredIfAttribute.cs" />
+    <Compile Include="Enumerations\Filter\NoteResultSort.cs" />
+    <Compile Include="Enumerations\RelationAccount.cs" />
+    <Compile Include="Enumerations\StatusRelation.cs" />
+    <Compile Include="Enumerations\SortDirection.cs" />
     <Compile Include="Enumerations\StatusAccount.cs" />
     <Compile Include="Constants\HeaderFields.cs" />
     <Compile Include="Constants\FieldLength.cs" />

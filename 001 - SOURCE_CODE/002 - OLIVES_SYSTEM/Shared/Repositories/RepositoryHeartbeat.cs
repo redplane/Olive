@@ -3,6 +3,8 @@ using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
+using Shared.Enumerations;
+using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels;
@@ -42,7 +44,7 @@ namespace Shared.Repositories
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-            
+
             // Find heartbeat note by using id.
             var results = context.Heartbeats.Where(x => x.Id == id);
 
@@ -95,6 +97,12 @@ namespace Shared.Repositories
             if (filter.MaxCreated != null)
                 results = results.Where(x => x.Created <= filter.MaxCreated);
 
+            // Time has been specified.
+            if (filter.MinTime != null)
+                results = results.Where(x => x.Time >= filter.MinTime);
+            if (filter.MaxTime != null)
+                results = results.Where(x => x.Time <= filter.MaxTime);
+
             // LastModified has been specified.
             if (filter.MinLastModified != null)
                 results = results.Where(x => x.LastModified >= filter.MinLastModified);
@@ -113,7 +121,40 @@ namespace Shared.Repositories
             response.Total = await results.CountAsync();
 
             // Calculate what records should be shown up.
-            var skippedRecords = filter.Page*filter.Records;
+            var skippedRecords = filter.Page * filter.Records;
+
+            // Sort the result.
+            switch (filter.Sort)
+            {
+                case NoteResultSort.Created:
+                    if (filter.Direction == SortDirection.Ascending)
+                    {
+                        results = results.OrderBy(x => x.Created);
+                        break;
+                    }
+
+                    results = results.OrderByDescending(x => x.Created);
+                    break;
+                case NoteResultSort.LastModified:
+                    if (filter.Direction == SortDirection.Ascending)
+                    {
+                        results = results.OrderBy(x => x.LastModified);
+                        break;
+                    }
+                    results = results.OrderByDescending(x => x.LastModified);
+                    break;
+                default:
+                    if (filter.Direction == SortDirection.Ascending)
+                    {
+                        results = results.OrderBy(x => x.Time);
+                        break;
+                    }
+
+                    results = results.OrderByDescending(x => x.Time);
+                    break;
+            }
+
+            // Summarize results.
             response.Heartbeats = await results.Skip(skippedRecords)
                 .Take(filter.Records)
                 .Select(x => new HeartbeatViewModel()
@@ -122,7 +163,8 @@ namespace Shared.Repositories
                     Id = x.Id,
                     LastModified = x.LastModified,
                     Note = x.Note,
-                    Rate = x.Rate
+                    Rate = x.Rate,
+                    Time = x.Time
                 })
                 .ToListAsync();
 

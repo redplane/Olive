@@ -5,7 +5,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
+using Olives.Attributes;
 using Olives.Interfaces;
+using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Helpers;
 using Shared.Interfaces;
@@ -492,6 +494,183 @@ namespace Olives.Controllers
 
             // Respond status 200 with no content to notify user to check email for activation code.
             return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+        #endregion
+
+        #region Relation
+
+        /// <summary>
+        /// Request to create a relationship to a target person.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        [Route("api/account/relation")]
+        [HttpPost]
+        [OlivesAuthorize(new[] { Role.Patient })]
+        public async Task<HttpResponseMessage> InitializeRelation([FromBody] int target)
+        {
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Find the target.
+            var person = await _repositoryAccount.FindPersonAsync(target, null, null, null, StatusAccount.Active);
+
+            // Cannot find the target.
+            if (person == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnTargetAccountNotFound}"
+                });
+            }
+
+            // Check whether these two people have relation or not.
+            var relationship = await _repositoryAccount.FindRelation(requester.Id, target);
+
+            // 2 people already make a relationship to each other.
+            if (relationship != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.Conflict, new
+                {
+                    Error = $"{Language.WarnRelationshipAlreadyExist}"
+                });
+            }
+
+            // Base on role of 2 people to decide the relation.
+            var targetRole = (Role)person.Role;
+            
+            // Create an instance of relation.
+            var relation = new Relation();
+            relation.Source = person.Id;
+            relation.Target = target;
+            relation.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            relation.Status = (byte) StatusRelation.Pending;
+
+            // Patient send request to doctor or vice versa.
+            if (targetRole == Role.Patient)
+                relation.Type = (byte) RelationAccount.Relative;
+            else
+                relation.Type = (byte) RelationAccount.Treatment;
+
+            await _repositoryAccount.InitializeRelationAsync(relation);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                Relation = new
+                {
+                    relation.Id,
+                    relation.Source,
+                    relation.Target,
+                    relation.Type,
+                    relation.Created,
+                    relation.Status
+                }
+            });
+        }
+
+        /// <summary>
+        /// Confirm a pending relation.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Route("api/account/confirmRelation")]
+        [HttpPost]
+        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
+        public async Task<HttpResponseMessage> ConfirmRelation([FromBody] int id)
+        {
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            
+            // Find the relationship by using id.
+            var relationships = await _repositoryAccount.FindRelation(id, null, requester.Id, (byte) StatusRelation.Pending);
+
+            // No relationship has been returned.
+            if (relationships == null || relationships.Count != 1)
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRelationNotFound}"
+                });
+            }
+
+            // Retrieve the relationship.
+            var relationship = relationships.FirstOrDefault();
+
+            // Invalid relationship.
+            if (relationship == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRelationNotFound}"
+                });
+            }
+
+            relationship.Status = (byte) StatusRelation.Active;
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                Relation = new
+                {
+                    relationship.Id,
+                    relationship.Source,
+                    relationship.Target,
+                    relationship.Type,
+                    relationship.Created,
+                    relationship.Status
+                }
+            });
+        }
+
+        /// <summary>
+        /// Remove an active relation.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Route("api/account/removeRelation")]
+        [HttpPost]
+        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
+        public async Task<HttpResponseMessage> RemoveRelation([FromBody] int id)
+        {
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Find the relationship by using id.
+            var relationships = await _repositoryAccount.FindRelation(id, requester.Id, null, (byte)StatusRelation.Active);
+
+            // No relationship has been returned.
+            if (relationships == null || relationships.Count != 1)
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRelationNotFound}"
+                });
+            }
+
+            // Retrieve the relationship.
+            var relationship = relationships.FirstOrDefault();
+
+            // Invalid relationship.
+            if (relationship == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRelationNotFound}"
+                });
+            }
+
+            relationship.Status = (byte)StatusRelation.Active;
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                Relation = new
+                {
+                    relationship.Id,
+                    relationship.Source,
+                    relationship.Target,
+                    relationship.Type,
+                    relationship.Created,
+                    relationship.Status
+                }
+            });
         }
 
         #endregion

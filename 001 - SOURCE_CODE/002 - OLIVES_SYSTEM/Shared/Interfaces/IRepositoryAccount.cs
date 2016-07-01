@@ -119,5 +119,35 @@ namespace Shared.Interfaces
         Task<bool> ActivatePatientAccount(string code);
 
         #endregion
+
+        #region Relation
+
+        /// <summary>
+        /// Find the relation between 2 people.
+        /// </summary>
+        /// <param name="firstPerson"></param>
+        /// <param name="secondPerson"></param>
+        /// <returns></returns>
+        Task<IList<Relation>> FindRelation(int firstPerson, int secondPerson);
+
+        /// <summary>
+        /// Initialize a relationship to database.
+        /// </summary>
+        /// <param name="relation"></param>
+        /// <returns></returns>
+        Task<Relation> InitializeRelationAsync(Relation relation);
+
+        /// <summary>
+        /// Find a relation by using specific information.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        Task<IList<Relation>> FindRelation(int? id, int? source, int? target, byte? type);
+
+
+        #endregion
     }
 }

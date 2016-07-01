@@ -19,6 +19,7 @@ namespace Shared.Models
         public int Target { get; set; }
         public byte Type { get; set; }
         public double Created { get; set; }
+        public byte Status { get; set; }
     
         public virtual Person Person { get; set; }
         public virtual Person Person1 { get; set; }

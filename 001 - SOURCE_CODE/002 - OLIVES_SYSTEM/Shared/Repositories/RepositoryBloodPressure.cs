@@ -4,6 +4,8 @@ using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
+using Shared.Enumerations;
+using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels;
@@ -96,6 +98,13 @@ namespace Shared.Repositories
             if (filter.MaxDiastolic != null)
                 results = results.Where(x => x.Diastolic <= filter.MaxDiastolic);
 
+
+            // Time has been specified.
+            if (filter.MinTime != null)
+                results = results.Where(x => x.Time >= filter.MinTime);
+            if (filter.MaxTime != null)
+                results = results.Where(x => x.Time <= filter.MaxTime);
+
             // Created has been specified.
             if (filter.MinCreated != null)
                 results = results.Where(x => x.Created >= filter.MinCreated);
@@ -120,7 +129,39 @@ namespace Shared.Repositories
             response.Total = await results.CountAsync();
 
             // Calculate what records should be shown up.
-            var skippedRecords = filter.Page*filter.Records;
+            var skippedRecords = filter.Page * filter.Records;
+
+            // Sort the result.
+            switch (filter.Sort)
+            {
+                case NoteResultSort.Created:
+                    if (filter.Direction == SortDirection.Ascending)
+                    {
+                        results = results.OrderBy(x => x.Created);
+                        break;
+                    }
+
+                    results = results.OrderByDescending(x => x.Created);
+                    break;
+                case NoteResultSort.LastModified:
+                    if (filter.Direction == SortDirection.Ascending)
+                    {
+                        results = results.OrderBy(x => x.LastModified);
+                        break;
+                    }
+                    results = results.OrderByDescending(x => x.LastModified);
+                    break;
+                default:
+                    if (filter.Direction == SortDirection.Ascending)
+                    {
+                        results = results.OrderBy(x => x.Time);
+                        break;
+                    }
+
+                    results = results.OrderByDescending(x => x.Time);
+                    break;
+            }
+            
             response.BloodPressures = await results.Skip(skippedRecords)
                 .Take(filter.Records)
                 .Select(x => new BloodPressureViewModel()

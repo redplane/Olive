@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -16,11 +17,11 @@ using Shared.Resources;
 using Shared.ViewModels;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Initialize;
+using Shared.ViewModels.Response;
 
 namespace Olives.Controllers
 {
     [Route("api/bloodpressure")]
-    [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
     public class BloodPressureController : ApiParentController
     {
         #region Constructors
@@ -51,6 +52,7 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
             // Retrieve information of person who sent request.
@@ -62,9 +64,10 @@ namespace Olives.Controllers
             // No result has been received.
             if (results == null || results.Count != 1)
             {
+                // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.NoRecordHasBeenFound}
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 
@@ -95,6 +98,7 @@ namespace Olives.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPost]
+        [OlivesAuthorize(new[] { Role.Patient })]
         public async Task<HttpResponseMessage> Post([FromBody] InitializeBloodPressureViewModel info)
         {
             #region ModelState result
@@ -153,6 +157,7 @@ namespace Olives.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPut]
+        [OlivesAuthorize(new[] { Role.Patient })]
         public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] InitializeBloodPressureViewModel info)
         {
             #region ModelState result
@@ -188,17 +193,17 @@ namespace Olives.Controllers
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.WarnRecordNotFound}
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 
             // Records are conflict.
             if (results.Count != 1)
             {
-                // Tell front-end that records are conflict.
-                return Request.CreateResponse(HttpStatusCode.Conflict, new
+                // Tell front-end, no record has been found.
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.WarnRecordConflict}
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 
@@ -209,7 +214,7 @@ namespace Olives.Controllers
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.WarnRecordNotFound}
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 
@@ -244,6 +249,7 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
+        [OlivesAuthorize(new[] { Role.Patient })]
         public async Task<HttpResponseMessage> Delete([FromUri] int id)
         {
             // Retrieve information of person who sent request.
@@ -258,17 +264,17 @@ namespace Olives.Controllers
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.WarnRecordNotFound}
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 
             // Records are conflict.
             if (result.Count != 1)
             {
-                // Tell front-end that records are conflict.
-                return Request.CreateResponse(HttpStatusCode.Conflict, new
+                // Tell front-end, no record has been found.
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.WarnRecordConflict}
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 
@@ -279,7 +285,7 @@ namespace Olives.Controllers
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.WarnRecordNotFound}
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 
@@ -294,7 +300,7 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        [Route("api/heartbeat/filter")]
+        [Route("api/bloodpressure/filter")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterBloodPressureViewModel info)
@@ -304,11 +310,8 @@ namespace Olives.Controllers
             // Model hasn't been initialized.
             if (info == null)
             {
-                _log.Error("Invalid allergies filter request parameters");
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new
-                {
-                    Errors = new[] {Language.InvalidRequestParameters}
-                });
+                info = new FilterBloodPressureViewModel();
+                Validate(info);
             }
 
             // Invalid model state.
@@ -332,10 +335,11 @@ namespace Olives.Controllers
             // No result has been received.
             if (results == null || results.BloodPressures == null || results.BloodPressures.Count < 1)
             {
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Errors = new[] {Language.NoRecordHasBeenFound}
-                });
+                results = new ResponseBloodPressureFilter();
+                results.BloodPressures = new List<BloodPressureViewModel>();
+                results.Total = 0;
+
+                return Request.CreateResponse(HttpStatusCode.OK, results);
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, results);

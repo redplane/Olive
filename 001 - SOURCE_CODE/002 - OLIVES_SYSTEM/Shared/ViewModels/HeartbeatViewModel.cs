@@ -8,6 +8,8 @@
 
         public string Note { get; set; }
 
+        public double Time { get; set; }
+
         public double Created { get; set; }
 
         public double? LastModified { get; set; }

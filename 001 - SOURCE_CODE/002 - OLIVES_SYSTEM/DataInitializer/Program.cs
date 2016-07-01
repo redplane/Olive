@@ -2,9 +2,11 @@
 using System.Data.Entity.Migrations;
 using System.Data.Entity.Validation;
 using System.Linq;
+using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Helpers;
 using Shared.Models;
+using Shared.Repositories;
 
 namespace DataInitializer
 {
@@ -12,11 +14,13 @@ namespace DataInitializer
     {
         private static void Main(string[] args)
         {
-            InitializePlaces(50);
-            InitializeSpecialties(50);
-            InitializeDoctor(50);
-            InitializePatient(50);
-            InitializeAdmin(50);
+
+            //InitializePlaces(50);
+            //InitializeSpecialties(50);
+            //InitializeDoctor(50);
+            //InitializePatient(50);
+            //InitializeAdmin(50);
+            InitializeHeartbeatNote("patient26@gmail.com", 90);
         }
 
         /// <summary>
@@ -68,7 +72,37 @@ namespace DataInitializer
             }
            
         }
-        
+
+        private static void InitializeHeartbeatNote(string account, int records)
+        {
+            var context = new OlivesHealthEntities();
+            var repositoryAccount = new RepositoryAccount();
+            var person = repositoryAccount.FindPerson(null, account, null, (byte) Role.Patient);
+            if (person == null)
+                throw new Exception($"Cannot find {account}");
+
+            Console.WriteLine("Found {0}", person.Email);
+            var random = new Random();
+            var iMinHeartRate = (int) Values.MinHeartRate;
+            var iMaxHeartRate = (int) Values.MaxHeartRate;
+
+            var currentTime = DateTime.Now;
+            for (var i = 0; i < records; i++)
+            {
+
+                var subtractedTime = currentTime.Subtract(TimeSpan.FromDays(i));
+                var heartbeatNote = new Heartbeat();
+                heartbeatNote.Owner = person.Id;
+                heartbeatNote.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(currentTime);
+                heartbeatNote.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(currentTime);
+                heartbeatNote.Time = EpochTimeHelper.Instance.DateTimeToEpochTime(subtractedTime);
+                heartbeatNote.Rate = random.Next(iMinHeartRate, iMaxHeartRate);
+                
+                context.Heartbeats.Add(heartbeatNote);
+            }
+
+            context.SaveChanges();
+        }
 
         /// <summary>
         /// Initialize a list of specialty.

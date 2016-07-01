@@ -19,8 +19,7 @@ using Shared.ViewModels.Initialize;
 
 namespace Olives.Controllers
 {
-    [Route("api/")]
-    [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+    [Route("api/sugarblood")]
     public class SugarbloodController : ApiParentController
     {
         #region Constructors
@@ -51,6 +50,7 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
             // Retrieve information of person who sent request.
@@ -62,9 +62,10 @@ namespace Olives.Controllers
             // No result has been received.
             if (results == null || results.Count != 1)
             {
+                // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.NoRecordHasBeenFound}
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 
@@ -93,6 +94,7 @@ namespace Olives.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPost]
+        [OlivesAuthorize(new[] { Role.Patient })]
         public async Task<HttpResponseMessage> Post([FromBody] InitializeSugarbloodViewModel info)
         {
             #region ModelState result
@@ -100,11 +102,8 @@ namespace Olives.Controllers
             // Model hasn't been initialized.
             if (info == null)
             {
-                _log.Error("Invalid allergies filter request parameters");
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new
-                {
-                    Errors = new[] {Language.InvalidRequestParameters}
-                });
+                info = new InitializeSugarbloodViewModel();
+                Validate(info);
             }
 
             // Invalid model state.
@@ -150,6 +149,7 @@ namespace Olives.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPut]
+        [OlivesAuthorize(new[] { Role.Patient })]
         public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] InitializeSugarbloodViewModel info)
         {
             #region ModelState result
@@ -180,22 +180,12 @@ namespace Olives.Controllers
             var results = await _repositorySugarblood.FindSugarbloodNoteAsync(id, requester.Id);
 
             // Not record has been found.
-            if (results == null || results.Count < 1)
+            if (results == null || results.Count != 1)
             {
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.WarnRecordNotFound}
-                });
-            }
-
-            // Records are conflict.
-            if (results.Count != 1)
-            {
-                // Tell front-end that records are conflict.
-                return Request.CreateResponse(HttpStatusCode.Conflict, new
-                {
-                    Errors = new[] {Language.WarnRecordConflict}
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 
@@ -206,7 +196,7 @@ namespace Olives.Controllers
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.WarnRecordNotFound}
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 
@@ -239,6 +229,7 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
+        [OlivesAuthorize(new[] { Role.Patient })]
         public async Task<HttpResponseMessage> Delete([FromUri] int id)
         {
             // Retrieve information of person who sent request.
@@ -248,22 +239,12 @@ namespace Olives.Controllers
             var results = await _repositorySugarblood.FindSugarbloodNoteAsync(id, requester.Id);
 
             // Not record has been found.
-            if (results == null || results.Count < 1)
+            if (results == null || results.Count != 1)
             {
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.WarnRecordNotFound}
-                });
-            }
-
-            // Records are conflict.
-            if (results.Count != 1)
-            {
-                // Tell front-end that records are conflict.
-                return Request.CreateResponse(HttpStatusCode.Conflict, new
-                {
-                    Errors = new[] {Language.WarnRecordConflict}
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 
@@ -274,7 +255,7 @@ namespace Olives.Controllers
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.WarnRecordNotFound}
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 
@@ -289,7 +270,7 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        [Route("api/heartbeat/filter")]
+        [Route("api/sugarblood/filter")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterSugarbloodViewModel info)
@@ -299,11 +280,8 @@ namespace Olives.Controllers
             // Model hasn't been initialized.
             if (info == null)
             {
-                _log.Error("Invalid allergies filter request parameters");
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new
-                {
-                    Errors = new[] {Language.InvalidRequestParameters}
-                });
+                info = new FilterSugarbloodViewModel();
+                Validate(info);
             }
 
             // Invalid model state.
@@ -325,11 +303,12 @@ namespace Olives.Controllers
             var results = await _repositorySugarblood.FilterSugarbloodNoteAsync(info);
 
             // No result has been received.
-            if (results == null || results.Sugarbloods == null || results.Sugarbloods.Count < 1)
+            if (results == null || results.Sugarbloods == null || results.Sugarbloods.Count != 1)
             {
+                // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.NoRecordHasBeenFound}
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 

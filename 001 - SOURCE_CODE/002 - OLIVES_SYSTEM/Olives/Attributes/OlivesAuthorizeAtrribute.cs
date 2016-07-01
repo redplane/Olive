@@ -58,13 +58,9 @@ namespace Olives.Attributes
             if (string.IsNullOrEmpty(accountEmail) || string.IsNullOrEmpty(accountPassword))
             {
                 // Treat this request is unauthorized.
-                var errorCode = $"{Language.WarnAccountNotLogin}";
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
                 {
-                    Error = new
-                    {
-                        errorCode
-                    }
+                    Error = $"{Language.WarnAccountNotLogin}"
                 });
                 
                 return;
@@ -77,10 +73,9 @@ namespace Olives.Attributes
             if (person == null)
             {
                 // Treat this request is unauthorized.
-                var errorCode = $"{Language.WarnAccountNotLogin}";
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
                 {
-                    Error = new { errorCode }
+                    Error = $"{Language.WarnAccountNotLogin}"
                 });
                 return;
             }
@@ -89,10 +84,9 @@ namespace Olives.Attributes
             if ((StatusAccount)person.Status == StatusAccount.Inactive)
             {
                 // Treat the login isn't successful because of disabled account.
-                var errorCode = $"{Language.WarnDisabledAccount}";
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
                 {
-                    Error = new { errorCode }
+                    Error = $"{Language.WarnDisabledAccount}"
                 });
 
                 return;
@@ -102,10 +96,9 @@ namespace Olives.Attributes
             if ((StatusAccount)person.Status == StatusAccount.Pending)
             {
                 // Treat the login isn't successful because of pending account.
-                var errorCode = $"{Language.WarnPendingAccount}";
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
                 {
-                    Error = new { errorCode }
+                    Error = $"{Language.WarnPendingAccount}"
                 });
 
                 return;
@@ -114,18 +107,15 @@ namespace Olives.Attributes
             // Account role isn't enough to access the function.
             if (!Roles.Any(x => x == person.Role))
             {
-                // Treat the request is forbidden.
-                var errorCode = $"{Language.WarnForbiddenAccessMethod}";
-
                 // Role isn't valid. Tell the client the access is forbidden.
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    Error = new { errorCode }
+                    Error = $"{Language.WarnForbiddenAccessMethod}"
                 });
             }
 
             // Store the requester information in action argument.
-            actionContext.ActionArguments["Account"] = person;
+            actionContext.ActionArguments[HeaderFields.RequestAccountStorage] = person;
         }
     }
 }

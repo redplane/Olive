@@ -2,6 +2,7 @@
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
+using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Resources;
 
@@ -48,6 +49,16 @@ namespace Shared.ViewModels.Filter
         [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Note { get; set; }
 
+        [NumericPropertyCompare("MaxTime", Comparision = Comparision.LowerEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
+            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+        public double? MinTime { get; set; }
+
+        [NumericPropertyCompare("MinTime", Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
+            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+        public double? MaxTime { get; set; }
+
         /// <summary>
         /// Time after which note was created.
         /// </summary>
@@ -79,7 +90,17 @@ namespace Shared.ViewModels.Filter
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? MaxLastModified { get; set; }
-        
+
+        /// <summary>
+        /// Which property should be used for sorting.
+        /// </summary>
+        public NoteResultSort Sort { get; set; } = NoteResultSort.Time;
+
+        /// <summary>
+        /// Whether record should be sorted ascendingly or decendingly.
+        /// </summary>
+        public SortDirection Direction { get; set; } = SortDirection.Decending;
+
         /// <summary>
         /// Index of page.
         /// </summary>
