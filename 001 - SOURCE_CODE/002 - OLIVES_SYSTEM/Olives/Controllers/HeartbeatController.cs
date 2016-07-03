@@ -121,6 +121,7 @@ namespace Olives.Controllers
             heartbeat.Owner = requester.Id;
             heartbeat.Rate = info.Rate;
             heartbeat.Note = info.Note;
+            heartbeat.Time = info.Time;
             heartbeat.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
 
             // Insert a new allergy to database.
