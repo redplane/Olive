@@ -206,11 +206,7 @@ namespace Shared.Repositories
             IQueryable<Country> countries = context.Countries;
 
             #region Cities filter
-
-            // City id is specified.
-            if (filter.Id != null)
-                cities = cities.Where(x => x.Id == filter.Id);
-
+            
             // City name is specified.
             if (!string.IsNullOrWhiteSpace(filter.Name))
                 cities = cities.Where(x => x.Name.Contains(filter.Name));
