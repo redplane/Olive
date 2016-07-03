@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Shared.Models;
 
 namespace Olives.Models
 {

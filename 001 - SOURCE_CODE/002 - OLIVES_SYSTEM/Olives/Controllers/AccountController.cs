@@ -32,7 +32,8 @@ namespace Olives.Controllers
         /// <param name="log"></param>
         /// <param name="emailService"></param>
         public AccountController(IRepositoryAccount repositoryAccount,
-            IRepositoryActivationCode repositoryActivationCode, IRepositorySpecialty repositorySpecialty, IRepositoryPlace repositoryPlace, ILog log, IEmailService emailService)
+            IRepositoryActivationCode repositoryActivationCode, IRepositorySpecialty repositorySpecialty,
+            IRepositoryPlace repositoryPlace, ILog log, IEmailService emailService)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryActivationCode = repositoryActivationCode;
@@ -85,13 +86,13 @@ namespace Olives.Controllers
             person.FirstName = info.FirstName;
             person.LastName = info.LastName;
             person.Birthday = info.Birthday;
-            person.Gender = (byte)info.Gender;
+            person.Gender = (byte) info.Gender;
             person.Email = info.Email;
             person.Password = info.Password;
             person.Phone = info.Phone;
             person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
-            person.Role = (byte)Role.Patient;
-            person.Status = (byte)StatusAccount.Pending;
+            person.Role = (byte) Role.Patient;
+            person.Status = (byte) StatusAccount.Pending;
 
             var patient = new Patient();
             patient.Height = info.Height;
@@ -112,7 +113,7 @@ namespace Olives.Controllers
 
                 // Url construction.
                 var url = Url.Link("Default",
-                    new { controller = "AccountVerify", action = "Index", code = activationCode.Code });
+                    new {controller = "AccountVerify", action = "Index", code = activationCode.Code});
 
                 // Send the activation code email.
                 await
@@ -189,7 +190,7 @@ namespace Olives.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest,
                     new
                     {
-                        Errors = new[] { string.Format(Language.ValueIsInvalid, "Specialty") }
+                        Errors = new[] {string.Format(Language.ValueIsInvalid, "Specialty")}
                     });
             }
 
@@ -200,7 +201,7 @@ namespace Olives.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest,
                     new
                     {
-                        Errors = new[] { string.Format(Language.ValueIsInvalid, "Specialty") }
+                        Errors = new[] {string.Format(Language.ValueIsInvalid, "Specialty")}
                     });
             }
 
@@ -209,25 +210,25 @@ namespace Olives.Controllers
             #region City validation
 
             // Find the list of city match with condition.
-            var cities = await _repositoryPlace.FindCity(info.City);
+            var cities = await _repositoryPlace.FindCityAsync(info.City);
             if (cities == null || cities.Count != 1)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest,
                     new
                     {
-                        Errors = new[] { string.Format(Language.ValueIsInvalid, "City") }
+                        Errors = new[] {string.Format(Language.ValueIsInvalid, "City")}
                     });
             }
-            
+
             // Retrieve the first queried result.
             var city = cities.FirstOrDefault();
             if (city == null)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest,
-                   new
-                   {
-                       Errors = new[] { string.Format(Language.ValueIsInvalid, "City") }
-                   });
+                    new
+                    {
+                        Errors = new[] {string.Format(Language.ValueIsInvalid, "City")}
+                    });
             }
 
             #endregion
@@ -250,26 +251,26 @@ namespace Olives.Controllers
             #endregion
 
             #endregion
-            
+
             // Account initialization.
             var person = new Person();
             person.FirstName = info.FirstName;
             person.LastName = info.LastName;
             person.Birthday = info.Birthday;
-            person.Gender = (byte)info.Gender;
+            person.Gender = (byte) info.Gender;
             person.Email = info.Email;
             person.Password = info.Password;
             person.Phone = info.Phone;
             person.Address = info.Address;
             person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
-            person.Role = (byte)Role.Doctor;
-            person.Status = (byte)StatusAccount.Pending;
+            person.Role = (byte) Role.Doctor;
+            person.Status = (byte) StatusAccount.Pending;
 
             var doctor = new Doctor();
             doctor.SpecialtyId = specialty.Id;
             doctor.SpecialtyName = specialty.Name;
             doctor.CityId = city.Id;
-            
+
             // Assign personal information to patient.
             doctor.Person = person;
 
@@ -277,7 +278,7 @@ namespace Olives.Controllers
             {
                 // Save patient data to database.
                 doctor = await _repositoryAccount.InitializeDoctorAsync(doctor);
-                
+
                 // Tell doctor to wait for admin confirmation.
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -338,6 +339,12 @@ namespace Olives.Controllers
         [HttpPost]
         public async Task<HttpResponseMessage> Login([FromBody] LoginViewModel loginViewModel)
         {
+            if (loginViewModel == null)
+            {
+                loginViewModel = new LoginViewModel();
+                Validate(loginViewModel);
+            }
+
             // Invalid model state.
             if (!ModelState.IsValid)
             {
@@ -353,8 +360,10 @@ namespace Olives.Controllers
             {
                 _log.Error(
                     $"No record has been found with {loginViewModel.Email} - {loginViewModel.Password} - {loginViewModel.Role} ");
-                ModelState.AddModelError("Credential", Language.InvalidLoginInfo);
-                return Request.CreateResponse(HttpStatusCode.NotFound, RetrieveValidationErrors(ModelState));
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
             }
 
             // Retrieve the first result.
@@ -363,28 +372,32 @@ namespace Olives.Controllers
             {
                 _log.Error(
                     $"No record has been found with {loginViewModel.Email} - {loginViewModel.Password} - {loginViewModel.Role} ");
-                ModelState.AddModelError("Credential", Language.InvalidLoginInfo);
-                return Request.CreateResponse(HttpStatusCode.NotFound, RetrieveValidationErrors(ModelState));
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
             }
 
             // Requested user is not a patient or a doctor.
-            if (result.Role != (byte)Role.Patient && result.Role != (byte)Role.Doctor)
+            if (result.Role != (byte) Role.Patient && result.Role != (byte) Role.Doctor)
             {
                 _log.Error($"{loginViewModel.Email} is a admin, therefore, it cannot be used here.");
-                ModelState.AddModelError("Credential", Language.InvalidLoginInfo);
-                return Request.CreateResponse(HttpStatusCode.NotFound, RetrieveValidationErrors(ModelState));
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
             }
 
             // Login is failed because of account is pending.
-            if ((StatusAccount)result.Status == StatusAccount.Pending)
+            if ((StatusAccount) result.Status == StatusAccount.Pending)
             {
                 // Tell doctor to contact admin for account verification.
-                if (result.Role == (byte)Role.Doctor)
+                if (result.Role == (byte) Role.Doctor)
                 {
                     _log.Error($"Access is forbidden because {loginViewModel.Email} is waiting for admin confirmation");
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
-                        Errors = new[] { Language.WarnPendingAccount }
+                        Error = $"{Language.WarnPendingAccount}"
                     });
                 }
 
@@ -392,18 +405,18 @@ namespace Olives.Controllers
                 // Tell patient to access his/her email to verify the account.
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    Errors = new[] { Language.WarnPendingAccount }
+                    Error = $"{Language.WarnPendingAccount}"
                 });
             }
 
             // Login is failed because of account has been disabled.
-            if ((StatusAccount)result.Status == StatusAccount.Inactive)
+            if ((StatusAccount) result.Status == StatusAccount.Inactive)
             {
                 _log.Error($"Access is forbidden because {loginViewModel.Email} has been disabled");
                 // Tell patient to access his/her email to verify the account.
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    Errors = new[] { Language.WarnDisabledAccount }
+                    Error = $"{Language.WarnDisabledAccount}"
                 });
             }
 
@@ -447,7 +460,7 @@ namespace Olives.Controllers
                 _log.Error("Invalid account information");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new
                 {
-                    Errors = new[] { Language.InvalidRequestParameters }
+                    Errors = new[] {Language.InvalidRequestParameters}
                 });
             }
 
@@ -464,7 +477,7 @@ namespace Olives.Controllers
 
             // Find the account whose email and password match with given conditions.
             var account =
-                await _repositoryAccount.FindPersonAsync(null, info.Email, info.Password, (byte)Role.Patient, null);
+                await _repositoryAccount.FindPersonAsync(null, info.Email, info.Password, (byte) Role.Patient, null);
             if (account == null)
             {
                 _log.Error($"Couldn't find account: '{info.Email}' : '{info.Password}'");
@@ -472,7 +485,7 @@ namespace Olives.Controllers
             }
 
             // Account is not waiting for being activated. Treat this as not found.
-            if (account.Status != (byte)StatusAccount.Pending)
+            if (account.Status != (byte) StatusAccount.Pending)
             {
                 _log.Error($"Couldn't create activation code for '{info.Email}' due to its status {account.Status}");
                 return Request.CreateResponse(HttpStatusCode.NotFound);
@@ -485,7 +498,7 @@ namespace Olives.Controllers
 
             // Url construction.
             var url = Url.Link("Default",
-                new { controller = "AccountVerify", action = "Index", code = activationCode.Code });
+                new {controller = "AccountVerify", action = "Index", code = activationCode.Code});
 
             // Write an email to user to notify him/her to activate account.
             await
@@ -501,17 +514,17 @@ namespace Olives.Controllers
         #region Relation
 
         /// <summary>
-        /// Request to create a relationship to a target person.
+        ///     Request to create a relationship to a target person.
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
         [Route("api/account/relation")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> InitializeRelation([FromBody] int target)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find the target.
             var person = await _repositoryAccount.FindPersonAsync(target, null, null, null, StatusAccount.Active);
@@ -538,8 +551,8 @@ namespace Olives.Controllers
             }
 
             // Base on role of 2 people to decide the relation.
-            var targetRole = (Role)person.Role;
-            
+            var targetRole = (Role) person.Role;
+
             // Create an instance of relation.
             var relation = new Relation();
             relation.Source = person.Id;
@@ -570,20 +583,21 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        /// Confirm a pending relation.
+        ///     Confirm a pending relation.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Route("api/account/confirmRelation")]
+        [Route("api/account/relation/confirm")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
+        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
         public async Task<HttpResponseMessage> ConfirmRelation([FromBody] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
             // Find the relationship by using id.
-            var relationships = await _repositoryAccount.FindRelation(id, null, requester.Id, (byte) StatusRelation.Pending);
+            var relationships =
+                await _repositoryAccount.FindRelation(id, null, requester.Id, (byte) StatusRelation.Pending);
 
             // No relationship has been returned.
             if (relationships == null || relationships.Count != 1)
@@ -622,20 +636,20 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        /// Remove an active relation.
+        ///     Remove an active relation.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Route("api/account/removeRelation")]
-        [HttpPost]
-        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
+        [Route("api/account/relation")]
+        [HttpDelete]
+        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
         public async Task<HttpResponseMessage> RemoveRelation([FromBody] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find the relationship by using id.
-            var relationships = await _repositoryAccount.FindRelation(id, requester.Id, null, (byte)StatusRelation.Active);
+            var relationships = await _repositoryAccount.FindRelationParticipation(id, requester.Id);
 
             // No relationship has been returned.
             if (relationships == null || relationships.Count != 1)
@@ -658,20 +672,14 @@ namespace Olives.Controllers
                 });
             }
 
-            relationship.Status = (byte)StatusRelation.Active;
-            return Request.CreateResponse(HttpStatusCode.OK, new
-            {
-                Relation = new
-                {
-                    relationship.Id,
-                    relationship.Source,
-                    relationship.Target,
-                    relationship.Type,
-                    relationship.Created,
-                    relationship.Status
-                }
-            });
+            await _repositoryAccount.DeleteRelationAsync(relationship);
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
+
+        #endregion
+
+        #region Doctor
+        
 
         #endregion
 
@@ -688,12 +696,12 @@ namespace Olives.Controllers
         private readonly IRepositoryActivationCode _repositoryActivationCode;
 
         /// <summary>
-        /// Repository of specialty.
+        ///     Repository of specialty.
         /// </summary>
         private readonly IRepositorySpecialty _repositorySpecialty;
 
         /// <summary>
-        /// Repository of places.
+        ///     Repository of places.
         /// </summary>
         private readonly IRepositoryPlace _repositoryPlace;
 

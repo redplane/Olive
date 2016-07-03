@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Configuration;
-using System.Drawing;
 using System.IO;
 using System.Web;
 using System.Web.Http;
@@ -10,7 +9,6 @@ using Autofac;
 using Autofac.Integration.Mvc;
 using Autofac.Integration.WebApi;
 using log4net.Config;
-using Neo4jClient;
 using Newtonsoft.Json;
 using Olives.Attributes;
 using Olives.Controllers;
@@ -43,14 +41,14 @@ namespace Olives
 
             //// ...or you can register individual controlllers manually.
             //builder.RegisterType<AdminController>().InstancePerRequest();
-            
+
             builder.RegisterType<AccountController>().InstancePerRequest();
             builder.RegisterType<AccountVerifyController>().InstancePerRequest();
             builder.RegisterType<SpecialtyController>().InstancePerRequest();
             builder.RegisterType<AllergyController>().InstancePerRequest();
             builder.RegisterType<HeartbeatController>().InstancePerRequest();
             builder.RegisterType<SugarbloodController>().InstancePerRequest();
-
+            builder.RegisterType<PlaceController>().InstancePerRequest();
 
             #endregion
 
@@ -75,7 +73,7 @@ namespace Olives
             #endregion
 
             #region Application settings check
-            
+
             /*
              *  Email
              */
@@ -87,7 +85,7 @@ namespace Olives
 
             #region IoC registration
 
-            #region Repository & Services
+            #region Repository & services
 
             // Repository account registration.
             builder.RegisterType<RepositoryAccount>()
@@ -118,7 +116,7 @@ namespace Olives
             builder.RegisterType<RepositoryPlace>()
                 .As<IRepositoryPlace>()
                 .SingleInstance();
-
+            
             // Email service.
             var emailService = new EmailService(applicationSetting.SmtpSetting);
 
@@ -147,16 +145,20 @@ namespace Olives
 
             #endregion
 
+            #region Modules
+
             // Log4net module registration (this is for logging)
             builder.RegisterModule<Log4NetModule>();
-            
+
+            #endregion
+
             // Web api dependency registration.
             builder.RegisterWebApiFilterProvider(GlobalConfiguration.Configuration);
 
             var container = builder.Build();
             GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
-            
+
             #endregion
 
             XmlConfigurator.Configure();

@@ -2,45 +2,26 @@
 
 namespace Shared.ViewModels
 {
-    public class DoctorViewModel : IPerson, IDoctor
+    public class DoctorViewModel : PersonViewModel
     {
+        /// <summary>
+        /// Money of doctor.
+        /// </summary>
         public int Money { get; set; }
 
+        /// <summary>
+        /// Rank of doctor.
+        /// </summary>
         public double Rank { get; set; }
 
-        public string Specialty { get; set; }
+        /// <summary>
+        /// Specialty of doctor.
+        /// </summary>
+        public SpecialtyViewModel Specialty { get; set; }
 
+        /// <summary>
+        /// Number of people voted for this doctor.
+        /// </summary>
         public int Voters { get; set; }
-        public int Id { get; set; }
-
-        public string Address { get; set; }
-
-        public double? Birthday { get; set; }
-
-        public double Created { get; set; }
-
-        public string Email { get; set; }
-
-        public string FirstName { get; set; }
-
-        public byte? Gender { get; set; }
-
-        public double? LastModified { get; set; }
-
-        public string LastName { get; set; }
-
-        public double? Latitude { get; set; }
-
-        public double? Longitude { get; set; }
-
-        public string Password { get; set; }
-
-        public string Phone { get; set; }
-
-        public string Photo { get; set; }
-
-        public byte Role { get; set; }
-
-        public byte Status { get; set; }
     }
 }

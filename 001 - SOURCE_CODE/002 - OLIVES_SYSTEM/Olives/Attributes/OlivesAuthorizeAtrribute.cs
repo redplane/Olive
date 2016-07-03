@@ -19,7 +19,7 @@ namespace Olives.Attributes
         /// <param name="roles"></param>
         public OlivesAuthorize(Role[] roles)
         {
-            Roles = Array.ConvertAll(roles, x => (int)x);
+            Roles = Array.ConvertAll(roles, x => (int) x);
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace Olives.Attributes
         ///     Which roles can access this function.
         /// </summary>
         public new int[] Roles { get; }
-        
+
         /// <summary>
         ///     This function is for handling authorization handling.
         /// </summary>
@@ -53,7 +53,7 @@ namespace Olives.Attributes
                         !string.IsNullOrEmpty(x.Key) &&
                         x.Key.Equals(HeaderFields.RequestAccountPassword))
                     .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
-            
+
             // Invalid account name or password.
             if (string.IsNullOrEmpty(accountEmail) || string.IsNullOrEmpty(accountPassword))
             {
@@ -62,7 +62,7 @@ namespace Olives.Attributes
                 {
                     Error = $"{Language.WarnAccountNotLogin}"
                 });
-                
+
                 return;
             }
 
@@ -79,9 +79,9 @@ namespace Olives.Attributes
                 });
                 return;
             }
-            
+
             // Account has been disabled.
-            if ((StatusAccount)person.Status == StatusAccount.Inactive)
+            if ((StatusAccount) person.Status == StatusAccount.Inactive)
             {
                 // Treat the login isn't successful because of disabled account.
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
@@ -93,7 +93,7 @@ namespace Olives.Attributes
             }
 
             // Account is still pending.
-            if ((StatusAccount)person.Status == StatusAccount.Pending)
+            if ((StatusAccount) person.Status == StatusAccount.Pending)
             {
                 // Treat the login isn't successful because of pending account.
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
@@ -103,7 +103,7 @@ namespace Olives.Attributes
 
                 return;
             }
-            
+
             // Account role isn't enough to access the function.
             if (!Roles.Any(x => x == person.Role))
             {

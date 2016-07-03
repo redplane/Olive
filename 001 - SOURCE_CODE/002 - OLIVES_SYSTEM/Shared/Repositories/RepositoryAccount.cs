@@ -281,7 +281,7 @@ namespace Shared.Repositories
                               Created = person.Created,
                               Email = person.Email,
                               FirstName = person.FirstName,
-                              Gender = person.Gender,
+                              Gender = (Gender)person.Gender,
                               LastModified = person.LastModified,
                               LastName = person.LastName,
                               Money = 0,
@@ -290,8 +290,12 @@ namespace Shared.Repositories
                               Photo = person.Photo,
                               Rank = doctor.Rank ?? 0,
                               Role = person.Role,
-                              Specialty = specialty.Name,
-                              Status = person.Status,
+                              Specialty = new SpecialtyViewModel()
+                              {
+                                  Id = specialty.Id,
+                                  Name = specialty.Name
+                              },
+                              Status = (StatusAccount) person.Status,
                               Voters = doctor.Voters
                           };
 
@@ -308,80 +312,96 @@ namespace Shared.Repositories
             // Database connection context initialization.
             var context = new OlivesHealthEntities();
 
+            // Take all people from database.
+            IQueryable<Person> people = context.People.Where(x => x.Role == (byte)Role.Doctor);
+
+            // By default, take all doctors.
+            IQueryable<Doctor> doctors = context.Doctors;
+
+            #region People filter
+
+            // Filter doctor by using email.
+            if (!string.IsNullOrEmpty(filter.Email))
+                people = people.Where(x => x.Email.Contains(filter.Email));
+
+            // Filter doctor by using phone number.
+            if (!string.IsNullOrEmpty(filter.Phone))
+                people = people.Where(x => x.Phone.Contains(filter.Phone));
+
+            // Filter by using first name
+            if (!string.IsNullOrEmpty(filter.FirstName))
+                people = people.Where(x => x.FirstName.Contains(filter.FirstName));
+
+            // Filter by using last name.
+            if (!string.IsNullOrEmpty(filter.LastName))
+                people = people.Where(x => x.LastName.Contains(filter.LastName));
+            
+            // Filter by using birthday.
+            if (filter.MinBirthday != null)
+                people = people.Where(x => x.Birthday >= filter.MinBirthday);
+
+            if (filter.MaxBirthday != null)
+                people = people.Where(x => x.Birthday <= filter.MaxBirthday);
+            
+            // Filter by gender.
+            if (filter.Gender != null)
+                people = people.Where(x => x.Gender == filter.Gender);
+            
+            // Filter by last modified.
+            if (filter.MinLastModified != null)
+                people = people.Where(x => x.LastModified >= filter.MinLastModified);
+            if (filter.MaxLastModified != null)
+                people = people.Where(x => x.LastModified <= filter.MaxLastModified);
+
+            // Filter by created.
+            if (filter.MinCreated != null)
+                people = people.Where(x => x.Created >= filter.MinCreated);
+            if (filter.MaxCreated != null)
+                people = people.Where(x => x.Created <= filter.MaxCreated);
+
+            // Filter by status.
+            if (filter.Status != null)
+                people = people.Where(x => x.Status == filter.Status);
+
+            #endregion
+
+            #region Doctors
+
+            // Filter by money.
+            if (filter.MinMoney != null) doctors = doctors.Where(x => x.Money >= filter.MinMoney);
+            if (filter.MaxMoney != null) doctors = doctors.Where(x => x.Money <= filter.MaxMoney);
+
+            // Filter by rank.
+            if (filter.MinRank != null) doctors = doctors.Where(x => x.Rank >= filter.MinRank);
+            if (filter.MaxRank != null) doctors = doctors.Where(x => x.Rank <= filter.MaxRank);
+
+            // Filter by id of specialty.
+            if (filter.Specialty != null) doctors = doctors.Where(x => x.SpecialtyId == filter.Specialty);
+
+            #endregion
+
+            #region Specialties
+
+            // By default, join all specialties.
+            IQueryable<Specialty> specialties = context.Specialties;
+
+            // Specialty has been specified.
+            if (filter.Specialty != null)
+                specialties = specialties.Where(x => x.Id == filter.Specialty);
+
+            #endregion
+            
             // Join the tables first.
-            var results = (from p in context.People
-                           join d in context.Doctors on p.Id equals d.Id
-                           join s in context.Specialties on d.SpecialtyId equals s.Id
+            var results = (from p in people
+                           join d in doctors on p.Id equals d.Id
+                           join s in specialties on d.SpecialtyId equals s.Id
                            select new
                            {
                                Person = p,
                                Doctor = d,
                                TrainedSpecialty = s
                            });
-
-            #region Result filter
-
-            // Filter doctor by using email.
-            if (!string.IsNullOrEmpty(filter.Email))
-                results = results.Where(x => x.Person.Email.Contains(filter.Email));
-
-            // Filter doctor by using phone number.
-            if (!string.IsNullOrEmpty(filter.Phone))
-                results = results.Where(x => x.Person.Phone.Contains(filter.Phone));
-
-            // Filter by last modified.
-            if (filter.MinLastModified != null)
-                results = results.Where(x => x.Person.LastModified >= filter.MinLastModified);
-
-            if (filter.MaxLastModified != null)
-                results = results.Where(x => x.Person.LastModified <= filter.MaxLastModified);
-
-            // Filter by using first name
-            if (!string.IsNullOrEmpty(filter.FirstName))
-                results = results.Where(x => x.Person.FirstName.Contains(filter.FirstName));
-
-            // Filter by using last name.
-            if (!string.IsNullOrEmpty(filter.LastName))
-                results = results.Where(x => x.Person.LastName.Contains(filter.LastName));
-
-            // Filter by using birthday.
-            if (filter.MinBirthday != null)
-                results = results.Where(x => x.Person.Birthday >= filter.MinBirthday);
-
-            if (filter.MaxBirthday != null)
-                results = results.Where(x => x.Person.Birthday <= filter.MaxBirthday);
-
-            // Filter by gender.
-            if (filter.Gender != null)
-                results = results.Where(x => x.Person.Gender == filter.Gender);
-
-            // Filter by money.
-            if (filter.MinMoney != null)
-                results = results.Where(x => x.Doctor.Money >= filter.MinMoney);
-
-            if (filter.MaxMoney != null)
-                results = results.Where(x => x.Doctor.Money <= filter.MaxMoney);
-
-            // Filter by created.
-            if (filter.MinCreated != null)
-                results = results.Where(x => x.Person.Created >= filter.MinCreated);
-
-            if (filter.MaxCreated != null)
-                results = results.Where(x => x.Person.Created <= filter.MaxCreated);
-
-            // Filter by status.
-            if (filter.Status != null)
-                results = results.Where(x => x.Person.Status == filter.Status);
-
-            // Filter by role.
-            results = results.Where(x => x.Person.Role == (byte)Role.Doctor);
-
-            // Filter by rank.
-            if (filter.MinRank != null) results = results.Where(x => x.Doctor.Rank >= filter.MinRank);
-            if (filter.MaxRank != null) results = results.Where(x => x.Doctor.Rank <= filter.MaxRank);
-
-            #endregion
-
+            
             var responseFilter = new ResponseDoctorFilter();
             responseFilter.Total = await results.CountAsync();
 
@@ -398,7 +418,7 @@ namespace Shared.Repositories
                     Created = x.Person.Created,
                     Email = x.Person.Email,
                     FirstName = x.Person.FirstName,
-                    Gender = x.Person.Gender,
+                    Gender = (Gender) x.Person.Gender,
                     Id = x.Person.Id,
                     LastModified = x.Person.LastModified,
                     LastName = x.Person.LastName,
@@ -407,10 +427,14 @@ namespace Shared.Repositories
                     Phone = x.Person.Phone,
                     Role = (byte)Role.Doctor,
                     Password = x.Person.Password,
-                    Status = x.Person.Status,
+                    Status = (StatusAccount)x.Person.Status,
                     Photo = x.Person.Photo,
                     Voters = x.Doctor.Voters,
-                    Specialty = x.TrainedSpecialty.Name
+                    Specialty = new SpecialtyViewModel()
+                    {
+                        Id = x.TrainedSpecialty.Id,
+                        Name = x.TrainedSpecialty.Name
+                    }
                 });
 
             responseFilter.Users = await filteredResults.ToListAsync();
@@ -712,6 +736,46 @@ namespace Shared.Repositories
                         (x.Source == secondPerson || x.Target == firstPerson)).ToListAsync();
         }
 
+        /// <summary>
+        /// Find a relation whose id match with search condition and person is taking part in it.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="person"></param>
+        /// <returns></returns>
+        public async Task<IList<Relation>> FindRelationParticipation(int id, int person)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // Find the relation whose id is matched and has the specific person takes part in.
+            var result = context.Relations.Where(x => x.Id == id && (x.Source == id || x.Target == id));
+
+            return await result.ToListAsync();
+        }
+
+        /// <summary>
+        /// Delete a relation asynchronously.
+        /// </summary>
+        /// <param name="relation"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteRelationAsync(Relation relation)
+        {
+            try
+            {
+                // Database context initialization.
+                var context = new OlivesHealthEntities();
+
+                // Find the relation whose id is matched and has the specific person takes part in.
+                context.Relations.Remove(relation);
+
+                await context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
         #endregion
     }
 }

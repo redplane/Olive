@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Shared.Models;
 using Shared.ViewModels;
+using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
 namespace Shared.Interfaces
@@ -13,7 +14,7 @@ namespace Shared.Interfaces
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        Task<ResponseAllergyFilter> FilterAllergy(AllergyGetViewModel filter);
+        Task<ResponseAllergyFilter> FilterAllergy(FilterAllergyViewModel filter);
 
         /// <summary>
         /// Initialize an allergy with given information.

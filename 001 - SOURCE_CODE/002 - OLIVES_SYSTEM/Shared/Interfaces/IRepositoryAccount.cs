@@ -147,6 +147,21 @@ namespace Shared.Interfaces
         /// <returns></returns>
         Task<IList<Relation>> FindRelation(int? id, int? source, int? target, byte? type);
 
+        /// <summary>
+        /// Find a relation whose id match with search condition and person is taking part in it.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="person"></param>
+        /// <returns></returns>
+        Task<IList<Relation>> FindRelationParticipation(int id, int person);
+
+        /// <summary>
+        /// Delete a relation asynchronously.
+        /// </summary>
+        /// <param name="relation"></param>
+        /// <returns></returns>
+        Task<bool> DeleteRelationAsync(Relation relation);
+
 
         #endregion
     }

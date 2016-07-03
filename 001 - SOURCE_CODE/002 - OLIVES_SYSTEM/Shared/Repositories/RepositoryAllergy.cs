@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels;
+using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
 namespace Shared.Repositories
 {
     public class RepositoryAllergy : IRepositoryAllergy
     {
-        public async Task<ResponseAllergyFilter> FilterAllergy(AllergyGetViewModel filter)
+        public async Task<ResponseAllergyFilter> FilterAllergy(FilterAllergyViewModel filter)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();

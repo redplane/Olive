@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Management.Instrumentation;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using log4net;
-using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Resources;
 
@@ -13,26 +11,27 @@ namespace Olives.Controllers
     public class AccountVerifyController : Controller
     {
         /// <summary>
-        /// Repository which provides functions to access account database.
-        /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
-
-        /// <summary>
-        /// Repository which provides functions to access activation code database.
-        /// </summary>
-        private readonly IRepositoryActivationCode _repositoryActivationCode;
-
-        /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
 
+        /// <summary>
+        ///     Repository which provides functions to access account database.
+        /// </summary>
+        private readonly IRepositoryAccount _repositoryAccount;
+
+        /// <summary>
+        ///     Repository which provides functions to access activation code database.
+        /// </summary>
+        private readonly IRepositoryActivationCode _repositoryActivationCode;
+
         #region Constructors
 
         /// <summary>
-        /// Initialize an instance of AccountVerifyController with given information.
+        ///     Initialize an instance of AccountVerifyController with given information.
         /// </summary>
-        public AccountVerifyController(IRepositoryAccount repositoryAccount, IRepositoryActivationCode repositoryActivationCode, ILog log)
+        public AccountVerifyController(IRepositoryAccount repositoryAccount,
+            IRepositoryActivationCode repositoryActivationCode, ILog log)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryActivationCode = repositoryActivationCode;
@@ -42,7 +41,7 @@ namespace Olives.Controllers
         #endregion
 
         /// <summary>
-        /// This function checks the activation code, validate it and returns result to client.
+        ///     This function checks the activation code, validate it and returns result to client.
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
@@ -56,7 +55,7 @@ namespace Olives.Controllers
                 ViewBag.Message = Language.MessageInvalidActivationCode;
                 ViewBag.IsError = true;
             }
-            
+
             try
             {
                 // Activate the account.
@@ -79,7 +78,7 @@ namespace Olives.Controllers
 
             ViewBag.Message = Language.MessageAccountActivatedSuccessfully;
             ViewBag.IsError = false;
-            
+
             return View();
         }
     }

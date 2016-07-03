@@ -39,13 +39,15 @@ namespace OlivesAdministration.Controllers
 
         #endregion
 
+        #region Methods
+
         /// <summary>
         ///     Find a patient by using a specific id.
         /// </summary>
         /// <param name="id">Id of patient</param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] {Role.Admin})]
+        [OlivesAuthorize(new[] { Role.Admin })]
         public async Task<HttpResponseMessage> Get(int id)
         {
             #region ModelState validation
@@ -82,7 +84,7 @@ namespace OlivesAdministration.Controllers
             #endregion
 
             // Respond to client.
-            return Request.CreateResponse(HttpStatusCode.OK, new {User = patients[0]});
+            return Request.CreateResponse(HttpStatusCode.OK, new { User = patients[0] });
         }
 
         /// <summary>
@@ -92,7 +94,7 @@ namespace OlivesAdministration.Controllers
         /// <returns></returns>
         [Route("api/patient/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Admin})]
+        [OlivesAuthorize(new[] { Role.Admin })]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterPatientViewModel filter)
         {
             #region ModelState validation
@@ -120,5 +122,7 @@ namespace OlivesAdministration.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK, results);
         }
+
+        #endregion
     }
 }

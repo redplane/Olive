@@ -52,7 +52,7 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
             // Retrieve information of person who sent request.
@@ -98,7 +98,7 @@ namespace Olives.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> Post([FromBody] InitializeBloodPressureViewModel info)
         {
             #region ModelState result
@@ -157,7 +157,7 @@ namespace Olives.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPut]
-        [OlivesAuthorize(new[] { Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] InitializeBloodPressureViewModel info)
         {
             #region ModelState result
@@ -249,7 +249,7 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
-        [OlivesAuthorize(new[] { Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> Delete([FromUri] int id)
         {
             // Retrieve information of person who sent request.

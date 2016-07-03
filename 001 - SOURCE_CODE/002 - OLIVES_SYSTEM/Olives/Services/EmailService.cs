@@ -87,6 +87,7 @@ namespace Olives.Services
         {
             _smtpClient.Send(mailMessage);
         }
+
         /// <summary>
         ///     Load email template from specific files.
         /// </summary>
@@ -154,7 +155,6 @@ namespace Olives.Services
             {
                 return false;
             }
-            
         }
 
         #endregion

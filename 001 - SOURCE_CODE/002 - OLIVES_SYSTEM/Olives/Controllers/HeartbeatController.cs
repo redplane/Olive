@@ -20,7 +20,7 @@ using Shared.ViewModels.Initialize;
 namespace Olives.Controllers
 {
     [Route("api/heartbeat")]
-    [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+    [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
     public class HeartbeatController : ApiParentController
     {
         #region Constructors
@@ -54,7 +54,7 @@ namespace Olives.Controllers
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Retrieve the results list.
             var results = await _repositoryHeartbeat.FindHeartbeatAsync(id, requester.Id);
@@ -114,7 +114,7 @@ namespace Olives.Controllers
             #endregion
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Only filter and receive the first result.
             var heartbeat = new Heartbeat();
@@ -167,7 +167,7 @@ namespace Olives.Controllers
             #endregion
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find allergy by using allergy id and owner id.
             var results = await _repositoryHeartbeat.FindHeartbeatAsync(id, requester.Id);
@@ -234,7 +234,7 @@ namespace Olives.Controllers
         public async Task<HttpResponseMessage> Delete([FromUri] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find allergy by using allergy id and owner id.
             var result = await _repositoryHeartbeat.FindHeartbeatAsync(id, requester.Id);
@@ -283,7 +283,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/heartbeat/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterHeatbeatViewModel info)
         {
             #region ModelState result
@@ -305,7 +305,7 @@ namespace Olives.Controllers
             #endregion
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Person can only see his/her notes.
             info.Owner = requester.Id;

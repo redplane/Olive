@@ -727,6 +727,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to W018.
+        /// </summary>
+        public static string WarnCountryNotFound {
+            get {
+                return ResourceManager.GetString("WarnCountryNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to W009.
         /// </summary>
         public static string WarnDaterInvalidRole {

@@ -51,6 +51,14 @@
 
         public const int LastNameMaxLength = 32;
 
-        public const int IdentityCardNoMaxLength = 9;
+        /// <summary>
+        /// Maximum length of name of country.
+        /// </summary>
+        public const int CountryNameMaxLength = 64;
+
+        /// <summary>
+        /// Maximum length of city name.
+        /// </summary>
+        public const int CityNameMaxLength = 64;
     }
 }

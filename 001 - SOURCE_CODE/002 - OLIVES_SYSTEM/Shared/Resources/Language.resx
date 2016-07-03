@@ -401,4 +401,8 @@
     <value>W017</value>
     <comment>Warn front-end that the relation cannot be found.</comment>
   </data>
+  <data name="WarnCountryNotFound" xml:space="preserve">
+    <value>W018</value>
+    <comment>Warn front-end that country hasn't been found</comment>
+  </data>
 </root>

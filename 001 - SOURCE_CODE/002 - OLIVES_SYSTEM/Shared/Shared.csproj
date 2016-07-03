@@ -81,6 +81,7 @@
     <Compile Include="Attributes\NumericCompareAttribute.cs" />
     <Compile Include="Attributes\RegexMatchAttribute.cs" />
     <Compile Include="Attributes\RequiredIfAttribute.cs" />
+    <Compile Include="Enumerations\Filter\CityResultSort.cs" />
     <Compile Include="Enumerations\Filter\NoteResultSort.cs" />
     <Compile Include="Enumerations\RelationAccount.cs" />
     <Compile Include="Enumerations\StatusRelation.cs" />
@@ -196,10 +197,14 @@
       <DependentUpon>Language.vi.resx</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\AccountViewModel.cs" />
-    <Compile Include="ViewModels\AllergyGetViewModel.cs" />
+    <Compile Include="ViewModels\CityViewModel.cs" />
+    <Compile Include="ViewModels\CountryViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterAllergyViewModel.cs" />
     <Compile Include="ViewModels\BloodPressureViewModel.cs" />
     <Compile Include="ViewModels\DoctorViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterBloodPressureViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterCityViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterCountryViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterHeatbeatViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPatientViewModel.cs" />
     <Compile Include="ViewModels\HeartbeatViewModel.cs" />
@@ -210,6 +215,8 @@
     <Compile Include="ViewModels\Initialize\InitializeHeartbeatViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePatientViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeSugarbloodViewModel.cs" />
+    <Compile Include="ViewModels\Response\ResponseCityFilter.cs" />
+    <Compile Include="ViewModels\Response\ResponseCountryFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseAllergyFilter.cs" />
     <Compile Include="ViewModels\Filter\FilterAppointmentViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseAppointment.cs" />
@@ -224,6 +231,7 @@
     <Compile Include="ViewModels\Response\ResponsePatientFilter.cs" />
     <Compile Include="ViewModels\Filter\FilterSugarbloodViewModel.cs" />
     <Compile Include="ViewModels\SpecialtyGetViewModel.cs" />
+    <Compile Include="ViewModels\SpecialtyViewModel.cs" />
     <Compile Include="ViewModels\StatusSummaryViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterDoctorViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPersonViewModel.cs" />

@@ -13,7 +13,7 @@ using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
-using Shared.ViewModels;
+using Shared.ViewModels.Filter;
 using Shared.ViewModels.Initialize;
 
 namespace Olives.Controllers
@@ -56,7 +56,7 @@ namespace Olives.Controllers
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Only filter and receive the first result.
-            var filter = new AllergyGetViewModel();
+            var filter = new FilterAllergyViewModel();
             filter.Id = id;
             filter.Owner = requester.Id;
             filter.Page = 0;
@@ -70,7 +70,7 @@ namespace Olives.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.WarnNoRecord }
+                    Errors = new[] {Language.WarnNoRecord}
                 });
             }
 
@@ -100,7 +100,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/allergy")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> Post([FromBody] InitializeAllergyViewModel info)
         {
             #region ModelState result
@@ -159,7 +159,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/allergy")]
         [HttpPut]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] InitializeAllergyViewModel info)
         {
             #region ModelState result
@@ -250,7 +250,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/allergy")]
         [HttpDelete]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> Delete([FromUri] int id)
         {
             // Retrieve information of person who sent request.
@@ -304,7 +304,7 @@ namespace Olives.Controllers
         [Route("api/allergy/filter")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> Filter([FromBody] AllergyGetViewModel info)
+        public async Task<HttpResponseMessage> Filter([FromBody] FilterAllergyViewModel info)
         {
             #region ModelState result
 
@@ -358,7 +358,7 @@ namespace Olives.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.WarnNoRecord }
+                    Errors = new[] {Language.WarnNoRecord}
                 });
             }
 
