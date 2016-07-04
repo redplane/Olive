@@ -235,34 +235,31 @@ namespace Olives.Controllers
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
-            // Find allergy by using allergy id and owner id.
-            var results = await _repositorySugarblood.FindSugarbloodNoteAsync(id, requester.Id);
-
-            // Not record has been found.
-            if (results == null || results.Count != 1)
+            try
             {
-                // Tell front-end, no record has been found.
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                // Delete and retrieve the affected records.
+                var deletedRecords = await _repositorySugarblood.DeleteSugarbloodNoteAsync(id, requester.Id);
+
+                if (deletedRecords < 1)
                 {
-                    Error = $"{Language.WarnRecordNotFound}"
+                    // Tell front-end, no record has been found.
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
+                }
+
+                // Tell client the result is OK.
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception.Message, exception);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new
+                {
+                    Error = $"{Language.InternalServerError}"
                 });
             }
-
-            // Retrieve the first record.
-            var result = results.FirstOrDefault();
-            if (result == null)
-            {
-                // Tell front-end, no record has been found.
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
-
-            // Remove the found allergy.
-            _repositorySugarblood.DeleteSugarbloodNoteAsync(result);
-
-            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
         /// <summary>

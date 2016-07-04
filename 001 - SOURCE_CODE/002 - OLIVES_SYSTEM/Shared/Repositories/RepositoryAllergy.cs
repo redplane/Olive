@@ -112,14 +112,20 @@ namespace Shared.Repositories
         /// <summary>
         /// Delete an allergy synchrounously.
         /// </summary>
-        /// <param name="allergy"></param>
+        /// <param name="id"></param>
+        /// <param name="owner"></param>
         /// <returns></returns>
-        public async void DeleteAllergy(Allergy allergy)
+        public async Task<int> DeleteAllergyAsync(int id, int owner)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-            context.Allergies.Remove(allergy);
-            await context.SaveChangesAsync();
+
+            // Find and remove the condition matched result.
+            context.Allergies.RemoveRange(context.Allergies.Where(x => x.Id == id && x.Owner == owner));
+            
+            // Count the number of affected records.
+            var records = await context.SaveChangesAsync();
+            return records;
         } 
     }
 }

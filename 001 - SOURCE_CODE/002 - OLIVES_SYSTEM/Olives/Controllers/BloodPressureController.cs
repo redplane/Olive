@@ -254,45 +254,30 @@ namespace Olives.Controllers
         {
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
-            // Find allergy by using allergy id and owner id.
-            var result = await _repositoryBloodPressure.FindBloodPressureNoteAsync(id, requester.Id);
-
-            // Not record has been found.
-            if (result == null || result.Count < 1)
+            
+            try
             {
-                // Tell front-end, no record has been found.
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                // Remove the found allergy.
+                var deletedRecords = await _repositoryBloodPressure.DeleteBloodPressureNoteAsync(id, requester.Id);
+                if (deletedRecords < 1)
                 {
-                    Error = $"{Language.WarnRecordNotFound}"
+                    // Tell front-end, no record has been found.
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception.Message, exception);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new
+                {
+                    Error = $"{Language.InternalServerError}"
                 });
             }
-
-            // Records are conflict.
-            if (result.Count != 1)
-            {
-                // Tell front-end, no record has been found.
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
-
-            // Retrieve the first record.
-            var heartbeat = result.FirstOrDefault();
-            if (heartbeat == null)
-            {
-                // Tell front-end, no record has been found.
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
-
-            // Remove the found allergy.
-            _repositoryBloodPressure.DeleteBloodPressureNoteAsync(heartbeat);
-
-            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
         /// <summary>

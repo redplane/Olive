@@ -255,45 +255,35 @@ namespace Olives.Controllers
         {
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
-            // Find allergy by using allergy id and owner id.
-            var allergies = await _repositoryAllergy.FindAllergyAsync(id, requester.Id);
-
-            // Not record has been found.
-            if (allergies == null || allergies.Count < 1)
+            
+            try
             {
-                // Tell front-end, no record has been found.
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                // Find and delete the allergy.
+                var deletedRecords = await _repositoryAllergy.DeleteAllergyAsync(id, requester.Id);
+
+                // No record has been deleted.
+                if (deletedRecords < 1)
                 {
-                    Errors = new[] {Language.WarnRecordNotFound}
+                    // Tell front-end, no record has been found.
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Errors = new[] { Language.WarnRecordNotFound }
+                    });
+                }
+
+                // Tell client the deletion is ok.
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch (Exception exception)
+            {
+                // Write the error to file.
+                _log.Error(exception.Message, exception);
+
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new
+                {
+                    Error = $"{Language.InternalServerError}"
                 });
             }
-
-            // Records are conflict.
-            if (allergies.Count != 1)
-            {
-                // Tell front-end that records are conflict.
-                return Request.CreateResponse(HttpStatusCode.Conflict, new
-                {
-                    Errors = new[] {Language.WarnRecordConflict}
-                });
-            }
-
-            // Retrieve the first record.
-            var allergy = allergies.FirstOrDefault();
-            if (allergy == null)
-            {
-                // Tell front-end, no record has been found.
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Errors = new[] {Language.WarnRecordNotFound}
-                });
-            }
-
-            // Remove the found allergy.
-            _repositoryAllergy.DeleteAllergy(allergy);
-
-            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
         /// <summary>

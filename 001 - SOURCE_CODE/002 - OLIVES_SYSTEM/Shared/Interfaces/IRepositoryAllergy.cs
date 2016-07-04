@@ -33,8 +33,9 @@ namespace Shared.Interfaces
         /// <summary>
         /// Delete an allergy synchronously.
         /// </summary>
-        /// <param name="allergy"></param>
+        /// <param name="id"></param>
+        /// <param name="owner"></param>
         /// <returns></returns>
-        void DeleteAllergy(Allergy allergy);
+        Task<int> DeleteAllergyAsync(int id, int owner);
     }
 }

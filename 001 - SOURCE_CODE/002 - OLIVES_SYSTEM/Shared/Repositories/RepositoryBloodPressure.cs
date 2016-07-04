@@ -59,14 +59,20 @@ namespace Shared.Repositories
         /// <summary>
         /// Delete a blood pressure note asynchrounously.
         /// </summary>
-        /// <param name="info"></param>
+        /// <param name="id"></param>
+        /// <param name="owner"></param>
         /// <returns></returns>
-        public async void DeleteBloodPressureNoteAsync(BloodPressure info)
+        public async Task<int> DeleteBloodPressureNoteAsync(int id, int owner)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-            context.BloodPressures.Remove(info);
-            await context.SaveChangesAsync();
+
+            // Find and delete a note.
+            context.BloodPressures.RemoveRange(context.BloodPressures.Where(x => x.Id == id && x.Owner == owner));
+
+            // Count the affeted records.
+            var deletedRecords = await context.SaveChangesAsync();
+            return deletedRecords;
         }
 
         /// <summary>

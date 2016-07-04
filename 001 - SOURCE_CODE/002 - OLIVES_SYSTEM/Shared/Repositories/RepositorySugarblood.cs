@@ -56,19 +56,6 @@ namespace Shared.Repositories
         }
         
         /// <summary>
-        /// Delete a heartbeat note asynchrounously.
-        /// </summary>
-        /// <param name="heartbeatNote"></param>
-        /// <returns></returns>
-        public async void DeleteHeartbeatNoteAsync(Heartbeat heartbeatNote)
-        {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-            context.Heartbeats.Remove(heartbeatNote);
-            await context.SaveChangesAsync();
-        }
-
-        /// <summary>
         /// Find heartbeat by using conditions.
         /// </summary>
         /// <param name="filter"></param>
@@ -174,13 +161,19 @@ namespace Shared.Repositories
         /// <summary>
         /// Delete a sugarblood note asynchronously.
         /// </summary>
-        /// <param name="info"></param>
-        public async void DeleteSugarbloodNoteAsync(SugarBlood info)
+        /// <param name="id"></param>
+        /// <param name="owner"></param>
+        public async Task<int> DeleteSugarbloodNoteAsync(int id, int owner)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-            context.SugarBloods.Remove(info);
+
+            // Remove records by querying id and owner id.
+            context.SugarBloods.RemoveRange(context.SugarBloods.Where(x => x.Id == id && x.Owner == owner));
+
+            var deletedRecords = await context.SaveChangesAsync();
             await context.SaveChangesAsync();
+            return deletedRecords;
         }
     }
 }

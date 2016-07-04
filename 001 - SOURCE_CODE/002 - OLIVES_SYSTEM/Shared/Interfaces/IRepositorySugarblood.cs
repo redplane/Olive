@@ -30,11 +30,11 @@ namespace Shared.Interfaces
         /// <returns></returns>
         Task<ResponseSugarbloodFilter> FilterSugarbloodNoteAsync(FilterSugarbloodViewModel filter);
 
-
         /// <summary>
         /// Delete a heartbeat note asynchronously.
         /// </summary>
-        /// <param name="info"></param>
-        void DeleteSugarbloodNoteAsync(SugarBlood info);
+        /// <param name="id"></param>
+        /// <param name="owner"></param>
+        Task<int> DeleteSugarbloodNoteAsync(int id, int owner);
     }
 }
