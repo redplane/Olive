@@ -34,7 +34,8 @@ namespace Shared.Interfaces
         /// <summary>
         /// Delete a heartbeat note asynchronously.
         /// </summary>
-        /// <param name="info"></param>
-        void DeleteHeartbeatNoteAsync(Heartbeat info);
+        /// <param name="id"></param>
+        /// <param name="owner"></param>
+        Task<int> DeleteHeartbeatNoteAsync(int id, int owner);
     }
 }

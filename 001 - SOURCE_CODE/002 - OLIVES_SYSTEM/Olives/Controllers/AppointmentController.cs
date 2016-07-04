@@ -42,6 +42,11 @@ namespace Olives.Controllers
 
         #region Methods
 
+        /// <summary>
+        /// Make an appointment request to a target person.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
         [Route("api/appointment")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]

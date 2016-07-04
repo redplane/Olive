@@ -1,6 +1,4 @@
-﻿using Shared.Interfaces;
-
-namespace Shared.ViewModels
+﻿namespace Shared.ViewModels
 {
     public class DoctorViewModel : PersonViewModel
     {
@@ -23,5 +21,10 @@ namespace Shared.ViewModels
         /// Number of people voted for this doctor.
         /// </summary>
         public int Voters { get; set; }
+
+        /// <summary>
+        /// City where doctor lives in.
+        /// </summary>
+        public CityViewModel City { get; set; }
     }
 }

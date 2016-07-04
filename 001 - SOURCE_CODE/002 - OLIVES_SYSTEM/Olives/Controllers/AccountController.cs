@@ -14,6 +14,7 @@ using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels;
+using Shared.ViewModels.Filter;
 using Shared.ViewModels.Initialize;
 
 namespace Olives.Controllers
@@ -679,7 +680,72 @@ namespace Olives.Controllers
         #endregion
 
         #region Doctor
-        
+
+        /// <summary>
+        /// Filter and respond a list of doctors to client.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [Route("api/doctor/filter")]
+        [HttpPost]
+        [OlivesAuthorize(new[] { Role.Patient })]
+        public async Task<HttpResponseMessage> FilterDoctor([FromBody] FilterDoctorViewModel filter)
+        {
+            // Filter hasn't been initialized. Initialize it and do validation.
+            if (filter == null)
+            {
+                filter = new FilterDoctorViewModel();
+                Validate(filter);
+            }
+            
+            // Prevent patient from searching sensitive information
+            filter.MinMoney = null;
+            filter.MaxMoney = null;
+            filter.MinCreated = null;
+            filter.MaxCreated = null;
+            filter.Status = (int) StatusAccount.Active;
+            filter.MinLastModified = null;
+            filter.MaxLastModified = null;
+            filter.MinMoney = null;
+            filter.MaxMoney = null;
+
+            // Invalid model.
+            if (!ModelState.IsValid)
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+
+            var results = await _repositoryAccount.FilterDoctorAsync(filter);
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                Doctors = results.Users.Select(x => new
+                {
+                    x.Id,
+                    x.FirstName,
+                    x.LastName,
+                    x.Email,
+                    x.Gender,
+                    x.Address,
+                    x.Photo,
+                    x.Phone,
+                    x.Rank,
+                    Specialty = new
+                    {
+                        x.Specialty.Id,
+                        x.Specialty.Name
+                    },
+                    City = new
+                    {
+                        x.City.Id,
+                        x.City.Name,
+                        Country = new
+                        {
+                            x.City.Country.Id,
+                            x.City.Country.Name
+                        }
+                    }
+                }),
+                results.Total
+            });
+        }
 
         #endregion
 

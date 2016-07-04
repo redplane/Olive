@@ -295,6 +295,16 @@ namespace Shared.Repositories
                                   Id = specialty.Id,
                                   Name = specialty.Name
                               },
+                              City = new CityViewModel()
+                              {
+                                  Id = doctor.City.Id,
+                                  Name = doctor.City.Name,
+                                  Country = new CountryViewModel()
+                                  {
+                                      Id = doctor.City.CountryId,
+                                      Name = doctor.City.CountryName
+                                  }
+                              },
                               Status = (StatusAccount) person.Status,
                               Voters = doctor.Voters
                           };
@@ -434,6 +444,16 @@ namespace Shared.Repositories
                     {
                         Id = x.TrainedSpecialty.Id,
                         Name = x.TrainedSpecialty.Name
+                    },
+                    City = new CityViewModel()
+                    {
+                        Id = x.Doctor.City.Id,
+                        Name = x.Doctor.City.Name,
+                        Country = new CountryViewModel()
+                        {
+                            Id = x.Doctor.City.CountryId,
+                            Name = x.Doctor.City.CountryName
+                        }
                     }
                 });
 

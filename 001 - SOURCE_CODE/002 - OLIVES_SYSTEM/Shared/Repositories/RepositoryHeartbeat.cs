@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
@@ -58,14 +59,26 @@ namespace Shared.Repositories
         /// <summary>
         /// Delete a heartbeat note asynchrounously.
         /// </summary>
-        /// <param name="heartbeatNote"></param>
+        /// <param name="id"></param>
+        /// <param name="owner"></param>
         /// <returns></returns>
-        public async void DeleteHeartbeatNoteAsync(Heartbeat heartbeatNote)
+        public async Task<int> DeleteHeartbeatNoteAsync(int id, int owner)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-            context.Heartbeats.Remove(heartbeatNote);
-            await context.SaveChangesAsync();
+            try
+            {
+                // Database context initialization.
+                var context = new OlivesHealthEntities();
+                
+                // Remove the queried record from database.
+                context.Heartbeats.RemoveRange(context.Heartbeats.Where(x => x.Id == id && x.Owner == owner));
+                var deletedRecords = await context.SaveChangesAsync();
+                return deletedRecords;
+            }
+            catch
+            {
+                throw;
+            }
+            
         }
 
         /// <summary>
