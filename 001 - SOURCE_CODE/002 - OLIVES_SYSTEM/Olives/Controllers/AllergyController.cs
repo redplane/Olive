@@ -68,9 +68,10 @@ namespace Olives.Controllers
             // No result has been received.
             if (results == null || results.Allergies == null || results.Allergies.Count != 1)
             {
+                // Tell client no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.WarnNoRecord}
+                    Error = $"{Language.WarnNoRecord}"
                 });
             }
 
@@ -108,11 +109,9 @@ namespace Olives.Controllers
             // Model hasn't been initialized.
             if (info == null)
             {
-                _log.Error("Invalid allergies filter request parameters");
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new
-                {
-                    Errors = new[] {Language.InvalidRequestParameters}
-                });
+                // Initialize the request view model and do the validation.
+                info = new InitializeAllergyViewModel();
+                Validate(info);
             }
 
             // Invalid model state.
@@ -190,22 +189,12 @@ namespace Olives.Controllers
             var allergies = await _repositoryAllergy.FindAllergyAsync(id, requester.Id);
 
             // Not record has been found.
-            if (allergies == null || allergies.Count < 1)
+            if (allergies == null || allergies.Count != 1)
             {
-                // Tell front-end, no record has been found.
+                // Tell client no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.WarnRecordNotFound}
-                });
-            }
-
-            // Records are conflict.
-            if (allergies.Count != 1)
-            {
-                // Tell front-end that records are conflict.
-                return Request.CreateResponse(HttpStatusCode.Conflict, new
-                {
-                    Errors = new[] {Language.WarnRecordConflict}
+                    Error = $"{Language.WarnNoRecord}"
                 });
             }
 
@@ -213,10 +202,10 @@ namespace Olives.Controllers
             var allergy = allergies.FirstOrDefault();
             if (allergy == null)
             {
-                // Tell front-end, no record has been found.
+                // Tell client no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.WarnRecordNotFound}
+                    Error = $"{Language.WarnNoRecord}"
                 });
             }
 
@@ -255,7 +244,7 @@ namespace Olives.Controllers
         {
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+
             try
             {
                 // Find and delete the allergy.
@@ -267,7 +256,7 @@ namespace Olives.Controllers
                     // Tell front-end, no record has been found.
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {
-                        Errors = new[] { Language.WarnRecordNotFound }
+                        Errors = new[] {Language.WarnRecordNotFound}
                     });
                 }
 
@@ -296,16 +285,14 @@ namespace Olives.Controllers
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterAllergyViewModel info)
         {
-            #region ModelState result
+            // Retrieve information of person who sent request.
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Model hasn't been initialized.
             if (info == null)
             {
                 _log.Error("Invalid allergies filter request parameters");
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new
-                {
-                    Errors = new[] {Language.InvalidRequestParameters}
-                });
+                info = new FilterAllergyViewModel();
             }
 
             // Invalid model state.
@@ -315,42 +302,33 @@ namespace Olives.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
 
-            #endregion
+            // Owner has been specified.
+            if (info.Owner != null)
+            {
+                // Owner is the requester.
+                if (info.Owner == requester.Id)
+                    info.Owner = requester.Id;
+                else
+                {
+                    // Find the relation between the owner and the requester.
+                    var relationships = await _repositoryAccount.FindRelation(requester.Id, info.Owner.Value,
+                        (byte)StatusAccount.Active);
 
-            #region Email & password of owners.
-
-            var accountEmail = Request.Headers.Where(
-                x =>
-                    !string.IsNullOrEmpty(x.Key) &&
-                    x.Key.Equals(HeaderFields.RequestAccountEmail))
-                .Select(x => x.Value.FirstOrDefault())
-                .FirstOrDefault();
-
-            var accountPassword = Request.Headers.Where(
-                x =>
-                    !string.IsNullOrEmpty(x.Key) &&
-                    x.Key.Equals(HeaderFields.RequestAccountPassword))
-                .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
-
-            // Filter person by email & password.
-            var person = _repositoryAccount.FindPerson(null, accountEmail, accountPassword, null);
-
-            #endregion
-
-            // Only see his/her own allergy.
-            info.Owner = person.Id;
+                    // No relationship has been found.
+                    if (relationships == null || relationships.Count < 1)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                        {
+                            Error = $"{Language.WarnHasNoRelationship}"
+                        });
+                    }
+                }
+            }
+            else
+                info.Owner = requester.Id;
 
             // Retrieve the results list.
             var results = await _repositoryAllergy.FilterAllergy(info);
-
-            // No result has been received.
-            if (results == null || results.Allergies == null || results.Allergies.Count < 1)
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Errors = new[] {Language.WarnNoRecord}
-                });
-            }
 
             // Filter allergies.
             var result = results.Allergies

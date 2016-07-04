@@ -13,6 +13,17 @@
           <Property Name="Code" Type="varchar" MaxLength="10" />
           <Property Name="Expired" Type="datetime" Nullable="false" />
         </EntityType>
+        <EntityType Name="Addiction">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Owner" Type="int" Nullable="false" />
+          <Property Name="Cause" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Note" Type="nvarchar" MaxLength="128" />
+          <Property Name="Created" Type="float" Nullable="false" />
+          <Property Name="LastModified" Type="float" />
+        </EntityType>
         <EntityType Name="Allergy">
           <Key>
             <PropertyRef Name="Id" />
@@ -20,7 +31,7 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Owner" Type="int" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="32" Nullable="false" />
-          <Property Name="Cause" Type="nvarchar" MaxLength="43" Nullable="false" />
+          <Property Name="Cause" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Note" Type="nvarchar" MaxLength="128" />
           <Property Name="Created" Type="float" Nullable="false" />
           <Property Name="LastModified" Type="float" />
@@ -176,7 +187,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Allergy__Owner__35A7EF71">
+        <Association Name="FK__Addiction__Owner__68336F3E">
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="Addiction" Type="Self.Addiction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Addiction">
+              <PropertyRef Name="Owner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Allergy__Owner__65570293">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="Allergy" Type="Self.Allergy" Multiplicity="*" />
           <ReferentialConstraint>
@@ -365,6 +388,7 @@
         <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="OlivesHealthModelStoreContainer">
           <EntitySet Name="ActivationCode" EntityType="Self.ActivationCode" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Addiction" EntityType="Self.Addiction" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Allergy" EntityType="Self.Allergy" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Appointment" EntityType="Self.Appointment" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BloodPressure" EntityType="Self.BloodPressure" Schema="dbo" store:Type="Tables" />
@@ -382,7 +406,11 @@
             <End Role="Person" EntitySet="Person" />
             <End Role="ActivationCode" EntitySet="ActivationCode" />
           </AssociationSet>
-          <AssociationSet Name="FK__Allergy__Owner__35A7EF71" Association="Self.FK__Allergy__Owner__35A7EF71">
+          <AssociationSet Name="FK__Addiction__Owner__68336F3E" Association="Self.FK__Addiction__Owner__68336F3E">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="Addiction" EntitySet="Addiction" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Allergy__Owner__65570293" Association="Self.FK__Allergy__Owner__65570293">
             <End Role="Person" EntitySet="Person" />
             <End Role="Allergy" EntitySet="Allergy" />
           </AssociationSet>
@@ -471,6 +499,7 @@
           </FunctionImport>
           <FunctionImport Name="sp_upgraddiagrams" />
           <EntitySet Name="ActivationCodes" EntityType="OlivesHealthModel.ActivationCode" />
+          <EntitySet Name="Addictions" EntityType="OlivesHealthModel.Addiction" />
           <EntitySet Name="Allergies" EntityType="OlivesHealthModel.Allergy" />
           <EntitySet Name="Appointments" EntityType="OlivesHealthModel.Appointment" />
           <EntitySet Name="BloodPressures" EntityType="OlivesHealthModel.BloodPressure" />
@@ -488,7 +517,11 @@
             <End Role="Person" EntitySet="People" />
             <End Role="ActivationCode" EntitySet="ActivationCodes" />
           </AssociationSet>
-          <AssociationSet Name="FK__Allergy__Owner__35A7EF71" Association="OlivesHealthModel.FK__Allergy__Owner__35A7EF71">
+          <AssociationSet Name="FK__Addiction__Owner__68336F3E" Association="OlivesHealthModel.FK__Addiction__Owner__68336F3E">
+            <End Role="Person" EntitySet="People" />
+            <End Role="Addiction" EntitySet="Addictions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Allergy__Owner__65570293" Association="OlivesHealthModel.FK__Allergy__Owner__65570293">
             <End Role="Person" EntitySet="People" />
             <End Role="Allergy" EntitySet="Allergies" />
           </AssociationSet>
@@ -561,6 +594,18 @@
           <Property Name="Expired" Type="DateTime" Nullable="false" Precision="3" />
           <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Activatio__Owner__2B2A60FE" FromRole="ActivationCode" ToRole="Person" />
         </EntityType>
+        <EntityType Name="Addiction">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Owner" Type="Int32" Nullable="false" />
+          <Property Name="Cause" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Note" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Created" Type="Double" Nullable="false" />
+          <Property Name="LastModified" Type="Double" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Addiction__Owner__68336F3E" FromRole="Addiction" ToRole="Person" />
+        </EntityType>
         <EntityType Name="Allergy">
           <Key>
             <PropertyRef Name="Id" />
@@ -568,11 +613,11 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Owner" Type="Int32" Nullable="false" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
-          <Property Name="Cause" Type="String" Nullable="false" MaxLength="43" FixedLength="false" Unicode="true" />
+          <Property Name="Cause" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Note" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Allergy__Owner__35A7EF71" FromRole="Allergy" ToRole="Person" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Allergy__Owner__65570293" FromRole="Allergy" ToRole="Person" />
         </EntityType>
         <EntityType Name="Appointment">
           <Key>
@@ -684,7 +729,8 @@
           <Property Name="Address" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Photo" Type="String" MaxLength="32" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="ActivationCode" Relationship="OlivesHealthModel.FK__Activatio__Owner__2B2A60FE" FromRole="Person" ToRole="ActivationCode" />
-          <NavigationProperty Name="Allergies" Relationship="OlivesHealthModel.FK__Allergy__Owner__35A7EF71" FromRole="Person" ToRole="Allergy" />
+          <NavigationProperty Name="Addictions" Relationship="OlivesHealthModel.FK__Addiction__Owner__68336F3E" FromRole="Person" ToRole="Addiction" />
+          <NavigationProperty Name="Allergies" Relationship="OlivesHealthModel.FK__Allergy__Owner__65570293" FromRole="Person" ToRole="Allergy" />
           <NavigationProperty Name="Appointments" Relationship="OlivesHealthModel.FK__Appointme__Dater__2EFAF1E2" FromRole="Person" ToRole="Appointment" />
           <NavigationProperty Name="Appointments1" Relationship="OlivesHealthModel.FK__Appointme__Statu__2E06CDA9" FromRole="Person" ToRole="Appointment" />
           <NavigationProperty Name="BloodPressures" Relationship="OlivesHealthModel.FK__BloodPres__LastM__284DF453" FromRole="Person" ToRole="BloodPressure" />
@@ -751,7 +797,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Allergy__Owner__35A7EF71">
+        <Association Name="FK__Addiction__Owner__68336F3E">
+          <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="OlivesHealthModel.Addiction" Role="Addiction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Addiction">
+              <PropertyRef Name="Owner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Allergy__Owner__65570293">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.Allergy" Role="Allergy" Multiplicity="*" />
           <ReferentialConstraint>
@@ -943,6 +1001,18 @@
                 <ScalarProperty Name="Expired" ColumnName="Expired" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Owner" ColumnName="Owner" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Addictions">
+            <EntityTypeMapping TypeName="OlivesHealthModel.Addiction">
+              <MappingFragment StoreEntitySet="Addiction">
+                <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="Cause" ColumnName="Cause" />
+                <ScalarProperty Name="Owner" ColumnName="Owner" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

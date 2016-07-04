@@ -28,6 +28,7 @@ namespace Shared.Models
         }
     
         public virtual DbSet<ActivationCode> ActivationCodes { get; set; }
+        public virtual DbSet<Addiction> Addictions { get; set; }
         public virtual DbSet<Allergy> Allergies { get; set; }
         public virtual DbSet<Appointment> Appointments { get; set; }
         public virtual DbSet<BloodPressure> BloodPressures { get; set; }

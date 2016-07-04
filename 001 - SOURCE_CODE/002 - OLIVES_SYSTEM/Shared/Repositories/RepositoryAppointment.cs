@@ -15,30 +15,6 @@ namespace Shared.Repositories
     public class RepositoryAppointment : IRepositoryAppointment
     {
         /// <summary>
-        /// Check whether the relation is available or not.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        public async Task<bool> IsRelationAvailable(int source, int target)
-        {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
-            // Find the relation which is related to owner.
-            var results = await (from p in context.People
-                                 join r in context.Relations on p.Id equals r.Source
-                                 where r.Source == source && r.Target == target
-                                 select r).ToListAsync();
-
-            // Relation already exists.
-            if (results != null && results.Count > 0)
-                return true;
-
-            return false;
-        }
-
-        /// <summary>
         /// Initialize an appointment and save to database.
         /// </summary>
         /// <param name="info"></param>
@@ -58,16 +34,15 @@ namespace Shared.Repositories
         /// Filter appointment asynchronously.
         /// </summary>
         /// <param name="filter"></param>
-        /// <param name="account"></param>
-        /// <param name="password"></param>
+        /// <param name="requester">The person who made or be dated</param>
         /// <returns></returns>
-        public async Task<ResponseAppointmentFilter> FilterAppointmentAsync(FilterAppointmentViewModel filter, string account, string password)
+        public async Task<ResponseAppointmentFilter> FilterAppointmentAsync(FilterAppointmentViewModel filter, int requester)
         {
             // Data context initialization.
             var context = new OlivesHealthEntities();
 
             // By default, take all records.
-            var results = from p in context.People.Where(x => x.Email.Equals(account) && x.Password.Equals(password))
+            var results = from p in context.People.Where(x => x.Id == requester)
                                               from a in context.Appointments
                                               where p != null && ((filter.Mode == PartnerFilterMode.PartnerIsRequester && p.Id == a.Dater) || (filter.Mode == PartnerFilterMode.ParterIsDater && p.Id == a.Maker))
                                               select a;
@@ -108,8 +83,6 @@ namespace Shared.Repositories
                 results = results.Where(x => x.LastModified >= filter.MinLastModified);
             if (filter.MaxLastModified != null)
                 results = results.Where(x => x.LastModified <= filter.MaxLastModified);
-
-            // Initialize appointment view model.
             
             // Response initialization.
             var response = new ResponseAppointmentFilter();

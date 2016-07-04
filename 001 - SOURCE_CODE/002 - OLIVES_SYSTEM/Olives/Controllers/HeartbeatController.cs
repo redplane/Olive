@@ -236,7 +236,7 @@ namespace Olives.Controllers
         {
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+
             try
             {
                 // Remove the found allergy.
@@ -274,8 +274,6 @@ namespace Olives.Controllers
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterHeatbeatViewModel info)
         {
-            #region ModelState result
-
             // Model hasn't been initialized.
             if (info == null)
             {
@@ -289,14 +287,34 @@ namespace Olives.Controllers
                 _log.Error("Invalid allergies filter request parameters");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
-
-            #endregion
-
+            
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
-            // Person can only see his/her notes.
-            info.Owner = requester.Id;
+            // Owner has been specified.
+            if (info.Owner != null)
+            {
+                // Owner is the requester.
+                if (info.Owner == requester.Id)
+                    info.Owner = requester.Id;
+                else
+                {
+                    // Find the relation between the owner and the requester.
+                    var relationships = await _repositoryAccount.FindRelation(requester.Id, info.Owner.Value,
+                        (byte) StatusAccount.Active);
+
+                    // No relationship has been found.
+                    if (relationships == null || relationships.Count < 1)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                        {
+                            Error = $"{Language.WarnHasNoRelationship}"
+                        });
+                    }
+                }
+            }
+            else
+                info.Owner = requester.Id;
 
             // Retrieve the results list.
             var results = await _repositoryHeartbeat.FilterHeartbeatAsync(info);

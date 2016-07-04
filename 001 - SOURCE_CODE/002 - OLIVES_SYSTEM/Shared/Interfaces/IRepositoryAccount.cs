@@ -127,8 +127,9 @@ namespace Shared.Interfaces
         /// </summary>
         /// <param name="firstPerson"></param>
         /// <param name="secondPerson"></param>
+        /// <param name="status"></param>
         /// <returns></returns>
-        Task<IList<Relation>> FindRelation(int firstPerson, int secondPerson);
+        Task<IList<Relation>> FindRelation(int firstPerson, int secondPerson, byte? status);
 
         /// <summary>
         /// Initialize a relationship to database.
@@ -161,8 +162,7 @@ namespace Shared.Interfaces
         /// <param name="relation"></param>
         /// <returns></returns>
         Task<bool> DeleteRelationAsync(Relation relation);
-
-
+        
         #endregion
     }
 }

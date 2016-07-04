@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -8,33 +7,18 @@ using log4net;
 using Olives.Attributes;
 using Shared.Enumerations;
 using Shared.Interfaces;
-using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
-    [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+    [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
     public class PlaceController : ApiParentController
     {
-        #region Properties
-
-        /// <summary>
-        ///     Repository places DI
-        /// </summary>
-        private readonly IRepositoryPlace _repositoryPlace;
-
-        /// <summary>
-        /// Logger module DI , this is used for writing log.
-        /// </summary>
-        private readonly ILog _log;
-
-        #endregion
-
         #region Constructors
 
         /// <summary>
-        /// Initialize an instance of PlaceController.
+        ///     Initialize an instance of PlaceController.
         /// </summary>
         /// <param name="repositoryPlace"></param>
         /// <param name="log"></param>
@@ -46,16 +30,30 @@ namespace Olives.Controllers
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        ///     Repository places DI
+        /// </summary>
+        private readonly IRepositoryPlace _repositoryPlace;
+
+        /// <summary>
+        ///     Logger module DI , this is used for writing log.
+        /// </summary>
+        private readonly ILog _log;
+
+        #endregion
+
         #region Country
 
         /// <summary>
-        /// Find a country by using specific id.
+        ///     Find a country by using specific id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [Route("api/country")]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetCountry([FromUri]int id)
+        public async Task<HttpResponseMessage> GetCountry([FromUri] int id)
         {
             // Using id to find country.
             var countries = await _repositoryPlace.FindCountryAsync(id, null, null);
@@ -91,9 +89,9 @@ namespace Olives.Controllers
                 }
             });
         }
-        
+
         /// <summary>
-        /// Filter countries by using given conditions.
+        ///     Filter countries by using given conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -121,13 +119,13 @@ namespace Olives.Controllers
         #region City
 
         /// <summary>
-        /// Find a city by using specific id.
+        ///     Find a city by using specific id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [Route("api/city")]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetCity([FromUri]int id)
+        public async Task<HttpResponseMessage> GetCity([FromUri] int id)
         {
             // Using id to find country.
             var cities = await _repositoryPlace.FindCityAsync(id);
@@ -168,9 +166,9 @@ namespace Olives.Controllers
                 }
             });
         }
-        
+
         /// <summary>
-        /// Filter and retrieve list of city with given information.
+        ///     Filter and retrieve list of city with given information.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>

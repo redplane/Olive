@@ -116,7 +116,7 @@ namespace Olives
             builder.RegisterType<RepositoryPlace>()
                 .As<IRepositoryPlace>()
                 .SingleInstance();
-            
+
             // Email service.
             var emailService = new EmailService(applicationSetting.SmtpSetting);
 

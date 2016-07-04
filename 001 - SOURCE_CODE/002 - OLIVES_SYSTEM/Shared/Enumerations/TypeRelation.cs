@@ -1,6 +1,6 @@
 ﻿namespace Shared.Enumerations
 {
-    public enum RelationAccount
+    public enum TypeRelation
     {
         Treatment,
         Relative

@@ -28,14 +28,12 @@ namespace Olives.Controllers
         /// <param name="repositoryAccount"></param>
         /// <param name="repositoryAppointment"></param>
         /// <param name="log"></param>
-        /// <param name="emailService"></param>
         public AppointmentController(IRepositoryAccount repositoryAccount, IRepositoryAppointment repositoryAppointment,
-            ILog log, IEmailService emailService)
+            ILog log)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryAppointment = repositoryAppointment;
             _log = log;
-            _emailService = emailService;
         }
 
         #endregion
@@ -43,7 +41,7 @@ namespace Olives.Controllers
         #region Methods
 
         /// <summary>
-        /// Make an appointment request to a target person.
+        ///     Make an appointment request to a target person.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
@@ -52,16 +50,13 @@ namespace Olives.Controllers
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Post([FromBody] InitializeAppointmentViewModel info)
         {
-            #region ModelState result
+            #region Model validation
 
             // Model hasn't been initialized.
             if (info == null)
             {
-                _log.Error("Invalid appointment filter request parameters");
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new
-                {
-                    Errors = new[] {Language.InvalidRequestParameters}
-                });
+                info = new InitializeAppointmentViewModel();
+                Validate(info);
             }
 
             // Invalid model state.
@@ -73,39 +68,11 @@ namespace Olives.Controllers
 
             #endregion
 
-            #region Request email & password
+            #region Relation validation
 
-            // Account email.
-            var accountEmail = Request.Headers.Where(
-                x =>
-                    !string.IsNullOrEmpty(x.Key) &&
-                    x.Key.Equals(HeaderFields.RequestAccountEmail))
-                .Select(x => x.Value.FirstOrDefault())
-                .FirstOrDefault();
-
-            // Account password.
-            var accountPassword = Request.Headers.Where(
-                x =>
-                    !string.IsNullOrEmpty(x.Key) &&
-                    x.Key.Equals(HeaderFields.RequestAccountPassword))
-                .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
-
-            // Filter person by email & password.
-            var person =
-                await
-                    _repositoryAccount.FindPersonAsync(null, accountEmail, accountPassword, null, StatusAccount.Active);
-            if (person == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.Unauthorized, new
-                {
-                    Errors = new[] {Language.WarnNotAuthorizedAccount}
-                });
-            }
-
-            #endregion
-
-            #region Dater validation
-
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            
             // Find the dater by using id.
             var dater = await _repositoryAccount.FindPersonAsync(info.Dater, null, null, null, StatusAccount.Active);
 
@@ -114,7 +81,7 @@ namespace Olives.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.WarnDaterNotFound}
+                    Error = $"{Language.WarnDaterNotFound}"
                 });
             }
 
@@ -123,35 +90,46 @@ namespace Olives.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    Errors = new[] {Language.WarnDaterInvalidRole}
+                    Error =  $"{Language.WarnDaterInvalidRole}"
                 });
             }
 
             // 2 people with same role cannot date each other.
-            if (dater.Role == person.Role)
+            if (dater.Role == requester.Role)
             {
                 return Request.CreateResponse(HttpStatusCode.Conflict, new
                 {
-                    Errors = new[] {Language.WarnDaterSameRole}
+                    Error =  $"{Language.WarnDaterSameRole}"
+                });
+            }
+            
+
+            // Check whether 2 people have relation with each other or not.
+            var relationships = await _repositoryAccount.FindRelationParticipation(requester.Id, info.Dater);
+            if (relationships == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                {
+                    Error =  $"{Language.WarnRelationNotExist}"
+                });
+            }
+
+            // No active relation has been found.
+            if (relationships.All(x => x.Status != (byte) StatusAccount.Active))
+            {
+                return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                {
+                    Error = $"{Language.WarnRelationNotExist}"
                 });
             }
 
             #endregion
 
-            // Check whether 2 people have relation with each other or not.
-            var isRelationAvailable = await _repositoryAppointment.IsRelationAvailable(person.Id, info.Dater);
-            if (!isRelationAvailable)
-            {
-                return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                {
-                    Errors = new[] {Language.WarnRelationNotExist}
-                });
-            }
-
+            // Initialize an appointment information.
             var appointment = new Appointment();
-            appointment.Maker = person.Id;
-            appointment.MakerFirstName = person.FirstName;
-            appointment.MakerLastName = person.LastName;
+            appointment.Maker = requester.Id;
+            appointment.MakerFirstName = requester.FirstName;
+            appointment.MakerLastName = requester.LastName;
             appointment.Dater = info.Dater;
             appointment.DaterFirstName = dater.FirstName;
             appointment.DaterLastName = dater.LastName;
@@ -169,9 +147,9 @@ namespace Olives.Controllers
                     result.Id,
                     Maker = new
                     {
-                        person.Id,
-                        person.FirstName,
-                        person.LastName
+                        requester.Id,
+                        requester.FirstName,
+                        requester.LastName
                     },
                     Dater = new
                     {
@@ -188,6 +166,11 @@ namespace Olives.Controllers
             });
         }
 
+        /// <summary>
+        /// Filter appointment by using specific conditions.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         [Route("api/appointment/filter")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
@@ -211,39 +194,11 @@ namespace Olives.Controllers
 
             #endregion
 
-            #region Request email & password
-
-            // Account email.
-            var accountEmail = Request.Headers.Where(
-                x =>
-                    !string.IsNullOrEmpty(x.Key) &&
-                    x.Key.Equals(HeaderFields.RequestAccountEmail))
-                .Select(x => x.Value.FirstOrDefault())
-                .FirstOrDefault();
-
-            // Account password.
-            var accountPassword = Request.Headers.Where(
-                x =>
-                    !string.IsNullOrEmpty(x.Key) &&
-                    x.Key.Equals(HeaderFields.RequestAccountPassword))
-                .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
-
-            // Filter person by email & password.
-            var person =
-                await
-                    _repositoryAccount.FindPersonAsync(null, accountEmail, accountPassword, null, StatusAccount.Active);
-            if (person == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.Unauthorized, new
-                {
-                    Errors = new[] {Language.WarnNotAuthorizedAccount}
-                });
-            }
-
-            #endregion
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Filter appointment by using specific conditions.
-            var response = await _repositoryAppointment.FilterAppointmentAsync(filter, accountEmail, accountPassword);
+            var response = await _repositoryAppointment.FilterAppointmentAsync(filter, requester.Id);
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 Appointments = response.Appointments.Select(x => new
@@ -275,23 +230,21 @@ namespace Olives.Controllers
 
         #region Properties
 
+        /// <summary>
+        /// Repository which provides functions to access account database.
+        /// </summary>
         private readonly IRepositoryAccount _repositoryAccount;
 
         /// <summary>
         ///     Repository of accounts
         /// </summary>
         private readonly IRepositoryAppointment _repositoryAppointment;
-
+        
         /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-
-        /// <summary>
-        ///     Service which is used for sending emails.
-        /// </summary>
-        private readonly IEmailService _emailService;
-
+        
         #endregion
     }
 }

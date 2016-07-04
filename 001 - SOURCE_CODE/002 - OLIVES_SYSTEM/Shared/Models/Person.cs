@@ -17,6 +17,7 @@ namespace Shared.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Person()
         {
+            this.Addictions = new HashSet<Addiction>();
             this.Allergies = new HashSet<Allergy>();
             this.Appointments = new HashSet<Appointment>();
             this.Appointments1 = new HashSet<Appointment>();
@@ -43,6 +44,8 @@ namespace Shared.Models
         public string Photo { get; set; }
     
         public virtual ActivationCode ActivationCode { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Addiction> Addictions { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Allergy> Allergies { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -790,6 +790,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to W019.
+        /// </summary>
+        public static string WarnHasNoRelationship {
+            get {
+                return ResourceManager.GetString("WarnHasNoRelationship", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to W003.
         /// </summary>
         public static string WarnNoRecord {

@@ -8,14 +8,6 @@ namespace Shared.Interfaces
     public interface IRepositoryAppointment
     {
         /// <summary>
-        /// Check whether relation is available or not.
-        /// </summary>
-        /// <param name="owner"></param>
-        /// <param name="relative"></param>
-        /// <returns></returns>
-        Task<bool> IsRelationAvailable(int owner, int relative);
-
-        /// <summary>
         /// Initialize an appointment with specific information.
         /// </summary>
         /// <param name="info"></param>
@@ -26,10 +18,8 @@ namespace Shared.Interfaces
         /// Filter appointment with requester account & password.
         /// </summary>
         /// <param name="filter"></param>
-        /// <param name="account"></param>
-        /// <param name="password"></param>
+        /// <param name="requester"></param>
         /// <returns></returns>
-        Task<ResponseAppointmentFilter> FilterAppointmentAsync(FilterAppointmentViewModel filter, string account,
-            string password);
+        Task<ResponseAppointmentFilter> FilterAppointmentAsync(FilterAppointmentViewModel filter, int requester);
     }
 }

@@ -46,6 +46,76 @@ namespace Olives.Controllers
 
         #endregion
 
+        #region Doctor
+
+        /// <summary>
+        ///     Filter and respond a list of doctors to client.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [Route("api/doctor/filter")]
+        [HttpPost]
+        [OlivesAuthorize(new[] {Role.Patient})]
+        public async Task<HttpResponseMessage> FilterDoctor([FromBody] FilterDoctorViewModel filter)
+        {
+            // Filter hasn't been initialized. Initialize it and do validation.
+            if (filter == null)
+            {
+                filter = new FilterDoctorViewModel();
+                Validate(filter);
+            }
+
+            // Prevent patient from searching sensitive information
+            filter.MinMoney = null;
+            filter.MaxMoney = null;
+            filter.MinCreated = null;
+            filter.MaxCreated = null;
+            filter.Status = (int) StatusAccount.Active;
+            filter.MinLastModified = null;
+            filter.MaxLastModified = null;
+            filter.MinMoney = null;
+            filter.MaxMoney = null;
+
+            // Invalid model.
+            if (!ModelState.IsValid)
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+
+            var results = await _repositoryAccount.FilterDoctorAsync(filter);
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                Doctors = results.Users.Select(x => new
+                {
+                    x.Id,
+                    x.FirstName,
+                    x.LastName,
+                    x.Email,
+                    x.Gender,
+                    x.Address,
+                    x.Photo,
+                    x.Phone,
+                    x.Rank,
+                    Specialty = new
+                    {
+                        x.Specialty.Id,
+                        x.Specialty.Name
+                    },
+                    City = new
+                    {
+                        x.City.Id,
+                        x.City.Name,
+                        Country = new
+                        {
+                            x.City.Country.Id,
+                            x.City.Country.Name
+                        }
+                    }
+                }),
+                results.Total
+            });
+        }
+
+        #endregion
+
         #region Sign up
 
         /// <summary>
@@ -540,7 +610,7 @@ namespace Olives.Controllers
             }
 
             // Check whether these two people have relation or not.
-            var relationship = await _repositoryAccount.FindRelation(requester.Id, target);
+            var relationship = await _repositoryAccount.FindRelation(requester.Id, target, null);
 
             // 2 people already make a relationship to each other.
             if (relationship != null)
@@ -563,9 +633,9 @@ namespace Olives.Controllers
 
             // Patient send request to doctor or vice versa.
             if (targetRole == Role.Patient)
-                relation.Type = (byte) RelationAccount.Relative;
+                relation.Type = (byte) TypeRelation.Relative;
             else
-                relation.Type = (byte) RelationAccount.Treatment;
+                relation.Type = (byte) TypeRelation.Treatment;
 
             await _repositoryAccount.InitializeRelationAsync(relation);
 
@@ -675,76 +745,6 @@ namespace Olives.Controllers
 
             await _repositoryAccount.DeleteRelationAsync(relationship);
             return Request.CreateResponse(HttpStatusCode.OK);
-        }
-
-        #endregion
-
-        #region Doctor
-
-        /// <summary>
-        /// Filter and respond a list of doctors to client.
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
-        [Route("api/doctor/filter")]
-        [HttpPost]
-        [OlivesAuthorize(new[] { Role.Patient })]
-        public async Task<HttpResponseMessage> FilterDoctor([FromBody] FilterDoctorViewModel filter)
-        {
-            // Filter hasn't been initialized. Initialize it and do validation.
-            if (filter == null)
-            {
-                filter = new FilterDoctorViewModel();
-                Validate(filter);
-            }
-            
-            // Prevent patient from searching sensitive information
-            filter.MinMoney = null;
-            filter.MaxMoney = null;
-            filter.MinCreated = null;
-            filter.MaxCreated = null;
-            filter.Status = (int) StatusAccount.Active;
-            filter.MinLastModified = null;
-            filter.MaxLastModified = null;
-            filter.MinMoney = null;
-            filter.MaxMoney = null;
-
-            // Invalid model.
-            if (!ModelState.IsValid)
-                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-
-            var results = await _repositoryAccount.FilterDoctorAsync(filter);
-            return Request.CreateResponse(HttpStatusCode.OK, new
-            {
-                Doctors = results.Users.Select(x => new
-                {
-                    x.Id,
-                    x.FirstName,
-                    x.LastName,
-                    x.Email,
-                    x.Gender,
-                    x.Address,
-                    x.Photo,
-                    x.Phone,
-                    x.Rank,
-                    Specialty = new
-                    {
-                        x.Specialty.Id,
-                        x.Specialty.Name
-                    },
-                    City = new
-                    {
-                        x.City.Id,
-                        x.City.Name,
-                        Country = new
-                        {
-                            x.City.Country.Id,
-                            x.City.Country.Name
-                        }
-                    }
-                }),
-                results.Total
-            });
         }
 
         #endregion

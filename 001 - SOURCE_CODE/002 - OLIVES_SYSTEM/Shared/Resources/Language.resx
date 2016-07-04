@@ -405,4 +405,8 @@
     <value>W018</value>
     <comment>Warn front-end that country hasn't been found</comment>
   </data>
+  <data name="WarnHasNoRelationship" xml:space="preserve">
+    <value>W019</value>
+    <comment>Warn front-end that 2 people don't have any relationships</comment>
+  </data>
 </root>
