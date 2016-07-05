@@ -44,12 +44,17 @@ namespace Olives
 
             builder.RegisterType<AccountController>().InstancePerRequest();
             builder.RegisterType<AccountVerifyController>().InstancePerRequest();
-            builder.RegisterType<SpecialtyController>().InstancePerRequest();
             builder.RegisterType<AllergyController>().InstancePerRequest();
+            builder.RegisterType<AppointmentController>().InstancePerRequest();
+            builder.RegisterType<SpecialtyController>().InstancePerRequest();
+
+            builder.RegisterType<AddictionController>().InstancePerRequest();
             builder.RegisterType<HeartbeatController>().InstancePerRequest();
             builder.RegisterType<SugarbloodController>().InstancePerRequest();
-            builder.RegisterType<PlaceController>().InstancePerRequest();
+            builder.RegisterType<BloodPressureController>().InstancePerRequest();
 
+            builder.RegisterType<PlaceController>().InstancePerRequest();
+            
             #endregion
 
             #region General application configuration
@@ -115,6 +120,20 @@ namespace Olives
             // Repository of place registration.
             builder.RegisterType<RepositoryPlace>()
                 .As<IRepositoryPlace>()
+                .SingleInstance();
+
+            // Repository of addiction registration.
+            builder.RegisterType<RepositoryAddiction>()
+                .As<IRepositoryAddiction>()
+                .SingleInstance();
+
+            // Repository of sugarblood registration.
+            builder.RegisterType<RepositorySugarblood>()
+                .As<IRepositorySugarblood>()
+                .SingleInstance();
+
+            builder.RegisterType<RepositoryAppointment>()
+                .As<IRepositoryAppointment>()
                 .SingleInstance();
 
             // Email service.
