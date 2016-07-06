@@ -43,19 +43,12 @@ namespace Shared.ViewModels.Filter
         public long? MaxLastModified { get; set; }
 
         /// <summary>
-        ///     Person first name.
+        ///     Person name.
         /// </summary>
-        [MaxLength(FieldLength.LastNameMaxLength, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidLastName")]
-        public string FirstName { get; set; }
-
-        /// <summary>
-        ///     Person last name.
-        /// </summary>
-        [MaxLength(FieldLength.FirstNameMaxLength, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidFirstName")]
-        public string LastName { get; set; }
-
+        [MaxLength(FieldLength.FullNameMaxLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        public string Name { get; set; }
+        
         /// <summary>
         ///     Date after that person was born
         /// </summary>

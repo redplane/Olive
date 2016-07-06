@@ -15,15 +15,15 @@ namespace DataInitializer
         private static void Main(string[] args)
         {
 
-            //InitializePlaces(50);
-            //InitializeSpecialties(50);
-            //InitializeDoctor(50);
-            //InitializePatient(50);
-            //InitializeAdmin(50);
-            //InitializeHeartbeatNote("patient26@gmail.com", 90);
-            //InitializeSugarbloodNote("patient26@gmail.com", 90);
-            //InitializeBloodPressureNote("patient26@gmail.com", 90);
-            //InitializeAllergyNote("patient26@gmail.com", 90);
+            InitializePlaces(50);
+            InitializeSpecialties(50);
+            InitializeDoctor(50);
+            InitializePatient(50);
+            InitializeAdmin(50);
+            InitializeHeartbeatNote("patient26@gmail.com", 90);
+            InitializeSugarbloodNote("patient26@gmail.com", 90);
+            InitializeBloodPressureNote("patient26@gmail.com", 90);
+            InitializeAllergyNote("patient26@gmail.com", 90);
         }
 
         /// <summary>
@@ -264,9 +264,10 @@ namespace DataInitializer
                     person.Password = "doctor199x";
                     person.FirstName = $"FirstName[{i}]";
                     person.LastName = $"LastName[{i}]";
+                    person.FullName = person.FirstName + " " + person.LastName;
                     person.Gender = 0;
                     person.Role = (byte)Role.Doctor;
-                    person.Created = 3;
+                    person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
                     person.Address = "New York, NY, USA";
                     person.Birthday = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
 
@@ -324,9 +325,10 @@ namespace DataInitializer
                 person.Password = "patient199x";
                 person.FirstName = $"FirstName[{i}]";
                 person.LastName = $"LastName[{i}]";
+                person.FullName = person.FirstName + " " + person.LastName;
                 person.Gender = 0;
                 person.Role = (byte)Role.Patient;
-                person.Created = 3;
+                person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
 
                 if (i > 25)
                     person.Status = (byte)StatusAccount.Active;
@@ -364,9 +366,10 @@ namespace DataInitializer
                 person.Password = "admin199x";
                 person.FirstName = $"FirstName[{i}]";
                 person.LastName = $"LastName[{i}]";
+                person.FullName = person.FirstName + " " + person.LastName;
                 person.Gender = 0;
                 person.Role = (byte)Role.Admin;
-                person.Created = 3;
+                person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
                 
                 if (i > 25)
                     person.Status = (byte)StatusAccount.Active;

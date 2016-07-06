@@ -47,9 +47,20 @@
         /// </summary>
         public const int MaxAddressLength = 128;
 
+        /// <summary>
+        /// Maximum length of first name.
+        /// </summary>
         public const int FirstNameMaxLength = 32;
 
+        /// <summary>
+        /// Maximum length of last name.
+        /// </summary>
         public const int LastNameMaxLength = 32;
+
+        /// <summary>
+        /// Maximum length of full name.
+        /// </summary>
+        public const int FullNameMaxLength = 64;
 
         /// <summary>
         /// Maximum length of name of country.

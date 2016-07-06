@@ -89,14 +89,10 @@ namespace Shared.Repositories
             if (filter.MaxLastModified != null)
                 results = results.Where(x => x.Person.LastModified <= filter.MaxLastModified);
 
-            // Filter by using first name
-            if (!string.IsNullOrEmpty(filter.FirstName))
-                results = results.Where(x => x.Person.FirstName.Contains(filter.FirstName));
-
-            // Filter by using last name.
-            if (!string.IsNullOrEmpty(filter.LastName))
-                results = results.Where(x => x.Person.LastName.Contains(filter.LastName));
-
+            // Filter by using name
+            if (!string.IsNullOrEmpty(filter.Name))
+                results = results.Where(x => x.Person.FullName.Contains(filter.Name));
+            
             // Filter by using birthday.
             if (filter.MinBirthday != null)
                 results = results.Where(x => x.Person.Birthday >= filter.MinBirthday);
@@ -337,14 +333,10 @@ namespace Shared.Repositories
             // Filter doctor by using phone number.
             if (!string.IsNullOrEmpty(filter.Phone))
                 people = people.Where(x => x.Phone.Contains(filter.Phone));
-
-            // Filter by using first name
-            if (!string.IsNullOrEmpty(filter.FirstName))
-                people = people.Where(x => x.FirstName.Contains(filter.FirstName));
-
-            // Filter by using last name.
-            if (!string.IsNullOrEmpty(filter.LastName))
-                people = people.Where(x => x.LastName.Contains(filter.LastName));
+            
+            // Filter by using full name.
+            if (!string.IsNullOrEmpty(filter.Name))
+                people = people.Where(x => x.FullName.Contains(filter.Name));
             
             // Filter by using birthday.
             if (filter.MinBirthday != null)

@@ -88,6 +88,7 @@ namespace Olives.Controllers
                     x.Id,
                     x.FirstName,
                     x.LastName,
+                    x.Birthday,
                     x.Email,
                     x.Gender,
                     x.Address,
@@ -156,6 +157,7 @@ namespace Olives.Controllers
             var person = new Person();
             person.FirstName = info.FirstName;
             person.LastName = info.LastName;
+            person.FullName = info.FirstName + " " + info.LastName;
             person.Birthday = info.Birthday;
             person.Gender = (byte) info.Gender;
             person.Email = info.Email;
@@ -327,6 +329,7 @@ namespace Olives.Controllers
             var person = new Person();
             person.FirstName = info.FirstName;
             person.LastName = info.LastName;
+            person.FullName = person.FirstName + " " + person.LastName;
             person.Birthday = info.Birthday;
             person.Gender = (byte) info.Gender;
             person.Email = info.Email;
