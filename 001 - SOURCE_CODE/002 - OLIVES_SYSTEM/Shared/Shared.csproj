@@ -98,7 +98,6 @@
     <Compile Include="Enumerations\Comparision.cs" />
     <Compile Include="Helpers\CodeGeneratorHelper.cs" />
     <Compile Include="Helpers\EpochTimeHelper.cs" />
-    <Compile Include="Interfaces\IDbSetting.cs" />
     <Compile Include="Interfaces\IDoctor.cs" />
     <Compile Include="Interfaces\IPagination.cs" />
     <Compile Include="Interfaces\IPatient.cs" />
