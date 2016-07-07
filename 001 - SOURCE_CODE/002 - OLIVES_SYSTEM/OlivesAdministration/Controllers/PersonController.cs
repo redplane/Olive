@@ -73,24 +73,16 @@ namespace OlivesAdministration.Controllers
             // Error happens while changing account status.
             if (result == null)
             {
-                // Response error construction.
-                var responseError = new ResponseErrror();
-                responseError.Errors = new List<string>();
-
-                responseError.Errors.Add(Language.InternalServerError);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, responseError);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new
+                {
+                    Error = $"{Language.WarnInternalServerError}"
+                });
             }
 
-            if ((StatusAccount)info.Status == Shared.Enumerations.StatusAccount.Active)
-                return Request.CreateResponse(HttpStatusCode.OK, new
-                {
-                    Message = new[] { Language.AccountHasBeenActivated}
-                });
+            if ((StatusAccount)info.Status == StatusAccount.Active)
+                return Request.CreateResponse(HttpStatusCode.OK);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new
-            {
-                Message = new[] {Language.AccountHasBeenDisabled}
-            });
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
         [Route("api/person/statistic/status")]

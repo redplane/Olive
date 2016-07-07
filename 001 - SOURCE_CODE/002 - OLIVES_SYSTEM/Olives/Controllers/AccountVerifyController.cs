@@ -72,7 +72,7 @@ namespace Olives.Controllers
             catch (Exception exception)
             {
                 _log.Error(exception.Message, exception);
-                ViewBag.Message = Language.InternalServerError;
+                ViewBag.Message = Language.WarnInternalServerError;
                 ViewBag.IsError = true;
             }
 

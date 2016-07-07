@@ -61,7 +61,14 @@ namespace Shared.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<IList<StatusSummaryViewModel>> SummarizePersonRole(byte? role);
-        
+
+        /// <summary>
+        /// Initialize or update person information asynchronously.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        Task<Person> InitializePersonAsync(Person info);
+
         #endregion
 
         #region Doctor

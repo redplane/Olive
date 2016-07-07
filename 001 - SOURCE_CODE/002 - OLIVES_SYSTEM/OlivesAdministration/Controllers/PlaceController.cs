@@ -383,7 +383,7 @@ namespace OlivesAdministration.Controllers
                 _log.Error(exception.Message, exception);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new
                 {
-                    Error = $"{Language.InternalServerError}"
+                    Error = $"{Language.WarnInternalServerError}"
                 });
             }
         }

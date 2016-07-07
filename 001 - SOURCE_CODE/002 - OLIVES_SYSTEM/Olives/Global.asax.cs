@@ -68,20 +68,21 @@ namespace Olives
             // Find the file on physical path.
             var applicationConfigFile = Server.MapPath($"~/{applicationConfig}.json");
 
-            // Invalid database configuration file.
-            if (File.Exists(applicationConfigFile))
-            {
-                var info = File.ReadAllText(applicationConfigFile);
-                applicationSetting = JsonConvert.DeserializeObject<ApplicationSetting>(info);
-            }
+            // Invalid application configuration file.
+            if (!File.Exists(applicationConfigFile))
+                throw new NotImplementedException($"{applicationConfigFile} is required to make server run properly.");
 
-            #endregion
+            var info = File.ReadAllText(applicationConfigFile);
+            applicationSetting = JsonConvert.DeserializeObject<ApplicationSetting>(info);
+            
+            // Invalid public storage folder.
+            var fullPublicStoragePath = Server.MapPath(applicationSetting.PublicStorage);
+            if (!Directory.Exists(fullPublicStoragePath))
+                Directory.CreateDirectory(fullPublicStoragePath);
 
-            #region Application settings check
-
-            /*
-             *  Email
-             */
+            // Update application public storage.
+            applicationSetting.PublicStorage = fullPublicStoragePath;
+            
             // Stmp setting is invalid
             if (applicationSetting.SmtpSetting == null || !applicationSetting.SmtpSetting.IsValid())
                 throw new NotImplementedException("Email configuration hasn't been configured.");
@@ -168,6 +169,9 @@ namespace Olives
 
             // Log4net module registration (this is for logging)
             builder.RegisterModule<Log4NetModule>();
+
+            // Application setting instance.
+            builder.RegisterInstance(applicationSetting).As<ApplicationSetting>();
 
             #endregion
 

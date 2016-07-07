@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -7,6 +10,8 @@ using System.Web.Http;
 using log4net;
 using Olives.Attributes;
 using Olives.Interfaces;
+using Olives.Models;
+using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Helpers;
@@ -32,9 +37,10 @@ namespace Olives.Controllers
         /// <param name="repositoryPlace"></param>
         /// <param name="log"></param>
         /// <param name="emailService"></param>
+        /// <param name="applicationSetting"></param>
         public AccountController(IRepositoryAccount repositoryAccount,
             IRepositoryActivationCode repositoryActivationCode, IRepositorySpecialty repositorySpecialty,
-            IRepositoryPlace repositoryPlace, ILog log, IEmailService emailService)
+            IRepositoryPlace repositoryPlace, ILog log, IEmailService emailService, ApplicationSetting applicationSetting)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryActivationCode = repositoryActivationCode;
@@ -42,6 +48,7 @@ namespace Olives.Controllers
             _repositoryPlace = repositoryPlace;
             _log = log;
             _emailService = emailService;
+            this.applicationSetting = applicationSetting;
         }
 
         #endregion
@@ -400,6 +407,111 @@ namespace Olives.Controllers
             }
         }
 
+        [Route("api/account/avatar")]
+        [HttpPost]
+        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
+        public async Task<HttpResponseMessage> PostAvatar([FromBody]InitializeAvatarViewModel info)
+        {
+            // Model validation.
+            if (info == null)
+            {
+                info = new InitializeAvatarViewModel();
+                Validate(info);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                _log.Error("Model validation is not successful");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // File validation.
+            using (var memoryStream = new MemoryStream())
+            {
+                try
+                {
+                    // Move the seeker pointer to the beginning of stream.
+                    memoryStream.Seek(0, SeekOrigin.Begin);
+
+                    // Read image from stream.
+                    var image = Image.FromStream(memoryStream);
+                    
+
+                    // As the requester has existed image before, use that name, otherwise generate a new one.
+                    if (!string.IsNullOrEmpty(requester.Photo))
+                    {
+                        // Update the image full path.
+                        var fullPath = Path.Combine(applicationSetting.PublicStorage, $"{requester.Photo}.png");
+                        image.Save(fullPath, ImageFormat.Png);
+
+                        _log.Info($"{requester.Email} has updated avatar successfuly.");
+                    }
+                    else
+                    {
+                        // Generate name for image and save image first.
+                        var imageName = Guid.NewGuid().ToString("N");
+                        var fullPath = Path.Combine(applicationSetting.PublicStorage, $"{imageName}.png");
+                        image.Save(fullPath);
+                        _log.Info($"{requester.Email} has uploaded avatar successfuly.");
+
+                        // Update to database.
+                        requester.Photo = imageName;
+
+                        // Update information to database.
+                        await _repositoryAccount.InitializePersonAsync(requester);
+                        _log.Info($"{requester.Email} has saved avatar successfully");
+                    }
+
+                    
+                    // Everything is successful. Tell client the result.
+                    return Request.CreateResponse(HttpStatusCode.OK, new
+                    {
+                        User = new
+                        {
+                            requester.Id,
+                            requester.Email,
+                            requester.Password,
+                            requester.FirstName,
+                            requester.LastName,
+                            requester.Birthday,
+                            requester.Phone,
+                            requester.Gender,
+                            requester.Role,
+                            requester.Created,
+                            requester.LastModified,
+                            requester.Status,
+                            requester.Address,
+                            requester.Photo
+                        }
+                    });
+                }
+                catch (BadImageFormatException badImageFormatException)
+                {
+                    // Log error to file.
+                    _log.Error(badImageFormatException.Message, badImageFormatException);
+
+                    // Tell the client the image is incorrect format.
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                    {
+                        Error = $"{Language.WarnImageIncorrectFormat}"
+                    });
+                }
+                catch (Exception exception)
+                {
+                    // Log error to file.
+                    _log.Error(exception.Message, exception);
+
+                    // Tell the client the server has some error occured, please try again.
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                    {
+                        Error = $"{Language.WarnInternalServerError}"
+                    });
+                }
+            }
+        }
         #endregion
 
         #region Login
@@ -783,6 +895,11 @@ namespace Olives.Controllers
         ///     Service which is used for sending emails.
         /// </summary>
         private readonly IEmailService _emailService;
+
+        /// <summary>
+        /// Property which contains settings of application which had been deserialized from json file.
+        /// </summary>
+        private readonly ApplicationSetting applicationSetting;
 
         #endregion
     }

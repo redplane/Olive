@@ -652,6 +652,25 @@ namespace Shared.Repositories
             return await filteredResult.ToListAsync();
         }
 
+        /// <summary>
+        /// Initialize or update person information asynchronously.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        public async Task<Person> InitializePersonAsync(Person info)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // Add or update information base on the primary key.
+            context.People.AddOrUpdate(info);
+
+            // Save change to database.
+            await context.SaveChangesAsync();
+
+            return info;
+        }
+
         #endregion
 
         #region Relation
@@ -794,6 +813,7 @@ namespace Shared.Repositories
                 return false;
             }
         }
+        
         #endregion
     }
 }

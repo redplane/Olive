@@ -255,8 +255,8 @@
   <data name="AccountHasBeenDisabled" xml:space="preserve">
     <value>Account has been disabled</value>
   </data>
-  <data name="InternalServerError" xml:space="preserve">
-    <value>There is something wrong with server. Process cannot be completed</value>
+  <data name="WarnInternalServerError" xml:space="preserve">
+    <value>W021</value>
   </data>
   <data name="InvalidBirthyear" xml:space="preserve">
     <value>Birthyear must be after {1}</value>
@@ -408,5 +408,9 @@
   <data name="WarnHasNoRelationship" xml:space="preserve">
     <value>W019</value>
     <comment>Warn front-end that 2 people don't have any relationships</comment>
+  </data>
+  <data name="WarnImageIncorrectFormat" xml:space="preserve">
+    <value>W020</value>
+    <comment>Warn front-end that the uploaded image is incorrect format.</comment>
   </data>
 </root>

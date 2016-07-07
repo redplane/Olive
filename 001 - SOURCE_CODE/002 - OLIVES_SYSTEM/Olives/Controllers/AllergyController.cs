@@ -270,7 +270,7 @@ namespace Olives.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new
                 {
-                    Error = $"{Language.InternalServerError}"
+                    Error = $"{Language.WarnInternalServerError}"
                 });
             }
         }

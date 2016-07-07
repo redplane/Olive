@@ -282,7 +282,7 @@ namespace Olives.Controllers
                 // Tell the client that something is wrong with the server.
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new
                 {
-                    Error = $"{Language.InternalServerError}"
+                    Error = $"{Language.WarnInternalServerError}"
                 });
             }
         }

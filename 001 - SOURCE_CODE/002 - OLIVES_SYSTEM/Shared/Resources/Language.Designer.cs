@@ -124,15 +124,6 @@ namespace Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There is something wrong with server. Process cannot be completed.
-        /// </summary>
-        public static string InternalServerError {
-            get {
-                return ResourceManager.GetString("InternalServerError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Account status is invalid.
         /// </summary>
         public static string InvalidAccountStatus {
@@ -795,6 +786,24 @@ namespace Shared.Resources {
         public static string WarnHasNoRelationship {
             get {
                 return ResourceManager.GetString("WarnHasNoRelationship", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W020.
+        /// </summary>
+        public static string WarnImageIncorrectFormat {
+            get {
+                return ResourceManager.GetString("WarnImageIncorrectFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W021.
+        /// </summary>
+        public static string WarnInternalServerError {
+            get {
+                return ResourceManager.GetString("WarnInternalServerError", resourceCulture);
             }
         }
         
