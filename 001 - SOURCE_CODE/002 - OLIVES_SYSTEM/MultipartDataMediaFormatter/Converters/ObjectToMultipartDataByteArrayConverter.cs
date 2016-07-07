@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Text;
 using MultipartDataMediaFormatter.Infrastructure;
 using MultipartDataMediaFormatter.Infrastructure.Extensions;
@@ -12,13 +13,13 @@ namespace MultipartDataMediaFormatter.Converters
     {
         public byte[] Convert(object value, string boundary)
         {
-            if(value == null)
+            if (value == null)
                 throw new ArgumentNullException("value");
-            if (String.IsNullOrWhiteSpace(boundary))
+            if (string.IsNullOrWhiteSpace(boundary))
                 throw new ArgumentNullException("boundary");
 
-            List<KeyValuePair<string, object>> propertiesList = ConvertObjectToFlatPropertiesList(value);
-            byte[] buffer = GetMultipartFormDataBytes(propertiesList, boundary);
+            var propertiesList = ConvertObjectToFlatPropertiesList(value);
+            var buffer = GetMultipartFormDataBytes(propertiesList, boundary);
             return buffer;
         }
 
@@ -28,16 +29,15 @@ namespace MultipartDataMediaFormatter.Converters
             if (value is FormData)
             {
                 FillFlatPropertiesListFromFormData((FormData) value, propertiesList);
-            }
-            else
-            {
-                FillFlatPropertiesListFromObject(value, "", propertiesList);   
+                return propertiesList;
             }
 
+            FillFlatPropertiesListFromObject(value, "", propertiesList);
             return propertiesList;
         }
 
-        private void FillFlatPropertiesListFromFormData(FormData formData, List<KeyValuePair<string, object>> propertiesList)
+        private void FillFlatPropertiesListFromFormData(FormData formData,
+            List<KeyValuePair<string, object>> propertiesList)
         {
             foreach (var field in formData.Fields)
             {
@@ -49,22 +49,23 @@ namespace MultipartDataMediaFormatter.Converters
             }
         }
 
-        private void FillFlatPropertiesListFromObject(object obj, string prefix, List<KeyValuePair<string, object>> propertiesList)
+        private void FillFlatPropertiesListFromObject(object obj, string prefix,
+            List<KeyValuePair<string, object>> propertiesList)
         {
             if (obj != null)
             {
-                Type type = obj.GetType();
+                var type = obj.GetType();
 
                 if (obj is IDictionary)
                 {
                     var dict = obj as IDictionary;
-                    int index = 0;
+                    var index = 0;
                     foreach (var key in dict.Keys)
                     {
-                        string indexedKeyPropName = String.Format("{0}[{1}].Key", prefix, index);
+                        var indexedKeyPropName = $"{prefix}[{index}].Key";
                         FillFlatPropertiesListFromObject(key, indexedKeyPropName, propertiesList);
 
-                        string indexedValuePropName = String.Format("{0}[{1}].Value", prefix, index);
+                        var indexedValuePropName = $"{prefix}[{index}].Value";
                         FillFlatPropertiesListFromObject(dict[key], indexedValuePropName, propertiesList);
 
                         index++;
@@ -73,10 +74,10 @@ namespace MultipartDataMediaFormatter.Converters
                 else if (obj is ICollection)
                 {
                     var list = obj as ICollection;
-                    int index = 0;
+                    var index = 0;
                     foreach (var indexedPropValue in list)
                     {
-                        string indexedPropName = String.Format("{0}[{1}]", prefix, index);
+                        var indexedPropName = $"{prefix}[{index}]";
                         FillFlatPropertiesListFromObject(indexedPropValue, indexedPropName, propertiesList);
 
                         index++;
@@ -86,10 +87,10 @@ namespace MultipartDataMediaFormatter.Converters
                 {
                     foreach (var propertyInfo in type.GetPublicAccessibleProperties())
                     {
-                        string propName = String.IsNullOrWhiteSpace(prefix)
-                                              ? propertyInfo.Name
-                                              : String.Format("{0}.{1}", prefix, propertyInfo.Name);
-                        object propValue = propertyInfo.GetValue(obj);
+                        var propName = string.IsNullOrWhiteSpace(prefix)
+                            ? propertyInfo.Name
+                            : string.Format("{0}.{1}", prefix, propertyInfo.Name);
+                        var propValue = propertyInfo.GetValue(obj);
 
                         FillFlatPropertiesListFromObject(propValue, propName, propertiesList);
                     }
@@ -103,11 +104,11 @@ namespace MultipartDataMediaFormatter.Converters
 
         private byte[] GetMultipartFormDataBytes(List<KeyValuePair<string, object>> postParameters, string boundary)
         {
-            Encoding encoding = Encoding.UTF8;
+            var encoding = Encoding.UTF8;
 
-            using (var formDataStream = new System.IO.MemoryStream())
+            using (var formDataStream = new MemoryStream())
             {
-                bool needsCLRF = false;
+                var needsCLRF = false;
 
                 foreach (var param in postParameters)
                 {
@@ -120,15 +121,11 @@ namespace MultipartDataMediaFormatter.Converters
 
                     if (param.Value is HttpFile)
                     {
-                        HttpFile httpFileToUpload = (HttpFile)param.Value;
+                        var httpFileToUpload = (HttpFile) param.Value;
 
                         // Add just the first part of this param, since we will write the file data directly to the Stream
-                        string header =
-                            string.Format("--{0}\r\nContent-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"\r\nContent-Type: {3}\r\n\r\n",
-                                boundary,
-                                param.Key,
-                                httpFileToUpload.FileName ?? param.Key,
-                                httpFileToUpload.MediaType ?? "application/octet-stream");
+                        var header =
+                            $"--{boundary}\r\nContent-Disposition: form-data; name=\"{param.Key}\"; filename=\"{httpFileToUpload.FileName ?? param.Key}\"\r\nContent-Type: {httpFileToUpload.MediaType ?? "application/octet-stream"}\r\n\r\n";
 
                         formDataStream.Write(encoding.GetBytes(header), 0, encoding.GetByteCount(header));
 
@@ -137,7 +134,7 @@ namespace MultipartDataMediaFormatter.Converters
                     }
                     else
                     {
-                        string objString = "";
+                        var objString = "";
                         if (param.Value != null)
                         {
                             var typeConverter = param.Value.GetType().GetToStringConverter();
@@ -147,24 +144,22 @@ namespace MultipartDataMediaFormatter.Converters
                             }
                             else
                             {
-                                throw new Exception(String.Format("Type \"{0}\" cannot be converted to string", param.Value.GetType().FullName));
+                                throw new Exception(string.Format("Type \"{0}\" cannot be converted to string",
+                                    param.Value.GetType().FullName));
                             }
                         }
 
-                        string postData =
-                            string.Format("--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}",
-                                          boundary,
-                                          param.Key,
-                                          objString);
+                        var postData =
+                            $"--{boundary}\r\nContent-Disposition: form-data; name=\"{param.Key}\"\r\n\r\n{objString}";
                         formDataStream.Write(encoding.GetBytes(postData), 0, encoding.GetByteCount(postData));
                     }
                 }
 
                 // Add the end of the request.  Start with a newline
-                string footer = "\r\n--" + boundary + "--\r\n";
+                var footer = "\r\n--" + boundary + "--\r\n";
                 formDataStream.Write(encoding.GetBytes(footer), 0, encoding.GetByteCount(footer));
 
-                byte[] formData = formDataStream.ToArray();
+                var formData = formDataStream.ToArray();
 
                 return formData;
             }

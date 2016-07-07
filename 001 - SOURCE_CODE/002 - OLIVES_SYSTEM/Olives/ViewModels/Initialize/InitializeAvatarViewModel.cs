@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using MultipartDataMediaFormatter.Infrastructure;
-using Shared.Models;
 using Shared.Resources;
 
 namespace Olives.ViewModels.Initialize

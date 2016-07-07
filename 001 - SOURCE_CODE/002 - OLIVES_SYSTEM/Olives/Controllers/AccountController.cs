@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -429,7 +430,7 @@ namespace Olives.Controllers
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // File validation.
-            using (var memoryStream = new MemoryStream())
+            using (var memoryStream = new MemoryStream(info.Avatar.Buffer))
             {
                 try
                 {
@@ -438,8 +439,17 @@ namespace Olives.Controllers
 
                     // Read image from stream.
                     var image = Image.FromStream(memoryStream);
-                    
 
+                    // Invalid image size.
+                    if (image.Height != Values.MaxImageSize && image.Width != Values.MaxImageSize)
+                    {
+                        // Tell client that he/she is forbidden to change his/her due to the uploaded image.
+                        return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                        {
+                            Error = $"{Language.WarnImageIncorrectFormat}"
+                        });
+                    }
+                    
                     // As the requester has existed image before, use that name, otherwise generate a new one.
                     if (!string.IsNullOrEmpty(requester.Photo))
                     {

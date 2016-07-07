@@ -99,6 +99,11 @@
         /// </summary>
         public const int MaxSystolic = 250;
 
+        /// <summary>
+        /// Number of pixel which height and width are allowed to be.
+        /// </summary>
+        public const int MaxImageSize = 128;
+
         #endregion
     }
 }
