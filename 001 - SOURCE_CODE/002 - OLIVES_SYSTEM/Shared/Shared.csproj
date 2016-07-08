@@ -222,6 +222,7 @@
     <Compile Include="ViewModels\Filter\FilterMedicalImageViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMedicalRecordViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPatientViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterPrescriptionViewModel.cs" />
     <Compile Include="ViewModels\HeartbeatViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAddictionViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAllergyViewModel.cs" />
@@ -244,6 +245,7 @@
     <Compile Include="ViewModels\Response\ResponseBloodPressureFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseMedicalImageFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseMedicalRecordFilter.cs" />
+    <Compile Include="ViewModels\Response\ResponsePrescriptionFilterViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseSugarbloodFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseHeartbeatFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseSpecialtyFilter.cs" />

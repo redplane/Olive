@@ -22,12 +22,11 @@ namespace Shared.Interfaces
         Task<Addiction> InitializeAddictionAsync(Addiction info);
 
         /// <summary>
-        ///     Find allergy by using id and owner id.
+        ///     Find an addiction by using id.
         /// </summary>
-        /// <param name="id">Allergy Id</param>
-        /// <param name="owner">Allergy owner</param>
+        /// <param name="id">Addiction Id</param>
         /// <returns></returns>
-        Task<IList<Allergy>> FindAddictionAsync(int id, int owner);
+        Task<Addiction> FindAddictionAsync(int id);
 
         /// <summary>
         ///     Delete an allergy synchronously.

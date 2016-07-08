@@ -44,11 +44,7 @@ namespace Shared.Repositories
 
             // By default, take all records from database.
             IQueryable<Addiction> addictions = context.Addictions;
-
-            // Id has been specified.
-            if (filter.Id != null)
-                addictions = addictions.Where(x => x.Id == filter.Id);
-
+            
             // Owner has been specified.
             if (filter.Owner != null)
                 addictions = addictions.Where(x => x.Owner == filter.Owner);
@@ -105,9 +101,19 @@ namespace Shared.Repositories
             return response;
         }
 
-        public Task<IList<Allergy>> FindAddictionAsync(int id, int owner)
+        /// <summary>
+        /// Find an addiction by using id asynchronously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Addiction> FindAddictionAsync(int id)
         {
-            throw new NotImplementedException();
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // Find the first matched addiction with id.
+            var result = await context.Addictions.FirstOrDefaultAsync(x => x.Id == id);
+            return result;
         }
 
         /// <summary>

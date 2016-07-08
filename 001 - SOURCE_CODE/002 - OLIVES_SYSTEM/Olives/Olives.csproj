@@ -223,9 +223,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\EmailService.cs" />
     <Compile Include="ViewModels\ActivationSendViewModel.cs" />
+    <Compile Include="ViewModels\Edit\EditPrescriptionViewModel.cs" />
     <Compile Include="ViewModels\FindPatientViewModel.cs" />
     <Compile Include="ViewModels\EditPatientStatusViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAvatarViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializePrescriptionViewModel.cs" />
     <Compile Include="ViewModels\OliveInitializePersonViewModel.cs" />
     <Compile Include="ViewModels\RetrieveDoctorViewModel.cs" />
   </ItemGroup>

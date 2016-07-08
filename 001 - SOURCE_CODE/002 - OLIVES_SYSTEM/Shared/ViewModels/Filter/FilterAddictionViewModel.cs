@@ -11,12 +11,6 @@ namespace Shared.ViewModels.Filter
     public class FilterAddictionViewModel : IPagination
     {
         /// <summary>
-        /// Id of addiction note.
-        /// </summary>
-        [NumericCompare(1, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
-        public int? Id { get; set; }
-
-        /// <summary>
         /// Owner of addiction note
         /// </summary>
         [NumericCompare(1, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]

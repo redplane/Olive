@@ -58,7 +58,7 @@ namespace Olives.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.WarnNoRecord}
+                    Errors = new[] {Language.WarnRecordNotFound}
                 });
             }
 
@@ -112,7 +112,7 @@ namespace Olives.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.WarnNoRecord}
+                    Errors = new[] {Language.WarnRecordNotFound }
                 });
             }
 
