@@ -12,9 +12,12 @@ DROP TABLE Patient;
 DROP TABLE Allergy;
 DROP TABLE ActivationCode;
 DROP TABLE Addiction;
-DROP TABLE Person;
+
 DROP TABLE City;
 DROP TABLE Country;
+DROP TABLE MedicalImage;
+DROP TABLE MedicalRecord;
+DROP TABLE Person;
 ---------------------------------------------------------------------------------------------------
 
 -- Specialty table.
@@ -203,6 +206,37 @@ CREATE TABLE Patient
 	FOREIGN KEY (Id) REFERENCES Person(Id)
 )
 
+-- Medical record table
+CREATE TABLE MedicalRecord
+(
+	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	Owner					INT NOT NULL,
+	Summary					NVARCHAR (128),
+	Tests					NVARCHAR (128),
+	AdditionalMorbidities	NVARCHAR (128),
+	DifferentialDiagnosis	NVARCHAR (128),
+	OtherPathologies		NVARCHAR (128),
+	Time					FLOAT NOT NULL,
+	Created					FLOAT NOT NULL,
+	LastModified			FLOAT,
+
+	FOREIGN KEY (Owner) REFERENCES Person(Id) 
+)
+
+-- Medical image table
+CREATE TABLE MedicalImage
+(
+	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	MedicalRecordId			INT NOT NULL,
+	Owner					INT NOT NULL,
+	Image					NVARCHAR(32) NOT NULL,
+	Created					FLOAT NOT NULL,
+	
+	FOREIGN KEY (MedicalRecordId) REFERENCES MedicalRecord(Id),
+	FOREIGN KEY (Owner) REFERENCES Person(Id)					
+)
+
+
 SELECT * FROM Person
 SELECT * FROM Country
 WHERE Country.Name = 'Bac giang'
@@ -227,3 +261,14 @@ ORDER BY Heartbeat.Time ASC
 
 
 DELETE FROM Heartbeat
+
+SELECT * FROM Person
+INNER JOIN Doctor ON Person.Id = Doctor.CityId
+WHERE Person.Id = 26
+
+SELECT * FROM Person
+WHERE Person.Email = 'patient26@gmail.com'
+
+UPDATE Person
+SET Email = 'patient26@gmail.com'
+WHERE Person.Id = 77
