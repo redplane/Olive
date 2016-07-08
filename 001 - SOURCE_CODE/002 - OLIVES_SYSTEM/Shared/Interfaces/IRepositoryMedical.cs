@@ -14,7 +14,7 @@ namespace Shared.Interfaces
         /// <param name="medicalRecord"></param>
         /// <returns></returns>
         Task<MedicalRecord> InitializeMedicalRecordAsync(MedicalRecord medicalRecord);
-        
+
         /// <summary>
         /// Find a medical record by using specific id.
         /// </summary>
@@ -50,5 +50,39 @@ namespace Shared.Interfaces
         /// <param name="owner"></param>
         /// <returns></returns>
         Task<int> DeleteMedicalImageAsync(int id, int? owner);
+
+        #region Prescription
+
+        /// <summary>
+        /// Find the prescription by using id asynchronously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<Prescription> FindPrescriptionAsync(int id);
+
+        /// <summary>
+        /// Initialize or update an prescription.
+        /// </summary>
+        /// <param name="prescription"></param>
+        /// <returns></returns>
+        Task<Prescription> InitializePrescriptionAsync(Prescription prescription);
+
+        /// <summary>
+        /// Delete prescription by using id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="owner"></param>
+        /// <returns></returns>
+        Task<int> DeletePrescriptionAsync(int id, int? owner);
+
+        /// <summary>
+        /// Filter prescription asynchronously.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        Task<ResponsePrescriptionFilterViewModel> FilterPrescriptionAsync(
+            FilterPrescriptionViewModel filter);
+
+        #endregion
     }
 }

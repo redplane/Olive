@@ -67,7 +67,7 @@ namespace Olives.Controllers
                 // Tell client no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Error = $"{Language.WarnNoRecord}"
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 
@@ -78,7 +78,7 @@ namespace Olives.Controllers
                 // Tell client no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Error = $"{Language.WarnNoRecord}"
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 
@@ -96,9 +96,10 @@ namespace Olives.Controllers
                 if (relationship == null)
                 {
                     // Tell client no record has been found.
+                    // Tell client no record has been found.
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {
-                        Error = $"{Language.WarnNoRecord}"
+                        Error = $"{Language.WarnRecordNotFound}"
                     });
                 }
             }
@@ -208,7 +209,7 @@ namespace Olives.Controllers
                 // Tell client no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Error = $"{Language.WarnNoRecord}"
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 
@@ -219,7 +220,7 @@ namespace Olives.Controllers
                 // Tell client no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Error = $"{Language.WarnNoRecord}"
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 

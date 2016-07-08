@@ -317,10 +317,6 @@
     <value>W002</value>
     <comment>Warn front-end that account is disabled</comment>
   </data>
-  <data name="WarnNoRecord" xml:space="preserve">
-    <value>W003</value>
-    <comment>Warn front-end that no record has been found</comment>
-  </data>
   <data name="WarnNotAuthorizedAccount" xml:space="preserve">
     <value>W004</value>
     <comment>Warn front-end that account isn't authorized.</comment>
@@ -416,5 +412,13 @@
   <data name="WarnRoleIsForbidden" xml:space="preserve">
     <value>W022</value>
     <comment>Warn front-end that the current role is forbidden to use the current method.</comment>
+  </data>
+  <data name="WarnMedicalRecordNotFound" xml:space="preserve">
+    <value>W003</value>
+    <comment>Warn front-end that medical record is not found.</comment>
+  </data>
+  <data name="WarnOwnerNotActive" xml:space="preserve">
+    <value>W023</value>
+    <comment>Warn front-end that medical record owner is disabled.</comment>
   </data>
 </root>

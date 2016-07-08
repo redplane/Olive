@@ -4,6 +4,7 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 using Shared.Enumerations;
+using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels.Filter;
@@ -22,7 +23,7 @@ namespace Shared.Repositories
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-            
+
             // Add or update the record.
             context.MedicalRecords.AddOrUpdate(info);
 
@@ -46,7 +47,7 @@ namespace Shared.Repositories
 
             // Find the record by using id.
             results = results.Where(x => x.Id == id);
-            
+
             // Return the matched results.
             return await results.ToListAsync();
         }
@@ -60,11 +61,13 @@ namespace Shared.Repositories
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-            
+
             context.MedicalImages.AddOrUpdate(info);
             await context.SaveChangesAsync();
             return info;
         }
+
+        #region Medical images
 
         /// <summary>
         /// Find medical images by using id and owner
@@ -75,7 +78,7 @@ namespace Shared.Repositories
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-            
+
             // By default, take all records.
             IQueryable<MedicalImage> medicalImages = context.MedicalImages;
 
@@ -99,7 +102,7 @@ namespace Shared.Repositories
             response.Total = await medicalImages.CountAsync();
 
             // Calculate how many record should be skipped.
-            var skippedRecords = filter.Records*filter.Page;
+            var skippedRecords = filter.Records * filter.Page;
             medicalImages = medicalImages.Skip(skippedRecords)
                 .Take(filter.Records);
 
@@ -120,7 +123,7 @@ namespace Shared.Repositories
 
             // By default, take all records.
             IQueryable<MedicalImage> medicalImages = context.MedicalImages;
-            
+
             // Find the medical image by using id.
             medicalImages = medicalImages.Where(x => x.Id == id);
 
@@ -166,7 +169,7 @@ namespace Shared.Repositories
             response.Total = await medicalRecords.CountAsync();
 
             // Calculate the number of records should be skipped.
-            var skippedRecords = filter.Page*filter.Records;
+            var skippedRecords = filter.Page * filter.Records;
             medicalRecords = medicalRecords.Skip(skippedRecords)
                 .Take(filter.Records);
 
@@ -174,5 +177,139 @@ namespace Shared.Repositories
 
             return response;
         }
+
+        #endregion
+
+        #region Prescription
+
+        /// <summary>
+        /// Find the prescription asynchronously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Prescription> FindPrescriptionAsync(int id)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // Find the prescription.
+            var result = await context.Prescriptions.FirstOrDefaultAsync(x => x.Id == id);
+            return result;
+        }
+
+        /// <summary>
+        /// Initialize or update an prescription.
+        /// </summary>
+        /// <param name="prescription"></param>
+        /// <returns></returns>
+        public async Task<Prescription> InitializePrescriptionAsync(Prescription prescription)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // Initialize or update prescription.
+            context.Prescriptions.AddOrUpdate(prescription);
+
+            // Save change to database.
+            await context.SaveChangesAsync();
+
+            return prescription;
+        }
+
+        /// <summary>
+        /// Delete prescription by using id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="owner"></param>
+        /// <returns></returns>
+        public async Task<int> DeletePrescriptionAsync(int id, int? owner)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+            
+            // By default, delete all record.
+            IQueryable<Prescription> prescriptions = context.Prescriptions;
+            prescriptions = prescriptions.Where(x => x.Id == id);
+
+            // Owner is specified.
+            if (owner != null)
+                prescriptions = prescriptions.Where(x => x.Owner == owner.Value);
+
+            context.Prescriptions.RemoveRange(prescriptions);
+            return await context.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Filter prescription asynchronously.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public async Task<ResponsePrescriptionFilterViewModel> FilterPrescriptionAsync(
+            FilterPrescriptionViewModel filter)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+            
+            // By default, take all prescriptions.
+            IQueryable<Prescription> prescriptions = context.Prescriptions;
+
+            // Firstly, only take prescription of a target medical record.
+            prescriptions = prescriptions.Where(x => x.MedicalRecordId == filter.MedicalRecord);
+            
+            // From is defined.
+            if (filter.MinFrom != null) prescriptions = prescriptions.Where(x => x.From >= filter.MinFrom);
+            if (filter.MaxFrom != null) prescriptions = prescriptions.Where(x => x.From <= filter.MaxFrom);
+
+            // To is defined.
+            if (filter.MinTo != null) prescriptions = prescriptions.Where(x => x.To >= filter.MinTo);
+            if (filter.MaxTo != null) prescriptions = prescriptions.Where(x => x.To <= filter.MaxTo);
+
+            // Created is defined.
+            if (filter.MinCreated != null) prescriptions = prescriptions.Where(x => x.Created >= filter.MinCreated);
+            if (filter.MaxCreated != null) prescriptions = prescriptions.Where(x => x.Created <= filter.MaxCreated);
+
+            // Last modified is defined.
+            if (filter.MinLastModified != null)
+                prescriptions = prescriptions.Where(x => x.LastModified >= filter.MinLastModified);
+            if (filter.MaxLastModified != null)
+                prescriptions = prescriptions.Where(x => x.LastModified <= filter.MaxLastModified);
+
+            // Sort the record.
+            switch (filter.Sort)
+            {
+                case NoteResultSort.Created:
+                    if (filter.Direction == SortDirection.Ascending)
+                    {
+                        prescriptions = prescriptions.OrderBy(x => x.Created);
+                        break;
+                    }
+                    prescriptions = prescriptions.OrderByDescending(x => x.Created);
+                    break;
+                default:
+                    if (filter.Direction == SortDirection.Ascending)
+                    {
+                        prescriptions = prescriptions.OrderBy(x => x.LastModified);
+                        break;
+                    }
+                    prescriptions = prescriptions.OrderByDescending(x => x.LastModified);
+                    break;
+            }
+
+            // Calculate the number of records should be skipped.
+            var skippedRecord = filter.Page*filter.Records;
+
+            // Response initialization.
+            var response = new ResponsePrescriptionFilterViewModel();
+            response.Total = await prescriptions.CountAsync();
+
+            // Retrieve the list of results.
+            response.Prescriptions = await prescriptions.Skip(skippedRecord)
+                .Take(filter.Records)
+                .ToListAsync();
+
+            return response;
+        }
+
+        #endregion
     }
 }

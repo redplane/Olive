@@ -810,9 +810,9 @@ namespace Shared.Resources {
         /// <summary>
         ///   Looks up a localized string similar to W003.
         /// </summary>
-        public static string WarnNoRecord {
+        public static string WarnMedicalRecordNotFound {
             get {
-                return ResourceManager.GetString("WarnNoRecord", resourceCulture);
+                return ResourceManager.GetString("WarnMedicalRecordNotFound", resourceCulture);
             }
         }
         
@@ -822,6 +822,15 @@ namespace Shared.Resources {
         public static string WarnNotAuthorizedAccount {
             get {
                 return ResourceManager.GetString("WarnNotAuthorizedAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W023.
+        /// </summary>
+        public static string WarnOwnerNotActive {
+            get {
+                return ResourceManager.GetString("WarnOwnerNotActive", resourceCulture);
             }
         }
         

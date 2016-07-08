@@ -18,6 +18,7 @@ namespace Shared.Models
         public MedicalRecord()
         {
             this.MedicalImages = new HashSet<MedicalImage>();
+            this.Prescriptions = new HashSet<Prescription>();
         }
     
         public int Id { get; set; }
@@ -34,5 +35,7 @@ namespace Shared.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MedicalImage> MedicalImages { get; set; }
         public virtual Person Person { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Prescription> Prescriptions { get; set; }
     }
 }

@@ -93,7 +93,6 @@
     <Compile Include="Enumerations\AppointmentFilterMode.cs" />
     <Compile Include="Enumerations\StatusAppointment.cs" />
     <Compile Include="Enumerations\Comparision.cs" />
-    <Compile Include="Helpers\UrlHelper.cs" />
     <Compile Include="Helpers\CodeGeneratorHelper.cs" />
     <Compile Include="Helpers\EpochTimeHelper.cs" />
     <Compile Include="Interfaces\IDoctor.cs" />
@@ -163,6 +162,9 @@
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Person.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Prescription.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Relation.cs">
