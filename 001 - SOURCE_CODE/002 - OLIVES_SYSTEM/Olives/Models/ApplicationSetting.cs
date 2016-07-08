@@ -5,15 +5,21 @@ namespace Olives.Models
     public class ApplicationSetting
     {
         /// <summary>
-        /// Simple mail transfer protocol setting properties.
+        ///     Simple mail transfer protocol setting properties.
         /// </summary>
         [JsonProperty("smtpSetting")]
         public SmtpSetting SmtpSetting { get; set; }
 
         /// <summary>
-        /// Folder where public files should be stored.
+        ///     Folder where avatar files should be stored.
         /// </summary>
-        [JsonProperty("publicStorage")]
-        public string PublicStorage { get; set; }
+        [JsonProperty("avatarStorage")]
+        public ServerPath AvatarStorage { get; set; }
+
+        /// <summary>
+        ///     Folder where private files should be stored.
+        /// </summary>
+        [JsonProperty("privateStorage")]
+        public ServerPath PrivateStorage { get; set; }
     }
 }

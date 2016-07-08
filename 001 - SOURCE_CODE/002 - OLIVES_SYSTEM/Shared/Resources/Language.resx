@@ -413,4 +413,8 @@
     <value>W020</value>
     <comment>Warn front-end that the uploaded image is incorrect format.</comment>
   </data>
+  <data name="WarnRoleIsForbidden" xml:space="preserve">
+    <value>W022</value>
+    <comment>Warn front-end that the current role is forbidden to use the current method.</comment>
+  </data>
 </root>

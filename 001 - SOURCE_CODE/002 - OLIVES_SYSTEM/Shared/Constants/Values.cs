@@ -102,7 +102,13 @@
         /// <summary>
         /// Number of pixel which height and width are allowed to be.
         /// </summary>
-        public const int MaxImageSize = 128;
+        public const int MaxImageSize = 256;
+
+        /// <summary>
+        /// Extension of image which will be used for storing on server.
+        /// </summary>
+        public const string StandardImageExtension = "png";
+
 
         #endregion
     }

@@ -160,8 +160,9 @@ namespace Shared.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <param name="person"></param>
+        /// <param name="status"></param>
         /// <returns></returns>
-        Task<IList<Relation>> FindRelationParticipation(int id, int person);
+        Task<IList<Relation>> FindRelationParticipation(int id, int person, byte? status);
 
         /// <summary>
         /// Delete a relation asynchronously.

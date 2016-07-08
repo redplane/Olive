@@ -26,7 +26,7 @@ namespace Shared.Helpers
         /// <summary>
         /// List of supported characters.
         /// </summary>
-        private const string _characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        private const string Characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
         #endregion
 
@@ -45,7 +45,7 @@ namespace Shared.Helpers
 
             // Start generating code.
             for (var i = 0; i < length; i++)
-                code += _characters[random.Next(_characters.Length)];
+                code += Characters[random.Next(Characters.Length)];
 
             return code;
         }

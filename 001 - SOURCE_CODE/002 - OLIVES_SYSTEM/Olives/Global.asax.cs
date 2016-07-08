@@ -8,7 +8,6 @@ using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.Mvc;
 using Autofac.Integration.WebApi;
-using log4net.Config;
 using Newtonsoft.Json;
 using Olives.Attributes;
 using Olives.Controllers;
@@ -53,8 +52,10 @@ namespace Olives
             builder.RegisterType<SugarbloodController>().InstancePerRequest();
             builder.RegisterType<BloodPressureController>().InstancePerRequest();
 
+            builder.RegisterType<MedicalController>().InstancePerRequest();
+
             builder.RegisterType<PlaceController>().InstancePerRequest();
-            
+
             #endregion
 
             #region General application configuration
@@ -74,15 +75,21 @@ namespace Olives
 
             var info = File.ReadAllText(applicationConfigFile);
             applicationSetting = JsonConvert.DeserializeObject<ApplicationSetting>(info);
-            
-            // Invalid public storage folder.
-            var fullPublicStoragePath = Server.MapPath(applicationSetting.PublicStorage);
+
+            // Invalid avatar storage folder.
+            var fullPublicStoragePath = Server.MapPath(applicationSetting.AvatarStorage.Relative);
             if (!Directory.Exists(fullPublicStoragePath))
                 Directory.CreateDirectory(fullPublicStoragePath);
-
             // Update application public storage.
-            applicationSetting.PublicStorage = fullPublicStoragePath;
-            
+            applicationSetting.AvatarStorage.Absolute = fullPublicStoragePath;
+
+            // Invalid private storage folder.
+            var fullPrivateStoragePath = Server.MapPath(applicationSetting.PrivateStorage.Relative);
+            if (!Directory.Exists(fullPrivateStoragePath))
+                Directory.CreateDirectory(fullPrivateStoragePath);
+            // Update application private storage folder.
+            applicationSetting.PrivateStorage.Absolute = fullPrivateStoragePath;
+
             // Stmp setting is invalid
             if (applicationSetting.SmtpSetting == null || !applicationSetting.SmtpSetting.IsValid())
                 throw new NotImplementedException("Email configuration hasn't been configured.");
@@ -137,6 +144,10 @@ namespace Olives
                 .As<IRepositoryAppointment>()
                 .SingleInstance();
 
+            builder.RegisterType<RepositoryMedical>()
+                .As<IRepositoryMedical>()
+                .SingleInstance();
+
             // Email service.
             var emailService = new EmailService(applicationSetting.SmtpSetting);
 
@@ -183,8 +194,6 @@ namespace Olives
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 
             #endregion
-
-            XmlConfigurator.Configure();
         }
     }
 }

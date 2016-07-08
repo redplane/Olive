@@ -107,6 +107,31 @@
           <Property Name="Created" Type="float" Nullable="false" />
           <Property Name="LastModified" Type="float" />
         </EntityType>
+        <EntityType Name="MedicalImage">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MedicalRecordId" Type="int" Nullable="false" />
+          <Property Name="Owner" Type="int" Nullable="false" />
+          <Property Name="Image" Type="nvarchar" MaxLength="32" Nullable="false" />
+          <Property Name="Created" Type="float" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MedicalRecord">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Owner" Type="int" Nullable="false" />
+          <Property Name="Summary" Type="nvarchar" MaxLength="128" />
+          <Property Name="Tests" Type="nvarchar" MaxLength="128" />
+          <Property Name="AdditionalMorbidities" Type="nvarchar" MaxLength="128" />
+          <Property Name="DifferentialDiagnosis" Type="nvarchar" MaxLength="128" />
+          <Property Name="OtherPathologies" Type="nvarchar" MaxLength="128" />
+          <Property Name="Time" Type="float" Nullable="false" />
+          <Property Name="Created" Type="float" Nullable="false" />
+          <Property Name="LastModified" Type="float" />
+        </EntityType>
         <EntityType Name="Patient">
           <Key>
             <PropertyRef Name="Id" />
@@ -308,6 +333,42 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__MedicalIm__Medic__5026DB83">
+          <End Role="MedicalRecord" Type="Self.MedicalRecord" Multiplicity="1" />
+          <End Role="MedicalImage" Type="Self.MedicalImage" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MedicalRecord">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MedicalImage">
+              <PropertyRef Name="MedicalRecordId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MedicalIm__Owner__511AFFBC">
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="MedicalImage" Type="Self.MedicalImage" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MedicalImage">
+              <PropertyRef Name="Owner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MedicalRe__Owner__469D7149">
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="MedicalRecord" Type="Self.MedicalRecord" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MedicalRecord">
+              <PropertyRef Name="Owner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Patient__Height__3E082B48">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="Patient" Type="Self.Patient" Multiplicity="0..1" />
@@ -397,6 +458,8 @@
           <EntitySet Name="Country" EntityType="Self.Country" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Doctor" EntityType="Self.Doctor" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Heartbeat" EntityType="Self.Heartbeat" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MedicalImage" EntityType="Self.MedicalImage" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MedicalRecord" EntityType="Self.MedicalRecord" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Patient" EntityType="Self.Patient" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Person" EntityType="Self.Person" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Relation" EntityType="Self.Relation" Schema="dbo" store:Type="Tables" />
@@ -446,6 +509,18 @@
           <AssociationSet Name="FK__Heartbeat__LastM__2077C861" Association="Self.FK__Heartbeat__LastM__2077C861">
             <End Role="Person" EntitySet="Person" />
             <End Role="Heartbeat" EntitySet="Heartbeat" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MedicalIm__Medic__5026DB83" Association="Self.FK__MedicalIm__Medic__5026DB83">
+            <End Role="MedicalRecord" EntitySet="MedicalRecord" />
+            <End Role="MedicalImage" EntitySet="MedicalImage" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MedicalIm__Owner__511AFFBC" Association="Self.FK__MedicalIm__Owner__511AFFBC">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="MedicalImage" EntitySet="MedicalImage" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MedicalRe__Owner__469D7149" Association="Self.FK__MedicalRe__Owner__469D7149">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="MedicalRecord" EntitySet="MedicalRecord" />
           </AssociationSet>
           <AssociationSet Name="FK__Patient__Height__3E082B48" Association="Self.FK__Patient__Height__3E082B48">
             <End Role="Person" EntitySet="Person" />
@@ -508,6 +583,8 @@
           <EntitySet Name="Countries" EntityType="OlivesHealthModel.Country" />
           <EntitySet Name="Doctors" EntityType="OlivesHealthModel.Doctor" />
           <EntitySet Name="Heartbeats" EntityType="OlivesHealthModel.Heartbeat" />
+          <EntitySet Name="MedicalImages" EntityType="OlivesHealthModel.MedicalImage" />
+          <EntitySet Name="MedicalRecords" EntityType="OlivesHealthModel.MedicalRecord" />
           <EntitySet Name="Patients" EntityType="OlivesHealthModel.Patient" />
           <EntitySet Name="People" EntityType="OlivesHealthModel.Person" />
           <EntitySet Name="Relations" EntityType="OlivesHealthModel.Relation" />
@@ -557,6 +634,18 @@
           <AssociationSet Name="FK__Heartbeat__LastM__2077C861" Association="OlivesHealthModel.FK__Heartbeat__LastM__2077C861">
             <End Role="Person" EntitySet="People" />
             <End Role="Heartbeat" EntitySet="Heartbeats" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MedicalIm__Medic__5026DB83" Association="OlivesHealthModel.FK__MedicalIm__Medic__5026DB83">
+            <End Role="MedicalRecord" EntitySet="MedicalRecords" />
+            <End Role="MedicalImage" EntitySet="MedicalImages" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MedicalIm__Owner__511AFFBC" Association="OlivesHealthModel.FK__MedicalIm__Owner__511AFFBC">
+            <End Role="Person" EntitySet="People" />
+            <End Role="MedicalImage" EntitySet="MedicalImages" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MedicalRe__Owner__469D7149" Association="OlivesHealthModel.FK__MedicalRe__Owner__469D7149">
+            <End Role="Person" EntitySet="People" />
+            <End Role="MedicalRecord" EntitySet="MedicalRecords" />
           </AssociationSet>
           <AssociationSet Name="FK__Patient__Height__3E082B48" Association="OlivesHealthModel.FK__Patient__Height__3E082B48">
             <End Role="Person" EntitySet="People" />
@@ -701,6 +790,35 @@
           <Property Name="LastModified" Type="Double" />
           <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Heartbeat__LastM__2077C861" FromRole="Heartbeat" ToRole="Person" />
         </EntityType>
+        <EntityType Name="MedicalImage">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MedicalRecordId" Type="Int32" Nullable="false" />
+          <Property Name="Owner" Type="Int32" Nullable="false" />
+          <Property Name="Image" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="Created" Type="Double" Nullable="false" />
+          <NavigationProperty Name="MedicalRecord" Relationship="OlivesHealthModel.FK__MedicalIm__Medic__5026DB83" FromRole="MedicalImage" ToRole="MedicalRecord" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__MedicalIm__Owner__511AFFBC" FromRole="MedicalImage" ToRole="Person" />
+        </EntityType>
+        <EntityType Name="MedicalRecord">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Owner" Type="Int32" Nullable="false" />
+          <Property Name="Summary" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Tests" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="AdditionalMorbidities" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="DifferentialDiagnosis" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="OtherPathologies" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Time" Type="Double" Nullable="false" />
+          <Property Name="Created" Type="Double" Nullable="false" />
+          <Property Name="LastModified" Type="Double" />
+          <NavigationProperty Name="MedicalImages" Relationship="OlivesHealthModel.FK__MedicalIm__Medic__5026DB83" FromRole="MedicalRecord" ToRole="MedicalImage" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__MedicalRe__Owner__469D7149" FromRole="MedicalRecord" ToRole="Person" />
+        </EntityType>
         <EntityType Name="Patient">
           <Key>
             <PropertyRef Name="Id" />
@@ -738,6 +856,8 @@
           <NavigationProperty Name="BloodPressures" Relationship="OlivesHealthModel.FK__BloodPres__LastM__2630A1B7" FromRole="Person" ToRole="BloodPressure" />
           <NavigationProperty Name="Doctor" Relationship="OlivesHealthModel.FK__Doctor__Id__3943762B" FromRole="Person" ToRole="Doctor" />
           <NavigationProperty Name="Heartbeats" Relationship="OlivesHealthModel.FK__Heartbeat__LastM__2077C861" FromRole="Person" ToRole="Heartbeat" />
+          <NavigationProperty Name="MedicalImages" Relationship="OlivesHealthModel.FK__MedicalIm__Owner__511AFFBC" FromRole="Person" ToRole="MedicalImage" />
+          <NavigationProperty Name="MedicalRecords" Relationship="OlivesHealthModel.FK__MedicalRe__Owner__469D7149" FromRole="Person" ToRole="MedicalRecord" />
           <NavigationProperty Name="Patient" Relationship="OlivesHealthModel.FK__Patient__Height__3E082B48" FromRole="Person" ToRole="Patient" />
           <NavigationProperty Name="Relations" Relationship="OlivesHealthModel.FK__Relation__Source__2FBA0BF1" FromRole="Person" ToRole="Relation" />
           <NavigationProperty Name="Relations1" Relationship="OlivesHealthModel.FK__Relation__Target__30AE302A" FromRole="Person" ToRole="Relation" />
@@ -915,6 +1035,42 @@
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Heartbeat">
+              <PropertyRef Name="Owner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MedicalIm__Medic__5026DB83">
+          <End Type="OlivesHealthModel.MedicalRecord" Role="MedicalRecord" Multiplicity="1" />
+          <End Type="OlivesHealthModel.MedicalImage" Role="MedicalImage" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MedicalRecord">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MedicalImage">
+              <PropertyRef Name="MedicalRecordId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MedicalIm__Owner__511AFFBC">
+          <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="OlivesHealthModel.MedicalImage" Role="MedicalImage" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MedicalImage">
+              <PropertyRef Name="Owner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MedicalRe__Owner__469D7149">
+          <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
+          <End Type="OlivesHealthModel.MedicalRecord" Role="MedicalRecord" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MedicalRecord">
               <PropertyRef Name="Owner" />
             </Dependent>
           </ReferentialConstraint>
@@ -1103,6 +1259,33 @@
                 <ScalarProperty Name="Note" ColumnName="Note" />
                 <ScalarProperty Name="Time" ColumnName="Time" />
                 <ScalarProperty Name="Rate" ColumnName="Rate" />
+                <ScalarProperty Name="Owner" ColumnName="Owner" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MedicalImages">
+            <EntityTypeMapping TypeName="OlivesHealthModel.MedicalImage">
+              <MappingFragment StoreEntitySet="MedicalImage">
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="Image" ColumnName="Image" />
+                <ScalarProperty Name="Owner" ColumnName="Owner" />
+                <ScalarProperty Name="MedicalRecordId" ColumnName="MedicalRecordId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MedicalRecords">
+            <EntityTypeMapping TypeName="OlivesHealthModel.MedicalRecord">
+              <MappingFragment StoreEntitySet="MedicalRecord">
+                <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="OtherPathologies" ColumnName="OtherPathologies" />
+                <ScalarProperty Name="DifferentialDiagnosis" ColumnName="DifferentialDiagnosis" />
+                <ScalarProperty Name="AdditionalMorbidities" ColumnName="AdditionalMorbidities" />
+                <ScalarProperty Name="Tests" ColumnName="Tests" />
+                <ScalarProperty Name="Summary" ColumnName="Summary" />
                 <ScalarProperty Name="Owner" ColumnName="Owner" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

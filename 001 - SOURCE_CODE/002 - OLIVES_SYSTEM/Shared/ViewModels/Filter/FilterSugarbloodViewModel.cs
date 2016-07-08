@@ -64,9 +64,9 @@ namespace Shared.ViewModels.Filter
         public SortDirection Direction { get; set; } = SortDirection.Decending;
 
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof(Language),
+            ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidPageIndex")]
-        public int Page { get; set; }
+        public int Page { get; set; } = 0;
 
         [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof(Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]

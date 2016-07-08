@@ -287,7 +287,7 @@ namespace Olives.Controllers
                 _log.Error("Invalid allergies filter request parameters");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
-            
+
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 

@@ -24,6 +24,7 @@ namespace DataInitializer
             InitializeSugarbloodNote("patient26@gmail.com", 90);
             InitializeBloodPressureNote("patient26@gmail.com", 90);
             InitializeAllergyNote("patient26@gmail.com", 90);
+            InitializeMedicalRecord("patient26@gmail.com", 90);
         }
 
         /// <summary>
@@ -257,6 +258,7 @@ namespace DataInitializer
                 if (specialty == null)
                     throw new Exception("No specialty has been found");
 
+                var random = new Random();
                 for (var i = 0; i < max; i++)
                 {
                     var person = new Person();
@@ -270,7 +272,7 @@ namespace DataInitializer
                     person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
                     person.Address = "New York, NY, USA";
                     person.Birthday = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
-
+                    person.Photo = $"{random.Next(1, 4)}";
                     if (i > 25)
                         person.Status = (byte)StatusAccount.Active;
                     else if (i == 25)
@@ -282,6 +284,7 @@ namespace DataInitializer
                     doctor.SpecialtyId = 1;
                     doctor.Person = person;
                     doctor.City = city;
+                    doctor.Rank = random.Next(0, 10);
                     doctor.SpecialtyName = specialty.Name;
                     doctor.Specialty = specialty;
                     context.Doctors.Add(doctor);
@@ -317,6 +320,7 @@ namespace DataInitializer
         private static void InitializePatient(int max)
         {
             var context = new OlivesHealthEntities();
+            var random = new Random();
             for (var i = 0; i < max; i++)
             {
                 // General information.
@@ -326,6 +330,7 @@ namespace DataInitializer
                 person.FirstName = $"FirstName[{i}]";
                 person.LastName = $"LastName[{i}]";
                 person.FullName = person.FirstName + " " + person.LastName;
+                person.Photo = $"{random.Next(1, 4)}";
                 person.Gender = 0;
                 person.Role = (byte)Role.Patient;
                 person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
@@ -379,6 +384,68 @@ namespace DataInitializer
                     person.Status = (byte)StatusAccount.Inactive;
 
                 context.People.Add(person);
+            }
+
+            context.SaveChanges();
+        }
+
+        private static void InitializeMedicalRecord(string account, int records)
+        {
+            var context = new OlivesHealthEntities();
+            var repositoryAccount = new RepositoryAccount();
+            var person = repositoryAccount.FindPerson(null, account, null, (byte)Role.Patient);
+            if (person == null)
+                throw new Exception($"Cannot find {account}");
+
+            Console.WriteLine("Found {0}", person.Email);
+            var random = new Random();
+
+            var currentTime = DateTime.Now;
+            for (var i = 0; i < records; i++)
+            {
+
+                var subtractedTime = currentTime.Subtract(TimeSpan.FromDays(i));
+                var medicalRecord = new MedicalRecord();
+                medicalRecord.Owner = person.Id;
+                medicalRecord.Summary = $"Summary[{i}]";
+                medicalRecord.Tests = $"Tests[{i}]";
+                medicalRecord.AdditionalMorbidities = $"AdditionalMorbidities[{i}]";
+                medicalRecord.DifferentialDiagnosis = $"DifferentialDiagnosis[{i}]";
+                medicalRecord.OtherPathologies = $"OtherPathologies[{i}]";
+
+                var createdTime = EpochTimeHelper.Instance.DateTimeToEpochTime(subtractedTime);
+                medicalRecord.Time = createdTime;
+                medicalRecord.Created = createdTime;
+                medicalRecord.LastModified = createdTime;
+
+                context.MedicalRecords.Add(medicalRecord);
+            }
+
+            context.SaveChanges();
+        }
+
+        private static void InitializeMedicalImage(string account, int records)
+        {
+            var context = new OlivesHealthEntities();
+            var repositoryAccount = new RepositoryAccount();
+            var person = repositoryAccount.FindPerson(null, account, null, (byte)Role.Patient);
+            if (person == null)
+                throw new Exception($"Cannot find {account}");
+
+            Console.WriteLine("Found {0}", person.Email);
+            var random = new Random();
+
+            var currentTime = DateTime.Now;
+            for (var i = 0; i < records; i++)
+            {
+
+                var subtractedTime = currentTime.Subtract(TimeSpan.FromDays(i));
+                var medicalImage = new MedicalImage();
+                medicalImage.Image = $"{random.Next(1, 4)}";
+                medicalImage.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(subtractedTime);
+                medicalImage.Owner = person.Id;
+                
+                context.MedicalImages.Add(medicalImage);
             }
 
             context.SaveChanges();

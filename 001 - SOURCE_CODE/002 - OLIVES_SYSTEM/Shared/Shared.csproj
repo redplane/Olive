@@ -93,6 +93,7 @@
     <Compile Include="Enumerations\AppointmentFilterMode.cs" />
     <Compile Include="Enumerations\StatusAppointment.cs" />
     <Compile Include="Enumerations\Comparision.cs" />
+    <Compile Include="Helpers\UrlHelper.cs" />
     <Compile Include="Helpers\CodeGeneratorHelper.cs" />
     <Compile Include="Helpers\EpochTimeHelper.cs" />
     <Compile Include="Interfaces\IDoctor.cs" />
@@ -105,6 +106,7 @@
     <Compile Include="Interfaces\IRepositoryAllergy.cs" />
     <Compile Include="Interfaces\IRepositoryAppointment.cs" />
     <Compile Include="Interfaces\IRepositoryBloodPressure.cs" />
+    <Compile Include="Interfaces\IRepositoryMedical.cs" />
     <Compile Include="Interfaces\IRepositoryPlace.cs" />
     <Compile Include="Interfaces\IRepositorySugarblood.cs" />
     <Compile Include="Interfaces\IRepositoryHeartbeat.cs" />
@@ -136,7 +138,12 @@
     <Compile Include="Models\Heartbeat.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\ImageFileModel.cs" />
+    <Compile Include="Models\MedicalImage.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MedicalRecord.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\OlivesHealth.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -182,6 +189,7 @@
     <Compile Include="Repositories\RepositoryActivationCode.cs" />
     <Compile Include="Repositories\RepositoryAddiction.cs" />
     <Compile Include="Repositories\RepositoryHeartbeat.cs" />
+    <Compile Include="Repositories\RepositoryMedical.cs" />
     <Compile Include="Repositories\RepositoryPlace.cs" />
     <Compile Include="Repositories\RepositorySugarblood.cs" />
     <Compile Include="Repositories\RepositoryBloodPressure.cs" />
@@ -209,6 +217,8 @@
     <Compile Include="ViewModels\Filter\FilterCityViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterCountryViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterHeatbeatViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterMedicalImageViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterMedicalRecordViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPatientViewModel.cs" />
     <Compile Include="ViewModels\HeartbeatViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAddictionViewModel.cs" />
@@ -217,6 +227,8 @@
     <Compile Include="ViewModels\Initialize\InitializeBloodPressureViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeDoctorViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeHeartbeatViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializeMedicalImageViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializeMedicalRecordViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePatientViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeSugarbloodViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseAddictionFilter.cs" />
@@ -228,6 +240,8 @@
     <Compile Include="ViewModels\Response\ResponseAppointmentFilter.cs" />
     <Compile Include="ViewModels\PersonViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseBloodPressureFilter.cs" />
+    <Compile Include="ViewModels\Response\ResponseMedicalImageFilter.cs" />
+    <Compile Include="ViewModels\Response\ResponseMedicalRecordFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseSugarbloodFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseHeartbeatFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseSpecialtyFilter.cs" />

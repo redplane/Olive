@@ -19,5 +19,10 @@
       }
     ]
   },
-  "publicStorage": "~/PublicStorage"
+  "avatarStorage": {
+    "relative": "~/Resources/Avatar"
+  },
+  "privateStorage": {
+    "relative": "~/App_Data/PrivateStorage"
+  }
 }

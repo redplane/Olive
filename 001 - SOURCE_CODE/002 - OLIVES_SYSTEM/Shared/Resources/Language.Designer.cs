@@ -880,6 +880,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to W022.
+        /// </summary>
+        public static string WarnRoleIsForbidden {
+            get {
+                return ResourceManager.GetString("WarnRoleIsForbidden", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to W015.
         /// </summary>
         public static string WarnTargetAccountNotFound {

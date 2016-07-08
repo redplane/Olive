@@ -303,7 +303,7 @@ namespace Olives.Controllers
                 _log.Error("Invalid blood pressure filter request parameters");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
-            
+
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
@@ -317,7 +317,7 @@ namespace Olives.Controllers
                 {
                     // Find the relation between the owner and the requester.
                     var relationships = await _repositoryAccount.FindRelation(requester.Id, info.Owner.Value,
-                        (byte)StatusAccount.Active);
+                        (byte) StatusAccount.Active);
 
                     // No relationship has been found.
                     if (relationships == null || relationships.Count < 1)

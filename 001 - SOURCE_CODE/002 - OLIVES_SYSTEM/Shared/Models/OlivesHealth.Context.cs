@@ -36,6 +36,8 @@ namespace Shared.Models
         public virtual DbSet<Country> Countries { get; set; }
         public virtual DbSet<Doctor> Doctors { get; set; }
         public virtual DbSet<Heartbeat> Heartbeats { get; set; }
+        public virtual DbSet<MedicalImage> MedicalImages { get; set; }
+        public virtual DbSet<MedicalRecord> MedicalRecords { get; set; }
         public virtual DbSet<Patient> Patients { get; set; }
         public virtual DbSet<Person> People { get; set; }
         public virtual DbSet<Relation> Relations { get; set; }

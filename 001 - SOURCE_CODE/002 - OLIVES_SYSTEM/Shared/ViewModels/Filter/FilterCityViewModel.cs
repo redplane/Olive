@@ -42,9 +42,9 @@ namespace Shared.ViewModels.Filter
         /// Index of result page.
         /// </summary>
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
-           ErrorMessageResourceType = typeof(Language),
-           ErrorMessageResourceName = "InvalidPageIndex")]
-        public int Page { get; set; }
+            ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "InvalidPageIndex")]
+        public int Page { get; set; } = 0;
 
         /// <summary>
         /// Number of record displayed on a page.

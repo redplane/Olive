@@ -778,16 +778,24 @@ namespace Shared.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <param name="person"></param>
+        /// <param name="status"></param>
         /// <returns></returns>
-        public async Task<IList<Relation>> FindRelationParticipation(int id, int person)
+        public async Task<IList<Relation>> FindRelationParticipation(int id, int person, byte? status)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
-            // Find the relation whose id is matched and has the specific person takes part in.
-            var result = context.Relations.Where(x => x.Id == id && (x.Source == id || x.Target == id));
+            // By default, take all relationship.
+            IQueryable<Relation> results = context.Relations;
 
-            return await result.ToListAsync();
+            // Find the relation whose id is matched and has the specific person takes part in.
+            results = results.Where(x => x.Id == id && (x.Source == id || x.Target == id));
+
+            // Status is defined
+            if (status != null)
+                results = results.Where(x => x.Status == status);
+
+            return await results.ToListAsync();
         }
 
         /// <summary>

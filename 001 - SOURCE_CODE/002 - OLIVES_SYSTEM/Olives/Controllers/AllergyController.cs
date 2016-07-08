@@ -312,7 +312,7 @@ namespace Olives.Controllers
                 {
                     // Find the relation between the owner and the requester.
                     var relationships = await _repositoryAccount.FindRelation(requester.Id, info.Owner.Value,
-                        (byte)StatusAccount.Active);
+                        (byte) StatusAccount.Active);
 
                     // No relationship has been found.
                     if (relationships == null || relationships.Count < 1)

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
-using Olives.Interfaces;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Helpers;
@@ -71,8 +70,8 @@ namespace Olives.Controllers
             #region Relation validation
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
             // Find the dater by using id.
             var dater = await _repositoryAccount.FindPersonAsync(info.Dater, null, null, null, StatusAccount.Active);
 
@@ -90,7 +89,7 @@ namespace Olives.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    Error =  $"{Language.WarnDaterInvalidRole}"
+                    Error = $"{Language.WarnDaterInvalidRole}"
                 });
             }
 
@@ -99,18 +98,20 @@ namespace Olives.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.Conflict, new
                 {
-                    Error =  $"{Language.WarnDaterSameRole}"
+                    Error = $"{Language.WarnDaterSameRole}"
                 });
             }
-            
+
 
             // Check whether 2 people have relation with each other or not.
-            var relationships = await _repositoryAccount.FindRelationParticipation(requester.Id, info.Dater);
+            var relationships =
+                await
+                    _repositoryAccount.FindRelationParticipation(requester.Id, info.Dater, (byte) StatusRelation.Active);
             if (relationships == null)
             {
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    Error =  $"{Language.WarnRelationNotExist}"
+                    Error = $"{Language.WarnRelationNotExist}"
                 });
             }
 
@@ -167,7 +168,7 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        /// Filter appointment by using specific conditions.
+        ///     Filter appointment by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -195,7 +196,7 @@ namespace Olives.Controllers
             #endregion
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Filter appointment by using specific conditions.
             var response = await _repositoryAppointment.FilterAppointmentAsync(filter, requester.Id);
@@ -231,7 +232,7 @@ namespace Olives.Controllers
         #region Properties
 
         /// <summary>
-        /// Repository which provides functions to access account database.
+        ///     Repository which provides functions to access account database.
         /// </summary>
         private readonly IRepositoryAccount _repositoryAccount;
 
@@ -239,12 +240,12 @@ namespace Olives.Controllers
         ///     Repository of accounts
         /// </summary>
         private readonly IRepositoryAppointment _repositoryAppointment;
-        
+
         /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-        
+
         #endregion
     }
 }

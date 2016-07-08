@@ -7,9 +7,9 @@ namespace Olives.ViewModels.Initialize
     public class InitializeAvatarViewModel
     {
         /// <summary>
-        /// File which is used for being user's avatar.
+        ///     File which is used for being user's avatar.
         /// </summary>
-        [Required(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsRequired")]
+        [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueIsRequired")]
         public HttpFile Avatar { get; set; }
     }
 }

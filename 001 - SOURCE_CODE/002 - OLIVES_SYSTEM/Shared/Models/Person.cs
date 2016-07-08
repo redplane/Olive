@@ -23,6 +23,8 @@ namespace Shared.Models
             this.Appointments1 = new HashSet<Appointment>();
             this.BloodPressures = new HashSet<BloodPressure>();
             this.Heartbeats = new HashSet<Heartbeat>();
+            this.MedicalImages = new HashSet<MedicalImage>();
+            this.MedicalRecords = new HashSet<MedicalRecord>();
             this.Relations = new HashSet<Relation>();
             this.Relations1 = new HashSet<Relation>();
             this.SugarBloods = new HashSet<SugarBlood>();
@@ -58,6 +60,10 @@ namespace Shared.Models
         public virtual Doctor Doctor { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Heartbeat> Heartbeats { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MedicalImage> MedicalImages { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MedicalRecord> MedicalRecords { get; set; }
         public virtual Patient Patient { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Relation> Relations { get; set; }

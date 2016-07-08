@@ -170,7 +170,13 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <None Include="Properties\PublishProfiles\Olive - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\Olive - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Resources\Avatar\1.png" />
+    <Content Include="Resources\Avatar\2.png" />
+    <Content Include="Resources\Avatar\3.png" />
+    <Content Include="Resources\Avatar\4.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -194,6 +200,7 @@
     <Compile Include="Constants\EmailType.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AccountVerifyController.cs" />
+    <Compile Include="Controllers\MedicalController.cs" />
     <Compile Include="Controllers\AddictionController.cs" />
     <Compile Include="Controllers\BloodPressureController.cs" />
     <Compile Include="Controllers\PlaceController.cs" />
@@ -210,6 +217,7 @@
     </Compile>
     <Compile Include="Models\EmailTemplate.cs" />
     <Compile Include="Models\EmailTemplateCore.cs" />
+    <Compile Include="Models\ServerPath.cs" />
     <Compile Include="Models\SmtpSetting.cs" />
     <Compile Include="Module\Log4NetModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -224,8 +232,6 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <Content Include="Configurations\Olives.json" />
-    <None Include="Properties\PublishProfiles\oliveshealth - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\oliveshealth - Web Deploy.pubxml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
@@ -250,7 +256,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
+    <Folder Include="App_Data\PrivateStorage\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
