@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
@@ -13,7 +11,12 @@ namespace Shared.Repositories
 {
     public class RepositoryAllergy : IRepositoryAllergy
     {
-        public async Task<ResponseAllergyFilter> FilterAllergy(FilterAllergyViewModel filter)
+        /// <summary>
+        /// Filter allergy by using specific conditions asynchronously.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public async Task<ResponseAllergyFilter> FilterAllergyAsync(FilterAllergyViewModel filter)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -22,11 +25,7 @@ namespace Shared.Repositories
             IQueryable<Allergy> results = context.Allergies;
 
             #region Result filtering
-
-            // Id has been specified.
-            if (filter.Id != null)
-                results = results.Where(x => x.Id == filter.Id);
-
+            
             // Owner has been specified.
             if (filter.Owner != null)
                 results = results.Where(x => x.Owner == filter.Owner);
@@ -99,14 +98,23 @@ namespace Shared.Repositories
         /// <param name="id">Allergy Id</param>
         /// <param name="owner">Allergy owner</param>
         /// <returns></returns>
-        public async Task<IList<Allergy>> FindAllergyAsync(int id, int owner)
+        public async Task<Allergy> FindAllergyAsync(int id, int? owner)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
             
+            // By default, take all allergy.
+            IQueryable<Allergy> allergies = context.Allergies;
+
+            // Filter allergy by using id.
+            allergies = allergies.Where(x => x.Id == id);
+
+            // Ower is specified.
+            if (owner != null)
+                allergies = allergies.Where(x => x.Owner == owner);
+
             // Find allergy with given conditions.
-            var results = context.Allergies.Where(x => x.Id == id && x.Owner == owner);
-            return await results.ToListAsync();
+            return await context.Allergies.FirstOrDefaultAsync(x => x.Id == id && x.Owner == owner);
         }
 
         /// <summary>

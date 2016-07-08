@@ -40,7 +40,7 @@ namespace Olives.Controllers
         #region Methods
 
         /// <summary>
-        ///     Find an addiction by using specialty id.
+        ///     Find an addiction by using addiction id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -118,7 +118,7 @@ namespace Olives.Controllers
             // Invalid model state.
             if (!ModelState.IsValid)
             {
-                _log.Error("Invalid addiction request parameters");
+                _log.Error("Request parameters are invalid. Error sent to client.");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
 
@@ -186,7 +186,7 @@ namespace Olives.Controllers
             }
 
             // Update the information.
-            if (info.Cause != null)
+            if (!string.IsNullOrWhiteSpace(info.Cause))
                 result.Cause = info.Cause;
 
             if (info.Note != null)
@@ -256,7 +256,7 @@ namespace Olives.Controllers
 
         [Route("api/addiction/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Patient})]
+        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterAddictionViewModel filter)
         {
             #region Request parameter validation
@@ -294,14 +294,17 @@ namespace Olives.Controllers
                 if (relationships == null || relationships.Count < 1)
                 {
                     // Tell client no record has been found.
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
-                        Error = $"{Language.WarnRecordNotFound}"
+                        Error = $"{Language.WarnHasNoRelationship}"
                     });
                 }
             }
             else
+            {
                 filter.Owner = requester.Id;
+            }
+                
 
             #endregion
 

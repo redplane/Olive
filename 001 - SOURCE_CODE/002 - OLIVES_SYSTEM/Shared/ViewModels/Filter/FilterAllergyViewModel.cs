@@ -2,6 +2,7 @@
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
+using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Resources;
 
@@ -9,9 +10,6 @@ namespace Shared.ViewModels.Filter
 {
     public class FilterAllergyViewModel : IPagination
     {
-        [NumericCompare(1, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
-        public int? Id { get; set; }
-
         [NumericCompare(1, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
         public int? Owner { get; set; }
 
@@ -44,10 +42,22 @@ namespace Shared.ViewModels.Filter
             ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? MaxLastModified { get; set; }
 
+        /// <summary>
+        /// Which property should be used for sorting
+        /// </summary>
+        [InEnumerationsArray(new object[] { NoteResultSort.LastModified, NoteResultSort.Created }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
+        public NoteResultSort Sort { get; set; } = NoteResultSort.LastModified;
+
+        /// <summary>
+        /// Whether the record should be sorted ascendingly or decendingly.
+        /// </summary>
+        [InEnumerationsArray(new object[] { SortDirection.Ascending, SortDirection.Decending }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
+        public SortDirection Direction { get; set; } = SortDirection.Decending;
+
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof(Language),
+            ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidPageIndex")]
-        public int Page { get; set; }
+        public int Page { get; set; } = FieldLength.PageIndexMin;
 
         [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof(Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]

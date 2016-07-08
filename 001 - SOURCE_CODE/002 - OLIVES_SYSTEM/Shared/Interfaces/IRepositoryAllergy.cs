@@ -14,7 +14,7 @@ namespace Shared.Interfaces
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        Task<ResponseAllergyFilter> FilterAllergy(FilterAllergyViewModel filter);
+        Task<ResponseAllergyFilter> FilterAllergyAsync(FilterAllergyViewModel filter);
 
         /// <summary>
         /// Initialize an allergy with given information.
@@ -28,7 +28,7 @@ namespace Shared.Interfaces
         /// <param name="id">Allergy Id</param>
         /// <param name="owner">Allergy owner</param>
         /// <returns></returns>
-        Task<IList<Allergy>> FindAllergyAsync(int id, int owner);
+        Task<Allergy> FindAllergyAsync(int id, int? owner);
 
         /// <summary>
         /// Delete an allergy synchronously.

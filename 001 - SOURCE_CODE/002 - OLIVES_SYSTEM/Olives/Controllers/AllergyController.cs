@@ -7,6 +7,8 @@ using System.Web.Http;
 using log4net;
 using Olives.Attributes;
 using Olives.Interfaces;
+using Olives.ViewModels.Edit;
+using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Helpers;
@@ -54,19 +56,12 @@ namespace Olives.Controllers
         {
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
-            // Only filter and receive the first result.
-            var filter = new FilterAllergyViewModel();
-            filter.Id = id;
-            filter.Owner = requester.Id;
-            filter.Page = 0;
-            filter.Records = 1;
-
+            
             // Retrieve the results list.
-            var results = await _repositoryAllergy.FilterAllergy(filter);
+            var allergy = await _repositoryAllergy.FindAllergyAsync(id, null);
 
             // No result has been received.
-            if (results == null || results.Allergies == null || results.Allergies.Count != 1)
+            if (allergy == null)
             {
                 // Tell client no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -75,22 +70,36 @@ namespace Olives.Controllers
                 });
             }
 
-            // Retrieve the 1st queried result.
-            var result = results.Allergies
-                .Select(x => new
-                {
-                    x.Id,
-                    x.Name,
-                    x.Cause,
-                    x.Note,
-                    x.Created,
-                    x.LastModified
-                })
-                .FirstOrDefault();
+            // Check the relationship between the requester and owner as these 2 people are different.
+            if (requester.Id != allergy.Owner)
+            {
+                // Find the relationship.
+                var relationships = await _repositoryAccount.FindRelationParticipation(requester.Id, allergy.Owner,
+                    (byte) StatusRelation.Active);
 
+                // There is no relationship between them.
+                if (relationships == null || relationships.Count < 1)
+                {
+                    // Tell client no record has been found.
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
+                }
+            }
+            
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Allergy = result
+                Allergy = new
+                {
+                    allergy.Id,
+                    allergy.Name,
+                    allergy.Cause,
+                    allergy.Note,
+                    allergy.Created,
+                    allergy.LastModified,
+                    allergy.Owner
+                }
             });
         }
 
@@ -104,8 +113,6 @@ namespace Olives.Controllers
         [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> Post([FromBody] InitializeAllergyViewModel info)
         {
-            #region ModelState result
-
             // Model hasn't been initialized.
             if (info == null)
             {
@@ -117,12 +124,10 @@ namespace Olives.Controllers
             // Invalid model state.
             if (!ModelState.IsValid)
             {
-                _log.Error("Invalid allergies filter request parameters");
+                _log.Error("Request parameters are invalid. Error sent to client");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
-
-            #endregion
-
+            
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
@@ -159,7 +164,7 @@ namespace Olives.Controllers
         [Route("api/allergy")]
         [HttpPut]
         [OlivesAuthorize(new[] {Role.Patient})]
-        public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] InitializeAllergyViewModel info)
+        public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] EditAllergyViewModel info)
         {
             #region ModelState result
 
@@ -186,20 +191,9 @@ namespace Olives.Controllers
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find allergy by using allergy id and owner id.
-            var allergies = await _repositoryAllergy.FindAllergyAsync(id, requester.Id);
+            var allergy = await _repositoryAllergy.FindAllergyAsync(id, requester.Id);
 
             // Not record has been found.
-            if (allergies == null || allergies.Count != 1)
-            {
-                // Tell client no record has been found.
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
-
-            // Retrieve the first record.
-            var allergy = allergies.FirstOrDefault();
             if (allergy == null)
             {
                 // Tell client no record has been found.
@@ -208,11 +202,18 @@ namespace Olives.Controllers
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-
+            
             // Confirm edit.
-            allergy.Name = info.Name;
-            allergy.Cause = info.Cause;
-            allergy.Note = info.Note;
+            if (!string.IsNullOrWhiteSpace(info.Name))
+                allergy.Name = info.Name;
+
+            if (!string.IsNullOrWhiteSpace(info.Cause))
+                allergy.Cause = info.Cause;
+
+            if (info.Note != null)
+                allergy.Note = info.Note;
+
+            // Update time when the record was lastly modified.
             allergy.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
 
             // Update allergy.
@@ -256,7 +257,7 @@ namespace Olives.Controllers
                     // Tell front-end, no record has been found.
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {
-                        Errors = new[] {Language.WarnRecordNotFound}
+                        Error =  $"{Language.WarnRecordNotFound}"
                     });
                 }
 
@@ -291,14 +292,14 @@ namespace Olives.Controllers
             // Model hasn't been initialized.
             if (info == null)
             {
-                _log.Error("Invalid allergies filter request parameters");
                 info = new FilterAllergyViewModel();
+                Validate(info);
             }
 
             // Invalid model state.
             if (!ModelState.IsValid)
             {
-                _log.Error("Invalid allergies filter request parameters");
+                _log.Error("Request parameters are invalid. Error sent to client.");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
 
@@ -306,9 +307,7 @@ namespace Olives.Controllers
             if (info.Owner != null)
             {
                 // Owner is the requester.
-                if (info.Owner == requester.Id)
-                    info.Owner = requester.Id;
-                else
+                if (info.Owner != requester.Id)
                 {
                     // Find the relation between the owner and the requester.
                     var relationships = await _repositoryAccount.FindRelation(requester.Id, info.Owner.Value,
@@ -328,10 +327,10 @@ namespace Olives.Controllers
                 info.Owner = requester.Id;
 
             // Retrieve the results list.
-            var results = await _repositoryAllergy.FilterAllergy(info);
-
-            // Filter allergies.
-            var result = results.Allergies
+            var results = await _repositoryAllergy.FilterAllergyAsync(info);
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                Allergies = results.Allergies
                 .Select(x => new
                 {
                     x.Id,
@@ -340,11 +339,7 @@ namespace Olives.Controllers
                     x.Note,
                     x.Created,
                     x.LastModified
-                });
-
-            return Request.CreateResponse(HttpStatusCode.OK, new
-            {
-                Allergies = result,
+                }),
                 results.Total
             });
         }

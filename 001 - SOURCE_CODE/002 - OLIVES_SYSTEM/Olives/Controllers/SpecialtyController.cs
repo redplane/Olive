@@ -58,7 +58,7 @@ namespace Olives.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = new[] {Language.WarnRecordNotFound}
+                    Errors = $"{Language.WarnRecordNotFound}"
                 });
             }
 
@@ -106,16 +106,7 @@ namespace Olives.Controllers
 
             // Retrieve the results list.
             var results = await _repositorySpecialty.FilterSpecialty(info);
-
-            // No result has been received.
-            if (results == null || results.Specialties == null || results.Specialties.Count < 1)
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Errors = new[] {Language.WarnRecordNotFound }
-                });
-            }
-
+            
             // Retrieve the 1st queried result.
             var result = results.Specialties
                 .Select(x => new

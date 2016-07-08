@@ -225,7 +225,6 @@
     <Compile Include="ViewModels\Filter\FilterPrescriptionViewModel.cs" />
     <Compile Include="ViewModels\HeartbeatViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAddictionViewModel.cs" />
-    <Compile Include="ViewModels\Initialize\InitializeAllergyViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAppointmentViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeBloodPressureViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeDoctorViewModel.cs" />

@@ -49,9 +49,9 @@ namespace Shared.ViewModels.Filter
         public double? MaxLastModified { get; set; }
 
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof(Language),
+            ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidPageIndex")]
-        public int Page { get; set; }
+        public int Page { get; set; } = FieldLength.PageIndexMin;
 
         [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof(Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]
@@ -67,6 +67,6 @@ namespace Shared.ViewModels.Filter
         /// Whether the record should be sorted ascendingly or decendingly.
         /// </summary>
         [InEnumerationsArray(new object[] { SortDirection.Ascending, SortDirection.Decending }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
-        public SortDirection Direction { get; set; }
+        public SortDirection Direction { get; set; } = SortDirection.Decending;
     }
 }

@@ -2,9 +2,9 @@
 using Shared.Constants;
 using Shared.Resources;
 
-namespace Shared.ViewModels.Initialize
+namespace Olives.ViewModels.Edit
 {
-    public class InitializeAllergyViewModel
+    public class EditAllergyViewModel
     {
         /// <summary>
         /// Name of allergy.
