@@ -872,8 +872,9 @@ namespace Shared.Repositories
             response.Total = await relationships.CountAsync();
 
             var skippedRecord = page*records;
-            response.Relationships = await relationships.Skip(skippedRecord)
+            response.Relationships = await relationships
                 .OrderByDescending(x => x.Created)
+                .Skip(skippedRecord)
                 .Take(records)
                 .ToListAsync();
 
