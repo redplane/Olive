@@ -16,6 +16,7 @@ DROP TABLE Addiction;
 DROP TABLE City;
 DROP TABLE Country;
 DROP TABLE MedicalImage;
+DROP TABLE Prescription;
 DROP TABLE MedicalRecord;
 DROP TABLE Person;
 ---------------------------------------------------------------------------------------------------
@@ -143,7 +144,11 @@ CREATE TABLE Relation
 (
 	Id					INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	Source				INT NOT NULL,
+	SourceFirstName		NVARCHAR(32) NOT NULL,
+	SourceLastName		NVARCHAR(32) NOT NULL,
 	Target				INT NOT NULL,
+	TargetFirstName		NVARCHAR(32) NOT NULL,
+	TargetLastName		NVARCHAR(32) NOT NULL,
 	Type				TINYINT NOT NULL,
 	Created				FLOAT NOT NULL,
 	Status				TINYINT NOT NULL,
