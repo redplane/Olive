@@ -236,6 +236,20 @@ CREATE TABLE MedicalImage
 	FOREIGN KEY (Owner) REFERENCES Person(Id)					
 )
 
+CREATE TABLE Prescription
+(
+	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	Owner					INT NOT NULL,
+	MedicalRecordId			INT NOT NULL,
+	[From]					FLOAT NOT NULL,
+	[To]					FLOAT NOT NULL,
+	Note					NVARCHAR(128),
+	Created					FLOAT NOT NULL,
+	LastModified			FLOAT,
+
+	FOREIGN KEY (MedicalRecordId)	REFERENCES MedicalRecord(Id),
+	FOREIGN KEY (Owner)				REFERENCES Person(Id)
+)
 
 SELECT * FROM Person
 SELECT * FROM Country
