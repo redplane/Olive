@@ -80,6 +80,7 @@
     <Compile Include="Attributes\RequiredIfAttribute.cs" />
     <Compile Include="Enumerations\Filter\CityResultSort.cs" />
     <Compile Include="Enumerations\Filter\NoteResultSort.cs" />
+    <Compile Include="Enumerations\RoleRelationship.cs" />
     <Compile Include="Enumerations\TypeRelation.cs" />
     <Compile Include="Enumerations\StatusRelation.cs" />
     <Compile Include="Enumerations\SortDirection.cs" />
@@ -215,6 +216,7 @@
     <Compile Include="ViewModels\Filter\FilterAllergyViewModel.cs" />
     <Compile Include="ViewModels\BloodPressureViewModel.cs" />
     <Compile Include="ViewModels\DoctorViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterAppointmentViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterBloodPressureViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterCityViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterCountryViewModel.cs" />
@@ -225,7 +227,6 @@
     <Compile Include="ViewModels\Filter\FilterPrescriptionViewModel.cs" />
     <Compile Include="ViewModels\HeartbeatViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAddictionViewModel.cs" />
-    <Compile Include="ViewModels\Initialize\InitializeAppointmentViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeBloodPressureViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeDoctorViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeHeartbeatViewModel.cs" />
@@ -237,7 +238,6 @@
     <Compile Include="ViewModels\Response\ResponseCityFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseCountryFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseAllergyFilter.cs" />
-    <Compile Include="ViewModels\Filter\FilterAppointmentViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseAppointment.cs" />
     <Compile Include="ViewModels\Response\ResponseAppointmentFilter.cs" />
     <Compile Include="ViewModels\PersonViewModel.cs" />
@@ -245,6 +245,7 @@
     <Compile Include="ViewModels\Response\ResponseMedicalImageFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseMedicalRecordFilter.cs" />
     <Compile Include="ViewModels\Response\ResponsePrescriptionFilterViewModel.cs" />
+    <Compile Include="ViewModels\Response\ResponseRelationshipFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseSugarbloodFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseHeartbeatFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseSpecialtyFilter.cs" />
@@ -252,7 +253,7 @@
     <Compile Include="ViewModels\Response\ResponseDoctorFilter.cs" />
     <Compile Include="ViewModels\Response\ResponsePatientFilter.cs" />
     <Compile Include="ViewModels\Filter\FilterSugarbloodViewModel.cs" />
-    <Compile Include="ViewModels\SpecialtyGetViewModel.cs" />
+    <Compile Include="ViewModels\FilterSpecialtyViewModel.cs" />
     <Compile Include="ViewModels\SpecialtyViewModel.cs" />
     <Compile Include="ViewModels\StatusSummaryViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterDoctorViewModel.cs" />

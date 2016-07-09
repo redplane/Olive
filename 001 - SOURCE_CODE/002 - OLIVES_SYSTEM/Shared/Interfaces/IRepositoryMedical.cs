@@ -20,7 +20,7 @@ namespace Shared.Interfaces
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<IList<MedicalRecord>> FindMedicalRecordAsync(int id);
+        Task<MedicalRecord> FindMedicalRecordAsync(int id);
 
         /// <summary>
         /// Filter medical record by using specific conditions.

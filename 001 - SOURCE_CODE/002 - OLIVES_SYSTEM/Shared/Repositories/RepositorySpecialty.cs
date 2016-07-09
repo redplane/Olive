@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels;
@@ -13,11 +12,26 @@ namespace Shared.Repositories
     public class RepositorySpecialty : IRepositorySpecialty
     {
         /// <summary>
+        /// Find the specialty by using specific id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Specialty> FindSpecialtyAsync(int id)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // Find the specialty by using id.
+            IQueryable<Specialty> specialties = context.Specialties;
+            return await specialties.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        /// <summary>
         /// Filter specialties by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<ResponseSpecialtyFilter> FilterSpecialty(SpecialtyGetViewModel filter)
+        public async Task<ResponseSpecialtyFilter> FilterSpecialtyAsync(FilterSpecialtyViewModel filter)
         {
             // Response initialization.
             var response = new ResponseSpecialtyFilter();
@@ -28,19 +42,25 @@ namespace Shared.Repositories
             // Filtered results initialization.
             IQueryable<Specialty> results = context.Specialties;
 
-            // Id has been specified.
-            if (filter.Id != null)
-                results = results.Where(x => x.Id == filter.Id);
-
             // Specialty name has been specified.
             if (!string.IsNullOrEmpty(filter.Name))
                 results = results.Where(x => x.Name.Contains(filter.Name));
+
+            switch (filter.Direction)
+            {
+                case SortDirection.Ascending:
+                    results = results.OrderBy(x => x.Name);
+                    break;
+                default:
+                    results = results.OrderByDescending(x => x.Name);
+                    break;
+            }
 
             // Count the matching results.
             response.Total = await results.CountAsync();
 
             // Finally, do the pagination.
-            var skippedRecords = filter.Page*filter.Records;
+            var skippedRecords = filter.Page * filter.Records;
             results = results
                 .OrderBy(x => x.Name)
                 .Skip(skippedRecords)
@@ -49,22 +69,6 @@ namespace Shared.Repositories
             // Retrieve the specialty list.
             response.Specialties = await results.ToListAsync();
             return response;
-        }
-
-        /// <summary>
-        /// Find specialty by using id asynchronously.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<IList<Specialty>> FindSpecialty(int id)
-        {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
-            // Find the specialty by using id.
-            var result = context.Specialties.Where(x => x.Id == id);
-
-            return await result.ToListAsync();
         }
     }
 }

@@ -12,6 +12,8 @@ namespace DataInitializer
 {
     internal class Program
     {
+        private static RepositoryAccount _repositoryAccount = new RepositoryAccount();
+
         private static void Main(string[] args)
         {
 
@@ -25,6 +27,54 @@ namespace DataInitializer
             InitializeBloodPressureNote("patient26@gmail.com", 90);
             InitializeAllergyNote("patient26@gmail.com", 90);
             InitializeMedicalRecord("patient26@gmail.com", 90);
+
+            #region Relationship create
+
+            for (var i = 26; i < 50; i++)
+            {
+                var patient = _repositoryAccount.FindPerson(null, $"patient{i}@gmail.com", null, (byte)Role.Patient);
+                var doctor = _repositoryAccount.FindPerson(null, $"doctor{i}@gmail.com", null, (byte)Role.Doctor);
+
+                if (patient != null)
+                    Console.WriteLine($"Found {patient.Email} for creating relationship");
+                else
+                {
+                    Console.WriteLine($"Cannot find {patient.Email} for creating relationship");
+                    Console.WriteLine("---");
+                    continue;
+                }
+
+                if (doctor != null)
+                    Console.WriteLine($"Found {doctor.Email} for creating relationship");
+                else
+                {
+                    Console.WriteLine($"Cannot find {doctor.Email} for creating relationship");
+                    Console.WriteLine("---");
+                    continue;
+                }
+
+                var relationship = new Relation();
+                relationship.Source = patient.Id;
+                relationship.SourceFirstName = patient.FirstName;
+                relationship.SourceLastName = patient.LastName;
+
+                relationship.Target = doctor.Id;
+                relationship.TargetFirstName = doctor.FirstName;
+                relationship.TargetLastName = doctor.LastName;
+
+                relationship.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+
+                if (i > 40)
+                    relationship.Status = (byte) StatusRelation.Pending;
+                else
+                    relationship.Status = (byte) StatusRelation.Active;
+
+                relationship = _repositoryAccount.InitializeRelationAsync(relationship).Result;
+                Console.WriteLine($"Created relationship. Id : {relationship.Id}");
+            }
+
+            #endregion
+
         }
 
         /// <summary>

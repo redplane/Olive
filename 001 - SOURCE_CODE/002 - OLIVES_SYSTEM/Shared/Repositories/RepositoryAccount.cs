@@ -5,6 +5,7 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Management.Instrumentation;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Interfaces;
@@ -92,7 +93,7 @@ namespace Shared.Repositories
             // Filter by using name
             if (!string.IsNullOrEmpty(filter.Name))
                 results = results.Where(x => x.Person.FullName.Contains(filter.Name));
-            
+
             // Filter by using birthday.
             if (filter.MinBirthday != null)
                 results = results.Where(x => x.Person.Birthday >= filter.MinBirthday);
@@ -301,7 +302,7 @@ namespace Shared.Repositories
                                       Name = doctor.City.CountryName
                                   }
                               },
-                              Status = (StatusAccount) person.Status,
+                              Status = (StatusAccount)person.Status,
                               Voters = doctor.Voters
                           };
 
@@ -333,22 +334,22 @@ namespace Shared.Repositories
             // Filter doctor by using phone number.
             if (!string.IsNullOrEmpty(filter.Phone))
                 people = people.Where(x => x.Phone.Contains(filter.Phone));
-            
+
             // Filter by using full name.
             if (!string.IsNullOrEmpty(filter.Name))
                 people = people.Where(x => x.FullName.Contains(filter.Name));
-            
+
             // Filter by using birthday.
             if (filter.MinBirthday != null)
                 people = people.Where(x => x.Birthday >= filter.MinBirthday);
 
             if (filter.MaxBirthday != null)
                 people = people.Where(x => x.Birthday <= filter.MaxBirthday);
-            
+
             // Filter by gender.
             if (filter.Gender != null)
                 people = people.Where(x => x.Gender == filter.Gender);
-            
+
             // Filter by last modified.
             if (filter.MinLastModified != null)
                 people = people.Where(x => x.LastModified >= filter.MinLastModified);
@@ -392,7 +393,7 @@ namespace Shared.Repositories
                 specialties = specialties.Where(x => x.Id == filter.Specialty);
 
             #endregion
-            
+
             // Join the tables first.
             var results = (from p in people
                            join d in doctors on p.Id equals d.Id
@@ -403,7 +404,7 @@ namespace Shared.Repositories
                                Doctor = d,
                                TrainedSpecialty = s
                            });
-            
+
             var responseFilter = new ResponseDoctorFilter();
             responseFilter.Total = await results.CountAsync();
 
@@ -420,7 +421,7 @@ namespace Shared.Repositories
                     Created = x.Person.Created,
                     Email = x.Person.Email,
                     FirstName = x.Person.FirstName,
-                    Gender = (Gender) x.Person.Gender,
+                    Gender = (Gender)x.Person.Gender,
                     Id = x.Person.Id,
                     LastModified = x.Person.LastModified,
                     LastName = x.Person.LastName,
@@ -673,7 +674,7 @@ namespace Shared.Repositories
 
         #endregion
 
-        #region Relation
+        #region Relationship
 
         /// <summary>
         /// Initialize a relationship to database.
@@ -696,58 +697,41 @@ namespace Shared.Repositories
         /// Find a relation by using specific information.
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="source"></param>
-        /// <param name="target"></param>
-        /// <param name="type"></param>
+        /// <param name="person"></param>
+        /// <param name="role"></param>
+        /// <param name="status"></param>
         /// <returns></returns>
-        public async Task<IList<Relation>> FindRelation(int? id, int? source, int? target, byte? type)
+        public async Task<Relation> FindRelationshipAsync(int id, int? person, RoleRelationship? role, StatusRelation? status)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
-            // Condition has bee specified or not.
-            var conditionSpecified = false;
-
             // Query result.
-            IQueryable<Relation> results = context.Relations;
+            IQueryable<Relation> relationships = context.Relations;
 
             #region Query
 
-            // Id is specified.
-            if (id != null)
-            {
-                results = context.Relations.Where(x => x.Id == id);
-                conditionSpecified = true;
-            }
+            // Filter relationship by using id.
+            relationships = relationships.Where(x => x.Id == id);
 
             // Source is specified.
-            if (source != null)
+            if (person != null)
             {
-                results = context.Relations.Where(x => x.Source == source);
-                conditionSpecified = true;
+                // Role role is specified.
+                if (role == RoleRelationship.Source)
+                    relationships = relationships.Where(x => x.Source == person.Value);
+                else if (role == RoleRelationship.Target)
+                    relationships = relationships.Where(x => x.Target == person.Value);
+                else
+                    relationships = relationships.Where(x => x.Source == person.Value || x.Target == person.Value);
+
             }
 
-            // Target is specified.
-            if (target != null)
-            {
-                results = context.Relations.Where(x => x.Target == target);
-                conditionSpecified = true;
-            }
+            // Status is specified.
+            if (status != null)
+                relationships = relationships.Where(x => x.Status == (byte)status);
 
-            // Type is specified.
-            if (type != null)
-            {
-                results = context.Relations.Where(x => x.Type == type);
-                conditionSpecified = true;
-            }
-
-            #endregion
-
-            // No condition is specified.
-            if (!conditionSpecified)
-                return null;
-
-            return await results.ToListAsync();
+            return await relationships.FirstOrDefaultAsync();
         }
 
         /// <summary>
@@ -757,7 +741,7 @@ namespace Shared.Repositories
         /// <param name="secondPerson"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public async Task<IList<Relation>> FindRelation(int firstPerson, int secondPerson, byte? status = null)
+        public async Task<IList<Relation>> FindRelationshipAsync(int firstPerson, int secondPerson, byte? status = null)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -801,27 +785,103 @@ namespace Shared.Repositories
         /// <summary>
         /// Delete a relation asynchronously.
         /// </summary>
-        /// <param name="relation"></param>
+        /// <param name="id">Id of relationship</param>
+        /// <param name="requester">Id of person who request to delete relationship.</param>
+        /// <param name="role">The participation of requester in relationship.</param>
+        /// <param name="status">Status of relationship.</param>
         /// <returns></returns>
-        public async Task<bool> DeleteRelationAsync(Relation relation)
+        public async Task<int> DeleteRelationAsync(int id, int? requester, RoleRelationship? role, StatusRelation? status)
         {
-            try
-            {
-                // Database context initialization.
-                var context = new OlivesHealthEntities();
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
 
-                // Find the relation whose id is matched and has the specific person takes part in.
-                context.Relations.Remove(relation);
+            // By default, take all relationships.
+            IQueryable<Relation> relationships = context.Relations;
 
-                await context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
+            // Find the relationship by using id.
+            relationships = relationships.Where(x => x.Id == id);
+
+            // Requester is defined. Find the his/her participation in the relationship.
+            if (requester != null)
             {
-                return false;
+                if (role == RoleRelationship.Source)
+                    relationships = relationships.Where(x => x.Source == requester.Value);
+                else if (role == RoleRelationship.Target)
+                    relationships = relationships.Where(x => x.Target == requester.Value);
+                else
+                    relationships = relationships.Where(x => x.Source == requester || x.Target == requester);
             }
+
+            // Status is defined.
+            if (status != null)
+                relationships = relationships.Where(x => x.Status == (byte) status);
+
+            // Find the relation whose id is matched and has the specific person takes part in.
+            context.Relations.RemoveRange(relationships);
+
+            return await context.SaveChangesAsync();
+            
+            
         }
-        
+
+        /// <summary>
+        /// Filter relationship base on the role of requester.
+        /// </summary>
+        /// <param name="requester"></param>
+        /// <param name="partner"></param>
+        /// <param name="role"></param>
+        /// <param name="status"></param>
+        /// <param name="page"></param>
+        /// <param name="records"></param>
+        public async Task<ResponseRelationshipFilter> FilterRelationshipAsync(int requester, int? partner, RoleRelationship? role, StatusRelation? status, int page, int records)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // By default, take all relationship.
+            IQueryable<Relation> relationships = context.Relations;
+             
+            // In case the relationship role is defined.
+            if (role == RoleRelationship.Source)
+            {
+                // Requester is the source of relationship.
+                relationships = relationships.Where(x => x.Source == requester);
+
+                // Therefore, partner is the target of relationship.
+                if (partner != null)
+                    relationships = relationships.Where(x => x.Target == partner.Value);
+            }
+            else if (role == RoleRelationship.Target)
+            {
+                // Requester is the target of relationship.
+                relationships = relationships.Where(x => x.Target == requester);
+
+                // Therefore, partner is the source of relationship.
+                if (partner != null)
+                    relationships = relationships.Where(x => x.Source == partner.Value);
+            }
+            else
+                relationships = relationships.Where(x => x.Source == requester || x.Target == requester);
+            
+            // Status is defined.
+            if (status != null)
+                relationships = relationships.Where(x => x.Status == (byte)status.Value);
+
+            // Response initialization.
+            var response = new ResponseRelationshipFilter();
+            response.Total = await relationships.CountAsync();
+
+            var skippedRecord = page*records;
+            response.Relationships = await relationships.Skip(skippedRecord)
+                .OrderByDescending(x => x.Created)
+                .Take(records)
+                .ToListAsync();
+
+            return response;
+        }
+
+        #endregion
+
         #endregion
     }
 }

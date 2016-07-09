@@ -54,9 +54,9 @@ namespace Shared.ViewModels.Filter
         public double? MaxLastModified { get; set; }
 
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof(Language),
-            ErrorMessageResourceName = "InvalidPageIndex")]
-        public int Page { get; set; }
+            ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueIsInvalid")]
+        public int Page { get; set; } = FieldLength.PageIndexMin;
 
         [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof(Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]

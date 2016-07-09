@@ -68,9 +68,9 @@ namespace Shared.ViewModels.Filter
 
 
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof(Language),
-            ErrorMessageResourceName = "InvalidPageIndex")]
-        public int Page { get; set; }
+            ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+        public int Page { get; set; } = 0;
 
         [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof(Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]

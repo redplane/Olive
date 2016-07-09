@@ -264,20 +264,9 @@ namespace Olives.Controllers
             #region Specialty validation
 
             // Find the list of speciaties match with searched condition.
-            var specialties = await _repositorySpecialty.FindSpecialty(info.Specialty);
+            var specialty = await _repositorySpecialty.FindSpecialtyAsync(info.Specialty);
 
             // Invalid results set.
-            if (specialties == null || specialties.Count != 1)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest,
-                    new
-                    {
-                        Errors = new[] {string.Format(Language.ValueIsInvalid, "Specialty")}
-                    });
-            }
-
-            // Retrieve the first queried result.
-            var specialty = specialties.FirstOrDefault();
             if (specialty == null)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest,
@@ -286,7 +275,7 @@ namespace Olives.Controllers
                         Errors = new[] {string.Format(Language.ValueIsInvalid, "Specialty")}
                     });
             }
-
+            
             #endregion
 
             #region City validation
@@ -707,174 +696,7 @@ namespace Olives.Controllers
         }
 
         #endregion
-
-        #region Relation
-
-        /// <summary>
-        ///     Request to create a relationship to a target person.
-        /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        [Route("api/account/relation")]
-        [HttpPost]
-        [OlivesAuthorize(new[] {Role.Patient})]
-        public async Task<HttpResponseMessage> InitializeRelation([FromBody] int target)
-        {
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
-            // Find the target.
-            var person = await _repositoryAccount.FindPersonAsync(target, null, null, null, StatusAccount.Active);
-
-            // Cannot find the target.
-            if (person == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnTargetAccountNotFound}"
-                });
-            }
-
-            // Check whether these two people have relation or not.
-            var relationship = await _repositoryAccount.FindRelation(requester.Id, target, null);
-
-            // 2 people already make a relationship to each other.
-            if (relationship != null)
-            {
-                return Request.CreateResponse(HttpStatusCode.Conflict, new
-                {
-                    Error = $"{Language.WarnRelationshipAlreadyExist}"
-                });
-            }
-
-            // Base on role of 2 people to decide the relation.
-            var targetRole = (Role) person.Role;
-
-            // Create an instance of relation.
-            var relation = new Relation();
-            relation.Source = person.Id;
-            relation.Target = target;
-            relation.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
-            relation.Status = (byte) StatusRelation.Pending;
-
-            // Patient send request to doctor or vice versa.
-            if (targetRole == Role.Patient)
-                relation.Type = (byte) TypeRelation.Relative;
-            else
-                relation.Type = (byte) TypeRelation.Treatment;
-
-            await _repositoryAccount.InitializeRelationAsync(relation);
-
-            return Request.CreateResponse(HttpStatusCode.OK, new
-            {
-                Relation = new
-                {
-                    relation.Id,
-                    relation.Source,
-                    relation.Target,
-                    relation.Type,
-                    relation.Created,
-                    relation.Status
-                }
-            });
-        }
-
-        /// <summary>
-        ///     Confirm a pending relation.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [Route("api/account/relation/confirm")]
-        [HttpPost]
-        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
-        public async Task<HttpResponseMessage> ConfirmRelation([FromBody] int id)
-        {
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
-            // Find the relationship by using id.
-            var relationships =
-                await _repositoryAccount.FindRelation(id, null, requester.Id, (byte) StatusRelation.Pending);
-
-            // No relationship has been returned.
-            if (relationships == null || relationships.Count != 1)
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRelationNotFound}"
-                });
-            }
-
-            // Retrieve the relationship.
-            var relationship = relationships.FirstOrDefault();
-
-            // Invalid relationship.
-            if (relationship == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRelationNotFound}"
-                });
-            }
-
-            relationship.Status = (byte) StatusRelation.Active;
-            return Request.CreateResponse(HttpStatusCode.OK, new
-            {
-                Relation = new
-                {
-                    relationship.Id,
-                    relationship.Source,
-                    relationship.Target,
-                    relationship.Type,
-                    relationship.Created,
-                    relationship.Status
-                }
-            });
-        }
-
-        /// <summary>
-        ///     Remove an active relation.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [Route("api/account/relation")]
-        [HttpDelete]
-        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
-        public async Task<HttpResponseMessage> RemoveRelation([FromBody] int id)
-        {
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
-            // Find the relationship by using id.
-            var relationships = await _repositoryAccount.FindRelationParticipation(id, requester.Id, null);
-
-            // No relationship has been returned.
-            if (relationships == null || relationships.Count != 1)
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRelationNotFound}"
-                });
-            }
-
-            // Retrieve the relationship.
-            var relationship = relationships.FirstOrDefault();
-
-            // Invalid relationship.
-            if (relationship == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRelationNotFound}"
-                });
-            }
-
-            await _repositoryAccount.DeleteRelationAsync(relationship);
-            return Request.CreateResponse(HttpStatusCode.OK);
-        }
-
-        #endregion
-
+        
         #region Properties
 
         /// <summary>

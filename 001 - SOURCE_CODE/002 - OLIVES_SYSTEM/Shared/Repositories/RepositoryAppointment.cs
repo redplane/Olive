@@ -125,20 +125,19 @@ namespace Shared.Repositories
         /// Find appointment by using appointment id and requester 
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="account"></param>
         /// <returns></returns>
-        public async Task<IList<Appointment>> FindAppointmentAsync(int id, string account)
+        public async Task<Appointment> FindAppointmentAsync(int id)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
+            
+            // By default, take all appointment.
+            IQueryable<Appointment> appointments = context.Appointments;
 
-            // Only return appointment as person takes part in the appointment.
-            var result = from p in context.People.Where(x => x.Email.Equals(account))
-                         from a in context.Appointments.Where(x => x.Id == id)
-                         where p.Id == a.Maker || p.Id == a.Dater
-                         select a;
+            // Find appointment by querying id.
+            appointments = appointments.Where(x => x.Id == id);
 
-            return await result.ToListAsync();
+            return await appointments.FirstOrDefaultAsync();
         }
     }
 }

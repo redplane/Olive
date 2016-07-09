@@ -180,9 +180,6 @@
   <data name="InvalidNoteId" xml:space="preserve">
     <value>Note ID is invalid</value>
   </data>
-  <data name="InvalidPageIndex" xml:space="preserve">
-    <value>Page index must be from 0</value>
-  </data>
   <data name="InvalidPersonalId" xml:space="preserve">
     <value>Id is invalid</value>
   </data>

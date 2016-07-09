@@ -9,17 +9,17 @@ namespace Shared.Interfaces
     public interface IRepositorySpecialty
     {
         /// <summary>
+        /// Find specialty by using specific id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<Specialty> FindSpecialtyAsync(int id);
+
+        /// <summary>
         /// Filter specialties by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        Task<ResponseSpecialtyFilter> FilterSpecialty(SpecialtyGetViewModel filter);
-
-        /// <summary>
-        /// Find a specialty by using id.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<IList<Specialty>> FindSpecialty(int id);
+        Task<ResponseSpecialtyFilter> FilterSpecialtyAsync(FilterSpecialtyViewModel filter);
     }
 }

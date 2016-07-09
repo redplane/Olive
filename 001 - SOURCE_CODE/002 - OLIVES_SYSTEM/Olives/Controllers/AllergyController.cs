@@ -74,7 +74,7 @@ namespace Olives.Controllers
             if (requester.Id != allergy.Owner)
             {
                 // Find the relationship.
-                var relationships = await _repositoryAccount.FindRelationParticipation(requester.Id, allergy.Owner,
+                var relationships = await _repositoryAccount.FindRelationshipAsync(requester.Id, allergy.Owner,
                     (byte) StatusRelation.Active);
 
                 // There is no relationship between them.
@@ -310,7 +310,7 @@ namespace Olives.Controllers
                 if (info.Owner != requester.Id)
                 {
                     // Find the relation between the owner and the requester.
-                    var relationships = await _repositoryAccount.FindRelation(requester.Id, info.Owner.Value,
+                    var relationships = await _repositoryAccount.FindRelationshipAsync(requester.Id, info.Owner.Value,
                         (byte) StatusAccount.Active);
 
                     // No relationship has been found.

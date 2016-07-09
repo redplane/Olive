@@ -41,39 +41,29 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/specialty")]
         [HttpGet]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
-            // Only filter and receive the first result.
-            var specialtyFilter = new SpecialtyGetViewModel();
-            specialtyFilter.Id = id;
-            specialtyFilter.Page = 0;
-            specialtyFilter.Records = 1;
-
-            // Retrieve the results list.
-            var results = await _repositorySpecialty.FilterSpecialty(specialtyFilter);
+            // Find the specialty by using specific id.
+            var specialty = await _repositorySpecialty.FindSpecialtyAsync(id);
 
             // No result has been received.
-            if (results == null || results.Specialties == null || results.Specialties.Count != 1)
+            if (specialty == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Errors = $"{Language.WarnRecordNotFound}"
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 
-            // Retrieve the 1st queried result.
-            var result = results.Specialties
-                .Select(x => new
-                {
-                    x.Id,
-                    x.Name
-                })
-                .FirstOrDefault();
-
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Specialty = result
+                Specialty = new
+                {
+                    specialty.Id,
+                    specialty.Name
+                }
+                
             });
         }
 
@@ -84,40 +74,34 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/specialty/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> Filter([FromBody] SpecialtyGetViewModel info)
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        public async Task<HttpResponseMessage> Filter([FromBody] FilterSpecialtyViewModel info)
         {
             // Model hasn't been initialized.
             if (info == null)
             {
-                _log.Error("Invalid specialties filter request parameters");
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new
-                {
-                    Errors = new[] {Language.InvalidRequestParameters}
-                });
+                info = new FilterSpecialtyViewModel();
+                Validate(info);
             }
 
             // Invalid model state.
             if (!ModelState.IsValid)
             {
-                _log.Error("Invalid specialties filter request parameters");
+                _log.Error("Request parameters are invalid. Error sent to client.");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
 
             // Retrieve the results list.
-            var results = await _repositorySpecialty.FilterSpecialty(info);
-            
-            // Retrieve the 1st queried result.
-            var result = results.Specialties
+            var results = await _repositorySpecialty.FilterSpecialtyAsync(info);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                Specialties = results.Specialties
                 .Select(x => new
                 {
                     x.Id,
                     x.Name
-                });
-
-            return Request.CreateResponse(HttpStatusCode.OK, new
-            {
-                Specialties = result,
+                }),
                 results.Total
             });
         }

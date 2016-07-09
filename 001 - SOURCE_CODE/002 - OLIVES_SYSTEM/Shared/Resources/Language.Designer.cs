@@ -304,15 +304,6 @@ namespace Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Page index must be from 0.
-        /// </summary>
-        public static string InvalidPageIndex {
-            get {
-                return ResourceManager.GetString("InvalidPageIndex", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Patient is invalid.
         /// </summary>
         public static string InvalidPatient {

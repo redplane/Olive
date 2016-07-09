@@ -56,7 +56,7 @@ namespace Shared.ViewModels.Filter
 
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidPageIndex")]
+            ErrorMessageResourceName = "ValueIsInvalid")]
         public int Page { get; set; } = FieldLength.PageIndexMin;
 
         [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof(Language),

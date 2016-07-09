@@ -37,7 +37,7 @@ namespace Shared.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<IList<MedicalRecord>> FindMedicalRecordAsync(int id)
+        public async Task<MedicalRecord> FindMedicalRecordAsync(int id)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -46,10 +46,7 @@ namespace Shared.Repositories
             IQueryable<MedicalRecord> results = context.MedicalRecords;
 
             // Find the record by using id.
-            results = results.Where(x => x.Id == id);
-
-            // Return the matched results.
-            return await results.ToListAsync();
+            return await results.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         /// <summary>

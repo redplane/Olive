@@ -21,5 +21,12 @@ namespace Shared.Interfaces
         /// <param name="requester"></param>
         /// <returns></returns>
         Task<ResponseAppointmentFilter> FilterAppointmentAsync(FilterAppointmentViewModel filter, int requester);
+
+        /// <summary>
+        /// Find appointment by searching id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<Appointment> FindAppointmentAsync(int id);
     }
 }

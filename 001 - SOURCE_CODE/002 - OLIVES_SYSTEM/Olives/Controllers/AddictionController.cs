@@ -70,7 +70,7 @@ namespace Olives.Controllers
             {
                 // Retrieve the relation between these 2 people.
                 var relationships =
-                    await _repositoryAccount.FindRelationParticipation(requester.Id, addiction.Owner, (byte) StatusRelation.Active);
+                    await _repositoryAccount.FindRelationshipAsync(requester.Id, addiction.Owner, (byte) StatusRelation.Active);
 
                 // There is no relationship between these 2 people
                 if (relationships == null || relationships.Count < 1)
@@ -287,7 +287,7 @@ namespace Olives.Controllers
                 // Retrieve the relation between these 2 people.
                 var relationships =
                     await
-                        _repositoryAccount.FindRelationParticipation(requester.Id, filter.Owner.Value,
+                        _repositoryAccount.FindRelationshipAsync(requester.Id, filter.Owner.Value,
                             (byte) StatusRelation.Active);
 
                 // There is no relationship between these 2 people
