@@ -279,6 +279,7 @@ CREATE TABLE ExperimentNote
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	MedicalRecordId			INT NOT NULL,
 	Owner					INT NOT NULL,
+	Name					NVARCHAR(32) NOT NULL,
 	Created					FLOAT NOT NULL,
 	LastModified			FLOAT,
 	
