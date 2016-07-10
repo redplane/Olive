@@ -418,4 +418,16 @@
     <value>W023</value>
     <comment>Warn front-end that medical record owner is disabled.</comment>
   </data>
+  <data name="WarnPrescriptionExpired" xml:space="preserve">
+    <value>W025</value>
+    <comment>Warn front-end the prescription is expired.</comment>
+  </data>
+  <data name="WarnPrescriptionNotFound" xml:space="preserve">
+    <value>W024</value>
+    <comment>Warn front-end the prescription is not found.</comment>
+  </data>
+  <data name="WarnFailedBulkUpdate" xml:space="preserve">
+    <value>W026</value>
+    <comment>Warn front-end that list of records are failed to update.</comment>
+  </data>
 </root>

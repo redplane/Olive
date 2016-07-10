@@ -17,6 +17,7 @@ namespace Shared.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public MedicalRecord()
         {
+            this.ExperimentNotes = new HashSet<ExperimentNote>();
             this.MedicalImages = new HashSet<MedicalImage>();
             this.Prescriptions = new HashSet<Prescription>();
         }
@@ -32,6 +33,8 @@ namespace Shared.Models
         public double Created { get; set; }
         public Nullable<double> LastModified { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ExperimentNote> ExperimentNotes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MedicalImage> MedicalImages { get; set; }
         public virtual Person Person { get; set; }

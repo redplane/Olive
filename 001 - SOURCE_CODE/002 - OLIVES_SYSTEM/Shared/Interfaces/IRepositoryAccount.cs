@@ -77,8 +77,9 @@ namespace Shared.Interfaces
         ///     Filter doctor by using id.
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="status"></param>
         /// <returns></returns>
-        Task<IList<DoctorViewModel>> FindDoctorAsync(int id);
+        Task<Doctor> FindDoctorAsync(int id, StatusAccount? status);
 
         /// <summary>
         ///     Filter doctor by using specific conditions.
@@ -180,12 +181,35 @@ namespace Shared.Interfaces
         /// <param name="requester"></param>
         /// <param name="partner"></param>
         /// <param name="role"></param>
+        /// <param name="type"></param>
         /// <param name="status"></param>
         /// <param name="page"></param>
         /// <param name="records"></param>
         Task<ResponseRelationshipFilter> FilterRelationshipAsync(int requester, int? partner, RoleRelationship? role,
-            StatusRelation? status, int page, int records);
+            TypeRelation? type, StatusRelation? status, int page, int records);
 
+        /// <summary>
+        /// Filter related doctors.
+        /// </summary>
+        /// <param name="requester"></param>
+        /// <param name="status"></param>
+        /// <param name="page"></param>
+        /// <param name="records"></param>
+        /// <returns></returns>
+        Task<ResponseRelatedDoctorFilter> FilterRelatedDoctorAsync(int requester, StatusRelation? status, int page,
+            int records);
+
+        /// <summary>
+        /// Filter related doctors.
+        /// </summary>
+        /// <param name="requester"></param>
+        /// <param name="status"></param>
+        /// <param name="page"></param>
+        /// <param name="records"></param>
+        /// <returns></returns>
+        Task<ResponseRelativeFilter> FilterRelativeAsync(int requester, StatusRelation? status, int page,
+            int records);
+        
         #endregion
     }
 }

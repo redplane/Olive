@@ -256,59 +256,7 @@ namespace Shared.Repositories
         #endregion
 
         #region Doctor
-
-        /// <summary>
-        ///     Find doctor from database by using id.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<IList<DoctorViewModel>> FindDoctorAsync(int id)
-        {
-            var context = new OlivesHealthEntities();
-
-            var results = from person in context.People.Where(x => x.Id == id)
-                          join doctor in context.Doctors.Where(x => x.Id == id)
-                          on person.Id equals doctor.Id
-                          join specialty in context.Specialties on doctor.SpecialtyId equals specialty.Id
-                          where person.Id == id
-                          select new DoctorViewModel
-                          {
-                              Address = person.Address,
-                              Birthday = person.Birthday,
-                              Created = person.Created,
-                              Email = person.Email,
-                              FirstName = person.FirstName,
-                              Gender = (Gender)person.Gender,
-                              LastModified = person.LastModified,
-                              LastName = person.LastName,
-                              Money = 0,
-                              Password = person.Password,
-                              Phone = person.Phone,
-                              Photo = person.Photo,
-                              Rank = doctor.Rank ?? 0,
-                              Role = person.Role,
-                              Specialty = new SpecialtyViewModel()
-                              {
-                                  Id = specialty.Id,
-                                  Name = specialty.Name
-                              },
-                              City = new CityViewModel()
-                              {
-                                  Id = doctor.City.Id,
-                                  Name = doctor.City.Name,
-                                  Country = new CountryViewModel()
-                                  {
-                                      Id = doctor.City.CountryId,
-                                      Name = doctor.City.CountryName
-                                  }
-                              },
-                              Status = (StatusAccount)person.Status,
-                              Voters = doctor.Voters
-                          };
-
-            return await results.ToListAsync();
-        }
-
+        
         /// <summary>
         ///     Filter doctor by using specific conditions asynchronously.
         /// </summary>
@@ -479,6 +427,29 @@ namespace Shared.Repositories
                     throw;
                 }
             }
+        }
+
+        /// <summary>
+        /// Find the doctor by using id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public async Task<Doctor> FindDoctorAsync(int id, StatusAccount? status)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            IQueryable<Doctor> doctors = context.Doctors;
+
+            // Find doctors by using id.
+            doctors = doctors.Where(x => x.Id == id);
+
+            // Status is defined.
+            if (status != null)
+                doctors = doctors.Where(x => x.Person.Status == (byte)status);
+
+            return await doctors.FirstOrDefaultAsync();
         }
 
         #endregion
@@ -830,10 +801,11 @@ namespace Shared.Repositories
         /// <param name="requester"></param>
         /// <param name="partner"></param>
         /// <param name="role"></param>
+        /// <param name="type"></param>
         /// <param name="status"></param>
         /// <param name="page"></param>
         /// <param name="records"></param>
-        public async Task<ResponseRelationshipFilter> FilterRelationshipAsync(int requester, int? partner, RoleRelationship? role, StatusRelation? status, int page, int records)
+        public async Task<ResponseRelationshipFilter> FilterRelationshipAsync(int requester, int? partner, RoleRelationship? role, TypeRelation? type, StatusRelation? status, int page, int records)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -863,10 +835,14 @@ namespace Shared.Repositories
             else
                 relationships = relationships.Where(x => x.Source == requester || x.Target == requester);
             
+            // Type is defined.
+            if (type != null)
+                relationships = relationships.Where(x => x.Type == (byte) type.Value);
+
             // Status is defined.
             if (status != null)
                 relationships = relationships.Where(x => x.Status == (byte)status.Value);
-
+            
             // Response initialization.
             var response = new ResponseRelationshipFilter();
             response.Total = await relationships.CountAsync();
@@ -875,6 +851,96 @@ namespace Shared.Repositories
             response.Relationships = await relationships
                 .OrderByDescending(x => x.Created)
                 .Skip(skippedRecord)
+                .Take(records)
+                .ToListAsync();
+
+            return response;
+        }
+
+        /// <summary>
+        /// Filter related doctors.
+        /// </summary>
+        /// <param name="requester"></param>
+        /// <param name="status"></param>
+        /// <param name="page"></param>
+        /// <param name="records"></param>
+        /// <returns></returns>
+        public async Task<ResponseRelatedDoctorFilter> FilterRelatedDoctorAsync(int requester, StatusRelation? status, int page, int records)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // By default, take all relationship.
+            IQueryable<Relation> relationships = context.Relations;
+
+            // Take the relationship whose source is requester and type is provide treatment.
+            relationships = relationships.Where(x => x.Source == requester && x.Type == (byte)TypeRelation.Relative);
+
+            // Status is defined.
+            if (status != null)
+                relationships = relationships.Where(x => x.Status == (byte) status.Value);
+
+            // Take all people who are doctor.
+            IQueryable<Doctor> doctors = context.Doctors;
+
+            var fullResult = from r in relationships
+                join d in doctors on r.Target equals d.Id
+                select new RelatedDoctorViewModel()
+                {
+                    Doctor = d,
+                    RelationshipStatus = r.Status,
+                    Created = r.Created
+                };
+
+            var response = new ResponseRelatedDoctorFilter();
+            response.Total = await fullResult.CountAsync();
+            response.List = await fullResult.OrderByDescending(x => x.Created)
+                .Skip(page*records)
+                .Take(records)
+                .ToListAsync();
+
+            return response;
+        }
+        
+        /// <summary>
+        /// Filter relative by using specific conditions.
+        /// </summary>
+        /// <param name="requester"></param>
+        /// <param name="status"></param>
+        /// <param name="page"></param>
+        /// <param name="records"></param>
+        /// <returns></returns>
+        public async Task<ResponseRelativeFilter> FilterRelativeAsync(int requester, StatusRelation? status, int page, int records)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // By default, take all relationship.
+            IQueryable<Relation> relationships = context.Relations;
+
+            // Take the relationship whose source is requester and type is provide treatment.
+            relationships = relationships.Where(x => x.Source == requester && x.Type == (byte)TypeRelation.Relative);
+
+            // Status is defined.
+            if (status != null)
+                relationships = relationships.Where(x => x.Status == (byte)status.Value);
+
+            // Take all people who are doctor.
+            IQueryable<Person> relatives = context.People;
+
+            var fullResult = from r in relationships
+                             join relative in relatives on r.Target equals relative.Id
+                             select new RelativeViewModel()
+                             {
+                                 Relative = relative,
+                                 RelationshipStatus = r.Status,
+                                 Created = r.Created
+                             };
+
+            var response = new ResponseRelativeFilter();
+            response.Total = await fullResult.CountAsync();
+            response.List = await fullResult.OrderByDescending(x => x.Created)
+                .Skip(page * records)
                 .Take(records)
                 .ToListAsync();
 

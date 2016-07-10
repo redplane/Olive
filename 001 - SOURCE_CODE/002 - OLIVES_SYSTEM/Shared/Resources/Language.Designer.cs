@@ -763,6 +763,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to W026.
+        /// </summary>
+        public static string WarnFailedBulkUpdate {
+            get {
+                return ResourceManager.GetString("WarnFailedBulkUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to W013.
         /// </summary>
         public static string WarnForbiddenAccessMethod {
@@ -831,6 +840,24 @@ namespace Shared.Resources {
         public static string WarnPendingAccount {
             get {
                 return ResourceManager.GetString("WarnPendingAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W025.
+        /// </summary>
+        public static string WarnPrescriptionExpired {
+            get {
+                return ResourceManager.GetString("WarnPrescriptionExpired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W024.
+        /// </summary>
+        public static string WarnPrescriptionNotFound {
+            get {
+                return ResourceManager.GetString("WarnPrescriptionNotFound", resourceCulture);
             }
         }
         

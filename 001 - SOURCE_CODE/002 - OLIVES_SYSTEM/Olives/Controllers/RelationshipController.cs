@@ -227,17 +227,17 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        [Route("api/relationship/filter")]
+        [Route("api/relationship/filter/doctor")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
-        public async Task<HttpResponseMessage> FilterRelationship([FromBody] FilterRelationshipViewModel filter)
+        [OlivesAuthorize(new[] { Role.Patient })]
+        public async Task<HttpResponseMessage> FilterRelatedDoctor([FromBody] FilterRelatedPeopleViewModel filter)
         {
             #region Parameters validation
 
             // Filter hasn't been initialized.
             if (filter == null)
             {
-                filter = new FilterRelationshipViewModel();
+                filter = new FilterRelatedPeopleViewModel();
                 Validate(filter);
             }
 
@@ -256,29 +256,87 @@ namespace Olives.Controllers
             // Filter the relationship.
             var result =
                 await
-                    _repositoryAccount.FilterRelationshipAsync(requester.Id, filter.Partner, filter.Role, filter.Status, filter.Page, filter.Records);
+                    _repositoryAccount.FilterRelatedDoctorAsync(requester.Id, filter.Status, filter.Page, filter.Records);
 
             // Throw the list back to client.
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Relationships = result.Relationships.Select(x => new
+                Relationships = result.List.Select(x => new
                 {
-                    x.Id,
-                    Source = new
+                    Doctor = new
                     {
-                        Id = x.Source,
-                        FirstName = x.SourceFirstName,
-                        LastName = x.SourceLastName
+                        x.Doctor.Id,
+                        x.Doctor.Person.FirstName,
+                        x.Doctor.Person.LastName,
+                        Specialty = x.Doctor.SpecialtyName,
+                        x.Doctor.Rank,
+                        x.Doctor.Person.Address,
+                        Photo = InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Doctor.Person.Photo, Values.StandardImageExtension)
                     },
-                    Target = new
+                    Status = x.RelationshipStatus,
+                    x.Created
+                }),
+                result.Total
+            });
+        }
+
+        /// <summary>
+        /// Filter relative by using conditions.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [Route("api/relationship/filter/relative")]
+        [HttpPost]
+        [OlivesAuthorize(new[] { Role.Patient })]
+        public async Task<HttpResponseMessage> FilterRelative([FromBody] FilterRelatedPeopleViewModel filter)
+        {
+            #region Parameters validation
+
+            // Filter hasn't been initialized.
+            if (filter == null)
+            {
+                filter = new FilterRelatedPeopleViewModel();
+                Validate(filter);
+            }
+
+            // Validation is not successful.
+            if (!ModelState.IsValid)
+            {
+                _log.Error("Parameters are invalid. Errors sent to client.");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            #endregion
+
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Filter the relationship.
+            var result =
+                await
+                    _repositoryAccount.FilterRelativeAsync(requester.Id, filter.Status, filter.Page, filter.Records);
+
+            // Throw the list back to client.
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                Relationships = result.List.Select(x => new
+                {
+                    Relative = new
                     {
-                        Id = x.Target,
-                        FirstName = x.TargetFirstName,
-                        LastName = x.TargetLastName
+                        x.Relative.Id,
+                        x.Relative.Email,
+                        x.Relative.FirstName,
+                        x.Relative.LastName,
+                        x.Relative.Birthday,
+                        x.Relative.Phone,
+                        x.Relative.Gender,
+                        x.Relative.Role,
+                        x.Relative.Status,
+                        x.Relative.Address,
+                        Photo = InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Relative.Photo, Values.StandardImageExtension)
                     },
-                    x.Type,
-                    x.Created,
-                    x.Status
+                    Status = x.RelationshipStatus,
+                    x.Created
                 }),
                 result.Total
             });

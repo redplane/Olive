@@ -7,14 +7,8 @@ using Shared.Resources;
 
 namespace Olives.ViewModels.Filter
 {
-    public class FilterRelationshipViewModel : IPagination
+    public class FilterRelatedPeopleViewModel : IPagination
     {
-        [NumericCompare(1, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
-        public int? Partner { get; set; }
-
-        [InEnumerationsArray(new object[] { RoleRelationship.Source, RoleRelationship.Target }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
-        public RoleRelationship? Role { get; set; }
-
         [InEnumerationsArray(new object[] { StatusRelation.Active, StatusRelation.Pending }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
         public StatusRelation? Status { get; set; }
 

@@ -228,13 +228,16 @@
     <Compile Include="ViewModels\Edit\EditPrescriptionViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditAllergyViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditAppointmentViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterRelationshipViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterRelatedPeopleViewModel.cs" />
     <Compile Include="ViewModels\FindPatientViewModel.cs" />
     <Compile Include="ViewModels\EditPatientStatusViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAllergyViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAppointmentViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAvatarViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializeMedicalExperiment.cs" />
+    <Compile Include="ViewModels\Initialize\InitializePrescriptedMedicineViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePrescriptionViewModel.cs" />
+    <Compile Include="ViewModels\Modify\ModifyExperimentViewModel.cs" />
     <Compile Include="ViewModels\OliveInitializePersonViewModel.cs" />
     <Compile Include="ViewModels\RetrieveDoctorViewModel.cs" />
   </ItemGroup>

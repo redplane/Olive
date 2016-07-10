@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Shared.Models;
+using Shared.ViewModels;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
@@ -57,8 +59,9 @@ namespace Shared.Interfaces
         /// Find the prescription by using id asynchronously.
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="owner"></param>
         /// <returns></returns>
-        Task<Prescription> FindPrescriptionAsync(int id);
+        Task<Prescription> FindPrescriptionAsync(int id, int? owner = null);
 
         /// <summary>
         /// Initialize or update an prescription.
@@ -82,6 +85,52 @@ namespace Shared.Interfaces
         /// <returns></returns>
         Task<ResponsePrescriptionFilterViewModel> FilterPrescriptionAsync(
             FilterPrescriptionViewModel filter);
+
+        #endregion
+
+        #region Medicine
+        
+        /// <summary>
+        /// Initialize a prescripted medicine asynchronously.
+        /// </summary>
+        /// <param name="prescriptedMedicine"></param>
+        /// <returns></returns>
+        Task<PrescriptedMedicine> InitializePrescriptedMedicineAsync(
+            PrescriptedMedicine prescriptedMedicine);
+
+        /// <summary>
+        /// Filter prescripted medicine by using specific conditions asynchronously.
+        /// </summary>
+        /// <returns></returns>
+        Task<ResponsePrescriptedMedicineFilterViewModel> FilterPrescriptedMedicineAsync(
+            FilterPrescriptedMedicineViewModel filter);
+
+        #endregion
+
+        #region Experiment note
+
+        /// <summary>
+        /// Find an experiment note asynchronously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<ExperimentNote> FindExperimentNoteAsync(int id);
+
+        /// <summary>
+        /// Initialize experment note with information.
+        /// </summary>
+        /// <param name="note"></param>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        Task<ExperimentNote> InitializeExperimentNote(ExperimentNote note, Dictionary<string, double> info);
+
+        /// <summary>
+        /// Modify a list of experiment notes asynchronously.
+        /// </summary>
+        /// <param name="experimentId"></param>
+        /// <param name="infos"></param>
+        /// <returns></returns>
+        Task<IList<ExperimentInfoViewModel>> ModifyExperimentNotes(int experimentId, IList<ExperimentInfoViewModel> infos);
 
         #endregion
     }

@@ -12,26 +12,23 @@ namespace Shared.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Prescription
+    public partial class ExperimentNote
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Prescription()
+        public ExperimentNote()
         {
-            this.PrescriptedMedicines = new HashSet<PrescriptedMedicine>();
+            this.ExperimentInfoes = new HashSet<ExperimentInfo>();
         }
     
         public int Id { get; set; }
-        public int Owner { get; set; }
         public int MedicalRecordId { get; set; }
-        public double From { get; set; }
-        public double To { get; set; }
-        public string Note { get; set; }
+        public int Owner { get; set; }
         public double Created { get; set; }
         public Nullable<double> LastModified { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ExperimentInfo> ExperimentInfoes { get; set; }
         public virtual MedicalRecord MedicalRecord { get; set; }
         public virtual Person Person { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PrescriptedMedicine> PrescriptedMedicines { get; set; }
     }
 }

@@ -58,6 +58,62 @@ namespace Olives.Controllers
         #region Doctor
 
         /// <summary>
+        /// Find a doctor by using specific id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Route("api/doctor")]
+        [HttpGet]
+        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
+        public async Task<HttpResponseMessage> FindDoctor([FromUri] int id)
+        {
+            // Find the doctor by using id.
+            var doctor = await _repositoryAccount.FindDoctorAsync(id, StatusAccount.Active);
+            
+            // Doctor is not found.
+            if (doctor == null)
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+
+
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                Doctor = new
+                {
+                    doctor.Id,
+                    doctor.Person.FirstName,
+                    doctor.Person.LastName,
+                    doctor.Person.Birthday,
+                    doctor.Person.Email,
+                    doctor.Person.Gender,
+                    doctor.Person.Address,
+                    Photo =
+                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, doctor.Person.Photo,
+                            Values.StandardImageExtension),
+                    doctor.Person.Phone,
+                    doctor.Rank,
+                    Specialty = new
+                    {
+                        doctor.Specialty.Id,
+                        doctor.Specialty.Name
+                    },
+                    City = new
+                    {
+                        doctor.City.Id,
+                        doctor.City.Name,
+                        Country = new
+                        {
+                            doctor.City.Country.Id,
+                            doctor.City.Country.Name
+                        }
+                    }
+                }
+            });
+        }
+
+        /// <summary>
         ///     Filter and respond a list of doctors to client.
         /// </summary>
         /// <param name="filter"></param>

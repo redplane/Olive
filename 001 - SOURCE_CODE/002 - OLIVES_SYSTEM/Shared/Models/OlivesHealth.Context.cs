@@ -35,11 +35,14 @@ namespace Shared.Models
         public virtual DbSet<City> Cities { get; set; }
         public virtual DbSet<Country> Countries { get; set; }
         public virtual DbSet<Doctor> Doctors { get; set; }
+        public virtual DbSet<ExperimentInfo> ExperimentInfoes { get; set; }
+        public virtual DbSet<ExperimentNote> ExperimentNotes { get; set; }
         public virtual DbSet<Heartbeat> Heartbeats { get; set; }
         public virtual DbSet<MedicalImage> MedicalImages { get; set; }
         public virtual DbSet<MedicalRecord> MedicalRecords { get; set; }
         public virtual DbSet<Patient> Patients { get; set; }
         public virtual DbSet<Person> People { get; set; }
+        public virtual DbSet<PrescriptedMedicine> PrescriptedMedicines { get; set; }
         public virtual DbSet<Prescription> Prescriptions { get; set; }
         public virtual DbSet<Relation> Relations { get; set; }
         public virtual DbSet<Specialty> Specialties { get; set; }

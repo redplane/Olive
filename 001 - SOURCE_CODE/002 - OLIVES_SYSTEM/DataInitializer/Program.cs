@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Data.Entity.Validation;
 using System.Linq;
@@ -13,10 +14,12 @@ namespace DataInitializer
     internal class Program
     {
         private static RepositoryAccount _repositoryAccount = new RepositoryAccount();
+        private static RepositoryMedical _repositoryMedical = new RepositoryMedical();
 
         private static void Main(string[] args)
         {
 
+            
             InitializePlaces(50);
             InitializeSpecialties(50);
             InitializeDoctor(50);
@@ -26,7 +29,9 @@ namespace DataInitializer
             InitializeSugarbloodNote("patient26@gmail.com", 90);
             InitializeBloodPressureNote("patient26@gmail.com", 90);
             InitializeAllergyNote("patient26@gmail.com", 90);
-            InitializeMedicalRecord("patient26@gmail.com", 90);
+
+            var sourcePatient = _repositoryAccount.FindPerson(null, "patient26@gmail.com", null, (byte)Role.Patient);
+            InitializeMedicalRecord(sourcePatient, 2);
 
             #region Relationship create
 
@@ -75,6 +80,7 @@ namespace DataInitializer
 
             #endregion
 
+            
         }
 
         /// <summary>
@@ -439,39 +445,73 @@ namespace DataInitializer
             context.SaveChanges();
         }
 
-        private static void InitializeMedicalRecord(string account, int records)
+        private static void InitializeMedicalRecord(Person patient, int records)
         {
-            var context = new OlivesHealthEntities();
-            var repositoryAccount = new RepositoryAccount();
-            var person = repositoryAccount.FindPerson(null, account, null, (byte)Role.Patient);
-            if (person == null)
-                throw new Exception($"Cannot find {account}");
-
-            Console.WriteLine("Found {0}", person.Email);
-            var random = new Random();
-
-            var currentTime = DateTime.Now;
+            var epochCurrentTime = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
             for (var i = 0; i < records; i++)
             {
+                var fromTime = DateTime.Now.Subtract(TimeSpan.FromDays(i));
+                var epochFromTime = EpochTimeHelper.Instance.DateTimeToEpochTime(fromTime);
 
-                var subtractedTime = currentTime.Subtract(TimeSpan.FromDays(i));
                 var medicalRecord = new MedicalRecord();
-                medicalRecord.Owner = person.Id;
+                medicalRecord.Owner = patient.Id;
                 medicalRecord.Summary = $"Summary[{i}]";
                 medicalRecord.Tests = $"Tests[{i}]";
                 medicalRecord.AdditionalMorbidities = $"AdditionalMorbidities[{i}]";
                 medicalRecord.DifferentialDiagnosis = $"DifferentialDiagnosis[{i}]";
                 medicalRecord.OtherPathologies = $"OtherPathologies[{i}]";
+                medicalRecord.Time = epochCurrentTime;
+                medicalRecord.Created = epochCurrentTime;
+                medicalRecord.LastModified = epochCurrentTime;
+                medicalRecord = _repositoryMedical.InitializeMedicalRecordAsync(medicalRecord).Result;
+                
+                Console.WriteLine($"Medical record [{i}] has been created");
 
-                var createdTime = EpochTimeHelper.Instance.DateTimeToEpochTime(subtractedTime);
-                medicalRecord.Time = createdTime;
-                medicalRecord.Created = createdTime;
-                medicalRecord.LastModified = createdTime;
+                for (var p = 0; p < 5; p++)
+                {
+                    var prescription = new Prescription();
+                    prescription.Owner = patient.Id;
+                    prescription.MedicalRecordId = medicalRecord.Id;
+                    prescription.From = epochFromTime;
+                    prescription.To = epochCurrentTime;
+                    prescription.Note = $"Note[{i}]";
+                    prescription.Created = epochCurrentTime;
+                    prescription = _repositoryMedical.InitializePrescriptionAsync(prescription).Result;
 
-                context.MedicalRecords.Add(medicalRecord);
+                    Console.WriteLine($"Prescription[{p}] has been created");
+
+                    for (var m = 0; m < 5; m++)
+                    {
+                        var prescriptedMedicine = new PrescriptedMedicine();
+                        prescriptedMedicine.PrescriptionId = prescription.Id;
+                        prescriptedMedicine.Owner = prescription.Owner;
+                        prescriptedMedicine.MedicineName = $"Medicine[{p}][{m}]]";
+                        prescriptedMedicine.Quantity = m;
+                        prescriptedMedicine.Unit = $"Unit[{p}][{m}]]";
+                        prescriptedMedicine.Note = $"Note[{p}][{m}]]";
+                        prescriptedMedicine.Expired = prescription.To;
+
+                        prescriptedMedicine = _repositoryMedical.InitializePrescriptedMedicineAsync(prescriptedMedicine).Result;
+
+                        Console.WriteLine($"Prescripted medicine [{prescriptedMedicine}] has been created");
+                    }
+                }
+
+                for (var e = 0; e < 5; e++)
+                {
+                    var experimentNote = new ExperimentNote();
+                    experimentNote.Owner = medicalRecord.Owner;
+                    experimentNote.MedicalRecordId = medicalRecord.Id;
+                    experimentNote.Created = epochCurrentTime;
+
+                    var infos = new Dictionary<string, double>();
+                    for (var d = 0; d < 5; d++)
+                        infos.Add($"Key[{d}]", d);
+                    
+                    experimentNote = _repositoryMedical.InitializeExperimentNote(experimentNote, infos).Result;
+
+                }
             }
-
-            context.SaveChanges();
         }
 
         private static void InitializeMedicalImage(string account, int records)

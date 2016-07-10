@@ -46,7 +46,7 @@ namespace OlivesAdministration.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] {Role.Admin})]
+        [OlivesAuthorize(new[] { Role.Admin })]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
             #region ModelState validation
@@ -63,29 +63,45 @@ namespace OlivesAdministration.Controllers
             #region Results handling
 
             // Retrieve filtered result asynchronously.
-            var results = await _repositoryAccount.FindDoctorAsync(id);
+            var doctor = await _repositoryAccount.FindDoctorAsync(id, null);
 
             // No result has been found.
-            if (results == null || results.Count < 1)
+            if (doctor == null)
             {
-                ModelState.AddModelError("FindResult", Language.DoctorDoesNotExist);
-                return Request.CreateResponse(HttpStatusCode.NotFound, RetrieveValidationErrors(ModelState));
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
             }
-
-
-            // Not only one result has been retrieved.
-            if (results.Count != 1)
-            {
-                ModelState.AddModelError("FindResult", Language.FindResultConflict);
-                return Request.CreateResponse(HttpStatusCode.Conflict, RetrieveValidationErrors(ModelState));
-            }
-
-            // Retrieve the first result.
-            var result = results.FirstOrDefault();
 
             #endregion
 
-            return Request.CreateResponse(HttpStatusCode.OK, new {User = result});
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                User = new
+                {
+                    Doctor = new
+                    {
+                        doctor.Id,
+                        doctor.Person.FirstName,
+                        doctor.Person.LastName,
+                        doctor.Person.Email,
+                        doctor.Person.Password,
+                        doctor.Person.Birthday,
+                        doctor.Person.Gender,
+                        doctor.Person.Address,
+                        doctor.Person.Phone,
+                        doctor.Person.Role,
+                        doctor.Person.Photo,
+                        doctor.Rank,
+                        Specialty = doctor.SpecialtyName,
+                        doctor.Voters,
+                        doctor.Money,
+                        doctor.Person.Created,
+                        doctor.Person.LastModified
+                    }
+                }
+            });
         }
 
         /// <summary>
@@ -95,7 +111,7 @@ namespace OlivesAdministration.Controllers
         /// <returns></returns>
         [Route("api/doctor/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Admin})]
+        [OlivesAuthorize(new[] { Role.Admin })]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterDoctorViewModel info)
         {
             #region ModelState validation

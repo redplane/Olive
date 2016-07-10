@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -11,6 +12,7 @@ using Olives.Attributes;
 using Olives.Models;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
+using Olives.ViewModels.Modify;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Helpers;
@@ -1083,6 +1085,364 @@ namespace Olives.Controllers
                 }),
                 result.Total
             });
+        }
+
+        #endregion
+
+        #region Medical prescripted medicine
+
+        /// <summary>
+        /// Initialize a medicine to a prescription.
+        /// </summary>
+        /// <param name="initializer"></param>
+        /// <returns></returns>
+        [Route("api/medical/prescription/medicine")]
+        [HttpPost]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        public async Task<HttpResponseMessage> InitializePrescriptedMedicine([FromBody] InitializePrescriptedMedicineViewModel initializer)
+        {
+            // Initializer hasn't been created.
+            if (initializer == null)
+            {
+                initializer = new InitializePrescriptedMedicineViewModel();
+                Validate(initializer);
+            }
+
+            // Request parameters are invalid.
+            if (!ModelState.IsValid)
+            {
+                _log.Error("Request parameters are invalid. Errors sent to client");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+            
+            // Find the prescription.
+            var prescription = await _repositoryMedical.FindPrescriptionAsync(initializer.Prescription);
+            if (prescription == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnPrescriptionNotFound}"
+                });
+            }
+
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Requester is different from the medical owner.
+            if (requester.Id != prescription.Owner)
+            {
+                // Patient cannot prescript medicine to another person.
+                if (requester.Role == (byte) Role.Patient)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                    {
+                        Error = $"{Language.WarnRoleIsForbidden}"
+                    });
+                }
+
+                // Find the relationship between the requester and prescription owner.
+                var relationship =
+                    await
+                        _repositoryAccount.FindRelationshipAsync(requester.Id, prescription.Owner,
+                            (byte) StatusRelation.Active);
+
+                // No relationship is found
+                if (relationship == null)
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                    {
+                        Error = $"{Language.WarnHasNoRelationship}"
+                    });
+            }
+
+            // Prescription is expired.
+            var unixCurrentTime = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            if (unixCurrentTime > prescription.To)
+            {
+                return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                {
+                    Error = $"{Language.WarnPrescriptionExpired}"
+                });
+            }
+
+            var prescriptedMedicine = new PrescriptedMedicine();
+            prescriptedMedicine.PrescriptionId = initializer.Prescription;
+            prescriptedMedicine.Owner = prescription.Owner;
+            prescriptedMedicine.MedicineName = initializer.Medicine;
+            prescriptedMedicine.Quantity = initializer.Quantity;
+            prescriptedMedicine.Unit = initializer.Unit;
+            prescriptedMedicine.Note = initializer.Note;
+            prescriptedMedicine.Expired = prescription.To;
+
+            prescriptedMedicine = await _repositoryMedical.InitializePrescriptedMedicineAsync(prescriptedMedicine);
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                PrescriptedMedicine = new
+                {
+                    prescriptedMedicine.Id,
+                    Prescription = prescriptedMedicine.PrescriptionId,
+                    prescriptedMedicine.Owner,
+                    Medicine = prescriptedMedicine.MedicineName,
+                    prescriptedMedicine.Quantity,
+                    prescriptedMedicine.Unit,
+                    prescriptedMedicine.Note
+                }
+            });
+        }
+
+        /// <summary>
+        /// Initialize a medicine to a prescription.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [Route("api/medical/prescription/medicine/filter")]
+        [HttpPost]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        public async Task<HttpResponseMessage> FilterPrescriptedMedicine([FromBody] FilterPrescriptedMedicineViewModel filter)
+        {
+            // Initializer hasn't been created.
+            if (filter == null)
+            {
+                filter = new FilterPrescriptedMedicineViewModel();
+                Validate(filter);
+            }
+
+            // Request parameters are invalid.
+            if (!ModelState.IsValid)
+            {
+                _log.Error("Request parameters are invalid. Errors sent to client");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Owner is not defined. That means the requester wants to filter his/her prescripted medicines.
+            if (filter.Owner == null)
+                filter.Owner = requester.Id;
+            else
+            {
+                // Find the relationship between requester and prescription owner.
+                var relationships = await _repositoryAccount.FindRelationshipAsync(requester.Id, filter.Owner.Value,
+                    (byte)StatusRelation.Active);
+
+                // No relationship is found.
+                if (relationships == null || relationships.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                    {
+                        Error = $"{Language.WarnHasNoRelationship}"
+                    });
+                }
+            }
+
+            // Filter the prescripted medicine.
+            var result = await _repositoryMedical.FilterPrescriptedMedicineAsync(filter);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                PrescriptedMedicines = result.PrescriptedMedicines.Select(x => new
+                {
+                    x.Id,
+                    x.MedicineName,
+                    x.Note,
+                    x.Owner,
+                    x.PrescriptionId,
+                    x.Quantity,
+                    x.Unit
+                }),
+                result.Total
+            });
+        }
+
+        #endregion
+
+        #region Medical experiment
+
+        /// <summary>
+        /// Initialize a medical experiment note with extra information.
+        /// </summary>
+        /// <param name="initializer"></param>
+        /// <returns></returns>
+        [Route("api/medical/experiment")]
+        [HttpPost]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        public async Task<HttpResponseMessage> InitializeMedialExperiment([FromBody] InitializeMedicalExperiment initializer)
+        {
+            // Initializer hasn't been initialized.
+            if (initializer == null)
+            {
+                initializer = new InitializeMedicalExperiment();
+                Validate(initializer);
+            }
+
+            // Request parameters are invalid.
+            if (!ModelState.IsValid)
+            {
+                _log.Error("Request parameters are invalid. Errors sent to client");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            // Find the medical record first.
+            var medicalRecord = await _repositoryMedical.FindMedicalRecordAsync(initializer.MedicalRecord);
+
+            // Medical record is not found.
+            if (medicalRecord == null)
+            {
+                _log.Error($"Medical record {initializer.MedicalRecord} is not found");
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnMedicalRecordNotFound}"
+                });
+            }
+
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Requester is different from the medical owner.
+            if (requester.Id != medicalRecord.Owner)
+            {
+                // Patient cannot note experiment result to another person.
+                if (requester.Role == (byte)Role.Patient)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                    {
+                        Error = $"{Language.WarnRoleIsForbidden}"
+                    });
+                }
+
+                // Find the relationship between the requester and prescription owner.
+                var relationship =
+                    await
+                        _repositoryAccount.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
+                            (byte)StatusRelation.Active);
+
+                // No relationship is found
+                if (relationship == null)
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                    {
+                        Error = $"{Language.WarnHasNoRelationship}"
+                    });
+            }
+
+            // Initialize note.
+            var note = new ExperimentNote();
+            note.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            note.MedicalRecordId = initializer.MedicalRecord;
+            note.Owner = medicalRecord.Owner;
+
+            try
+            {
+                var infos = initializer.Info.Select(t => new { t.Key, t.Value })
+                   .ToDictionary(t => t.Key, t => t.Value);
+
+                note = await _repositoryMedical.InitializeExperimentNote(note, infos);
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    Note = new
+                    {
+                        note.Id,
+                        note.Created,
+                        initializer.Info
+                    }
+                });
+            }
+            catch (Exception exception)
+            {
+                // Log the exception.
+                _log.Error(exception.Message, exception);
+
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new
+                {
+                    Error = $"{Language.WarnInternalServerError}"
+                });
+            }
+            
+        }
+
+        /// <summary>
+        /// Initialize a medical experiment note with extra information.
+        /// </summary>
+        /// <param name="experiment">Experiment which contains records.</param>
+        /// <param name="modifier">List of informations which need changing</param>
+        /// <returns></returns>
+        [Route("api/medical/experiment/notes")]
+        [HttpPut]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        public async Task<HttpResponseMessage> ModifyMedialExperimentNote([FromUri] int experiment, [FromBody] ModifyExperimentViewModel modifier)
+        {
+            // Initializer hasn't been initialized.
+            if (modifier == null)
+            {
+                modifier = new ModifyExperimentViewModel();
+                Validate(modifier);
+            }
+
+            // Request parameters are invalid.
+            if (!ModelState.IsValid)
+            {
+                _log.Error("Request parameters are invalid. Errors sent to client");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            // Find the medical record first.
+            var experimentNote = await _repositoryMedical.FindExperimentNoteAsync(experiment);
+            
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Requester is different from the medical owner.
+            if (requester.Id != experimentNote.Owner)
+            {
+                // Patient cannot note experiment result to another person.
+                if (requester.Role == (byte)Role.Patient)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                    {
+                        Error = $"{Language.WarnRoleIsForbidden}"
+                    });
+                }
+
+                // Find the relationship between the requester and prescription owner.
+                var relationship =
+                    await
+                        _repositoryAccount.FindRelationshipAsync(requester.Id, experimentNote.Owner,
+                            (byte)StatusRelation.Active);
+
+                // No relationship is found
+                if (relationship == null)
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                    {
+                        Error = $"{Language.WarnHasNoRelationship}"
+                    });
+            }
+
+            
+            try
+            {
+                var failedRecords = await _repositoryMedical.ModifyExperimentNotes(experimentNote.Id, modifier.Infos);
+
+                // No record is failed.
+                if (failedRecords == null)
+                    return Request.CreateResponse(HttpStatusCode.OK);
+
+                // Send the list of failed record back to client.
+                return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                {
+                    Error = $"{Language.WarnFailedBulkUpdate}",
+                    FailedRecords = failedRecords
+                });
+            }
+            catch (Exception exception)
+            {
+                // Log the exception.
+                _log.Error(exception.Message, exception);
+
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new
+                {
+                    Error = $"{Language.WarnInternalServerError}"
+                });
+            }
+
         }
 
         #endregion
