@@ -41,7 +41,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/specialty")]
         [HttpGet]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
             // Find the specialty by using specific id.
@@ -63,7 +63,6 @@ namespace Olives.Controllers
                     specialty.Id,
                     specialty.Name
                 }
-                
             });
         }
 
@@ -74,7 +73,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/specialty/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterSpecialtyViewModel info)
         {
             // Model hasn't been initialized.
@@ -97,11 +96,11 @@ namespace Olives.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 Specialties = results.Specialties
-                .Select(x => new
-                {
-                    x.Id,
-                    x.Name
-                }),
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.Name
+                    }),
                 results.Total
             });
         }

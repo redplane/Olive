@@ -6,13 +6,13 @@ namespace Olives.ViewModels.Initialize
     public class InitializeMedicalExperiment
     {
         /// <summary>
-        /// Medical record experiment should belong to.
+        ///     Medical record experiment should belong to.
         /// </summary>
-        public int MedicalRecord { get; set; } 
+        public int MedicalRecord { get; set; }
 
         /// <summary>
-        /// Experiment information.
+        ///     Experiment information.
         /// </summary>
-        public List<ExperimentInfoViewModel> Info { get; set; } 
+        public List<ExperimentInfoViewModel> Info { get; set; }
     }
 }

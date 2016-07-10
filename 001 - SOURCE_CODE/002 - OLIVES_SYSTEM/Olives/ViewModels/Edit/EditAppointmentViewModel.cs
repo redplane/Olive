@@ -9,30 +9,32 @@ namespace Olives.ViewModels.Edit
     public class EditAppointmentViewModel
     {
         /// <summary>
-        /// When the appointment should start.
+        ///     When the appointment should start.
         /// </summary>
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? From { get; set; }
 
         /// <summary>
-        /// When the appointment should be ended.
+        ///     When the appointment should be ended.
         /// </summary>
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? To { get; set; }
 
         /// <summary>
-        /// Appointment note.
+        ///     Appointment note.
         /// </summary>
-        [Required(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsRequired")]
-        [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueIsRequired")]
+        [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Note { get; set; }
 
         /// <summary>
-        /// Status of appointment.
+        ///     Status of appointment.
         /// </summary>
-        [InEnumerationsArray(new object[] {StatusAppointment.Cancelled, StatusAppointment.Done, StatusAppointment.Active})]
+        [InEnumerationsArray(
+            new object[] {StatusAppointment.Cancelled, StatusAppointment.Done, StatusAppointment.Active})]
         public StatusAppointment? Status { get; set; }
     }
 }

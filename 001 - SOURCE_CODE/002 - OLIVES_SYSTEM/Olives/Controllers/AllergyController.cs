@@ -16,7 +16,6 @@ using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels.Filter;
-using Shared.ViewModels.Initialize;
 
 namespace Olives.Controllers
 {
@@ -56,7 +55,7 @@ namespace Olives.Controllers
         {
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+
             // Retrieve the results list.
             var allergy = await _repositoryAllergy.FindAllergyAsync(id, null);
 
@@ -87,7 +86,7 @@ namespace Olives.Controllers
                     });
                 }
             }
-            
+
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 Allergy = new
@@ -127,7 +126,7 @@ namespace Olives.Controllers
                 _log.Error("Request parameters are invalid. Error sent to client");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
-            
+
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
@@ -202,7 +201,7 @@ namespace Olives.Controllers
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-            
+
             // Confirm edit.
             if (!string.IsNullOrWhiteSpace(info.Name))
                 allergy.Name = info.Name;
@@ -257,7 +256,7 @@ namespace Olives.Controllers
                     // Tell front-end, no record has been found.
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {
-                        Error =  $"{Language.WarnRecordNotFound}"
+                        Error = $"{Language.WarnRecordNotFound}"
                     });
                 }
 
@@ -331,15 +330,15 @@ namespace Olives.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 Allergies = results.Allergies
-                .Select(x => new
-                {
-                    x.Id,
-                    x.Name,
-                    x.Cause,
-                    x.Note,
-                    x.Created,
-                    x.LastModified
-                }),
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.Name,
+                        x.Cause,
+                        x.Note,
+                        x.Created,
+                        x.LastModified
+                    }),
                 results.Total
             });
         }

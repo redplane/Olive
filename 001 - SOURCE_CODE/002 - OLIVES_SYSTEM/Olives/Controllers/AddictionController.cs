@@ -64,13 +64,15 @@ namespace Olives.Controllers
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-            
+
             // Requester is requesting to see the personal note of another person.
             if (requester.Id != addiction.Owner)
             {
                 // Retrieve the relation between these 2 people.
                 var relationships =
-                    await _repositoryAccount.FindRelationshipAsync(requester.Id, addiction.Owner, (byte) StatusRelation.Active);
+                    await
+                        _repositoryAccount.FindRelationshipAsync(requester.Id, addiction.Owner,
+                            (byte) StatusRelation.Active);
 
                 // There is no relationship between these 2 people
                 if (relationships == null || relationships.Count < 1)
@@ -82,7 +84,7 @@ namespace Olives.Controllers
                     });
                 }
             }
-            
+
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 Addiction = new
@@ -171,7 +173,7 @@ namespace Olives.Controllers
 
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+
             // Find the addiction of the requester with the same id.
             var result = await _repositoryAddiction.FindAddictionAsync(id);
 
@@ -277,10 +279,10 @@ namespace Olives.Controllers
             #endregion
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             #region Relationship validation
-            
+
             // Requester is different from the addictions owner.
             if (filter.Owner != null && requester.Id != filter.Owner.Value)
             {
@@ -304,7 +306,6 @@ namespace Olives.Controllers
             {
                 filter.Owner = requester.Id;
             }
-                
 
             #endregion
 
@@ -325,6 +326,7 @@ namespace Olives.Controllers
                 result.Total
             });
         }
+
         #endregion
 
         #region Properties

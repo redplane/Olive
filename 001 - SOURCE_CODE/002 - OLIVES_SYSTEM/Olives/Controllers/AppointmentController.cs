@@ -15,7 +15,6 @@ using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels.Filter;
-using Shared.ViewModels.Initialize;
 
 namespace Olives.Controllers
 {
@@ -42,17 +41,17 @@ namespace Olives.Controllers
         #region Methods
 
         /// <summary>
-        /// Retrieve appointment by search id.
+        ///     Retrieve appointment by search id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [Route("api/appointment")]
         [HttpGet]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> RetrieveAppointment([FromUri] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find the appointment by searching id.
             var appointment = await _repositoryAppointment.FindAppointmentAsync(id);
@@ -70,7 +69,7 @@ namespace Olives.Controllers
                 // Find the activate appointment maker.
                 var maker =
                     await _repositoryAccount.FindPersonAsync(appointment.Maker, null, null, null, null);
-                
+
                 // Cannot find the maker.
                 if (maker == null)
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -210,7 +209,7 @@ namespace Olives.Controllers
                     Error = $"{Language.WarnHasNoRelationship}"
                 });
             }
-            
+
             #endregion
 
             #region Appointment initialization
@@ -266,8 +265,8 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/appointment")]
         [HttpPut]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
-        public async Task<HttpResponseMessage> Post([FromUri] int id,  [FromBody] EditAppointmentViewModel info)
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        public async Task<HttpResponseMessage> Post([FromUri] int id, [FromBody] EditAppointmentViewModel info)
         {
             #region Model validation
 
@@ -290,7 +289,7 @@ namespace Olives.Controllers
             #region Appointment validation
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find appointment by using id asynchronously.
             var appointment = await _repositoryAppointment.FindAppointmentAsync(id);
@@ -303,7 +302,7 @@ namespace Olives.Controllers
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-            
+
             // Appointment is cancelled or done.
             if (appointment.Status == (byte) StatusAppointment.Cancelled ||
                 appointment.Status == (byte) StatusAppointment.Done)

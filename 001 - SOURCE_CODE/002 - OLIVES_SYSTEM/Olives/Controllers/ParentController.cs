@@ -54,9 +54,9 @@ namespace Olives.Controllers
 
             base.Initialize(controllerContext);
         }
-        
+
         /// <summary>
-        /// Construct full url path.
+        ///     Construct full url path.
         /// </summary>
         /// <param name="path"></param>
         /// <param name="file"></param>

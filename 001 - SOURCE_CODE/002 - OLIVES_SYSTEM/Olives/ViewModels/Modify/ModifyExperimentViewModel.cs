@@ -8,9 +8,9 @@ namespace Olives.ViewModels.Modify
     public class ModifyExperimentViewModel
     {
         /// <summary>
-        /// List of experiment information.
+        ///     List of experiment information.
         /// </summary>
-        [Required(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsRequired")]
-        public List<ExperimentInfoViewModel> Infos { get; set; } 
+        [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueIsRequired")]
+        public List<ExperimentInfoViewModel> Infos { get; set; }
     }
 }

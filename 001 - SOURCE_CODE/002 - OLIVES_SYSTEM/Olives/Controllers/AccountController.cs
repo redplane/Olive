@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
@@ -58,18 +57,18 @@ namespace Olives.Controllers
         #region Doctor
 
         /// <summary>
-        /// Find a doctor by using specific id.
+        ///     Find a doctor by using specific id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [Route("api/doctor")]
         [HttpGet]
-        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
+        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
         public async Task<HttpResponseMessage> FindDoctor([FromUri] int id)
         {
             // Find the doctor by using id.
             var doctor = await _repositoryAccount.FindDoctorAsync(id, StatusAccount.Active);
-            
+
             // Doctor is not found.
             if (doctor == null)
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -140,7 +139,7 @@ namespace Olives.Controllers
             filter.MaxLastModified = null;
             filter.MinMoney = null;
             filter.MaxMoney = null;
-            
+
             // Invalid model.
             if (!ModelState.IsValid)
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
@@ -157,7 +156,8 @@ namespace Olives.Controllers
                     x.Email,
                     x.Gender,
                     x.Address,
-                    Photo = InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Photo, Values.StandardImageExtension),
+                    Photo =
+                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Photo, Values.StandardImageExtension),
                     x.Phone,
                     x.Rank,
                     Specialty = new
@@ -331,7 +331,7 @@ namespace Olives.Controllers
                         Errors = new[] {string.Format(Language.ValueIsInvalid, "Specialty")}
                     });
             }
-            
+
             #endregion
 
             #region City validation
@@ -500,7 +500,8 @@ namespace Olives.Controllers
                     if (!string.IsNullOrEmpty(requester.Photo))
                     {
                         // Update the image full path.
-                        var fullPath = Path.Combine(_applicationSetting.AvatarStorage.Absolute, $"{requester.Photo}.{Values.StandardImageExtension}");
+                        var fullPath = Path.Combine(_applicationSetting.AvatarStorage.Absolute,
+                            $"{requester.Photo}.{Values.StandardImageExtension}");
                         image.Save(fullPath, ImageFormat.Png);
 
                         _log.Info($"{requester.Email} has updated avatar successfuly.");
@@ -509,7 +510,8 @@ namespace Olives.Controllers
                     {
                         // Generate name for image and save image first.
                         var imageName = Guid.NewGuid().ToString("N");
-                        var fullPath = Path.Combine(_applicationSetting.AvatarStorage.Absolute, $"{imageName}.{Values.StandardImageExtension}");
+                        var fullPath = Path.Combine(_applicationSetting.AvatarStorage.Absolute,
+                            $"{imageName}.{Values.StandardImageExtension}");
                         image.Save(fullPath);
                         _log.Info($"{requester.Email} has uploaded avatar successfuly.");
 
@@ -540,7 +542,9 @@ namespace Olives.Controllers
                             requester.LastModified,
                             requester.Status,
                             requester.Address,
-                            Photo = InitializeUrl(_applicationSetting.AvatarStorage.Relative, requester.Photo, Values.StandardImageExtension)
+                            Photo =
+                                InitializeUrl(_applicationSetting.AvatarStorage.Relative, requester.Photo,
+                                    Values.StandardImageExtension)
                         }
                     });
                 }
@@ -680,7 +684,9 @@ namespace Olives.Controllers
                     result.LastModified,
                     result.Status,
                     result.Address,
-                    Photo = InitializeUrl(_applicationSetting.AvatarStorage.Relative, result.Photo, Values.StandardImageExtension)
+                    Photo =
+                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, result.Photo,
+                            Values.StandardImageExtension)
                 }
             });
         }
@@ -752,7 +758,7 @@ namespace Olives.Controllers
         }
 
         #endregion
-        
+
         #region Properties
 
         /// <summary>
@@ -789,7 +795,7 @@ namespace Olives.Controllers
         ///     Property which contains settings of application which had been deserialized from json file.
         /// </summary>
         private readonly ApplicationSetting _applicationSetting;
-        
+
         #endregion
     }
 }
