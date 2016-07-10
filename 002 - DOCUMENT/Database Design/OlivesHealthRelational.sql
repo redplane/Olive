@@ -16,7 +16,10 @@ DROP TABLE Addiction;
 DROP TABLE City;
 DROP TABLE Country;
 DROP TABLE MedicalImage;
+DROP TABLE PrescriptedMedicine;
 DROP TABLE Prescription;
+DROP TABLE ExperimentInfo;
+DROP TABLE ExperimentNote;
 DROP TABLE MedicalRecord;
 DROP TABLE Person;
 ---------------------------------------------------------------------------------------------------
@@ -256,6 +259,45 @@ CREATE TABLE Prescription
 	FOREIGN KEY (Owner)				REFERENCES Person(Id)
 )
 
+CREATE TABLE PrescriptedMedicine
+(
+	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	PrescriptionId			INT NOT NULL,
+	Owner					INT NOT NULL,
+	MedicineName			NVARCHAR(32) NOT NULL,
+	Quantity				FLOAT NOT NULL,
+	Unit					NVARCHAR(16) NOT NULL,
+	Note					NVARCHAR(128),
+	Expired					FLOAT NOT NULL,
+
+	FOREIGN KEY (PrescriptionId) REFERENCES Prescription(Id),
+	FOREIGN KEY (Owner) REFERENCES Person(Id)
+)
+
+CREATE TABLE ExperimentNote
+(
+	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	MedicalRecordId			INT NOT NULL,
+	Owner					INT NOT NULL,
+	Created					FLOAT NOT NULL,
+	LastModified			FLOAT,
+	
+	FOREIGN KEY (MedicalRecordId) REFERENCES MedicalRecord(Id),
+	FOREIGN KEY (Owner) REFERENCES Person(Id)
+)
+
+CREATE TABLE ExperimentInfo
+(
+	ExperimentId			INT NOT NULL,
+	[Key]					NVARCHAR(32) NOT NULL,
+	Value					FLOAT NOT NULL,
+
+	FOREIGN KEY (ExperimentId) REFERENCES ExperimentNote(Id),
+	PRIMARY KEY (ExperimentId, [Key])
+)
+
+SELECT * FROM ExperimentNote
+INNER JOIN ExperimentInfo ON ExperimentNote.Id = ExperimentInfo.ExperimentId
 SELECT * FROM Person
 SELECT * FROM Country
 WHERE Country.Name = 'Bac giang'
@@ -291,3 +333,5 @@ WHERE Person.Email = 'patient26@gmail.com'
 UPDATE Person
 SET Email = 'patient26@gmail.com'
 WHERE Person.Id = 77
+
+SELECT * FROM Relation
