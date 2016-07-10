@@ -8,19 +8,15 @@ using Shared.Resources;
 
 namespace Shared.ViewModels.Filter
 {
-    public class FilterMedicalRecordViewModel : IPagination
+    public class FilterExperimentViewModel : IPagination
     {
-        public int? Owner { get; set; }
+        /// <summary>
+        /// Id of medical record which filtered experiments belong to.
+        /// </summary>
+        public int MedicalRecord { get; set; } 
 
-        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
-        [NumericPropertyCompare("MaxTime", Comparision = Comparision.LowerEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
-        public float? MinTime { get; set; }
-
-        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
-        [NumericPropertyCompare("MinTime", Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
-        public float? MaxTime { get; set; }
+        [StringLength(32, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        public string Name { get; set; }
 
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
@@ -42,20 +38,16 @@ namespace Shared.ViewModels.Filter
         [NumericPropertyCompare("MinLastModified", Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public float? MaxLastModified { get; set; }
 
-        /// <summary>
-        /// Which property should be used for sorting.
-        /// </summary>
-        public NoteResultSort Sort { get; set; } = NoteResultSort.Time;
+        [InEnumerationsArray(new object[] {ExperimentFilterSort.Name, ExperimentFilterSort.Created, ExperimentFilterSort.LastModified}, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
+        public ExperimentFilterSort Sort { get; set; } = ExperimentFilterSort.Name;
 
-        /// <summary>
-        /// Whether record should be sorted ascendingly or decendingly.
-        /// </summary>
-        public SortDirection Direction { get; set; } = SortDirection.Decending;
+        [InEnumerationsArray(new object[] { SortDirection.Ascending, SortDirection.Decending }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
+        public SortDirection Direction { get; set; }
 
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceType = typeof(Language),
             ErrorMessageResourceName = "ValueIsInvalid")]
-        public int Page { get; set; } = 0;
+        public int Page { get; set; } = FieldLength.PageIndexMin;
 
         [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof(Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]

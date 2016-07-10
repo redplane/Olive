@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using Shared.Enumerations;
 using Shared.Models;
 using Shared.ViewModels;
 using Shared.ViewModels.Filter;
@@ -127,10 +128,20 @@ namespace Shared.Interfaces
         /// <summary>
         /// Modify a list of experiment notes asynchronously.
         /// </summary>
-        /// <param name="experimentId"></param>
+        /// <param name="experimentNote"></param>
         /// <param name="infos"></param>
         /// <returns></returns>
-        Task<IList<ExperimentInfoViewModel>> ModifyExperimentNotes(int experimentId, IList<ExperimentInfoViewModel> infos);
+        Task<IList<ExperimentInfoViewModel>> ModifyExperimentNotes(ExperimentNote experimentNote, IList<ExperimentInfoViewModel> infos);
+
+        /// <summary>
+        /// Delete experiment record or its infos only.
+        /// </summary>
+        /// <param name="experimentId"></param>
+        /// <param name="keys"></param>
+        /// <param name="mode"></param>
+        /// <returns></returns>
+        Task<ResponseNoteDelete> DeleteExperimentNotesAsync(int experimentId, HashSet<string> keys,
+            NoteDeleteMode mode);
 
         #endregion
     }

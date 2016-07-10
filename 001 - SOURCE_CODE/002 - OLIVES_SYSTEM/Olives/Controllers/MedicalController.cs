@@ -9,6 +9,7 @@ using System.Web.Http;
 using log4net;
 using Olives.Attributes;
 using Olives.Models;
+using Olives.ViewModels.Delete;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Olives.ViewModels.Modify;
@@ -1341,6 +1342,7 @@ namespace Olives.Controllers
             var note = new ExperimentNote();
             note.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
             note.MedicalRecordId = initializer.MedicalRecord;
+            note.Name = initializer.Name;
             note.Owner = medicalRecord.Owner;
 
             try
@@ -1432,7 +1434,9 @@ namespace Olives.Controllers
 
             try
             {
-                var failedRecords = await _repositoryMedical.ModifyExperimentNotes(experimentNote.Id, modifier.Infos);
+                // Update the last modified time.
+                experimentNote.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+                var failedRecords = await _repositoryMedical.ModifyExperimentNotes(experimentNote, modifier.Infos);
 
                 // No record is failed.
                 if (failedRecords == null)
@@ -1456,6 +1460,68 @@ namespace Olives.Controllers
                 });
             }
         }
+
+        /// <summary>
+        ///     Delete a medical experiment note or only its key-value pairs.
+        /// </summary>
+        /// <param name="experiment">Experiment which contains records.</param>
+        /// <param name="remover">List of informations which need changing</param>
+        /// <returns></returns>
+        [Route("api/medical/experiment/notes")]
+        [HttpDelete]
+        [OlivesAuthorize(new[] { Role.Patient })]
+        public async Task<HttpResponseMessage> DeleteMedialExperimentNote([FromUri] int experiment,
+            [FromBody] DeleteExperimentViewModel remover)
+        {
+            // Initializer hasn't been initialized.
+            if (remover == null)
+            {
+                remover = new DeleteExperimentViewModel();
+                Validate(remover);
+            }
+
+            // Request parameters are invalid.
+            if (!ModelState.IsValid)
+            {
+                _log.Error("Request parameters are invalid. Errors sent to client");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            // Find the medical record first.
+            var experimentNote = await _repositoryMedical.FindExperimentNoteAsync(experiment);
+
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Requester is different from the medical owner.
+            if (requester.Id != experimentNote.Owner)
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
+            
+            try
+            {
+                // Remove note and retrieve the response.
+                var response = await _repositoryMedical.DeleteExperimentNotesAsync(experimentNote.Id, remover.Keys, remover.Mode);
+                
+                // Send the list of failed record back to client.
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception exception)
+            {
+                // Log the exception.
+                _log.Error(exception.Message, exception);
+
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new
+                {
+                    Error = $"{Language.WarnInternalServerError}"
+                });
+            }
+        }
+
 
         #endregion
 

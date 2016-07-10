@@ -498,14 +498,14 @@ namespace Shared.Repositories
                 }
             }
         }
-        
+
         /// <summary>
         /// Modify a list of experiment info.
         /// </summary>
-        /// <param name="experimentId"></param>
+        /// <param name="experimentNote"></param>
         /// <param name="infos"></param>
         /// <returns></returns>
-        public async Task<IList<ExperimentInfoViewModel>> ModifyExperimentNotes(int experimentId, IList<ExperimentInfoViewModel> infos)
+        public async Task<IList<ExperimentInfoViewModel>> ModifyExperimentNotes(ExperimentNote experimentNote, IList<ExperimentInfoViewModel> infos)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -517,10 +517,13 @@ namespace Shared.Repositories
             {
                 try
                 {
+                    // Update the experiment.
+                    context.ExperimentNotes.AddOrUpdate(experimentNote);
+
                     foreach (var info in infos)
                     {
                         var result =
-                            context.ExperimentInfoes.FirstOrDefault(x => x.Key.Equals(info.Key));
+                            context.ExperimentInfoes.FirstOrDefault(x => x.ExperimentId == experimentNote.Id && x.Key.Equals(info.Key));
 
                         // No record has been found.
                         if (result == null)
@@ -555,6 +558,80 @@ namespace Shared.Repositories
                     }
 
                     return failedRecords;
+                }
+                catch (Exception)
+                {
+                    // Rollback the transaction.
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+        }
+        
+        public async void FilterExperimentAsync(FilterExperimentViewModel filter)
+        {
+            // Database context initialization.
+        }
+
+        /// <summary>
+        /// Delete experiment or its infos.
+        /// </summary>
+        /// <param name="experimentId"></param>
+        /// <param name="keys"></param>
+        /// <param name="mode"></param>
+        /// <returns></returns>
+        public async Task<ResponseNoteDelete> DeleteExperimentNotesAsync(int experimentId, HashSet<string> keys, NoteDeleteMode mode)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+            
+            // Response initialization.
+            var response = new ResponseNoteDelete();
+
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    switch (mode)
+                    {
+                        case NoteDeleteMode.Note:
+
+                            // Retrieve all experiment infos.
+                            IQueryable<ExperimentInfo> experimentInfos = context.ExperimentInfoes;
+
+                            // Find the experiment infos.
+                            experimentInfos = experimentInfos.Where(x => x.ExperimentId == experimentId);
+                            context.ExperimentInfoes.RemoveRange(experimentInfos);
+                            response.Notes = await context.SaveChangesAsync();
+
+                            // Retrieve all experiment note.
+                            IQueryable<ExperimentNote> experimentNotes = context.ExperimentNotes;
+                            experimentNotes = experimentNotes.Where(x => x.Id == experimentId);
+                            context.ExperimentNotes.RemoveRange(experimentNotes);
+                            response.Pairs = await context.SaveChangesAsync();
+                            break;
+                            
+                        default:
+                            foreach (var key in keys)
+                            {
+                                var result =
+                                    context.ExperimentInfoes.FirstOrDefault(x => x.Key.Equals(key));
+
+                                // No record has been found.
+                                if (result == null)
+                                    continue;
+
+                                context.ExperimentInfoes.Remove(result);
+                            }
+
+                            response.Pairs = await context.SaveChangesAsync();
+                            break;
+                    }
+
+
+                    // Commit the transaction.
+                    transaction.Commit();
+                    return response;
                 }
                 catch (Exception)
                 {

@@ -79,8 +79,10 @@
     <Compile Include="Attributes\RegexMatchAttribute.cs" />
     <Compile Include="Attributes\RequiredIfAttribute.cs" />
     <Compile Include="Enumerations\Filter\CityResultSort.cs" />
+    <Compile Include="Enumerations\Filter\ExperimentFilterSort.cs" />
     <Compile Include="Enumerations\Filter\NoteResultSort.cs" />
     <Compile Include="Enumerations\Filter\PrescriptedMedicineSort.cs" />
+    <Compile Include="Enumerations\NoteDeleteMode.cs" />
     <Compile Include="Enumerations\RoleRelationship.cs" />
     <Compile Include="Enumerations\TypeRelation.cs" />
     <Compile Include="Enumerations\StatusRelation.cs" />
@@ -231,6 +233,7 @@
     <Compile Include="ViewModels\Filter\FilterBloodPressureViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterCityViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterCountryViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterExperimentViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterHeatbeatViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMedicalImageViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMedicalRecordViewModel.cs" />
@@ -238,6 +241,7 @@
     <Compile Include="ViewModels\Filter\FilterPrescriptedMedicineViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPrescriptionViewModel.cs" />
     <Compile Include="ViewModels\RelativeViewModel.cs" />
+    <Compile Include="ViewModels\Response\ResponseNoteDelete.cs" />
     <Compile Include="ViewModels\Response\ResponsePrescriptedMedicineFilterViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseRelativeFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseRelatedDoctorFilter.cs" />

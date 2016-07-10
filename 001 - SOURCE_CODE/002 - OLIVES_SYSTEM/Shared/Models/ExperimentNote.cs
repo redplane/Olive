@@ -23,6 +23,7 @@ namespace Shared.Models
         public int Id { get; set; }
         public int MedicalRecordId { get; set; }
         public int Owner { get; set; }
+        public string Name { get; set; }
         public double Created { get; set; }
         public Nullable<double> LastModified { get; set; }
     

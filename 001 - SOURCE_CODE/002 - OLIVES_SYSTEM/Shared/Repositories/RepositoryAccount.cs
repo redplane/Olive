@@ -874,7 +874,7 @@ namespace Shared.Repositories
             IQueryable<Relation> relationships = context.Relations;
 
             // Take the relationship whose source is requester and type is provide treatment.
-            relationships = relationships.Where(x => x.Source == requester && x.Type == (byte)TypeRelation.Relative);
+            relationships = relationships.Where(x => x.Source == requester && x.Type == (byte)TypeRelation.Treatment);
 
             // Status is defined.
             if (status != null)
