@@ -1,8 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using Olives.Attributes;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Resources;
+using Shared.ViewModels;
 
 namespace Olives.ViewModels.Initialize
 {
@@ -10,7 +13,7 @@ namespace Olives.ViewModels.Initialize
     {
         [NumericCompare(1, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
-        public int MedicalRecordId { get; set; } = 1;
+        public int MedicalRecord { get; set; } = 1;
 
         [NumericPropertyCompare("To", Comparision = Comparision.LowerEqual, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
@@ -27,5 +30,9 @@ namespace Olives.ViewModels.Initialize
         [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Note { get; set; }
+
+        [MedicineListKeyValidate(MaxLengthName = FieldLength.MaxDictionaryKeyLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
+        [MedicineListLengthValidate(FieldLength.MaxDictionaryLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainKey")]
+        public Dictionary<string, MedicineInfoViewModel> Medicines { get; set; } 
     }
 }

@@ -24,11 +24,7 @@ namespace Shared.Models
     
         public int Id { get; set; }
         public int Owner { get; set; }
-        public string Summary { get; set; }
-        public string Tests { get; set; }
-        public string AdditionalMorbidities { get; set; }
-        public string DifferentialDiagnosis { get; set; }
-        public string OtherPathologies { get; set; }
+        public string Info { get; set; }
         public double Time { get; set; }
         public double Created { get; set; }
         public Nullable<double> LastModified { get; set; }

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Data.Entity.Validation;
 using System.Linq;
+using Newtonsoft.Json;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Helpers;
@@ -18,8 +20,10 @@ namespace DataInitializer
 
         private static void Main(string[] args)
         {
+            var a = new Dictionary<string, string>();
+            if (a is IDictionary)
+                Console.WriteLine("A is dictionary");
 
-            
             InitializePlaces(50);
             InitializeSpecialties(50);
             InitializeDoctor(50);
@@ -455,11 +459,12 @@ namespace DataInitializer
 
                 var medicalRecord = new MedicalRecord();
                 medicalRecord.Owner = patient.Id;
-                medicalRecord.Summary = $"Summary[{i}]";
-                medicalRecord.Tests = $"Tests[{i}]";
-                medicalRecord.AdditionalMorbidities = $"AdditionalMorbidities[{i}]";
-                medicalRecord.DifferentialDiagnosis = $"DifferentialDiagnosis[{i}]";
-                medicalRecord.OtherPathologies = $"OtherPathologies[{i}]";
+                
+                var info = new Dictionary<string, string>();
+                for (var key = 0; key < 5; key++)
+                    info[$"Key[{key}]"] = $"Value[{key}]";
+
+                medicalRecord.Info = JsonConvert.SerializeObject(info);
                 medicalRecord.Time = epochCurrentTime;
                 medicalRecord.Created = epochCurrentTime;
                 medicalRecord.LastModified = epochCurrentTime;
@@ -479,38 +484,22 @@ namespace DataInitializer
                     prescription = _repositoryMedical.InitializePrescriptionAsync(prescription).Result;
 
                     Console.WriteLine($"Prescription[{p}] has been created");
-
-                    for (var m = 0; m < 5; m++)
-                    {
-                        var prescriptedMedicine = new PrescriptedMedicine();
-                        prescriptedMedicine.PrescriptionId = prescription.Id;
-                        prescriptedMedicine.Owner = prescription.Owner;
-                        prescriptedMedicine.MedicineName = $"Medicine[{p}][{m}]]";
-                        prescriptedMedicine.Quantity = m;
-                        prescriptedMedicine.Unit = $"Unit[{p}][{m}]]";
-                        prescriptedMedicine.Note = $"Note[{p}][{m}]]";
-                        prescriptedMedicine.Expired = prescription.To;
-
-                        prescriptedMedicine = _repositoryMedical.InitializePrescriptedMedicineAsync(prescriptedMedicine).Result;
-
-                        Console.WriteLine($"Prescripted medicine [{prescriptedMedicine}] has been created");
-                    }
                 }
 
-                for (var e = 0; e < 5; e++)
-                {
-                    var experimentNote = new ExperimentNote();
-                    experimentNote.Owner = medicalRecord.Owner;
-                    experimentNote.MedicalRecordId = medicalRecord.Id;
-                    experimentNote.Created = epochCurrentTime;
+                //for (var e = 0; e < 5; e++)
+                //{
+                //    var experimentNote = new ExperimentNote();
+                //    experimentNote.Owner = medicalRecord.Owner;
+                //    experimentNote.MedicalRecordId = medicalRecord.Id;
+                //    experimentNote.Created = epochCurrentTime;
 
-                    var infos = new Dictionary<string, double>();
-                    for (var d = 0; d < 5; d++)
-                        infos.Add($"Key[{d}]", d);
+                //    var infos = new Dictionary<string, double>();
+                //    for (var d = 0; d < 5; d++)
+                //        infos.Add($"Key[{d}]", d);
                     
-                    experimentNote = _repositoryMedical.InitializeExperimentNote(experimentNote, infos).Result;
+                //    experimentNote = _repositoryMedical.InitializeExperimentNote(experimentNote, infos).Result;
 
-                }
+                //}
             }
         }
 

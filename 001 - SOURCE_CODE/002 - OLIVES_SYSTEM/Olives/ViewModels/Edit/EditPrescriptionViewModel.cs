@@ -1,8 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using Olives.Attributes;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Resources;
+using Shared.ViewModels;
 
 namespace Olives.ViewModels.Edit
 {
@@ -19,6 +22,10 @@ namespace Olives.ViewModels.Edit
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? To { get; set; }
+
+        [MedicineListKeyValidate(MaxLengthName = FieldLength.MaxDictionaryKeyLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
+        [MedicineListLengthValidate(FieldLength.MaxDictionaryLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainKey")]
+        public Dictionary<string, MedicineInfoViewModel> Medicines { get; set; }
 
         [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]

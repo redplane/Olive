@@ -270,7 +270,11 @@ namespace Olives.Controllers
                         x.Doctor.Id,
                         x.Doctor.Person.FirstName,
                         x.Doctor.Person.LastName,
-                        Specialty = x.Doctor.SpecialtyName,
+                        Specialty = new
+                        {
+                            Id = x.Doctor.SpecialtyId,
+                            Name = x.Doctor.SpecialtyName
+                        },
                         x.Doctor.Rank,
                         x.Doctor.Person.Address,
                         Photo =

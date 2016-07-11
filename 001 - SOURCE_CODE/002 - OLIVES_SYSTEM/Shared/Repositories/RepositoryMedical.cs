@@ -319,121 +319,7 @@ namespace Shared.Repositories
         }
 
         #endregion
-
-        #region Prescripted medicine
-
-        /// <summary>
-        /// Initialize a prescripted medicine to database.
-        /// </summary>
-        /// <param name="prescriptedMedicine"></param>
-        /// <returns></returns>
-        public async Task<PrescriptedMedicine> InitializePrescriptedMedicineAsync(
-            PrescriptedMedicine prescriptedMedicine)
-        {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
-            // Initialize prescripted medicine to database.
-            context.PrescriptedMedicines.Add(prescriptedMedicine);
-
-            // Save the prescripted medicine to database.
-            await context.SaveChangesAsync();
-
-            return prescriptedMedicine;
-        }
-
-        /// <summary>
-        /// Filter medicine by using specific conditions.
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
-        public async Task<ResponsePrescriptedMedicineFilterViewModel> FilterPrescriptedMedicineAsync(FilterPrescriptedMedicineViewModel filter)
-        {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
-            // Take the list of medicines.
-            IQueryable<PrescriptedMedicine> medicines = context.PrescriptedMedicines;
-
-            // Prescription is defined.
-            if (filter.Prescription != null)
-                medicines = medicines.Where(x => x.PrescriptionId == filter.Prescription);
-
-            // Owner is specified.
-            if (filter.Owner != null)
-                medicines = medicines.Where(x => x.Owner == filter.Owner);
-
-            // Medicine name is specified.
-            if (!string.IsNullOrWhiteSpace(filter.Medicine))
-                medicines = medicines.Where(x => x.MedicineName.Contains(filter.Medicine));
-
-            // Quantity is defined.
-            if (filter.MinQuantity != null)
-                medicines = medicines.Where(x => x.Quantity >= filter.MinQuantity);
-            if (filter.MaxQuantity != null)
-                medicines = medicines.Where(x => x.Quantity <= filter.MaxQuantity);
-
-            // Expired is defined.
-            if (filter.MinExpired != null)
-                medicines = medicines.Where(x => x.Expired >= filter.MinExpired);
-            if (filter.MaxExpired != null)
-                medicines = medicines.Where(x => x.Expired <= filter.MaxExpired);
-
-            // Unit is defined.
-            if (!string.IsNullOrWhiteSpace(filter.Unit))
-                medicines = medicines.Where(x => x.Unit.Equals(filter.Medicine));
-
-            // Result sorting.
-            switch (filter.Direction)
-            {
-                case SortDirection.Ascending:
-                    switch (filter.Sort)
-                    {
-                        case PrescriptedMedicineSort.MedicineName:
-                            medicines = medicines.OrderBy(x => x.MedicineName);
-                            break;
-                        case PrescriptedMedicineSort.Quantity:
-                            medicines = medicines.OrderBy(x => x.Quantity);
-                            break;
-                        default:
-                            medicines = medicines.OrderBy(x => x.Expired);
-                            break;
-                    }
-                    break;
-                default:
-                    switch (filter.Sort)
-                    {
-                        case PrescriptedMedicineSort.MedicineName:
-                            medicines = medicines.OrderByDescending(x => x.MedicineName);
-                            break;
-                        case PrescriptedMedicineSort.Quantity:
-                            medicines = medicines.OrderByDescending(x => x.Quantity);
-                            break;
-                        default:
-                            medicines = medicines.OrderByDescending(x => x.Expired);
-                            break;
-                    }
-                    break;
-            }
-
-            // Response initialization.
-            var response = new ResponsePrescriptedMedicineFilterViewModel();
-
-            // Calculate how many records should be skipped.
-            var skippedRecords = filter.Page * filter.Records;
-
-            // Count the total matched result.
-            response.Total = await medicines.CountAsync();
-            response.PrescriptedMedicines = await medicines
-                .Skip(skippedRecords)
-                .Take(filter.Records)
-                .ToListAsync();
-
-            return response;
-        }
-
-        #endregion
-
+        
         #region Experiment
 
         /// <summary>
@@ -455,9 +341,8 @@ namespace Shared.Repositories
         /// Initialize experment note with information.
         /// </summary>
         /// <param name="note"></param>
-        /// <param name="info"></param>
         /// <returns></returns>
-        public async Task<ExperimentNote> InitializeExperimentNote(ExperimentNote note, Dictionary<string, double> info)
+        public async Task<ExperimentNote> InitializeExperimentNote(ExperimentNote note)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -470,21 +355,7 @@ namespace Shared.Repositories
                     // Initialize a note.
                     context.ExperimentNotes.AddOrUpdate(note);
                     await context.SaveChangesAsync();
-
-                    if (info != null)
-                    {
-                        foreach (var key in info.Keys)
-                        {
-                            var experimentInfo = new ExperimentInfo();
-                            experimentInfo.Key = key;
-                            experimentInfo.Value = info[key];
-                            experimentInfo.ExperimentId = note.Id;
-                            
-                            context.ExperimentInfoes.AddOrUpdate(experimentInfo);
-                            await context.SaveChangesAsync();
-                        }
-                    }
-
+                    
                     // Commit the transaction.
                     transaction.Commit();
 
@@ -498,144 +369,30 @@ namespace Shared.Repositories
                 }
             }
         }
-
-        /// <summary>
-        /// Modify a list of experiment info.
-        /// </summary>
-        /// <param name="experimentNote"></param>
-        /// <param name="infos"></param>
-        /// <returns></returns>
-        public async Task<IList<ExperimentInfoViewModel>> ModifyExperimentNotes(ExperimentNote experimentNote, IList<ExperimentInfoViewModel> infos)
-        {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
-            // List of failed record.
-            IList<ExperimentInfoViewModel> failedRecords = null;
-
-            using (var transaction = context.Database.BeginTransaction())
-            {
-                try
-                {
-                    // Update the experiment.
-                    context.ExperimentNotes.AddOrUpdate(experimentNote);
-
-                    foreach (var info in infos)
-                    {
-                        var result =
-                            context.ExperimentInfoes.FirstOrDefault(x => x.ExperimentId == experimentNote.Id && x.Key.Equals(info.Key));
-
-                        // No record has been found.
-                        if (result == null)
-                        {
-                            if (failedRecords == null)
-                                failedRecords = new List<ExperimentInfoViewModel>();
-
-                            failedRecords.Add(new ExperimentInfoViewModel()
-                            {
-                                Key = info.Key,
-                                Value = info.Value
-                            });
-
-                            transaction.Rollback();
-                        }
-                        else
-                        {
-                            // There is at least one record is failed.
-                            if (failedRecords != null)
-                                continue;
-
-                            result.Value = info.Value;
-                            context.ExperimentInfoes.AddOrUpdate(result);
-                        }
-                    }
-
-                    // No failed record has been found.
-                    if (failedRecords == null)
-                    {
-                        await context.SaveChangesAsync();
-                        transaction.Commit();
-                    }
-
-                    return failedRecords;
-                }
-                catch (Exception)
-                {
-                    // Rollback the transaction.
-                    transaction.Rollback();
-                    throw;
-                }
-            }
-        }
         
-        public async void FilterExperimentAsync(FilterExperimentViewModel filter)
-        {
-            // Database context initialization.
-        }
-
         /// <summary>
         /// Delete experiment or its infos.
         /// </summary>
         /// <param name="experimentId"></param>
-        /// <param name="keys"></param>
-        /// <param name="mode"></param>
         /// <returns></returns>
-        public async Task<ResponseNoteDelete> DeleteExperimentNotesAsync(int experimentId, HashSet<string> keys, NoteDeleteMode mode)
+        public async Task<int> DeleteExperimentNotesAsync(int experimentId)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-            
-            // Response initialization.
-            var response = new ResponseNoteDelete();
 
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    switch (mode)
-                    {
-                        case NoteDeleteMode.Note:
-
-                            // Retrieve all experiment infos.
-                            IQueryable<ExperimentInfo> experimentInfos = context.ExperimentInfoes;
-
-                            // Find the experiment infos.
-                            experimentInfos = experimentInfos.Where(x => x.ExperimentId == experimentId);
-                            context.ExperimentInfoes.RemoveRange(experimentInfos);
-                            response.Notes = await context.SaveChangesAsync();
-
-                            // Retrieve all experiment note.
-                            IQueryable<ExperimentNote> experimentNotes = context.ExperimentNotes;
-                            experimentNotes = experimentNotes.Where(x => x.Id == experimentId);
-                            context.ExperimentNotes.RemoveRange(experimentNotes);
-                            response.Pairs = await context.SaveChangesAsync();
-                            break;
-                            
-                        default:
-                            foreach (var key in keys)
-                            {
-                                var result =
-                                    context.ExperimentInfoes.FirstOrDefault(x => x.Key.Equals(key));
-
-                                // No record has been found.
-                                if (result == null)
-                                    continue;
-
-                                context.ExperimentInfoes.Remove(result);
-                            }
-
-                            response.Pairs = await context.SaveChangesAsync();
-                            break;
-                    }
-
-
-                    // Commit the transaction.
+                    // Retrieve all experiment infos.
+                    context.ExperimentNotes.RemoveRange(context.ExperimentNotes.Where(x => x.Id == experimentId));
+                    var deletedRecords = await context.SaveChangesAsync();
                     transaction.Commit();
-                    return response;
+
+                    return deletedRecords;
                 }
                 catch (Exception)
                 {
-                    // Rollback the transaction.
                     transaction.Rollback();
                     throw;
                 }

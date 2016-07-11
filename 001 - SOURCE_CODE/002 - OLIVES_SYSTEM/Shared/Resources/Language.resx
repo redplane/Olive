@@ -430,4 +430,7 @@
     <value>W026</value>
     <comment>Warn front-end that list of records are failed to update.</comment>
   </data>
+  <data name="ValueCanOnlyContainKey" xml:space="preserve">
+    <value>{0} can only contain {1} key(s)</value>
+  </data>
 </root>

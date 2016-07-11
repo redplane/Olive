@@ -14,21 +14,14 @@ namespace Shared.Models
     
     public partial class ExperimentNote
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ExperimentNote()
-        {
-            this.ExperimentInfoes = new HashSet<ExperimentInfo>();
-        }
-    
         public int Id { get; set; }
         public int MedicalRecordId { get; set; }
         public int Owner { get; set; }
         public string Name { get; set; }
+        public string Info { get; set; }
         public double Created { get; set; }
         public Nullable<double> LastModified { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ExperimentInfo> ExperimentInfoes { get; set; }
         public virtual MedicalRecord MedicalRecord { get; set; }
         public virtual Person Person { get; set; }
     }

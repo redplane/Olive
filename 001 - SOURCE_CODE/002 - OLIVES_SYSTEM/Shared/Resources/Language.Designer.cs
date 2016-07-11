@@ -610,6 +610,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} can only contain {1} key(s).
+        /// </summary>
+        public static string ValueCanOnlyContainKey {
+            get {
+                return ResourceManager.GetString("ValueCanOnlyContainKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} is invalid.
         /// </summary>
         public static string ValueIsInvalid {

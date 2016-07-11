@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
@@ -9,37 +10,12 @@ namespace Olives.ViewModels.Edit
     public class EditMedicalRecordViewModel
     {
         /// <summary>
-        ///     Summary of medical record.
+        /// List of noticed information.
         /// </summary>
-        [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
-        public string Summary { get; set; }
-
-        /// <summary>
-        ///     Neccessary tests which are needed doing.
-        /// </summary>
-        [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
-        public string Tests { get; set; }
-
-        [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
-        public string AdditionalMorbidities { get; set; }
-
-        /// <summary>
-        ///     Another diagnosis
-        /// </summary>
-        [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
-        public string DifferentialDiagnosis { get; set; }
-
-        /// <summary>
-        ///     Other pathologies which patient is currently having.
-        /// </summary>
-        [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
-        public string OtherPathologies { get; set; }
-
+        [DictionaryLength(FieldLength.MaxDictionaryLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainKey")]
+        [DictionaryKeyValueLength(FieldLength.MaxDictionaryKeyLength, FieldLength.MaxDictionaryValueLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        public Dictionary<string, string> Infos { get; set; }
+        
         /// <summary>
         ///     Time when the record is created.
         /// </summary>

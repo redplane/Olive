@@ -69,6 +69,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\DateTimeCompareAttribute.cs" />
+    <Compile Include="Attributes\DictionaryKeyLengthAttribute.cs" />
+    <Compile Include="Attributes\DictionaryLengthAttribute.cs" />
+    <Compile Include="Attributes\DictionaryKeyValueLengthAttribute.cs" />
     <Compile Include="Attributes\EpochTimeCompareAttribute.cs" />
     <Compile Include="Attributes\InAccountStatusAttribute.cs" />
     <Compile Include="Attributes\InEnumerationsArray.cs" />
@@ -78,11 +81,11 @@
     <Compile Include="Attributes\NumericCompareAttribute.cs" />
     <Compile Include="Attributes\RegexMatchAttribute.cs" />
     <Compile Include="Attributes\RequiredIfAttribute.cs" />
+    <Compile Include="Attributes\ValueStringLengthAttribute.cs" />
     <Compile Include="Enumerations\Filter\CityResultSort.cs" />
     <Compile Include="Enumerations\Filter\ExperimentFilterSort.cs" />
     <Compile Include="Enumerations\Filter\NoteResultSort.cs" />
     <Compile Include="Enumerations\Filter\PrescriptedMedicineSort.cs" />
-    <Compile Include="Enumerations\NoteDeleteMode.cs" />
     <Compile Include="Enumerations\RoleRelationship.cs" />
     <Compile Include="Enumerations\TypeRelation.cs" />
     <Compile Include="Enumerations\StatusRelation.cs" />
@@ -138,9 +141,6 @@
     <Compile Include="Models\Doctor.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\ExperimentInfo.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\ExperimentNote.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
@@ -174,9 +174,6 @@
     <Compile Include="Models\Person.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\PrescriptedMedicine.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\Prescription.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
@@ -194,9 +191,6 @@
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SugarBlood.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\sysdiagram.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -238,11 +232,10 @@
     <Compile Include="ViewModels\Filter\FilterMedicalImageViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMedicalRecordViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPatientViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterPrescriptedMedicineViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPrescriptionViewModel.cs" />
+    <Compile Include="ViewModels\MedicineInfoViewModel.cs" />
     <Compile Include="ViewModels\RelativeViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseNoteDelete.cs" />
-    <Compile Include="ViewModels\Response\ResponsePrescriptedMedicineFilterViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseRelativeFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseRelatedDoctorFilter.cs" />
     <Compile Include="ViewModels\HeartbeatViewModel.cs" />

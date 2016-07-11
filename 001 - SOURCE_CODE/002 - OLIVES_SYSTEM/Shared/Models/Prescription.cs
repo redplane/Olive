@@ -14,24 +14,17 @@ namespace Shared.Models
     
     public partial class Prescription
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Prescription()
-        {
-            this.PrescriptedMedicines = new HashSet<PrescriptedMedicine>();
-        }
-    
         public int Id { get; set; }
         public int Owner { get; set; }
         public int MedicalRecordId { get; set; }
         public double From { get; set; }
         public double To { get; set; }
+        public string Medicine { get; set; }
         public string Note { get; set; }
         public double Created { get; set; }
         public Nullable<double> LastModified { get; set; }
     
         public virtual MedicalRecord MedicalRecord { get; set; }
         public virtual Person Person { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PrescriptedMedicine> PrescriptedMedicines { get; set; }
     }
 }

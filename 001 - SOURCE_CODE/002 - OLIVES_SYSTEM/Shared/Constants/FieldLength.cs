@@ -1,4 +1,6 @@
-﻿namespace Shared.Constants
+﻿using System.ComponentModel;
+
+namespace Shared.Constants
 {
     public class FieldLength
     {
@@ -71,5 +73,12 @@
         /// Maximum length of city name.
         /// </summary>
         public const int CityNameMaxLength = 64;
+
+        public const int MaxDictionaryKeyLength = 32;
+
+        public const int MaxDictionaryValueLength = 32;
+
+        public const int MaxDictionaryLength = 32;
+
     }
 }
