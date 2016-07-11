@@ -18,7 +18,6 @@ DROP TABLE Country;
 DROP TABLE MedicalImage;
 DROP TABLE PrescriptedMedicine;
 DROP TABLE Prescription;
-DROP TABLE ExperimentInfo;
 DROP TABLE ExperimentNote;
 DROP TABLE MedicalRecord;
 DROP TABLE Person;
@@ -219,11 +218,7 @@ CREATE TABLE MedicalRecord
 (
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	Owner					INT NOT NULL,
-	Summary					NVARCHAR (128),
-	Tests					NVARCHAR (128),
-	AdditionalMorbidities	NVARCHAR (128),
-	DifferentialDiagnosis	NVARCHAR (128),
-	OtherPathologies		NVARCHAR (128),
+	Info					NVARCHAR(MAX),
 	Time					FLOAT NOT NULL,
 	Created					FLOAT NOT NULL,
 	LastModified			FLOAT,
@@ -280,6 +275,7 @@ CREATE TABLE ExperimentNote
 	MedicalRecordId			INT NOT NULL,
 	Owner					INT NOT NULL,
 	Name					NVARCHAR(32) NOT NULL,
+	Info					NVARCHAR(MAX),
 	Created					FLOAT NOT NULL,
 	LastModified			FLOAT,
 	
@@ -287,18 +283,6 @@ CREATE TABLE ExperimentNote
 	FOREIGN KEY (Owner) REFERENCES Person(Id)
 )
 
-CREATE TABLE ExperimentInfo
-(
-	ExperimentId			INT NOT NULL,
-	[Key]					NVARCHAR(32) NOT NULL,
-	Value					FLOAT NOT NULL,
-
-	FOREIGN KEY (ExperimentId) REFERENCES ExperimentNote(Id),
-	PRIMARY KEY (ExperimentId, [Key])
-)
-
-SELECT * FROM ExperimentNote
-INNER JOIN ExperimentInfo ON ExperimentNote.Id = ExperimentInfo.ExperimentId
 SELECT * FROM Person
 SELECT * FROM Country
 WHERE Country.Name = 'Bac giang'
@@ -310,7 +294,7 @@ DELETE FROM Person;
 DELETE FROM Doctor;
 DELETE FROM Patient;
 
-
+SELECT * FROM MedicalRecord
 ---------------------------------------------------------------------------------------------------
 -- PROCEDURES
 ---------------------------------------------------------------------------------------------------
