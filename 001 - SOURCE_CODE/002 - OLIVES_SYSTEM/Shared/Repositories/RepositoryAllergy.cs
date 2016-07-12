@@ -12,7 +12,7 @@ namespace Shared.Repositories
     public class RepositoryAllergy : IRepositoryAllergy
     {
         /// <summary>
-        /// Filter allergy by using specific conditions asynchronously.
+        ///     Filter allergy by using specific conditions asynchronously.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -25,7 +25,7 @@ namespace Shared.Repositories
             IQueryable<Allergy> results = context.Allergies;
 
             #region Result filtering
-            
+
             // Owner has been specified.
             if (filter.Owner != null)
                 results = results.Where(x => x.Owner == filter.Owner);
@@ -63,7 +63,7 @@ namespace Shared.Repositories
             response.Total = await results.CountAsync();
 
             // Calculate how many record should be skipped.
-            var skippedRecords = filter.Records * filter.Page;
+            var skippedRecords = filter.Records*filter.Page;
 
             response.Allergies = await results.OrderBy(x => x.Name)
                 .Skip(skippedRecords)
@@ -74,7 +74,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Initialize allergy to database.
+        ///     Initialize allergy to database.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
@@ -93,7 +93,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Find allergy by using id and owner id.
+        ///     Find allergy by using id and owner id.
         /// </summary>
         /// <param name="id">Allergy Id</param>
         /// <param name="owner">Allergy owner</param>
@@ -102,7 +102,7 @@ namespace Shared.Repositories
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-            
+
             // By default, take all allergy.
             IQueryable<Allergy> allergies = context.Allergies;
 
@@ -118,7 +118,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Delete an allergy synchrounously.
+        ///     Delete an allergy synchrounously.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="owner"></param>
@@ -130,10 +130,10 @@ namespace Shared.Repositories
 
             // Find and remove the condition matched result.
             context.Allergies.RemoveRange(context.Allergies.Where(x => x.Id == id && x.Owner == owner));
-            
+
             // Count the number of affected records.
             var records = await context.SaveChangesAsync();
             return records;
-        } 
+        }
     }
 }

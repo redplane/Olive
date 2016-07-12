@@ -196,6 +196,7 @@
     <Compile Include="Attributes\MedicineListKeyValidateAttribute.cs" />
     <Compile Include="Attributes\OlivesAuthorizeAtrribute.cs" />
     <Compile Include="Constants\EmailType.cs" />
+    <Compile Include="Controllers\RateController.cs" />
     <Compile Include="Controllers\RelationshipController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AccountVerifyController.cs" />
@@ -223,6 +224,8 @@
     <Compile Include="Services\EmailService.cs" />
     <Compile Include="ViewModels\ActivationSendViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditMedicalRecordViewModel.cs" />
+    <Compile Include="ViewModels\Edit\EditDoctorProfileViewModel.cs" />
+    <Compile Include="ViewModels\Edit\EditPatientProfileViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditPrescriptionViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditAllergyViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditAppointmentViewModel.cs" />
@@ -235,6 +238,7 @@
     <Compile Include="ViewModels\Initialize\InitializeMedicalExperiment.cs" />
     <Compile Include="ViewModels\Initialize\InitializePrescriptedMedicineViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePrescriptionViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializeRatingViewModel.cs" />
     <Compile Include="ViewModels\Modify\EditMedicalExperiment.cs" />
     <Compile Include="ViewModels\OliveInitializePersonViewModel.cs" />
     <Compile Include="ViewModels\RetrieveDoctorViewModel.cs" />

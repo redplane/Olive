@@ -7,7 +7,7 @@ namespace Shared.Attributes
     public class DictionaryLengthAttribute : ValidationAttribute
     {
         /// <summary>
-        /// Length of key.
+        ///     Length of key.
         /// </summary>
         private readonly int _length;
 
@@ -19,7 +19,7 @@ namespace Shared.Attributes
         {
             _length = length;
         }
-        
+
         /// <summary>
         ///     Check whether regular expression is valid or not.
         /// </summary>
@@ -31,18 +31,18 @@ namespace Shared.Attributes
             // Invalid value.
             if (value == null)
                 return ValidationResult.Success;
-            
+
             // Value is not a Dictionary<string, string>.
             if (!(value is Dictionary<string, string>))
                 throw new Exception($"{validationContext} must be an instance of Dictionary<string, string>");
-            
+
             // Cast the value to Dictionary<string, string>()
             var dict = (Dictionary<string, string>) value;
 
             // Key length is defined.
             if (dict.Keys.Count > _length)
                 return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
-            
+
             return ValidationResult.Success;
         }
     }

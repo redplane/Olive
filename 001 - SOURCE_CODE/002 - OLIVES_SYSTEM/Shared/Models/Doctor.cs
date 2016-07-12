@@ -14,6 +14,12 @@ namespace Shared.Models
     
     public partial class Doctor
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Doctor()
+        {
+            this.Ratings = new HashSet<Rating>();
+        }
+    
         public int Id { get; set; }
         public Nullable<double> Rank { get; set; }
         public int SpecialtyId { get; set; }
@@ -25,5 +31,7 @@ namespace Shared.Models
         public virtual City City { get; set; }
         public virtual Person Person { get; set; }
         public virtual Specialty Specialty { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Rating> Ratings { get; set; }
     }
 }

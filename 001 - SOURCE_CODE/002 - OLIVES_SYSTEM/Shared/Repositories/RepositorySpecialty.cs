@@ -12,7 +12,7 @@ namespace Shared.Repositories
     public class RepositorySpecialty : IRepositorySpecialty
     {
         /// <summary>
-        /// Find the specialty by using specific id.
+        ///     Find the specialty by using specific id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -27,7 +27,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Filter specialties by using specific conditions.
+        ///     Filter specialties by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -60,7 +60,7 @@ namespace Shared.Repositories
             response.Total = await results.CountAsync();
 
             // Finally, do the pagination.
-            var skippedRecords = filter.Page * filter.Records;
+            var skippedRecords = filter.Page*filter.Records;
             results = results
                 .OrderBy(x => x.Name)
                 .Skip(skippedRecords)

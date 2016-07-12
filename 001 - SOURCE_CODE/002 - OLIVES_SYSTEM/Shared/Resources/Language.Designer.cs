@@ -932,5 +932,14 @@ namespace Shared.Resources {
                 return ResourceManager.GetString("WarnTargetAccountNotFound", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W027.
+        /// </summary>
+        public static string WarnTheRatedNotFound {
+            get {
+                return ResourceManager.GetString("WarnTheRatedNotFound", resourceCulture);
+            }
+        }
     }
 }

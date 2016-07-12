@@ -12,6 +12,19 @@ namespace Shared.Attributes
         /// </summary>
         private readonly int[] _milesStone;
 
+        #region Constructor
+
+        /// <summary>
+        ///     Initialize an instance of IntsMatchAttribute class.
+        /// </summary>
+        /// <param name="milestones"></param>
+        public InEnumerationsArray(object[] milestones)
+        {
+            _milesStone = Array.ConvertAll(milestones, value => (int) value);
+        }
+
+        #endregion
+
         /// <summary>
         ///     Check whether property is valid or not.
         /// </summary>
@@ -23,7 +36,7 @@ namespace Shared.Attributes
             // Value is null. This mean no validation is specified.
             if (value == null)
                 return ValidationResult.Success;
-            
+
             // Invalid milestone.
             if (_milesStone == null || _milesStone.Length < 1)
                 throw new Exception("Invalid milestones.");
@@ -49,18 +62,5 @@ namespace Shared.Attributes
 
             return string.Format(CultureInfo.CurrentCulture, ErrorMessageString, name, milestoneList);
         }
-
-        #region Constructor
-
-        /// <summary>
-        ///     Initialize an instance of IntsMatchAttribute class.
-        /// </summary>
-        /// <param name="milestones"></param>
-        public InEnumerationsArray(object[] milestones)
-        {
-            _milesStone = Array.ConvertAll(milestones, value => (int)value);
-        }
-        
-        #endregion
     }
 }

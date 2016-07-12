@@ -8,12 +8,12 @@ namespace Olives.Attributes
     public class MedicineListLengthValidateAttribute : ValidationAttribute
     {
         /// <summary>
-        /// Maximum key is allowed.
+        ///     Maximum key is allowed.
         /// </summary>
         private readonly int _maxKey;
 
         /// <summary>
-        /// Initialize an instance of MedicineListLengthValidateAttribute.
+        ///     Initialize an instance of MedicineListLengthValidateAttribute.
         /// </summary>
         /// <param name="maxKey"></param>
         public MedicineListLengthValidateAttribute(int maxKey)
@@ -35,16 +35,17 @@ namespace Olives.Attributes
 
             // Value is not a Dictionary<string, string>.
             if (!(value is Dictionary<string, MedicineInfoViewModel>))
-                throw new Exception($"{validationContext} must be an instance of Dictionary<string, MedicineInfoViewModel>");
+                throw new Exception(
+                    $"{validationContext} must be an instance of Dictionary<string, MedicineInfoViewModel>");
 
             // Cast the value to Dictionary<string, string>()
-            var dict = (Dictionary<string, MedicineInfoViewModel>)value;
+            var dict = (Dictionary<string, MedicineInfoViewModel>) value;
 
             // Key length is defined.
             if (_maxKey > 0)
                 if (dict.Keys.Count > _maxKey)
                     return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
-            
+
             return ValidationResult.Success;
         }
     }

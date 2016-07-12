@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Shared.Models;
 using Shared.ViewModels;
 using Shared.ViewModels.Response;
@@ -9,14 +8,14 @@ namespace Shared.Interfaces
     public interface IRepositorySpecialty
     {
         /// <summary>
-        /// Find specialty by using specific id.
+        ///     Find specialty by using specific id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Specialty> FindSpecialtyAsync(int id);
 
         /// <summary>
-        /// Filter specialties by using specific conditions.
+        ///     Filter specialties by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>

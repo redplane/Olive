@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
@@ -17,7 +16,7 @@ namespace Shared.Repositories
     public class RepositoryHeartbeat : IRepositoryHeartbeat
     {
         /// <summary>
-        /// Initialize heartbeat note to database.
+        ///     Initialize heartbeat note to database.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
@@ -36,7 +35,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Find heartbeat note by using id and owner id.
+        ///     Find heartbeat note by using id and owner id.
         /// </summary>
         /// <param name="id">Allergy Id</param>
         /// <param name="owner">Allergy owner</param>
@@ -57,7 +56,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Delete a heartbeat note asynchrounously.
+        ///     Delete a heartbeat note asynchrounously.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="owner"></param>
@@ -68,7 +67,7 @@ namespace Shared.Repositories
             {
                 // Database context initialization.
                 var context = new OlivesHealthEntities();
-                
+
                 // Remove the queried record from database.
                 context.Heartbeats.RemoveRange(context.Heartbeats.Where(x => x.Id == id && x.Owner == owner));
                 var deletedRecords = await context.SaveChangesAsync();
@@ -78,11 +77,10 @@ namespace Shared.Repositories
             {
                 throw;
             }
-            
         }
 
         /// <summary>
-        /// Find heartbeat by using conditions.
+        ///     Find heartbeat by using conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -134,7 +132,7 @@ namespace Shared.Repositories
             response.Total = await results.CountAsync();
 
             // Calculate what records should be shown up.
-            var skippedRecords = filter.Page * filter.Records;
+            var skippedRecords = filter.Page*filter.Records;
 
             // Sort the result.
             switch (filter.Sort)
@@ -170,7 +168,7 @@ namespace Shared.Repositories
             // Summarize results.
             response.Heartbeats = await results.Skip(skippedRecords)
                 .Take(filter.Records)
-                .Select(x => new HeartbeatViewModel()
+                .Select(x => new HeartbeatViewModel
                 {
                     Created = x.Created,
                     Id = x.Id,

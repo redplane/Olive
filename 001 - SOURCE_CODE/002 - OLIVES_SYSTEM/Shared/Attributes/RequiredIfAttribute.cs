@@ -4,29 +4,10 @@ namespace Shared.Attributes
 {
     public class RequiredIfAttribute : ValidationAttribute
     {
-        #region Properties
-
-        /// <summary>
-        /// Initialize an instance of required attribute to validate require section.
-        /// </summary>
-        private readonly RequiredAttribute _innerAttribute = new RequiredAttribute();
-
-        /// <summary>
-        /// The property which is used for comparision.
-        /// </summary>
-        private readonly string _dependentProperty;
-
-        /// <summary>
-        /// The value which dependent property must match to execute attribute.
-        /// </summary>
-        private readonly object _targetValue;
-
-        #endregion
-
         #region Constructor
 
         /// <summary>
-        /// Initialize an instance of RequiredIfAttribute with given information.
+        ///     Initialize an instance of RequiredIfAttribute with given information.
         /// </summary>
         /// <param name="dependentProperty"></param>
         /// <param name="targetValue"></param>
@@ -39,9 +20,9 @@ namespace Shared.Attributes
         #endregion
 
         #region Methods
-        
+
         /// <summary>
-        /// Check whether property is valid or not.
+        ///     Check whether property is valid or not.
         /// </summary>
         /// <param name="value"></param>
         /// <param name="validationContext"></param>
@@ -61,15 +42,15 @@ namespace Shared.Attributes
 
                 // compare the value against the target value
                 if ((dependentvalue == null &&
-                    _targetValue == null) ||
+                     _targetValue == null) ||
                     (dependentvalue != null &&
-                    dependentvalue.Equals(_targetValue)))
+                     dependentvalue.Equals(_targetValue)))
                 {
                     // match => means we should try validating this field
                     if (!_innerAttribute.IsValid(value))
                         // validation failed - return an error
                         return new ValidationResult(ErrorMessage,
-                            new[] { validationContext.MemberName });
+                            new[] {validationContext.MemberName});
                 }
             }
 
@@ -78,5 +59,23 @@ namespace Shared.Attributes
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        ///     Initialize an instance of required attribute to validate require section.
+        /// </summary>
+        private readonly RequiredAttribute _innerAttribute = new RequiredAttribute();
+
+        /// <summary>
+        ///     The property which is used for comparision.
+        /// </summary>
+        private readonly string _dependentProperty;
+
+        /// <summary>
+        ///     The value which dependent property must match to execute attribute.
+        /// </summary>
+        private readonly object _targetValue;
+
+        #endregion
     }
 }

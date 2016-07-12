@@ -48,7 +48,7 @@ namespace Shared.ViewModels.Filter
         [MaxLength(FieldLength.FullNameMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Name { get; set; }
-        
+
         /// <summary>
         ///     Date after that person was born
         /// </summary>

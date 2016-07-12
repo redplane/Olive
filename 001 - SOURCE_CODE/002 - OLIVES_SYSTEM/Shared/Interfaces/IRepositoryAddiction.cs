@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Shared.Models;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;

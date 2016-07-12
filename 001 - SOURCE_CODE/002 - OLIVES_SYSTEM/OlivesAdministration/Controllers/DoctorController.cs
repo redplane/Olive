@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using OlivesAdministration.Attributes;
-using OlivesAdministration.ViewModels;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Resources;
@@ -46,7 +44,7 @@ namespace OlivesAdministration.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] { Role.Admin })]
+        [OlivesAuthorize(new[] {Role.Admin})]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
             #region ModelState validation
@@ -111,7 +109,7 @@ namespace OlivesAdministration.Controllers
         /// <returns></returns>
         [Route("api/doctor/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Admin })]
+        [OlivesAuthorize(new[] {Role.Admin})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterDoctorViewModel info)
         {
             #region ModelState validation

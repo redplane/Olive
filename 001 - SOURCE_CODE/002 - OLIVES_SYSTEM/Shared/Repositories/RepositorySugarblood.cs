@@ -16,7 +16,7 @@ namespace Shared.Repositories
     public class RepositorySugarblood : IRepositorySugarblood
     {
         /// <summary>
-        /// Initialize sugarblood note to database.
+        ///     Initialize sugarblood note to database.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
@@ -33,9 +33,9 @@ namespace Shared.Repositories
 
             return info;
         }
-        
+
         /// <summary>
-        /// Find sugarblood note by using id and owner id.
+        ///     Find sugarblood note by using id and owner id.
         /// </summary>
         /// <param name="id">Allergy Id</param>
         /// <param name="owner">Allergy owner</param>
@@ -54,9 +54,9 @@ namespace Shared.Repositories
 
             return await results.ToListAsync();
         }
-        
+
         /// <summary>
-        /// Find heartbeat by using conditions.
+        ///     Find heartbeat by using conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -143,7 +143,7 @@ namespace Shared.Repositories
 
             response.Sugarbloods = await results.Skip(skippedRecords)
                 .Take(filter.Records)
-                .Select(x => new SugarbloodViewModel()
+                .Select(x => new SugarbloodViewModel
                 {
                     Id = x.Id,
                     Created = x.Created,
@@ -159,7 +159,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Delete a sugarblood note asynchronously.
+        ///     Delete a sugarblood note asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="owner"></param>

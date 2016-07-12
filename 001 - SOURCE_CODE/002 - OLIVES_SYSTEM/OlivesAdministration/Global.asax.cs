@@ -1,10 +1,10 @@
 ﻿using System.Web;
 using System.Web.Http;
-using System.Web.Mvc;
 using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.WebApi;
 using log4net.Config;
+using Newtonsoft.Json;
 using OlivesAdministration.Attributes;
 using OlivesAdministration.Controllers;
 using OlivesAdministration.Module;
@@ -64,7 +64,7 @@ namespace OlivesAdministration
             #endregion
 
             #region Modules
-            
+
             // Log4net module registration (this is for logging)
             builder.RegisterModule<Log4NetModule>();
 
@@ -73,13 +73,14 @@ namespace OlivesAdministration
             builder.RegisterWebApiFilterProvider(GlobalConfiguration.Configuration);
             var container = builder.Build();
             GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
-            
 
             #endregion
 
             XmlConfigurator.Configure();
-            GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            GlobalConfiguration.Configuration.Formatters.Remove(GlobalConfiguration.Configuration.Formatters.XmlFormatter);
+            GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings.ReferenceLoopHandling =
+                ReferenceLoopHandling.Ignore;
+            GlobalConfiguration.Configuration.Formatters.Remove(
+                GlobalConfiguration.Configuration.Formatters.XmlFormatter);
         }
     }
 }

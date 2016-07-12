@@ -15,6 +15,12 @@ namespace Olives.ViewModels.Initialize
             ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public int MedicalRecord { get; set; } = 1;
 
+        [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueIsRequired")]
+        [StringLength(32, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainKey")]
+        public string Name { get; set; }
+
         [NumericPropertyCompare("To", Comparision = Comparision.LowerEqual, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
@@ -31,8 +37,10 @@ namespace Olives.ViewModels.Initialize
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Note { get; set; }
 
-        [MedicineListKeyValidate(MaxLengthName = FieldLength.MaxDictionaryKeyLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
-        [MedicineListLengthValidate(FieldLength.MaxDictionaryLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainKey")]
-        public Dictionary<string, MedicineInfoViewModel> Medicines { get; set; } 
+        [MedicineListKeyValidate(MaxLengthName = FieldLength.MaxDictionaryKeyLength,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueIsInvalid")]
+        [MedicineListLengthValidate(FieldLength.MaxDictionaryLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainKey")]
+        public Dictionary<string, MedicineInfoViewModel> Medicines { get; set; }
     }
 }

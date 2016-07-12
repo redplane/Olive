@@ -9,7 +9,7 @@ namespace Olives.Attributes
     public class MedicineListKeyValidateAttribute : ValidationAttribute
     {
         /// <summary>
-        /// Maximum length of name.
+        ///     Maximum length of name.
         /// </summary>
         public int MaxLengthName { get; set; }
 
@@ -27,10 +27,11 @@ namespace Olives.Attributes
 
             // Value is not a Dictionary<string, string>.
             if (!(value is Dictionary<string, MedicineInfoViewModel>))
-                throw new Exception($"{validationContext} must be an instance of Dictionary<string, MedicineInfoViewModel>");
+                throw new Exception(
+                    $"{validationContext} must be an instance of Dictionary<string, MedicineInfoViewModel>");
 
             // Cast the value to Dictionary<string, string>()
-            var dict = (Dictionary<string, MedicineInfoViewModel>)value;
+            var dict = (Dictionary<string, MedicineInfoViewModel>) value;
 
             // Key length is defined.
             if (MaxLengthName > 0)
@@ -38,7 +39,7 @@ namespace Olives.Attributes
                 var invalidKey = dict.Keys.FirstOrDefault(x => x.Length > MaxLengthName);
                 return new ValidationResult(FormatErrorMessage(invalidKey));
             }
-            
+
             return ValidationResult.Success;
         }
     }

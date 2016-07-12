@@ -5,12 +5,12 @@ namespace Shared.ViewModels.Response
     public class ResponseHeartbeatFilter
     {
         /// <summary>
-        /// List of filtered heartbeat notes.
+        ///     List of filtered heartbeat notes.
         /// </summary>
-        public IList<HeartbeatViewModel> Heartbeats { get; set; } 
+        public IList<HeartbeatViewModel> Heartbeats { get; set; }
 
         /// <summary>
-        /// Number of results match the condition.
+        ///     Number of results match the condition.
         /// </summary>
         public int Total { get; set; }
     }

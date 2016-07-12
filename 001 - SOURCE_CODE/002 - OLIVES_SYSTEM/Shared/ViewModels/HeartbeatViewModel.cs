@@ -3,7 +3,7 @@
     public class HeartbeatViewModel
     {
         public int Id { get; set; }
-        
+
         public double Rate { get; set; }
 
         public string Note { get; set; }

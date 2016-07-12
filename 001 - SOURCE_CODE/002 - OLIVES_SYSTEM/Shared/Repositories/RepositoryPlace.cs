@@ -1,5 +1,4 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
@@ -20,7 +19,7 @@ namespace Shared.Repositories
         #region Country
 
         /// <summary>
-        /// Find countries by using id.
+        ///     Find countries by using id.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="name"></param>
@@ -60,7 +59,7 @@ namespace Shared.Repositories
 
 
         /// <summary>
-        /// Initialize a country asynchronously.
+        ///     Initialize a country asynchronously.
         /// </summary>
         /// <param name="country"></param>
         /// <returns></returns>
@@ -77,7 +76,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Edit a country asynchronously.
+        ///     Edit a country asynchronously.
         /// </summary>
         /// <param name="country"></param>
         /// <returns></returns>
@@ -111,7 +110,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Filter countries list asynchronously with given conditions.
+        ///     Filter countries list asynchronously with given conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -141,7 +140,7 @@ namespace Shared.Repositories
             #endregion
 
             // Do pagination.
-            var skippedRecords = filter.Page * filter.Records;
+            var skippedRecords = filter.Page*filter.Records;
 
             var filterResponse = new ResponseCountryFilter();
             filterResponse.Countries = await results.Skip(skippedRecords)
@@ -152,12 +151,13 @@ namespace Shared.Repositories
 
             return filterResponse;
         }
+
         #endregion
 
         #region City
 
         /// <summary>
-        /// Find a list of cities by using id.
+        ///     Find a list of cities by using id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -173,7 +173,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Initialize a city to database.
+        ///     Initialize a city to database.
         /// </summary>
         /// <param name="city"></param>
         /// <returns></returns>
@@ -190,7 +190,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Filter a list of cities asynchronously with given information.
+        ///     Filter a list of cities asynchronously with given information.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -206,7 +206,7 @@ namespace Shared.Repositories
             IQueryable<Country> countries = context.Countries;
 
             #region Cities filter
-            
+
             // City name is specified.
             if (!string.IsNullOrWhiteSpace(filter.Name))
                 cities = cities.Where(x => x.Name.Contains(filter.Name));
@@ -233,18 +233,18 @@ namespace Shared.Repositories
 
             // Join tables and retrieve all records.
             var results = from city in cities
-                          join country in countries on city.CountryId equals country.Id
-                          select new
-                          {
-                              Cities = city,
-                              Countries = country
-                          };
-            
+                join country in countries on city.CountryId equals country.Id
+                select new
+                {
+                    Cities = city,
+                    Countries = country
+                };
+
             // Calculate the total records.
             response.Total = await results.CountAsync();
 
             // Calculate the number of records should be skipped.
-            var skippedRecords = filter.Page * filter.Records;
+            var skippedRecords = filter.Page*filter.Records;
 
             #region Sort
 
@@ -290,11 +290,11 @@ namespace Shared.Repositories
             // Response records construction.
             response.Cities = await results.Skip(skippedRecords)
                 .Take(filter.Records)
-                .Select(x => new CityViewModel()
+                .Select(x => new CityViewModel
                 {
                     Id = x.Cities.Id,
                     Name = x.Cities.Name,
-                    Country = new CountryViewModel()
+                    Country = new CountryViewModel
                     {
                         Id = x.Countries.Id,
                         Name = x.Countries.Name

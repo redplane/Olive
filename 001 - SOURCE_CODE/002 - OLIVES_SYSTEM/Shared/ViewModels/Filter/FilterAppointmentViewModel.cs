@@ -9,48 +9,60 @@ namespace Shared.ViewModels.Filter
 {
     public class FilterAppointmentViewModel : IPagination
     {
-        [InEnumerationsArray(new object[] { PartnerFilterMode.ParterIsDater, PartnerFilterMode.PartnerIsRequester }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
+        [InEnumerationsArray(new object[] {PartnerFilterMode.ParterIsDater, PartnerFilterMode.PartnerIsRequester},
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
         public PartnerFilterMode Mode { get; set; }
 
         public int Partner { get; set; }
 
-        [NumericPropertyCompare("MaxCreated", Comparision = Comparision.LowerEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+        [NumericPropertyCompare("MaxCreated", Comparision = Comparision.LowerEqual,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         public double? MinCreated { get; set; }
 
-        [NumericPropertyCompare("MinCreated", Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+        [NumericPropertyCompare("MinCreated", Comparision = Comparision.GreaterEqual,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public double? MaxCreated { get; set; }
 
-        [NumericPropertyCompare("MaxFrom", Comparision = Comparision.LowerEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+        [NumericPropertyCompare("MaxFrom", Comparision = Comparision.LowerEqual,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? MinFrom { get; set; }
 
-        [NumericPropertyCompare("MinFrom", Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+        [NumericPropertyCompare("MinFrom", Comparision = Comparision.GreaterEqual,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? MaxFrom { get; set; }
 
-        [NumericPropertyCompare("MaxTo", Comparision = Comparision.LowerEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+        [NumericPropertyCompare("MaxTo", Comparision = Comparision.LowerEqual,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? MinTo { get; set; }
 
-        [NumericPropertyCompare("MinTo", Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+        [NumericPropertyCompare("MinTo", Comparision = Comparision.GreaterEqual,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? MaxTo { get; set; }
 
-        [InEnumerationsArray(new object[] { StatusAppointment.Pending, StatusAppointment.Active, StatusAppointment.Cancelled, StatusAppointment.Done }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
+        [InEnumerationsArray(
+            new object[]
+            {StatusAppointment.Pending, StatusAppointment.Active, StatusAppointment.Cancelled, StatusAppointment.Done},
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
         public StatusAppointment? Status { get; set; }
 
-        [NumericPropertyCompare("MaxLastModified", Comparision = Comparision.LowerEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+        [NumericPropertyCompare("MaxLastModified", Comparision = Comparision.LowerEqual,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? MinLastModified { get; set; }
 
-        [NumericPropertyCompare("MinLastModified", Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+        [NumericPropertyCompare("MinLastModified", Comparision = Comparision.GreaterEqual,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? MaxLastModified { get; set; }
 
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
@@ -58,7 +70,7 @@ namespace Shared.ViewModels.Filter
             ErrorMessageResourceName = "ValueIsInvalid")]
         public int Page { get; set; } = FieldLength.PageIndexMin;
 
-        [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof(Language),
+        [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]
         public int Records { get; set; } = FieldLength.RecordMax;
     }

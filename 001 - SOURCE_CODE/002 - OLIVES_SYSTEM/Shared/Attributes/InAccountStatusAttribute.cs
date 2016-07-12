@@ -13,6 +13,19 @@ namespace Shared.Attributes
         /// </summary>
         private readonly StatusAccount[] _milesStone;
 
+        #region Constructor
+
+        /// <summary>
+        ///     Initialize an instance of IntsMatchAttribute class.
+        /// </summary>
+        /// <param name="milestones"></param>
+        public InAccountStatusAttribute(StatusAccount[] milestones)
+        {
+            _milesStone = milestones;
+        }
+
+        #endregion
+
         /// <summary>
         ///     Check whether property is valid or not.
         /// </summary>
@@ -51,18 +64,5 @@ namespace Shared.Attributes
             var milestoneList = string.Join(",", _milesStone);
             return string.Format(CultureInfo.CurrentCulture, ErrorMessageString, name, milestoneList);
         }
-
-        #region Constructor
-
-        /// <summary>
-        ///     Initialize an instance of IntsMatchAttribute class.
-        /// </summary>
-        /// <param name="milestones"></param>
-        public InAccountStatusAttribute(StatusAccount[] milestones)
-        {
-            _milesStone = milestones;
-        }
-        
-        #endregion
     }
 }

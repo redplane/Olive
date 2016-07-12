@@ -433,4 +433,8 @@
   <data name="ValueCanOnlyContainKey" xml:space="preserve">
     <value>{0} can only contain {1} key(s)</value>
   </data>
+  <data name="WarnTheRatedNotFound" xml:space="preserve">
+    <value>W027</value>
+    <comment>Warn front-end the rated is not found.</comment>
+  </data>
 </root>

@@ -9,23 +9,25 @@ namespace Shared.ViewModels.Initialize
     public class InitializeSugarbloodViewModel
     {
         /// <summary>
-        /// Value of sugar in blood.
-        /// Unit : mmol/L
+        ///     Value of sugar in blood.
+        ///     Unit : mmol/L
         /// </summary>
-        [Range(Values.MinSugarBloodMmol, Values.MaxSugarBloodMmol, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeFromTo")]
+        [Range(Values.MinSugarBloodMmol, Values.MaxSugarBloodMmol, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueMustBeFromTo")]
         public double Value { get; set; }
 
         /// <summary>
-        /// Time when measurement was made.
+        ///     Time when measurement was made.
         /// </summary>
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double Time { get; set; }
 
         /// <summary>
-        /// Note of measurement.
+        ///     Note of measurement.
         /// </summary>
-        [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Note { get; set; }
     }
 }

@@ -27,7 +27,8 @@ namespace Shared.ViewModels.Initialize
         /// <summary>
         ///     Birthday (ticks).
         /// </summary>
-        [RequiredIf("Role", Role.Doctor, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsRequired")]
+        [RequiredIf("Role", Role.Doctor, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueIsRequired")]
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public long? Birthday { get; set; }
@@ -35,7 +36,8 @@ namespace Shared.ViewModels.Initialize
         /// <summary>
         ///     Person gender.
         /// </summary>
-        [RequiredIf("Role", Role.Doctor, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsRequired")]
+        [RequiredIf("Role", Role.Doctor, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueIsRequired")]
         [InEnumerationsArray(new object[] {Gender.Female, Gender.Male},
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "InvalidGender")]
         public Gender Gender { get; set; } = Gender.Male;
@@ -65,17 +67,20 @@ namespace Shared.ViewModels.Initialize
         /// <summary>
         ///     Phone number which is used for contacting.
         /// </summary>
-        [RequiredIf("Role", Role.Doctor, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsRequired")]
+        [RequiredIf("Role", Role.Doctor, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueIsRequired")]
         [RegexMatch(Regexes.Phone, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidPhone")]
         public string Phone { get; set; }
-        
-        [RequiredIf("Role", Role.Doctor, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsRequired")]
-        [StringLength(FieldLength.MaxAddressLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+
+        [RequiredIf("Role", Role.Doctor, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueIsRequired")]
+        [StringLength(FieldLength.MaxAddressLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Address { get; set; }
 
         /// <summary>
-        /// Role of person.
+        ///     Role of person.
         /// </summary>
         public Role Role { get; set; }
     }

@@ -79,7 +79,7 @@ namespace OlivesAdministration.Controllers
                 });
             }
 
-            if ((StatusAccount)info.Status == StatusAccount.Active)
+            if ((StatusAccount) info.Status == StatusAccount.Active)
                 return Request.CreateResponse(HttpStatusCode.OK);
 
             return Request.CreateResponse(HttpStatusCode.OK);
@@ -109,9 +109,9 @@ namespace OlivesAdministration.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                ActiveAccounts = summaryResult.Where(x => x.Status == (byte)StatusAccount.Active).Sum(x => x.Total),
-                PendingAccounts = summaryResult.Where(x => x.Status == (byte)StatusAccount.Pending).Sum(x => x.Total),
-                DeactiveAccounts = summaryResult.Where(x => x.Status == (byte)StatusAccount.Inactive).Sum(x => x.Total),
+                ActiveAccounts = summaryResult.Where(x => x.Status == (byte) StatusAccount.Active).Sum(x => x.Total),
+                PendingAccounts = summaryResult.Where(x => x.Status == (byte) StatusAccount.Pending).Sum(x => x.Total),
+                DeactiveAccounts = summaryResult.Where(x => x.Status == (byte) StatusAccount.Inactive).Sum(x => x.Total),
                 Total = summaryResult.Sum(x => x.Total)
             });
         }

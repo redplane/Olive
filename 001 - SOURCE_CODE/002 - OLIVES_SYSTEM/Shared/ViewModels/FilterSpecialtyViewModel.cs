@@ -10,27 +10,27 @@ namespace Shared.ViewModels
     public class FilterSpecialtyViewModel : IPagination
     {
         /// <summary>
-        /// Name of specialty.
+        ///     Name of specialty.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Whether record should be sorted ascendingly or decendingly.
+        ///     Whether record should be sorted ascendingly or decendingly.
         /// </summary>
         public SortDirection Direction { get; set; } = SortDirection.Decending;
 
         /// <summary>
-        /// Index of result page.
+        ///     Index of result page.
         /// </summary>
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof(Language),
+            ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsInvalid")]
         public int Page { get; set; } = 0;
 
         /// <summary>
-        /// Number of record per page.
+        ///     Number of record per page.
         /// </summary>
-        [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof(Language),
+        [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]
         public int Records { get; set; } = FieldLength.RecordMax;
     }

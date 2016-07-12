@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +14,7 @@ namespace Shared.Repositories
     public class RepositoryAddiction : IRepositoryAddiction
     {
         /// <summary>
-        /// Delete an addiction asynchronously.
+        ///     Delete an addiction asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="owner"></param>
@@ -33,7 +31,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Filter a list of addiction with the specific conditions.
+        ///     Filter a list of addiction with the specific conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -44,7 +42,7 @@ namespace Shared.Repositories
 
             // By default, take all records from database.
             IQueryable<Addiction> addictions = context.Addictions;
-            
+
             // Owner has been specified.
             if (filter.Owner != null)
                 addictions = addictions.Where(x => x.Owner == filter.Owner);
@@ -62,12 +60,14 @@ namespace Shared.Repositories
             if (filter.MaxCreated != null) addictions = addictions.Where(x => x.Created <= filter.MaxCreated);
 
             // Last modified has been specified.
-            if (filter.MinLastModified != null) addictions = addictions.Where(x => x.LastModified >= filter.MinLastModified);
-            if (filter.MaxLastModified != null) addictions = addictions.Where(x => x.LastModified <= filter.MaxLastModified);
+            if (filter.MinLastModified != null)
+                addictions = addictions.Where(x => x.LastModified >= filter.MinLastModified);
+            if (filter.MaxLastModified != null)
+                addictions = addictions.Where(x => x.LastModified <= filter.MaxLastModified);
 
             // Calculate the records should be skipped.
             var skippedRecords = filter.Page*filter.Records;
-            
+
             // Result sorting.
             switch (filter.Sort)
             {
@@ -102,7 +102,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Find an addiction by using id asynchronously.
+        ///     Find an addiction by using id asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -117,7 +117,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Initialize an addiction asynchronously.
+        ///     Initialize an addiction asynchronously.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>

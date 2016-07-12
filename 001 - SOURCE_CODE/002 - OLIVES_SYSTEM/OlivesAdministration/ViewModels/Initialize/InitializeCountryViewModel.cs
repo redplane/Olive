@@ -6,7 +6,8 @@ namespace OlivesAdministration.ViewModels.Initialize
 {
     public class InitializeCountryViewModel
     {
-        [StringLength(FieldLength.CountryNameMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
-        public string Name { get; set; } 
+        [StringLength(FieldLength.CountryNameMaxLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        public string Name { get; set; }
     }
 }

@@ -8,7 +8,7 @@
         public const string Email = @"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$";
 
         /// <summary>
-        /// Regex for email filtering.
+        ///     Regex for email filtering.
         /// </summary>
         public const string EmailFilter = "^[a-zA-Z-_.@]*";
 

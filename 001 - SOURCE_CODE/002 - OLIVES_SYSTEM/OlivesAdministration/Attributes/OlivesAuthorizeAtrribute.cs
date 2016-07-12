@@ -10,6 +10,7 @@ using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
+
 namespace OlivesAdministration.Attributes
 {
     public class OlivesAuthorize : AuthorizeAttribute
@@ -20,7 +21,7 @@ namespace OlivesAdministration.Attributes
         /// <param name="roles"></param>
         public OlivesAuthorize(Role[] roles)
         {
-            Roles = Array.ConvertAll(roles, x => (int)x);
+            Roles = Array.ConvertAll(roles, x => (int) x);
         }
 
         /// <summary>

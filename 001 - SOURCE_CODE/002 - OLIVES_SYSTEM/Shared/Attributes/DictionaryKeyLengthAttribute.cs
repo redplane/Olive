@@ -9,10 +9,10 @@ namespace Shared.Attributes
     public class DictionaryKeyLengthAttribute : ValidationAttribute
     {
         /// <summary>
-        /// Length of key.
+        ///     Length of key.
         /// </summary>
         private readonly int _keyLength;
-        
+
         /// <summary>
         ///     Initialize an instance of RegexMatchAttribute class.
         /// </summary>
@@ -21,7 +21,7 @@ namespace Shared.Attributes
         {
             _keyLength = keyLength;
         }
-        
+
         /// <summary>
         ///     Check whether regular expression is valid or not.
         /// </summary>
@@ -37,7 +37,7 @@ namespace Shared.Attributes
             // Value is not a Dictionary<string, string>.
             if (!(value is IDictionary))
                 throw new Exception($"{validationContext} must be an instance of Dictionary<string, string>");
-            
+
             // Cast the value to Dictionary<string, string>()
             var dict = (Dictionary<string, object>) value;
 
@@ -49,7 +49,7 @@ namespace Shared.Attributes
                 if (invalidKey != null)
                     return new ValidationResult(FormatErrorMessage(invalidKey));
             }
-            
+
             return ValidationResult.Success;
         }
     }

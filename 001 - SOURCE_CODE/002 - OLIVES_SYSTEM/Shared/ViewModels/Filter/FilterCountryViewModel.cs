@@ -10,18 +10,19 @@ namespace Shared.ViewModels.Filter
     public class FilterCountryViewModel : IPagination
     {
         /// <summary>
-        /// Country name.
+        ///     Country name.
         /// </summary>
-        [StringLength(FieldLength.CountryNameMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
-        public string Name { get; set; } 
+        [StringLength(FieldLength.CountryNameMaxLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        public string Name { get; set; }
 
         /// <summary>
-        /// Direction of sorted country.
+        ///     Direction of sorted country.
         /// </summary>
         public SortDirection Direction { get; set; } = SortDirection.Ascending;
 
         /// <summary>
-        /// Index of result page.
+        ///     Index of result page.
         /// </summary>
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language),
@@ -29,9 +30,9 @@ namespace Shared.ViewModels.Filter
         public int Page { get; set; } = 0;
 
         /// <summary>
-        /// Maximum number of records a page.
+        ///     Maximum number of records a page.
         /// </summary>
-        [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof(Language),
+        [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]
         public int Records { get; set; } = FieldLength.RecordMax;
     }

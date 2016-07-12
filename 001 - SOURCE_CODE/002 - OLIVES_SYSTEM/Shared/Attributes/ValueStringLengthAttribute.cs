@@ -7,12 +7,12 @@ namespace Shared.Attributes
     public class ValueStringLengthAttribute : ValidationAttribute
     {
         /// <summary>
-        /// Maximum length that a string can contain.
+        ///     Maximum length that a string can contain.
         /// </summary>
         private readonly int _maxLength;
 
         /// <summary>
-        /// Initialize an instance of ValueStringLengthAttribute with given parameters.
+        ///     Initialize an instance of ValueStringLengthAttribute with given parameters.
         /// </summary>
         /// <param name="maxLength"></param>
         public ValueStringLengthAttribute(int maxLength)
@@ -31,7 +31,7 @@ namespace Shared.Attributes
             // Invalid value.
             if (value == null)
                 return ValidationResult.Success;
-            
+
             if (!(value is string))
                 throw new Exception("Value must be a string");
 
@@ -52,6 +52,5 @@ namespace Shared.Attributes
         {
             return string.Format(CultureInfo.CurrentCulture, ErrorMessageString, name, _maxLength);
         }
-
     }
 }

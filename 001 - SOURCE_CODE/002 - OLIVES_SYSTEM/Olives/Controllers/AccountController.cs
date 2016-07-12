@@ -11,6 +11,7 @@ using log4net;
 using Olives.Attributes;
 using Olives.Interfaces;
 using Olives.Models;
+using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
@@ -50,6 +51,110 @@ namespace Olives.Controllers
             _log = log;
             _emailService = emailService;
             _applicationSetting = applicationSetting;
+        }
+
+        #endregion
+
+        #region Patient
+
+        /// <summary>
+        ///     Find a doctor by using specific id.
+        /// </summary>
+        /// <returns></returns>
+        [Route("api/patient/profile")]
+        [HttpPut]
+        [OlivesAuthorize(new[] {Role.Patient})]
+        public async Task<HttpResponseMessage> EditPatientProfile([FromBody] EditPatientProfileViewModel editor)
+        {
+            // Model hasn't been initialized.
+            if (editor == null)
+            {
+                editor = new EditPatientProfileViewModel();
+                Validate(editor);
+            }
+
+            // ModelState is invalid.
+            if (!ModelState.IsValid)
+            {
+                _log.Error("Request parameters are invalid. Errors sent to client");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            // Retrieve information of person who sent request.
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            #region Information construction
+
+            // First name is defined.
+            if (!string.IsNullOrWhiteSpace(editor.FirstName))
+                requester.FirstName = editor.FirstName;
+
+            // Last name is defined.
+            if (!string.IsNullOrWhiteSpace(editor.LastName))
+                requester.LastName = editor.LastName;
+
+            // Birthday is defined.
+            if (editor.Birthday != null)
+                requester.Birthday = editor.Birthday;
+
+            // Gender is defined.
+            if (editor.Gender != null)
+                requester.Gender = (byte) editor.Gender;
+
+            // Phone is defined.
+            if (!string.IsNullOrWhiteSpace(editor.Phone))
+                requester.Phone = editor.Phone;
+
+            // Address is defined.
+            if (!string.IsNullOrWhiteSpace(editor.Address))
+                requester.Address = editor.Address;
+
+            // Update person full name.
+            requester.FullName = requester.FirstName + " " + requester.LastName;
+
+            var patient = new Patient();
+            patient = requester.Patient;
+
+            // Weight is defined.
+            if (editor.Weight != null)
+                patient.Weight = editor.Weight;
+
+            // Height is defined.
+            if (editor.Height != null)
+                patient.Height = editor.Height;
+
+            requester.Patient = patient;
+
+            #endregion
+
+            // Update the last modified.
+            requester.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+
+            // Update the patient.
+            requester = await _repositoryAccount.EditPersonProfileAsync(requester.Id, requester);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                User = new
+                {
+                    patient.Person.Id,
+                    patient.Person.Email,
+                    patient.Person.Password,
+                    patient.Person.FirstName,
+                    patient.Person.LastName,
+                    patient.Person.Birthday,
+                    patient.Person.Phone,
+                    patient.Person.Gender,
+                    patient.Person.Role,
+                    patient.Person.Created,
+                    patient.Person.LastModified,
+                    patient.Person.Status,
+                    patient.Person.Address,
+                    Photo =
+                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, patient.Person.Photo,
+                            Values.StandardImageExtension)
+                }
+            });
         }
 
         #endregion
@@ -180,6 +285,65 @@ namespace Olives.Controllers
             });
         }
 
+        [Route("api/doctor/profile")]
+        [HttpPut]
+        [OlivesAuthorize(new[] {Role.Patient})]
+        public async Task<HttpResponseMessage> EditDoctorProfile([FromBody] EditDoctorProfileViewModel editor)
+        {
+            // Filter hasn't been initialized. Initialize it and do validation.
+            if (editor == null)
+            {
+                editor = new EditDoctorProfileViewModel();
+                Validate(editor);
+            }
+
+            // Invalid model.
+            if (!ModelState.IsValid)
+            {
+                // Log the error.
+                _log.Error("Request parameters are invalid. Errors sent to client");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            // Retrieve information of person who sent request.
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Address is defined.
+            if (!string.IsNullOrWhiteSpace(editor.Address))
+                requester.Address = editor.Address;
+
+            // Phone is defined.
+            if (!string.IsNullOrWhiteSpace(editor.Phone))
+                requester.Phone = editor.Phone;
+
+            // Save account.
+            requester = await _repositoryAccount.InitializePersonAsync(requester);
+
+            // Respond information to client.
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                User = new
+                {
+                    requester.Id,
+                    requester.Email,
+                    requester.Password,
+                    requester.FirstName,
+                    requester.LastName,
+                    requester.Birthday,
+                    requester.Phone,
+                    requester.Gender,
+                    requester.Role,
+                    requester.Created,
+                    requester.LastModified,
+                    requester.Status,
+                    requester.Address,
+                    Photo =
+                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, requester.Photo,
+                            Values.StandardImageExtension)
+                }
+            });
+        }
+
         #endregion
 
         #region Sign up
@@ -238,12 +402,12 @@ namespace Olives.Controllers
             patient.Money = 0;
 
             // Assign personal information to patient.
-            patient.Person = person;
+            person.Patient = patient;
 
             try
             {
                 // Save patient data to database.
-                patient = await _repositoryAccount.InitializePatientAsync(patient);
+                person = await _repositoryAccount.InitializePersonAsync(person);
 
                 // Initialize an activation code.
                 var activationCode =
@@ -400,12 +564,12 @@ namespace Olives.Controllers
             doctor.CityId = city.Id;
 
             // Assign personal information to patient.
-            doctor.Person = person;
+            person.Doctor = doctor;
 
             try
             {
                 // Save patient data to database.
-                doctor = await _repositoryAccount.InitializeDoctorAsync(doctor);
+                person = await _repositoryAccount.InitializePersonAsync(person);
 
                 // Tell doctor to wait for admin confirmation.
                 return Request.CreateResponse(HttpStatusCode.OK, new

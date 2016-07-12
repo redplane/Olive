@@ -14,7 +14,7 @@ namespace Shared.Repositories
     public class RepositoryActivationCode : IRepositoryActivationCode
     {
         /// <summary>
-        /// Initialize an allergy with given information.
+        ///     Initialize an allergy with given information.
         /// </summary>
         /// <param name="owner"></param>
         /// <param name="created"></param>
@@ -36,13 +36,13 @@ namespace Shared.Repositories
                     break;
                 }
             }
-            
+
 
             var activationCode = new ActivationCode();
             activationCode.Code = code;
             activationCode.Expired = DateTime.Now.AddHours(Values.ActivationCodeHourDuration);
             activationCode.Owner = owner;
-            
+
             // Add allergy to database context.
             context.ActivationCodes.AddOrUpdate(activationCode);
 
@@ -53,7 +53,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Find activation code by owner and code.
+        ///     Find activation code by owner and code.
         /// </summary>
         /// <param name="owner"></param>
         /// <param name="code"></param>
@@ -62,7 +62,7 @@ namespace Shared.Repositories
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-            
+
             // No filter is specified.
             if (owner == null && string.IsNullOrWhiteSpace(code))
                 return null;
@@ -77,12 +77,12 @@ namespace Shared.Repositories
             // Code is specified.
             if (!string.IsNullOrWhiteSpace(code))
                 results = results.Where(x => x.Code.Equals(code));
-            
+
             return await results.ToListAsync();
         }
 
         /// <summary>
-        /// Delete an activation code synchronously.
+        ///     Delete an activation code synchronously.
         /// </summary>
         /// <param name="activationCode"></param>
         /// <returns></returns>
@@ -96,6 +96,6 @@ namespace Shared.Repositories
 
             // Save result asynchronously.
             await context.SaveChangesAsync();
-        } 
+        }
     }
 }

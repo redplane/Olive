@@ -11,35 +11,38 @@ namespace Shared.ViewModels.Filter
     public class FilterCityViewModel : IPagination
     {
         /// <summary>
-        /// Name of city.
+        ///     Name of city.
         /// </summary>
-        [StringLength(FieldLength.CountryNameMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        [StringLength(FieldLength.CountryNameMaxLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Name { get; set; }
 
         /// <summary>
-        /// Id of country where city belongs to.
+        ///     Id of country where city belongs to.
         /// </summary>
-        [NumericCompare(1, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
+        [NumericCompare(1, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueIsInvalid")]
         public int? CountryId { get; set; }
 
         /// <summary>
-        /// Name of country where city belongs to.
+        ///     Name of country where city belongs to.
         /// </summary>
-        [StringLength(FieldLength.CountryNameMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        [StringLength(FieldLength.CountryNameMaxLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string CountryName { get; set; }
-        
+
         /// <summary>
-        /// Which property should be used for sorting.
+        ///     Which property should be used for sorting.
         /// </summary>
         public CityResultSort Sort { get; set; } = CityResultSort.CityName;
 
         /// <summary>
-        /// Whether records are sorted ascendingly or decendingly.
+        ///     Whether records are sorted ascendingly or decendingly.
         /// </summary>
         public SortDirection Direction { get; set; } = SortDirection.Ascending;
 
         /// <summary>
-        /// Index of result page.
+        ///     Index of result page.
         /// </summary>
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language),
@@ -47,9 +50,9 @@ namespace Shared.ViewModels.Filter
         public int Page { get; set; } = 0;
 
         /// <summary>
-        /// Number of record displayed on a page.
+        ///     Number of record displayed on a page.
         /// </summary>
-        [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof(Language),
+        [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]
         public int Records { get; set; } = FieldLength.RecordMax;
     }

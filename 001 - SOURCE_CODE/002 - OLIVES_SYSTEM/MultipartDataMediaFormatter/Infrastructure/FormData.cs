@@ -10,7 +10,7 @@ namespace MultipartDataMediaFormatter.Infrastructure
         #region Constructor
 
         /// <summary>
-        /// Initialize an instance of FormData
+        ///     Initialize an instance of FormData
         /// </summary>
         public FormData()
         {
@@ -23,12 +23,12 @@ namespace MultipartDataMediaFormatter.Infrastructure
         #region Properties
 
         /// <summary>
-        /// List of primitive parameters
+        ///     List of primitive parameters
         /// </summary>
         public List<FileModel> Files;
 
         /// <summary>
-        /// List of primitive fields.
+        ///     List of primitive fields.
         /// </summary>
         public List<PrimitiveModel> Fields;
 
@@ -37,7 +37,7 @@ namespace MultipartDataMediaFormatter.Infrastructure
         #region Methods
 
         /// <summary>
-        /// Retrieve list of every keys submitted to server.
+        ///     Retrieve list of every keys submitted to server.
         /// </summary>
         /// <returns></returns>
         public IEnumerable<string> AllKeys()
@@ -46,34 +46,35 @@ namespace MultipartDataMediaFormatter.Infrastructure
         }
 
         /// <summary>
-        /// Add primitive parameters to list.
+        ///     Add primitive parameters to list.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
         public void Add(string name, string value)
         {
-            Fields.Add(new PrimitiveModel() { Name = name, Value = value});
+            Fields.Add(new PrimitiveModel {Name = name, Value = value});
         }
 
         /// <summary>
-        /// Add file parameters to list.
+        ///     Add file parameters to list.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
         public void Add(string name, HttpFile value)
         {
-            Files.Add(new FileModel() { Name = name, Value = value });
+            Files.Add(new FileModel {Name = name, Value = value});
         }
 
         /// <summary>
-        /// Parse data and retrieve primitive data.
+        ///     Parse data and retrieve primitive data.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
         /// <returns></returns>
         public bool TryGetValue(string name, out string value)
         {
-            var field = Fields.FirstOrDefault(m => string.Equals(m.Name, name, StringComparison.CurrentCultureIgnoreCase));
+            var field =
+                Fields.FirstOrDefault(m => string.Equals(m.Name, name, StringComparison.CurrentCultureIgnoreCase));
             if (field != null)
             {
                 value = field.Value;
@@ -84,7 +85,7 @@ namespace MultipartDataMediaFormatter.Infrastructure
         }
 
         /// <summary>
-        /// Parse data and return HttpFile data.
+        ///     Parse data and return HttpFile data.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>

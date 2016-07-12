@@ -9,28 +9,31 @@ namespace Shared.ViewModels.Initialize
     public class InitializeBloodPressureViewModel
     {
         /// <summary>
-        /// Minimum pressure of blood.
+        ///     Minimum pressure of blood.
         /// </summary>
-        [Range(Values.MinDiastolic, Values.MaxDiastolic, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeFromTo")]
+        [Range(Values.MinDiastolic, Values.MaxDiastolic, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueMustBeFromTo")]
         public int Diastolic { get; set; }
 
         /// <summary>
-        /// Maximum pressure of blood.
+        ///     Maximum pressure of blood.
         /// </summary>
-        [Range(Values.MinSystolic, Values.MaxSystolic, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeFromTo")]
+        [Range(Values.MinSystolic, Values.MaxSystolic, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueMustBeFromTo")]
         public int Systolic { get; set; }
 
         /// <summary>
-        /// Time when measurement was done.
+        ///     Time when measurement was done.
         /// </summary>
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double Time { get; set; }
 
         /// <summary>
-        /// Note of measurement.
+        ///     Note of measurement.
         /// </summary>
-        [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Note { get; set; }
     }
 }

@@ -8,14 +8,14 @@ namespace Shared.Interfaces
     public interface IRepositoryAppointment
     {
         /// <summary>
-        /// Initialize an appointment with specific information.
+        ///     Initialize an appointment with specific information.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
         Task<Appointment> InitializeAppointment(Appointment info);
 
         /// <summary>
-        /// Filter appointment with requester account & password.
+        ///     Filter appointment with requester account & password.
         /// </summary>
         /// <param name="filter"></param>
         /// <param name="requester"></param>
@@ -23,7 +23,7 @@ namespace Shared.Interfaces
         Task<ResponseAppointmentFilter> FilterAppointmentAsync(FilterAppointmentViewModel filter, int requester);
 
         /// <summary>
-        /// Find appointment by searching id.
+        ///     Find appointment by searching id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>

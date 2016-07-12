@@ -12,7 +12,7 @@ namespace MultipartDataMediaFormatter.Converters
     {
         public async Task<FormData> Convert(HttpContent content)
         {
-            if(content == null)
+            if (content == null)
                 throw new ArgumentNullException("content");
 
             if (!content.IsMimeMultipartContent())
@@ -20,7 +20,7 @@ namespace MultipartDataMediaFormatter.Converters
                 throw new Exception("Unsupported Media Type");
             }
 
-            MultipartMemoryStreamProvider multipartProvider = await content.ReadAsMultipartAsync();
+            var multipartProvider = await content.ReadAsMultipartAsync();
 
             var multipartFormData = await Convert(multipartProvider);
             return multipartFormData;
@@ -33,12 +33,12 @@ namespace MultipartDataMediaFormatter.Converters
             foreach (var file in multipartProvider.Contents.Where(x => IsFile(x.Headers.ContentDisposition)))
             {
                 var name = UnquoteToken(file.Headers.ContentDisposition.Name);
-                string fileName = FixFilename(file.Headers.ContentDisposition.FileName);
-                string mediaType = file.Headers.ContentType.MediaType;
+                var fileName = FixFilename(file.Headers.ContentDisposition.FileName);
+                var mediaType = file.Headers.ContentType.MediaType;
 
                 using (var stream = await file.ReadAsStreamAsync())
                 {
-                    byte[] buffer = ReadAllBytes(stream);
+                    var buffer = ReadAllBytes(stream);
                     if (buffer.Length > 0)
                     {
                         multipartFormData.Add(name, new HttpFile(fileName, mediaType, buffer));
@@ -46,8 +46,10 @@ namespace MultipartDataMediaFormatter.Converters
                 }
             }
 
-            foreach (var part in multipartProvider.Contents.Where(x => x.Headers.ContentDisposition.DispositionType == "form-data"
-                                                                  && !IsFile(x.Headers.ContentDisposition)))
+            foreach (
+                var part in
+                    multipartProvider.Contents.Where(x => x.Headers.ContentDisposition.DispositionType == "form-data"
+                                                          && !IsFile(x.Headers.ContentDisposition)))
             {
                 var name = UnquoteToken(part.Headers.ContentDisposition.Name);
                 var data = await part.ReadAsStringAsync();
@@ -55,7 +57,7 @@ namespace MultipartDataMediaFormatter.Converters
             }
 
             return multipartFormData;
-        } 
+        }
 
         private bool IsFile(ContentDispositionHeaderValue disposition)
         {
@@ -63,16 +65,17 @@ namespace MultipartDataMediaFormatter.Converters
         }
 
         /// <summary>
-        /// Remove bounding quotes on a token if present
+        ///     Remove bounding quotes on a token if present
         /// </summary>
         private static string UnquoteToken(string token)
         {
-            if (String.IsNullOrWhiteSpace(token))
+            if (string.IsNullOrWhiteSpace(token))
             {
                 return token;
             }
 
-            if (token.StartsWith("\"", StringComparison.Ordinal) && token.EndsWith("\"", StringComparison.Ordinal) && token.Length > 1)
+            if (token.StartsWith("\"", StringComparison.Ordinal) && token.EndsWith("\"", StringComparison.Ordinal) &&
+                token.Length > 1)
             {
                 return token.Substring(1, token.Length - 2);
             }
@@ -81,7 +84,7 @@ namespace MultipartDataMediaFormatter.Converters
         }
 
         /// <summary>
-        /// Amend filenames to remove surrounding quotes and remove path from IE
+        ///     Amend filenames to remove surrounding quotes and remove path from IE
         /// </summary>
         private static string FixFilename(string originalFileName)
         {
@@ -89,7 +92,7 @@ namespace MultipartDataMediaFormatter.Converters
                 return string.Empty;
 
             var result = originalFileName.Trim();
-            
+
             // remove leading and trailing quotes
             result = result.Trim('"');
 

@@ -6,12 +6,12 @@ namespace Shared.ViewModels.Response
     public class ResponsePrescriptionFilterViewModel
     {
         /// <summary>
-        /// List of filtered prescription.
+        ///     List of filtered prescription.
         /// </summary>
-        public IList<Prescription> Prescriptions { get; set; } 
+        public IList<Prescription> Prescriptions { get; set; }
 
         /// <summary>
-        /// Total matched results.
+        ///     Total matched results.
         /// </summary>
         public int Total { get; set; }
     }

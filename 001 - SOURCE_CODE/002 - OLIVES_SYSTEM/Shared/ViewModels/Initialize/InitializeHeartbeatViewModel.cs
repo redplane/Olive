@@ -9,22 +9,24 @@ namespace Shared.ViewModels.Initialize
     public class InitializeHeartbeatViewModel
     {
         /// <summary>
-        /// Heart rate.
+        ///     Heart rate.
         /// </summary>
-        [Range(Values.MinHeartRate, Values.MaxHeartRate, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeFromTo")]
+        [Range(Values.MinHeartRate, Values.MaxHeartRate, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueMustBeFromTo")]
         public double Rate { get; set; }
 
         /// <summary>
-        /// Time when measurement was done.
+        ///     Time when measurement was done.
         /// </summary>
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double Time { get; set; }
 
         /// <summary>
-        /// Note of measurement.
+        ///     Note of measurement.
         /// </summary>
-        [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Note { get; set; }
     }
 }

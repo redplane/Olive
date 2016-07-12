@@ -11,62 +11,70 @@ namespace Shared.ViewModels.Filter
     public class FilterAddictionViewModel : IPagination
     {
         /// <summary>
-        /// Owner of addiction note
+        ///     Owner of addiction note
         /// </summary>
-        [NumericCompare(1, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
+        [NumericCompare(1, ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueIsInvalid")]
         public int? Owner { get; set; }
-        
+
         /// <summary>
-        /// Cause of addiction
+        ///     Cause of addiction
         /// </summary>
-        [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Cause { get; set; }
 
         /// <summary>
-        /// Note of addiction
+        ///     Note of addiction
         /// </summary>
-        [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Note { get; set; }
 
-        [NumericPropertyCompare("MaxCreated", Comparision = Comparision.LowerEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+        [NumericPropertyCompare("MaxCreated", Comparision = Comparision.LowerEqual,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? MinCreated { get; set; }
 
-        [NumericPropertyCompare("MinCreated", Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+        [NumericPropertyCompare("MinCreated", Comparision = Comparision.GreaterEqual,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? MaxCreated { get; set; }
 
-        [NumericPropertyCompare("MaxLastModified", Comparision = Comparision.LowerEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+        [NumericPropertyCompare("MaxLastModified", Comparision = Comparision.LowerEqual,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? MinLastModified { get; set; }
 
-        [NumericPropertyCompare("MinLastModified", Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+        [NumericPropertyCompare("MinLastModified", Comparision = Comparision.GreaterEqual,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? MaxLastModified { get; set; }
+
+        /// <summary>
+        ///     Which property should be used for sorting
+        /// </summary>
+        [InEnumerationsArray(new object[] {NoteResultSort.LastModified, NoteResultSort.Created},
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
+        public NoteResultSort Sort { get; set; } = NoteResultSort.LastModified;
+
+        /// <summary>
+        ///     Whether the record should be sorted ascendingly or decendingly.
+        /// </summary>
+        [InEnumerationsArray(new object[] {SortDirection.Ascending, SortDirection.Decending},
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
+        public SortDirection Direction { get; set; } = SortDirection.Decending;
 
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsInvalid")]
         public int Page { get; set; } = FieldLength.PageIndexMin;
 
-        [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof(Language),
+        [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]
         public int Records { get; set; } = FieldLength.RecordMax;
-
-        /// <summary>
-        /// Which property should be used for sorting
-        /// </summary>
-        [InEnumerationsArray(new object[] {NoteResultSort.LastModified, NoteResultSort.Created}, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
-        public NoteResultSort Sort { get; set; } = NoteResultSort.LastModified;
-
-        /// <summary>
-        /// Whether the record should be sorted ascendingly or decendingly.
-        /// </summary>
-        [InEnumerationsArray(new object[] { SortDirection.Ascending, SortDirection.Decending }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
-        public SortDirection Direction { get; set; } = SortDirection.Decending;
     }
 }

@@ -36,15 +36,15 @@ namespace Shared.Attributes
         ///     Model display name.
         /// </summary>
         public string ModelDisplayName { get; internal set; }
-        
+
         /// <summary>
-        /// Which way should 2 models be compared with each other.
+        ///     Which way should 2 models be compared with each other.
         /// </summary>
         public Comparision Comparision { get; set; } = Comparision.Equal;
 
         /// <summary>
-        /// Dunno what this means.
-        /// TODO: Update documentation later.
+        ///     Dunno what this means.
+        ///     TODO: Update documentation later.
         /// </summary>
         public override bool RequiresValidationContext
         {
@@ -68,7 +68,7 @@ namespace Shared.Attributes
             // Value hasn't been defined.
             if (value == null)
                 return ValidationResult.Success;
-            
+
             // Retrieve model information.
             var modelInfo = validationContext.ObjectType.GetProperty(Model);
 
@@ -82,7 +82,7 @@ namespace Shared.Attributes
 
             // Retrieve value from target model.
             var modelValue = modelInfo.GetValue(validationContext.ObjectInstance, null);
-            
+
             if (modelValue == null)
                 return ValidationResult.Success;
 
@@ -95,60 +95,60 @@ namespace Shared.Attributes
             switch (Comparision)
             {
                 case Comparision.Lower:
+                {
+                    if (compareOrigin >= milestone)
                     {
-                        if (compareOrigin >= milestone)
-                        {
-                            if (ModelDisplayName == null)
-                                ModelDisplayName = RetrievePropertyDisplayName(validationContext.ObjectType, Model);
+                        if (ModelDisplayName == null)
+                            ModelDisplayName = RetrievePropertyDisplayName(validationContext.ObjectType, Model);
 
-                            return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
-                        }
-                        break;
+                        return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
                     }
+                    break;
+                }
                 case Comparision.LowerEqual:
+                {
+                    if (compareOrigin > milestone)
                     {
-                        if (compareOrigin > milestone)
-                        {
-                            if (ModelDisplayName == null)
-                                ModelDisplayName = RetrievePropertyDisplayName(validationContext.ObjectType, Model);
+                        if (ModelDisplayName == null)
+                            ModelDisplayName = RetrievePropertyDisplayName(validationContext.ObjectType, Model);
 
-                            return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
-                        }
-                        break;
+                        return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
                     }
+                    break;
+                }
                 case Comparision.Equal: // Value must be equal to milestone.
+                {
+                    if (compareOrigin != milestone)
                     {
-                        if (compareOrigin != milestone)
-                        {
-                            if (ModelDisplayName == null)
-                                ModelDisplayName = RetrievePropertyDisplayName(validationContext.ObjectType, Model);
+                        if (ModelDisplayName == null)
+                            ModelDisplayName = RetrievePropertyDisplayName(validationContext.ObjectType, Model);
 
-                            return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
-                        }
-                        break;
+                        return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
                     }
+                    break;
+                }
                 case Comparision.GreaterEqual: // Value must be larger than or equal to milestone.
+                {
+                    if (compareOrigin < milestone)
                     {
-                        if (compareOrigin < milestone)
-                        {
-                            if (ModelDisplayName == null)
-                                ModelDisplayName = RetrievePropertyDisplayName(validationContext.ObjectType, Model);
+                        if (ModelDisplayName == null)
+                            ModelDisplayName = RetrievePropertyDisplayName(validationContext.ObjectType, Model);
 
-                            return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
-                        }
-                        break;
+                        return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
                     }
+                    break;
+                }
                 case Comparision.Greater: // Value must be larger than milestone.
+                {
+                    if (compareOrigin <= milestone)
                     {
-                        if (compareOrigin <= milestone)
-                        {
-                            if (ModelDisplayName == null)
-                                ModelDisplayName = RetrievePropertyDisplayName(validationContext.ObjectType, Model);
+                        if (ModelDisplayName == null)
+                            ModelDisplayName = RetrievePropertyDisplayName(validationContext.ObjectType, Model);
 
-                            return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
-                        }
-                        break;
+                        return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
                     }
+                    break;
+                }
                 default:
                     throw new NotImplementedException();
             }
@@ -157,7 +157,7 @@ namespace Shared.Attributes
         }
 
         /// <summary>
-        /// Retrieve display name of a property
+        ///     Retrieve display name of a property
         /// </summary>
         /// <param name="containerType"></param>
         /// <param name="propertyName"></param>

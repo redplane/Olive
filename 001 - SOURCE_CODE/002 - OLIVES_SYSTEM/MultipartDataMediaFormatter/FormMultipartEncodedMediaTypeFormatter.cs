@@ -3,10 +3,10 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using MultipartDataMediaFormatter.Converters;
-using System.Net.Http.Formatting;
 
 namespace MultipartDataMediaFormatter
 {
@@ -33,7 +33,7 @@ namespace MultipartDataMediaFormatter
             MediaTypeHeaderValue mediaType)
         {
             base.SetDefaultContentHeaders(type, headers, mediaType);
-            
+
             if (headers.ContentType == null)
                 headers.ContentType = new MediaTypeHeaderValue(SupportedMediaType);
 

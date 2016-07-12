@@ -4,8 +4,6 @@ using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Management.Instrumentation;
-using System.Net.Sockets;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Interfaces;
@@ -21,6 +19,30 @@ namespace Shared.Repositories
         #region Patient
 
         /// <summary>
+        ///     Find the patient with id and may be status asynchronously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public async Task<Patient> FindPatientAsync(int id, byte? status)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // By default, take all patients.
+            IQueryable<Patient> patients = context.Patients;
+
+            // Filter patient by id.
+            patients = patients.Where(x => x.Id == id);
+
+            // Status is defined.
+            if (status != null)
+                patients = patients.Where(x => x.Person.Status == (byte) status);
+
+            return await patients.FirstOrDefaultAsync();
+        }
+
+        /// <summary>
         ///     Find a patient by using id.
         /// </summary>
         /// <param name="id"></param>
@@ -29,27 +51,27 @@ namespace Shared.Repositories
         {
             var context = new OlivesHealthEntities();
             var results = from person in context.People.Where(x => x.Id == id)
-                          join patient in context.Patients.Where(x => x.Id == id) on person.Id equals patient.Id
-                          where person.Id == id
-                          select new PatientViewModel
-                          {
-                              Address = person.Address,
-                              Birthday = person.Birthday,
-                              Created = person.Created,
-                              Email = person.Email,
-                              FirstName = person.FirstName,
-                              Gender = (Gender)person.Gender,
-                              LastModified = person.LastModified,
-                              LastName = person.LastName,
-                              Money = 0,
-                              Password = person.Password,
-                              Phone = person.Phone,
-                              Photo = person.Photo,
-                              Role = person.Role,
-                              Status = (StatusAccount)person.Status,
-                              Height = patient.Height,
-                              Weight = patient.Weight
-                          };
+                join patient in context.Patients.Where(x => x.Id == id) on person.Id equals patient.Id
+                where person.Id == id
+                select new PatientViewModel
+                {
+                    Address = person.Address,
+                    Birthday = person.Birthday,
+                    Created = person.Created,
+                    Email = person.Email,
+                    FirstName = person.FirstName,
+                    Gender = (Gender) person.Gender,
+                    LastModified = person.LastModified,
+                    LastName = person.LastName,
+                    Money = 0,
+                    Password = person.Password,
+                    Phone = person.Phone,
+                    Photo = person.Photo,
+                    Role = person.Role,
+                    Status = (StatusAccount) person.Status,
+                    Height = patient.Height,
+                    Weight = patient.Weight
+                };
 
             return await results.ToListAsync();
         }
@@ -65,7 +87,7 @@ namespace Shared.Repositories
 
             // Join the table first.
             var results = context.People
-                .Where(x => x.Role == (byte)Role.Patient)
+                .Where(x => x.Role == (byte) Role.Patient)
                 .Join(context.Patients, p => p.Id, d => d.Id,
                     (p, d) => new
                     {
@@ -137,7 +159,7 @@ namespace Shared.Repositories
             responseFilter.Total = await results.CountAsync();
 
             // How many records should be skipped.
-            var skippedRecords = filter.Page * filter.Records;
+            var skippedRecords = filter.Page*filter.Records;
             var filteredResults = results
                 .OrderBy(x => x.Person.Status)
                 .Skip(skippedRecords)
@@ -149,15 +171,15 @@ namespace Shared.Repositories
                     Created = x.Person.Created,
                     Email = x.Person.Email,
                     FirstName = x.Person.FirstName,
-                    Gender = (Gender)x.Person.Gender,
+                    Gender = (Gender) x.Person.Gender,
                     Id = x.Person.Id,
                     LastModified = x.Person.LastModified,
                     LastName = x.Person.LastName,
                     Money = x.Patient.Money,
                     Phone = x.Person.Phone,
-                    Role = (byte)Role.Doctor,
+                    Role = (byte) Role.Doctor,
                     Password = x.Person.Password,
-                    Status = (StatusAccount)x.Person.Status,
+                    Status = (StatusAccount) x.Person.Status,
                     Photo = x.Person.Photo,
                     Height = x.Patient.Height,
                     Weight = x.Patient.Weight
@@ -168,34 +190,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Initialize a patient to database.
-        /// </summary>
-        /// <param name="patient"></param>
-        /// <returns></returns>
-        public async Task<Patient> InitializePatientAsync(Patient patient)
-        {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
-            using (var transaction = context.Database.BeginTransaction())
-            {
-                try
-                {
-                    context.Patients.Add(patient);
-                    await context.SaveChangesAsync();
-                    transaction.Commit();
-                    return patient;
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    throw;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Find and activate patient's account and remove the activation code.
+        ///     Find and activate patient's account and remove the activation code.
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
@@ -209,12 +204,12 @@ namespace Shared.Repositories
                 try
                 {
                     var results = from p in context.People
-                                  join c in context.ActivationCodes.Where(x => x.Code.Equals(code)) on p.Id equals c.Owner
-                                  select new
-                                  {
-                                      Person = p,
-                                      Code = c
-                                  };
+                        join c in context.ActivationCodes.Where(x => x.Code.Equals(code)) on p.Id equals c.Owner
+                        select new
+                        {
+                            Person = p,
+                            Code = c
+                        };
 
                     // Retrieve the total matched result.
                     var resultsCount = await results.CountAsync();
@@ -235,7 +230,7 @@ namespace Shared.Repositories
                     // Update the person status and remove the activation code.
                     var person = result.Person;
                     var activationCode = result.Code;
-                    person.Status = (byte)StatusAccount.Active;
+                    person.Status = (byte) StatusAccount.Active;
                     context.People.AddOrUpdate(person);
                     context.ActivationCodes.Remove(activationCode);
                     await context.SaveChangesAsync();
@@ -249,14 +244,13 @@ namespace Shared.Repositories
                     transaction.Rollback();
                     throw;
                 }
-
             }
         }
 
         #endregion
 
         #region Doctor
-        
+
         /// <summary>
         ///     Filter doctor by using specific conditions asynchronously.
         /// </summary>
@@ -268,7 +262,7 @@ namespace Shared.Repositories
             var context = new OlivesHealthEntities();
 
             // Take all people from database.
-            IQueryable<Person> people = context.People.Where(x => x.Role == (byte)Role.Doctor);
+            var people = context.People.Where(x => x.Role == (byte) Role.Doctor);
 
             // By default, take all doctors.
             IQueryable<Doctor> doctors = context.Doctors;
@@ -343,21 +337,21 @@ namespace Shared.Repositories
             #endregion
 
             // Join the tables first.
-            var results = (from p in people
-                           join d in doctors on p.Id equals d.Id
-                           join s in specialties on d.SpecialtyId equals s.Id
-                           select new
-                           {
-                               Person = p,
-                               Doctor = d,
-                               TrainedSpecialty = s
-                           });
+            var results = from p in people
+                join d in doctors on p.Id equals d.Id
+                join s in specialties on d.SpecialtyId equals s.Id
+                select new
+                {
+                    Person = p,
+                    Doctor = d,
+                    TrainedSpecialty = s
+                };
 
             var responseFilter = new ResponseDoctorFilter();
             responseFilter.Total = await results.CountAsync();
 
             // How many records should be skipped.
-            var skippedRecords = filter.Page * filter.Records;
+            var skippedRecords = filter.Page*filter.Records;
             var filteredResults = results
                 .OrderBy(x => x.Person.Status)
                 .Skip(skippedRecords)
@@ -369,28 +363,28 @@ namespace Shared.Repositories
                     Created = x.Person.Created,
                     Email = x.Person.Email,
                     FirstName = x.Person.FirstName,
-                    Gender = (Gender)x.Person.Gender,
+                    Gender = (Gender) x.Person.Gender,
                     Id = x.Person.Id,
                     LastModified = x.Person.LastModified,
                     LastName = x.Person.LastName,
                     Money = x.Doctor.Money,
                     Rank = x.Doctor.Rank ?? 0,
                     Phone = x.Person.Phone,
-                    Role = (byte)Role.Doctor,
+                    Role = (byte) Role.Doctor,
                     Password = x.Person.Password,
-                    Status = (StatusAccount)x.Person.Status,
+                    Status = (StatusAccount) x.Person.Status,
                     Photo = x.Person.Photo,
                     Voters = x.Doctor.Voters,
-                    Specialty = new SpecialtyViewModel()
+                    Specialty = new SpecialtyViewModel
                     {
                         Id = x.TrainedSpecialty.Id,
                         Name = x.TrainedSpecialty.Name
                     },
-                    City = new CityViewModel()
+                    City = new CityViewModel
                     {
                         Id = x.Doctor.City.Id,
                         Name = x.Doctor.City.Name,
-                        Country = new CountryViewModel()
+                        Country = new CountryViewModel
                         {
                             Id = x.Doctor.City.CountryId,
                             Name = x.Doctor.City.CountryName
@@ -403,7 +397,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Initialize a doctor asynchronously.
+        ///     Initialize a doctor asynchronously.
         /// </summary>
         /// <param name="doctor"></param>
         /// <returns></returns>
@@ -430,7 +424,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Find the doctor by using id.
+        ///     Find the doctor by using id.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>
@@ -447,7 +441,7 @@ namespace Shared.Repositories
 
             // Status is defined.
             if (status != null)
-                doctors = doctors.Where(x => x.Person.Status == (byte)status);
+                doctors = doctors.Where(x => x.Person.Status == (byte) status);
 
             return await doctors.FirstOrDefaultAsync();
         }
@@ -500,7 +494,8 @@ namespace Shared.Repositories
         /// <param name="role">As role is specified. Find account by role.</param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public async Task<Person> FindPersonAsync(int? id, string email, string password, byte? role, StatusAccount? status)
+        public async Task<Person> FindPersonAsync(int? id, string email, string password, byte? role,
+            StatusAccount? status)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -527,7 +522,7 @@ namespace Shared.Repositories
             // Status has been specified.
             if (status != null)
             {
-                var castedStatus = (byte)status;
+                var castedStatus = (byte) status;
                 result = result.Where(x => x.Status == castedStatus);
             }
 
@@ -535,7 +530,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Find a person asynchronously by using activation code.
+        ///     Find a person asynchronously by using activation code.
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
@@ -546,8 +541,8 @@ namespace Shared.Repositories
 
             // Find the person whose activation code matches the condition.
             var results = from p in context.People
-                          join a in context.ActivationCodes.Where(x => x.Code.Equals(code)) on p.Id equals a.Owner
-                          select p;
+                join a in context.ActivationCodes.Where(x => x.Code.Equals(code)) on p.Id equals a.Owner
+                select p;
 
             // Count the number of matched records.
             var records = await results.CountAsync();
@@ -557,7 +552,6 @@ namespace Shared.Repositories
                 return null;
 
             return await results.FirstOrDefaultAsync();
-
         }
 
         /// <summary>
@@ -612,7 +606,7 @@ namespace Shared.Repositories
             if (role != null)
                 result = result.Where(x => x.Role == role);
 
-            var filteredResult = result.GroupBy(x => new { x.Role, x.Status })
+            var filteredResult = result.GroupBy(x => new {x.Role, x.Status})
                 .OrderBy(x => x.Key)
                 .Select(x => new StatusSummaryViewModel
                 {
@@ -625,7 +619,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Initialize or update person information asynchronously.
+        ///     Initialize or update person information asynchronously.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
@@ -643,12 +637,110 @@ namespace Shared.Repositories
             return info;
         }
 
+        /// <summary>
+        ///     Edit person profile asynchronously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        public async Task<Person> EditPersonProfileAsync(int id, Person info)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // Information hasn't been specified.
+            if (info == null)
+                throw new Exception("Personal information is required.");
+
+            // Keep the id.
+            info.Id = id;
+
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Add or update information base on the primary key.
+                    context.People.AddOrUpdate(info);
+
+                    #region Relationship update
+
+                    // Because data is redundant in Relationship table, name should be changed.
+                    var relationships = context.Relations.Where(x => x.Source == id || x.Target == id);
+
+                    foreach (var relationship in relationships)
+                    {
+                        if (relationship.Source == id)
+                        {
+                            relationship.SourceFirstName = info.FirstName;
+                            relationship.SourceLastName = info.LastName;
+                            continue;
+                        }
+
+                        relationship.TargetFirstName = info.FirstName;
+                        relationship.TargetLastName = info.LastName;
+                    }
+
+                    #endregion
+
+                    #region Appointment update
+
+                    var appointments = context.Appointments.Where(x => x.Maker == id || x.Dater == id);
+                    foreach (var appointment in appointments)
+                    {
+                        if (appointment.Maker == id)
+                        {
+                            appointment.MakerFirstName = info.FirstName;
+                            appointment.MakerLastName = info.LastName;
+                            continue;
+                        }
+
+                        appointment.DaterFirstName = info.FirstName;
+                        appointment.DaterLastName = info.LastName;
+                    }
+
+                    #endregion
+
+                    #region Rating update
+
+                    var ratings = context.Ratings.Where(x => x.Maker == id || x.Target == id);
+                    foreach (var rating in ratings)
+                    {
+                        if (rating.Maker == id)
+                        {
+                            rating.MakerFirstName = info.FirstName;
+                            rating.MakerLastName = info.LastName;
+                            continue;
+                        }
+
+                        rating.TargetFirstName = info.FirstName;
+                        rating.TargetLastName = info.LastName;
+                    }
+
+                    #endregion
+
+                    // Save change to database.
+                    await context.SaveChangesAsync();
+
+                    // Commit the transaction.
+                    transaction.Commit();
+                    return info;
+                }
+                catch
+                {
+                    // Error happens, transaction will be rolled back and error will be thrown to client.
+                    transaction.Rollback();
+
+                    throw;
+                }
+            }
+        }
+
         #endregion
 
         #region Relationship
 
         /// <summary>
-        /// Initialize a relationship to database.
+        ///     Initialize a relationship to database.
         /// </summary>
         /// <param name="relation"></param>
         /// <returns></returns>
@@ -665,14 +757,15 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Find a relation by using specific information.
+        ///     Find a relation by using specific information.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="person"></param>
         /// <param name="role"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public async Task<Relation> FindRelationshipAsync(int id, int? person, RoleRelationship? role, StatusRelation? status)
+        public async Task<Relation> FindRelationshipAsync(int id, int? person, RoleRelationship? role,
+            StatusRelation? status)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -695,18 +788,17 @@ namespace Shared.Repositories
                     relationships = relationships.Where(x => x.Target == person.Value);
                 else
                     relationships = relationships.Where(x => x.Source == person.Value || x.Target == person.Value);
-
             }
 
             // Status is specified.
             if (status != null)
-                relationships = relationships.Where(x => x.Status == (byte)status);
+                relationships = relationships.Where(x => x.Status == (byte) status);
 
             return await relationships.FirstOrDefaultAsync();
         }
 
         /// <summary>
-        /// Find the relation between 2 people.
+        ///     Find the relation between 2 people.
         /// </summary>
         /// <param name="firstPerson"></param>
         /// <param name="secondPerson"></param>
@@ -720,8 +812,8 @@ namespace Shared.Repositories
             // Find the participation of people in relationships.
             var results = context.Relations.Where(
                 x =>
-                    (x.Source == firstPerson && x.Target == secondPerson) ||
-                    (x.Source == secondPerson || x.Target == firstPerson));
+                    (x.Source == firstPerson && x.Target == secondPerson) || x.Source == secondPerson ||
+                    x.Target == firstPerson);
 
             // Find the status which matches with the status we wanna find.
             results = results.Where(x => x.Status == status);
@@ -729,7 +821,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Find a relation whose id match with search condition and person is taking part in it.
+        ///     Find a relation whose id match with search condition and person is taking part in it.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="person"></param>
@@ -754,14 +846,15 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Delete a relation asynchronously.
+        ///     Delete a relation asynchronously.
         /// </summary>
         /// <param name="id">Id of relationship</param>
         /// <param name="requester">Id of person who request to delete relationship.</param>
         /// <param name="role">The participation of requester in relationship.</param>
         /// <param name="status">Status of relationship.</param>
         /// <returns></returns>
-        public async Task<int> DeleteRelationAsync(int id, int? requester, RoleRelationship? role, StatusRelation? status)
+        public async Task<int> DeleteRelationAsync(int id, int? requester, RoleRelationship? role,
+            StatusRelation? status)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -791,12 +884,10 @@ namespace Shared.Repositories
             context.Relations.RemoveRange(relationships);
 
             return await context.SaveChangesAsync();
-            
-            
         }
 
         /// <summary>
-        /// Filter relationship base on the role of requester.
+        ///     Filter relationship base on the role of requester.
         /// </summary>
         /// <param name="requester"></param>
         /// <param name="partner"></param>
@@ -805,14 +896,15 @@ namespace Shared.Repositories
         /// <param name="status"></param>
         /// <param name="page"></param>
         /// <param name="records"></param>
-        public async Task<ResponseRelationshipFilter> FilterRelationshipAsync(int requester, int? partner, RoleRelationship? role, TypeRelation? type, StatusRelation? status, int page, int records)
+        public async Task<ResponseRelationshipFilter> FilterRelationshipAsync(int requester, int? partner,
+            RoleRelationship? role, TypeRelation? type, StatusRelation? status, int page, int records)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
             // By default, take all relationship.
             IQueryable<Relation> relationships = context.Relations;
-             
+
             // In case the relationship role is defined.
             if (role == RoleRelationship.Source)
             {
@@ -834,15 +926,15 @@ namespace Shared.Repositories
             }
             else
                 relationships = relationships.Where(x => x.Source == requester || x.Target == requester);
-            
+
             // Type is defined.
             if (type != null)
                 relationships = relationships.Where(x => x.Type == (byte) type.Value);
 
             // Status is defined.
             if (status != null)
-                relationships = relationships.Where(x => x.Status == (byte)status.Value);
-            
+                relationships = relationships.Where(x => x.Status == (byte) status.Value);
+
             // Response initialization.
             var response = new ResponseRelationshipFilter();
             response.Total = await relationships.CountAsync();
@@ -858,14 +950,15 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Filter related doctors.
+        ///     Filter related doctors.
         /// </summary>
         /// <param name="requester"></param>
         /// <param name="status"></param>
         /// <param name="page"></param>
         /// <param name="records"></param>
         /// <returns></returns>
-        public async Task<ResponseRelatedDoctorFilter> FilterRelatedDoctorAsync(int requester, StatusRelation? status, int page, int records)
+        public async Task<ResponseRelatedDoctorFilter> FilterRelatedDoctorAsync(int requester, StatusRelation? status,
+            int page, int records)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -874,7 +967,7 @@ namespace Shared.Repositories
             IQueryable<Relation> relationships = context.Relations;
 
             // Take the relationship whose source is requester and type is provide treatment.
-            relationships = relationships.Where(x => x.Source == requester && x.Type == (byte)TypeRelation.Treatment);
+            relationships = relationships.Where(x => x.Source == requester && x.Type == (byte) TypeRelation.Treatment);
 
             // Status is defined.
             if (status != null)
@@ -885,7 +978,7 @@ namespace Shared.Repositories
 
             var fullResult = from r in relationships
                 join d in doctors on r.Target equals d.Id
-                select new RelatedDoctorViewModel()
+                select new RelatedDoctorViewModel
                 {
                     Doctor = d,
                     RelationshipStatus = r.Status,
@@ -901,16 +994,17 @@ namespace Shared.Repositories
 
             return response;
         }
-        
+
         /// <summary>
-        /// Filter relative by using specific conditions.
+        ///     Filter relative by using specific conditions.
         /// </summary>
         /// <param name="requester"></param>
         /// <param name="status"></param>
         /// <param name="page"></param>
         /// <param name="records"></param>
         /// <returns></returns>
-        public async Task<ResponseRelativeFilter> FilterRelativeAsync(int requester, StatusRelation? status, int page, int records)
+        public async Task<ResponseRelativeFilter> FilterRelativeAsync(int requester, StatusRelation? status, int page,
+            int records)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -919,28 +1013,28 @@ namespace Shared.Repositories
             IQueryable<Relation> relationships = context.Relations;
 
             // Take the relationship whose source is requester and type is provide treatment.
-            relationships = relationships.Where(x => x.Source == requester && x.Type == (byte)TypeRelation.Relative);
+            relationships = relationships.Where(x => x.Source == requester && x.Type == (byte) TypeRelation.Relative);
 
             // Status is defined.
             if (status != null)
-                relationships = relationships.Where(x => x.Status == (byte)status.Value);
+                relationships = relationships.Where(x => x.Status == (byte) status.Value);
 
             // Take all people who are doctor.
             IQueryable<Person> relatives = context.People;
 
             var fullResult = from r in relationships
-                             join relative in relatives on r.Target equals relative.Id
-                             select new RelativeViewModel()
-                             {
-                                 Relative = relative,
-                                 RelationshipStatus = r.Status,
-                                 Created = r.Created
-                             };
+                join relative in relatives on r.Target equals relative.Id
+                select new RelativeViewModel
+                {
+                    Relative = relative,
+                    RelationshipStatus = r.Status,
+                    Created = r.Created
+                };
 
             var response = new ResponseRelativeFilter();
             response.Total = await fullResult.CountAsync();
             response.List = await fullResult.OrderByDescending(x => x.Created)
-                .Skip(page * records)
+                .Skip(page*records)
                 .Take(records)
                 .ToListAsync();
 

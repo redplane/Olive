@@ -15,27 +15,13 @@ using Shared.ViewModels.Filter;
 
 namespace OlivesAdministration.Controllers
 {
-    [OlivesAuthorize(new[] { Role.Admin })]
+    [OlivesAuthorize(new[] {Role.Admin})]
     public class PlaceController : ApiParentController
     {
-        #region Properties
-
-        /// <summary>
-        ///     Repository places DI
-        /// </summary>
-        private readonly IRepositoryPlace _repositoryPlace;
-
-        /// <summary>
-        /// Logger module DI , this is used for writing log.
-        /// </summary>
-        private readonly ILog _log;
-
-        #endregion
-
         #region Constructors
 
         /// <summary>
-        /// Initialize an instance of PlaceController.
+        ///     Initialize an instance of PlaceController.
         /// </summary>
         /// <param name="repositoryPlace"></param>
         /// <param name="log"></param>
@@ -47,16 +33,30 @@ namespace OlivesAdministration.Controllers
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        ///     Repository places DI
+        /// </summary>
+        private readonly IRepositoryPlace _repositoryPlace;
+
+        /// <summary>
+        ///     Logger module DI , this is used for writing log.
+        /// </summary>
+        private readonly ILog _log;
+
+        #endregion
+
         #region Country
 
         /// <summary>
-        /// Find a country by using specific id.
+        ///     Find a country by using specific id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [Route("api/country")]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetCountry([FromUri]int id)
+        public async Task<HttpResponseMessage> GetCountry([FromUri] int id)
         {
             // Using id to find country.
             var countries = await _repositoryPlace.FindCountryAsync(id, null, null);
@@ -94,7 +94,7 @@ namespace OlivesAdministration.Controllers
         }
 
         /// <summary>
-        /// Create a country.
+        ///     Create a country.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
@@ -143,7 +143,7 @@ namespace OlivesAdministration.Controllers
         }
 
         /// <summary>
-        /// Find a country by using id and edit its information.
+        ///     Find a country by using id and edit its information.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="info"></param>
@@ -192,7 +192,8 @@ namespace OlivesAdministration.Controllers
             #region Name validation
 
             // Check whether country name has been used before or not.
-            var target = await _repositoryPlace.FindCountryAsync(null, info.Name, StringComparison.InvariantCultureIgnoreCase);
+            var target =
+                await _repositoryPlace.FindCountryAsync(null, info.Name, StringComparison.InvariantCultureIgnoreCase);
 
             // Record has been created before.
             if (target != null && target.Count > 0)
@@ -231,7 +232,7 @@ namespace OlivesAdministration.Controllers
         }
 
         /// <summary>
-        /// Filter countries by using given conditions.
+        ///     Filter countries by using given conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -259,13 +260,13 @@ namespace OlivesAdministration.Controllers
         #region City
 
         /// <summary>
-        /// Find a city by using specific id.
+        ///     Find a city by using specific id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [Route("api/city")]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetCity([FromUri]int id)
+        public async Task<HttpResponseMessage> GetCity([FromUri] int id)
         {
             // Using id to find country.
             var cities = await _repositoryPlace.FindCityAsync(id);
@@ -308,7 +309,7 @@ namespace OlivesAdministration.Controllers
         }
 
         /// <summary>
-        /// Initialize a city which belongs to a country asynchronously.
+        ///     Initialize a city which belongs to a country asynchronously.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
@@ -389,7 +390,7 @@ namespace OlivesAdministration.Controllers
         }
 
         /// <summary>
-        /// Filter and retrieve list of city with given information.
+        ///     Filter and retrieve list of city with given information.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>

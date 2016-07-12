@@ -85,7 +85,7 @@
     <Compile Include="Enumerations\Filter\CityResultSort.cs" />
     <Compile Include="Enumerations\Filter\ExperimentFilterSort.cs" />
     <Compile Include="Enumerations\Filter\NoteResultSort.cs" />
-    <Compile Include="Enumerations\Filter\PrescriptedMedicineSort.cs" />
+    <Compile Include="Enumerations\Filter\RatingResultSort.cs" />
     <Compile Include="Enumerations\RoleRelationship.cs" />
     <Compile Include="Enumerations\TypeRelation.cs" />
     <Compile Include="Enumerations\StatusRelation.cs" />
@@ -114,6 +114,7 @@
     <Compile Include="Interfaces\IRepositoryBloodPressure.cs" />
     <Compile Include="Interfaces\IRepositoryMedical.cs" />
     <Compile Include="Interfaces\IRepositoryPlace.cs" />
+    <Compile Include="Interfaces\IRepositoryRating.cs" />
     <Compile Include="Interfaces\IRepositorySugarblood.cs" />
     <Compile Include="Interfaces\IRepositoryHeartbeat.cs" />
     <Compile Include="Interfaces\IRepositorySpecialty.cs" />
@@ -177,6 +178,9 @@
     <Compile Include="Models\Prescription.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Rating.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Relation.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
@@ -200,6 +204,7 @@
     <Compile Include="Repositories\RepositoryHeartbeat.cs" />
     <Compile Include="Repositories\RepositoryMedical.cs" />
     <Compile Include="Repositories\RepositoryPlace.cs" />
+    <Compile Include="Repositories\RepositoryRating.cs" />
     <Compile Include="Repositories\RepositorySugarblood.cs" />
     <Compile Include="Repositories\RepositoryBloodPressure.cs" />
     <Compile Include="Repositories\RepositoryAllergy.cs" />
@@ -233,9 +238,11 @@
     <Compile Include="ViewModels\Filter\FilterMedicalRecordViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPatientViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPrescriptionViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterRatingViewModel.cs" />
     <Compile Include="ViewModels\MedicineInfoViewModel.cs" />
     <Compile Include="ViewModels\RelativeViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseNoteDelete.cs" />
+    <Compile Include="ViewModels\Response\ResponseRatingFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseRelativeFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseRelatedDoctorFilter.cs" />
     <Compile Include="ViewModels\HeartbeatViewModel.cs" />

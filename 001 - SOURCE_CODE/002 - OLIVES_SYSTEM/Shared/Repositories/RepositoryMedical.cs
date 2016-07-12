@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
@@ -8,7 +7,6 @@ using Shared.Enumerations;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
@@ -17,7 +15,7 @@ namespace Shared.Repositories
     public class RepositoryMedical : IRepositoryMedical
     {
         /// <summary>
-        /// Initialize / edit a medical record asynchronously.
+        ///     Initialize / edit a medical record asynchronously.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
@@ -35,7 +33,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Find a medical record by using specific id.
+        ///     Find a medical record by using specific id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -52,7 +50,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Initialize / update medical image.
+        ///     Initialize / update medical image.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
@@ -69,7 +67,7 @@ namespace Shared.Repositories
         #region Medical images
 
         /// <summary>
-        /// Find medical images by using id and owner
+        ///     Find medical images by using id and owner
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -101,7 +99,7 @@ namespace Shared.Repositories
             response.Total = await medicalImages.CountAsync();
 
             // Calculate how many record should be skipped.
-            var skippedRecords = filter.Records * filter.Page;
+            var skippedRecords = filter.Records*filter.Page;
             medicalImages = medicalImages.Skip(skippedRecords)
                 .Take(filter.Records);
 
@@ -110,7 +108,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Delete a medical image asynchronously.
+        ///     Delete a medical image asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="owner"></param>
@@ -135,7 +133,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Filter medical records by using specific conditions.
+        ///     Filter medical records by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -160,15 +158,17 @@ namespace Shared.Repositories
             if (filter.MaxCreated != null) medicalRecords = medicalRecords.Where(x => x.Created <= filter.MaxCreated);
 
             // Last modified is specified.
-            if (filter.MinLastModified != null) medicalRecords = medicalRecords.Where(x => x.LastModified >= filter.MinLastModified);
-            if (filter.MaxLastModified != null) medicalRecords = medicalRecords.Where(x => x.LastModified <= filter.MaxLastModified);
+            if (filter.MinLastModified != null)
+                medicalRecords = medicalRecords.Where(x => x.LastModified >= filter.MinLastModified);
+            if (filter.MaxLastModified != null)
+                medicalRecords = medicalRecords.Where(x => x.LastModified <= filter.MaxLastModified);
 
             // Calculate the total result.
             var response = new ResponseMedicalRecordFilter();
             response.Total = await medicalRecords.CountAsync();
 
             // Calculate the number of records should be skipped.
-            var skippedRecords = filter.Page * filter.Records;
+            var skippedRecords = filter.Page*filter.Records;
             medicalRecords = medicalRecords.Skip(skippedRecords)
                 .Take(filter.Records);
 
@@ -182,7 +182,7 @@ namespace Shared.Repositories
         #region Prescription
 
         /// <summary>
-        /// Find the prescription asynchronously.
+        ///     Find the prescription asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="owner"></param>
@@ -206,7 +206,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Initialize or update an prescription.
+        ///     Initialize or update an prescription.
         /// </summary>
         /// <param name="prescription"></param>
         /// <returns></returns>
@@ -225,7 +225,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Delete prescription by using id.
+        ///     Delete prescription by using id.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="owner"></param>
@@ -248,7 +248,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Filter prescription asynchronously.
+        ///     Filter prescription asynchronously.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -304,7 +304,7 @@ namespace Shared.Repositories
             }
 
             // Calculate the number of records should be skipped.
-            var skippedRecord = filter.Page * filter.Records;
+            var skippedRecord = filter.Page*filter.Records;
 
             // Response initialization.
             var response = new ResponsePrescriptionFilterViewModel();
@@ -319,11 +319,11 @@ namespace Shared.Repositories
         }
 
         #endregion
-        
+
         #region Experiment
 
         /// <summary>
-        /// Find an experiment note asynchronously by using id.
+        ///     Find an experiment note asynchronously by using id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -338,7 +338,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Initialize experment note with information.
+        ///     Initialize experment note with information.
         /// </summary>
         /// <param name="note"></param>
         /// <returns></returns>
@@ -346,7 +346,7 @@ namespace Shared.Repositories
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-            
+
             // Begin a transaction.
             using (var transaction = context.Database.BeginTransaction())
             {
@@ -355,7 +355,7 @@ namespace Shared.Repositories
                     // Initialize a note.
                     context.ExperimentNotes.AddOrUpdate(note);
                     await context.SaveChangesAsync();
-                    
+
                     // Commit the transaction.
                     transaction.Commit();
 
@@ -369,9 +369,9 @@ namespace Shared.Repositories
                 }
             }
         }
-        
+
         /// <summary>
-        /// Delete experiment or its infos.
+        ///     Delete experiment or its infos.
         /// </summary>
         /// <param name="experimentId"></param>
         /// <returns></returns>

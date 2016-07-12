@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Models;
@@ -42,7 +41,7 @@ namespace Shared.Interfaces
         Task<Person> FindPersonAsync(int? id, string email, string password, byte? role, StatusAccount? status);
 
         /// <summary>
-        /// Find a person asynchronously by using activation code.
+        ///     Find a person asynchronously by using activation code.
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
@@ -63,11 +62,19 @@ namespace Shared.Interfaces
         Task<IList<StatusSummaryViewModel>> SummarizePersonRole(byte? role);
 
         /// <summary>
-        /// Initialize or update person information asynchronously.
+        ///     Initialize or update person information asynchronously.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
         Task<Person> InitializePersonAsync(Person info);
+
+        /// <summary>
+        ///     Edit a person by using id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        Task<Person> EditPersonProfileAsync(int id, Person info);
 
         #endregion
 
@@ -88,16 +95,17 @@ namespace Shared.Interfaces
         /// <returns></returns>
         Task<ResponseDoctorFilter> FilterDoctorAsync(FilterDoctorViewModel filter);
 
-        /// <summary>
-        /// Initialize a doctor to database.
-        /// </summary>
-        /// <param name="doctor"></param>
-        /// <returns></returns>
-        Task<Doctor> InitializeDoctorAsync(Doctor doctor);
-
         #endregion
 
         #region Patient
+
+        /// <summary>
+        ///     Find the patient by using id and perhaps status asynchronously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        Task<Patient> FindPatientAsync(int id, byte? status);
 
         /// <summary>
         ///     Find patient by using specific asynchrounously.
@@ -114,14 +122,7 @@ namespace Shared.Interfaces
         Task<ResponsePatientFilter> FilterPatientAsync(FilterPatientViewModel filter);
 
         /// <summary>
-        /// Initialize a patient to database.
-        /// </summary>
-        /// <param name="patient"></param>
-        /// <returns></returns>
-        Task<Patient> InitializePatientAsync(Patient patient);
-
-        /// <summary>
-        /// Activate patient's account by search person id.
+        ///     Activate patient's account by search person id.
         /// </summary>
         /// <param name="code"></param>
         Task<bool> ActivatePatientAccount(string code);
@@ -131,7 +132,7 @@ namespace Shared.Interfaces
         #region Relation
 
         /// <summary>
-        /// Find the relation between 2 people.
+        ///     Find the relation between 2 people.
         /// </summary>
         /// <param name="firstPerson"></param>
         /// <param name="secondPerson"></param>
@@ -140,7 +141,7 @@ namespace Shared.Interfaces
         Task<IList<Relation>> FindRelationshipAsync(int firstPerson, int secondPerson, byte? status);
 
         /// <summary>
-        /// Find a relation by using specific information.
+        ///     Find a relation by using specific information.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="person"></param>
@@ -150,14 +151,14 @@ namespace Shared.Interfaces
         Task<Relation> FindRelationshipAsync(int id, int? person, RoleRelationship? role, StatusRelation? status);
 
         /// <summary>
-        /// Initialize a relationship to database.
+        ///     Initialize a relationship to database.
         /// </summary>
         /// <param name="relation"></param>
         /// <returns></returns>
         Task<Relation> InitializeRelationAsync(Relation relation);
 
         /// <summary>
-        /// Find a relation whose id match with search condition and person is taking part in it.
+        ///     Find a relation whose id match with search condition and person is taking part in it.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="person"></param>
@@ -166,7 +167,7 @@ namespace Shared.Interfaces
         Task<IList<Relation>> FindRelationParticipation(int id, int person, byte? status);
 
         /// <summary>
-        /// Delete a relation asynchronously.
+        ///     Delete a relation asynchronously.
         /// </summary>
         /// <param name="id">Id of relationship</param>
         /// <param name="requester">Id of person who request to delete relationship.</param>
@@ -176,7 +177,7 @@ namespace Shared.Interfaces
         Task<int> DeleteRelationAsync(int id, int? requester, RoleRelationship? role, StatusRelation? status);
 
         /// <summary>
-        /// Filter relationship base on the role of requester.
+        ///     Filter relationship base on the role of requester.
         /// </summary>
         /// <param name="requester"></param>
         /// <param name="partner"></param>
@@ -189,7 +190,7 @@ namespace Shared.Interfaces
             TypeRelation? type, StatusRelation? status, int page, int records);
 
         /// <summary>
-        /// Filter related doctors.
+        ///     Filter related doctors.
         /// </summary>
         /// <param name="requester"></param>
         /// <param name="status"></param>
@@ -200,7 +201,7 @@ namespace Shared.Interfaces
             int records);
 
         /// <summary>
-        /// Filter related doctors.
+        ///     Filter related doctors.
         /// </summary>
         /// <param name="requester"></param>
         /// <param name="status"></param>
@@ -209,7 +210,7 @@ namespace Shared.Interfaces
         /// <returns></returns>
         Task<ResponseRelativeFilter> FilterRelativeAsync(int requester, StatusRelation? status, int page,
             int records);
-        
+
         #endregion
     }
 }

@@ -55,6 +55,7 @@ namespace Olives
             builder.RegisterType<MedicalController>().InstancePerRequest();
             builder.RegisterType<PlaceController>().InstancePerRequest();
             builder.RegisterType<RelationshipController>().InstancePerRequest();
+            builder.RegisterType<RateController>().InstancePerRequest();
 
             #endregion
 
@@ -146,6 +147,10 @@ namespace Olives
 
             builder.RegisterType<RepositoryMedical>()
                 .As<IRepositoryMedical>()
+                .SingleInstance();
+
+            builder.RegisterType<RepositoryRating>()
+                .As<IRepositoryRating>()
                 .SingleInstance();
 
             // Email service.

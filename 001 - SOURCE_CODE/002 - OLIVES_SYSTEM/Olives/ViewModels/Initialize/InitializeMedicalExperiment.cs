@@ -13,16 +13,19 @@ namespace Olives.ViewModels.Initialize
         /// </summary>
         public int MedicalRecord { get; set; }
 
-        [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsRequired")]
-        [StringLength(32, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueIsRequired")]
+        [StringLength(32, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Name { get; set; }
 
         /// <summary>
         ///     Experiment information.
         /// </summary>
-        [DictionaryLength(FieldLength.MaxDictionaryKeyLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainKey")]
-        [DictionaryKeyLength(FieldLength.MaxDictionaryKeyLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        [DictionaryLength(FieldLength.MaxDictionaryKeyLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainKey")]
+        [DictionaryKeyLength(FieldLength.MaxDictionaryKeyLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public Dictionary<string, double> Infos { get; set; }
-        
     }
 }

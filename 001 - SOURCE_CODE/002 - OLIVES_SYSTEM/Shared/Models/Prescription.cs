@@ -19,6 +19,7 @@ namespace Shared.Models
         public int MedicalRecordId { get; set; }
         public double From { get; set; }
         public double To { get; set; }
+        public string Name { get; set; }
         public string Medicine { get; set; }
         public string Note { get; set; }
         public double Created { get; set; }

@@ -14,11 +14,19 @@ namespace Shared.Models
     
     public partial class Patient
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Patient()
+        {
+            this.Ratings = new HashSet<Rating>();
+        }
+    
         public int Id { get; set; }
         public int Money { get; set; }
         public Nullable<double> Weight { get; set; }
         public Nullable<double> Height { get; set; }
     
         public virtual Person Person { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Rating> Ratings { get; set; }
     }
 }

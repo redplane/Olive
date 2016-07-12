@@ -9,14 +9,14 @@ namespace Shared.Interfaces
     public interface IRepositorySugarblood
     {
         /// <summary>
-        /// Initialize and save heart
+        ///     Initialize and save heart
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
         Task<SugarBlood> InitializeSugarbloodNoteAsync(SugarBlood info);
 
         /// <summary>
-        /// Find heartbeat by using heartbeat note id.
+        ///     Find heartbeat by using heartbeat note id.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="owner"></param>
@@ -24,14 +24,14 @@ namespace Shared.Interfaces
         Task<IList<SugarBlood>> FindSugarbloodNoteAsync(int id, int? owner);
 
         /// <summary>
-        /// Find heartbeat by using conditions.
+        ///     Find heartbeat by using conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
         Task<ResponseSugarbloodFilter> FilterSugarbloodNoteAsync(FilterSugarbloodViewModel filter);
 
         /// <summary>
-        /// Delete a heartbeat note asynchronously.
+        ///     Delete a heartbeat note asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="owner"></param>

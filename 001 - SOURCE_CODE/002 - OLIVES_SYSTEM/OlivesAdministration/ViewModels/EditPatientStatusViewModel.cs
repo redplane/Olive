@@ -6,7 +6,7 @@ namespace OlivesAdministration.ViewModels
 {
     public class EditPatientStatusViewModel : FindPatientViewModel
     {
-        [InAccountStatus(new[] { Shared.Enumerations.StatusAccount.Inactive, Shared.Enumerations.StatusAccount.Active},
+        [InAccountStatus(new[] {StatusAccount.Inactive, StatusAccount.Active},
             ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidAccountStatus")]
         public byte Status { get; set; }

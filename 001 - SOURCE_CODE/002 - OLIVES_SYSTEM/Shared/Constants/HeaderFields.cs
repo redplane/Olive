@@ -13,7 +13,7 @@
         public const string RequestAccountPassword = "Password";
 
         /// <summary>
-        /// Key of ActionArgument which information of requester will be stored inside.
+        ///     Key of ActionArgument which information of requester will be stored inside.
         /// </summary>
         public const string RequestAccountStorage = "Account";
     }

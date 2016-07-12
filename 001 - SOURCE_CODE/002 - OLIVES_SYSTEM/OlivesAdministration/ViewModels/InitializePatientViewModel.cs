@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Shared.Constants;
 using Shared.Resources;
-using Shared.ViewModels;
 using Shared.ViewModels.Initialize;
 
 namespace OlivesAdministration.ViewModels

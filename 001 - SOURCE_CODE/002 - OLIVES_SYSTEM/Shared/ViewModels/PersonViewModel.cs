@@ -5,67 +5,67 @@ namespace Shared.ViewModels
     public class PersonViewModel
     {
         /// <summary>
-        /// Id of person.
+        ///     Id of person.
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// Person first name.
+        ///     Person first name.
         /// </summary>
         public string FirstName { get; set; }
 
         /// <summary>
-        /// Person last name.
+        ///     Person last name.
         /// </summary>
         public string LastName { get; set; }
 
         /// <summary>
-        /// Person email.
+        ///     Person email.
         /// </summary>
         public string Email { get; set; }
 
         /// <summary>
-        /// Personal password.
+        ///     Personal password.
         /// </summary>
         public string Password { get; set; }
 
         /// <summary>
-        /// Personal birthday.
+        ///     Personal birthday.
         /// </summary>
         public double? Birthday { get; set; }
 
         /// <summary>
-        /// Personal role.
+        ///     Personal role.
         /// </summary>
         public byte Role { get; set; }
 
         /// <summary>
-        /// Created date.
+        ///     Created date.
         /// </summary>
         public double Created { get; set; }
 
         /// <summary>
-        /// The last time profile was modified.
+        ///     The last time profile was modified.
         /// </summary>
         public double? LastModified { get; set; }
 
         /// <summary>
-        /// Gender of person.
+        ///     Gender of person.
         /// </summary>
         public Gender Gender { get; set; }
 
         /// <summary>
-        /// Status of account.
+        ///     Status of account.
         /// </summary>
         public StatusAccount Status { get; set; }
 
         /// <summary>
-        /// Address of person.
+        ///     Address of person.
         /// </summary>
         public string Address { get; set; }
 
         /// <summary>
-        /// Personal avatar.
+        ///     Personal avatar.
         /// </summary>
         public string Photo { get; set; }
 

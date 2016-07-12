@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
@@ -17,7 +16,7 @@ namespace Shared.Repositories
     public class RepositoryBloodPressure : IRepositoryBloodPressure
     {
         /// <summary>
-        /// Initialize a blood pressure note to database.
+        ///     Initialize a blood pressure note to database.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
@@ -34,9 +33,9 @@ namespace Shared.Repositories
 
             return info;
         }
-        
+
         /// <summary>
-        /// Find heartbeat note by using id and owner id.
+        ///     Find heartbeat note by using id and owner id.
         /// </summary>
         /// <param name="id">Allergy Id</param>
         /// <param name="owner">Allergy owner</param>
@@ -57,7 +56,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Delete a blood pressure note asynchrounously.
+        ///     Delete a blood pressure note asynchrounously.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="owner"></param>
@@ -76,7 +75,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Find heartbeat by using conditions.
+        ///     Find heartbeat by using conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -135,7 +134,7 @@ namespace Shared.Repositories
             response.Total = await results.CountAsync();
 
             // Calculate what records should be shown up.
-            var skippedRecords = filter.Page * filter.Records;
+            var skippedRecords = filter.Page*filter.Records;
 
             // Sort the result.
             switch (filter.Sort)
@@ -167,10 +166,10 @@ namespace Shared.Repositories
                     results = results.OrderByDescending(x => x.Time);
                     break;
             }
-            
+
             response.BloodPressures = await results.Skip(skippedRecords)
                 .Take(filter.Records)
-                .Select(x => new BloodPressureViewModel()
+                .Select(x => new BloodPressureViewModel
                 {
                     Id = x.Id,
                     Systolic = x.Systolic,
@@ -185,7 +184,5 @@ namespace Shared.Repositories
             // Return filtered result.
             return response;
         }
-        
-        
     }
 }

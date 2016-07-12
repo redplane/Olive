@@ -9,16 +9,19 @@ namespace OlivesAdministration.ViewModels.Initialize
     public class InitializeCityViewModel
     {
         /// <summary>
-        /// City name.
+        ///     City name.
         /// </summary>
-        [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsRequired")]
-        [StringLength(FieldLength.CityNameMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueIsRequired")]
+        [StringLength(FieldLength.CityNameMaxLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Name { get; set; }
 
         /// <summary>
-        /// Id of country where this city belongs to.
+        ///     Id of country where this city belongs to.
         /// </summary>
-        [NumericCompare(1, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
-        public int Country { get; set; } 
+        [NumericCompare(1, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+        public int Country { get; set; }
     }
 }

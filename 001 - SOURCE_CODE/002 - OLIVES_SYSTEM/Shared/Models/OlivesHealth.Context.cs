@@ -42,6 +42,7 @@ namespace Shared.Models
         public virtual DbSet<Patient> Patients { get; set; }
         public virtual DbSet<Person> People { get; set; }
         public virtual DbSet<Prescription> Prescriptions { get; set; }
+        public virtual DbSet<Rating> Ratings { get; set; }
         public virtual DbSet<Relation> Relations { get; set; }
         public virtual DbSet<Specialty> Specialties { get; set; }
         public virtual DbSet<SugarBlood> SugarBloods { get; set; }
