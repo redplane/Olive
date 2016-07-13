@@ -35,15 +35,16 @@ namespace DataInitializer
             InitializeBloodPressureNote("patient26@gmail.com", 90);
             InitializeAllergyNote("patient26@gmail.com", 90);
 
-            var sourcePatient = _repositoryAccount.FindPerson(null, "patient26@gmail.com", null, (byte) Role.Patient);
+            var sourcePatient = _repositoryAccount.FindPerson(null, "patient26@gmail.com", null, (byte)Role.Patient);
+            var sourceDoctor = _repositoryAccount.FindPerson(null, "doctor26@gmail.com", null, (byte)Role.Doctor);
             InitializeMedicalRecord(sourcePatient, 2);
 
             #region Relationship create
 
             for (var i = 26; i < 50; i++)
             {
-                var patient = _repositoryAccount.FindPerson(null, $"patient{i}@gmail.com", null, (byte) Role.Patient);
-                var doctor = _repositoryAccount.FindPerson(null, $"doctor{i}@gmail.com", null, (byte) Role.Doctor);
+                var patient = _repositoryAccount.FindPerson(null, $"patient{i}@gmail.com", null, (byte)Role.Patient);
+                var doctor = _repositoryAccount.FindPerson(null, $"doctor{i}@gmail.com", null, (byte)Role.Doctor);
 
                 if (patient != null)
                     Console.WriteLine($"Found {patient.Email} for creating relationship");
@@ -75,13 +76,19 @@ namespace DataInitializer
                 relationship.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
 
                 if (i > 40)
-                    relationship.Status = (byte) StatusRelation.Pending;
+                    relationship.Status = (byte)StatusRelation.Pending;
                 else
-                    relationship.Status = (byte) StatusRelation.Active;
+                    relationship.Status = (byte)StatusRelation.Active;
 
                 relationship = _repositoryAccount.InitializeRelationAsync(relationship).Result;
                 Console.WriteLine($"Created relationship. Id : {relationship.Id}");
             }
+
+            #endregion
+
+            #region Appointment create
+
+            InitializeAppointment(sourcePatient, sourceDoctor, 60);
 
             #endregion
         }
@@ -100,8 +107,7 @@ namespace DataInitializer
                 var country = new Country();
                 country.Name = $"Country";
                 context.Countries.Add(country);
-                context.SaveChanges();
-
+                
                 for (var i = 0; i < max; i++)
                 {
                     var city = new City();
@@ -180,17 +186,17 @@ namespace DataInitializer
                     person.LastName = $"LastName[{i}]";
                     person.FullName = person.FirstName + " " + person.LastName;
                     person.Gender = 0;
-                    person.Role = (byte) Role.Doctor;
+                    person.Role = (byte)Role.Doctor;
                     person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
                     person.Address = "New York, NY, USA";
                     person.Birthday = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
                     person.Photo = $"{random.Next(1, 4)}";
                     if (i > 25)
-                        person.Status = (byte) StatusAccount.Active;
+                        person.Status = (byte)StatusAccount.Active;
                     else if (i == 25)
-                        person.Status = (byte) StatusAccount.Pending;
+                        person.Status = (byte)StatusAccount.Pending;
                     else
-                        person.Status = (byte) StatusAccount.Inactive;
+                        person.Status = (byte)StatusAccount.Inactive;
 
                     var doctor = new Doctor();
                     doctor.SpecialtyId = 1;
@@ -243,15 +249,15 @@ namespace DataInitializer
                 person.FullName = person.FirstName + " " + person.LastName;
                 person.Photo = $"{random.Next(1, 4)}";
                 person.Gender = 0;
-                person.Role = (byte) Role.Patient;
+                person.Role = (byte)Role.Patient;
                 person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
 
                 if (i > 25)
-                    person.Status = (byte) StatusAccount.Active;
+                    person.Status = (byte)StatusAccount.Active;
                 else if (i == 25)
-                    person.Status = (byte) StatusAccount.Pending;
+                    person.Status = (byte)StatusAccount.Pending;
                 else
-                    person.Status = (byte) StatusAccount.Inactive;
+                    person.Status = (byte)StatusAccount.Inactive;
 
                 // Specific information.
                 var patient = new Patient();
@@ -284,15 +290,15 @@ namespace DataInitializer
                 person.LastName = $"LastName[{i}]";
                 person.FullName = person.FirstName + " " + person.LastName;
                 person.Gender = 0;
-                person.Role = (byte) Role.Admin;
+                person.Role = (byte)Role.Admin;
                 person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
 
                 if (i > 25)
-                    person.Status = (byte) StatusAccount.Active;
+                    person.Status = (byte)StatusAccount.Active;
                 else if (i == 25)
-                    person.Status = (byte) StatusAccount.Pending;
+                    person.Status = (byte)StatusAccount.Pending;
                 else
-                    person.Status = (byte) StatusAccount.Inactive;
+                    person.Status = (byte)StatusAccount.Inactive;
 
                 context.People.Add(person);
             }
@@ -367,11 +373,69 @@ namespace DataInitializer
             }
         }
 
+        private static void InitializeAppointment(Person patient, Person doctor, int max = 60)
+        {
+            var context = new OlivesHealthEntities();
+            var half = max / 2;
+            var quarter = max / 4;
+            var secondQuater = quarter * 2;
+            var thirdQuater = quarter * 3;
+
+            var currentEpochTime = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            for (var i = 0; i < max; i++)
+            {
+                var dayAdd = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now.AddDays(1));
+
+                var appointment = new Appointment();
+
+                if (i < half)
+                {
+                    appointment.Maker = patient.Id;
+                    appointment.MakerFirstName = patient.FirstName;
+                    appointment.MakerLastName = patient.LastName;
+
+                    appointment.Dater = doctor.Id;
+                    appointment.DaterFirstName = doctor.FirstName;
+                    appointment.DaterLastName = doctor.LastName;
+                }
+                else
+                {
+                    appointment.Dater = patient.Id;
+                    appointment.DaterFirstName = patient.FirstName;
+                    appointment.DaterLastName = patient.LastName;
+
+                    appointment.Maker = doctor.Id;
+                    appointment.MakerFirstName = doctor.FirstName;
+                    appointment.MakerLastName = doctor.LastName;
+                }
+
+                appointment.From = currentEpochTime;
+                appointment.To = 100;
+                appointment.Note = $"Note[{i}]";
+                appointment.Created = currentEpochTime;
+                appointment.LastModified = dayAdd;
+
+                if (i <= quarter)
+                    appointment.Status = (byte)StatusAppointment.Cancelled;
+                else if (quarter < i && i <= secondQuater)
+                    appointment.Status = (byte)StatusAppointment.Pending;
+                else if (secondQuater < i && i <= thirdQuater)
+                    appointment.Status = (byte)StatusAppointment.Active;
+                else
+                    appointment.Status = (byte)StatusAppointment.Done;
+
+                context.Appointments.Add(appointment);
+            }
+
+            context.SaveChanges();
+
+        }
+
         private static void InitializeMedicalImage(string account, int records)
         {
             var context = new OlivesHealthEntities();
             var repositoryAccount = new RepositoryAccount();
-            var person = repositoryAccount.FindPerson(null, account, null, (byte) Role.Patient);
+            var person = repositoryAccount.FindPerson(null, account, null, (byte)Role.Patient);
             if (person == null)
                 throw new Exception($"Cannot find {account}");
 
@@ -404,14 +468,14 @@ namespace DataInitializer
         {
             var context = new OlivesHealthEntities();
             var repositoryAccount = new RepositoryAccount();
-            var person = repositoryAccount.FindPerson(null, account, null, (byte) Role.Patient);
+            var person = repositoryAccount.FindPerson(null, account, null, (byte)Role.Patient);
             if (person == null)
                 throw new Exception($"Cannot find {account}");
 
             Console.WriteLine("Found {0}", person.Email);
             var random = new Random();
-            var iMinHeartRate = (int) Values.MinHeartRate;
-            var iMaxHeartRate = (int) Values.MaxHeartRate;
+            var iMinHeartRate = (int)Values.MinHeartRate;
+            var iMaxHeartRate = (int)Values.MaxHeartRate;
 
             var currentTime = DateTime.Now;
             for (var i = 0; i < records; i++)
@@ -439,14 +503,14 @@ namespace DataInitializer
         {
             var context = new OlivesHealthEntities();
             var repositoryAccount = new RepositoryAccount();
-            var person = repositoryAccount.FindPerson(null, account, null, (byte) Role.Patient);
+            var person = repositoryAccount.FindPerson(null, account, null, (byte)Role.Patient);
             if (person == null)
                 throw new Exception($"Cannot find {account}");
 
             Console.WriteLine("Found {0}", person.Email);
             var random = new Random();
-            var iMinSugarMol = (int) Values.MinSugarBloodMmol;
-            var iMaxSugarMol = (int) Values.MaxSugarBloodMmol;
+            var iMinSugarMol = (int)Values.MinSugarBloodMmol;
+            var iMaxSugarMol = (int)Values.MaxSugarBloodMmol;
 
             var currentTime = DateTime.Now;
             for (var i = 0; i < records; i++)
@@ -474,7 +538,7 @@ namespace DataInitializer
         {
             var context = new OlivesHealthEntities();
             var repositoryAccount = new RepositoryAccount();
-            var person = repositoryAccount.FindPerson(null, account, null, (byte) Role.Patient);
+            var person = repositoryAccount.FindPerson(null, account, null, (byte)Role.Patient);
             if (person == null)
                 throw new Exception($"Cannot find {account}");
 
@@ -508,7 +572,7 @@ namespace DataInitializer
         {
             var context = new OlivesHealthEntities();
             var repositoryAccount = new RepositoryAccount();
-            var person = repositoryAccount.FindPerson(null, account, null, (byte) Role.Patient);
+            var person = repositoryAccount.FindPerson(null, account, null, (byte)Role.Patient);
             if (person == null)
                 throw new Exception($"Cannot find {account}");
 

@@ -20,5 +20,16 @@ namespace Olives.ViewModels.Edit
         [StringLength(FieldLength.MaxAddressLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Address { get; set; }
+
+        /// <summary>
+        ///     Password of this account.
+        /// </summary>
+        [MinLength(Values.MinPasswordLength, ErrorMessageResourceType = typeof(Language),
+            ErrorMessageResourceName = "MinLengthPassword")]
+        [MaxLength(Values.MaxPasswordLength, ErrorMessageResourceType = typeof(Language),
+            ErrorMessageResourceName = "MaxLengthPassword")]
+        [RegexMatch(Regexes.Password, ErrorMessageResourceType = typeof(Language),
+            ErrorMessageResourceName = "RegexPassword")]
+        public string Password { get; set; }
     }
 }

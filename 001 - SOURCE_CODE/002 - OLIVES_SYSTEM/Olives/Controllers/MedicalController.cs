@@ -1014,21 +1014,38 @@ namespace Olives.Controllers
 
             #endregion
 
-            #region Medical record owner validation
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            
+            #region Owner validation
 
-            // Find the prescription by using id.
-            var medicalRecord = await _repositoryMedical.FindMedicalRecordAsync(filter.MedicalRecord);
-            if (medicalRecord == null)
+            Person owner;
+            if (filter.MedicalRecord != null)
             {
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                // Find the prescription by using id.
+                var medicalRecord = await _repositoryMedical.FindMedicalRecordAsync(filter.MedicalRecord.Value);
+                if (medicalRecord == null)
                 {
-                    Error = $"{Language.WarnMedicalRecordNotFound}"
-                });
-            }
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Error = $"{Language.WarnMedicalRecordNotFound}"
+                    });
+                }
 
-            // Find the owner of medical record.
-            var owner =
-                await _repositoryAccount.FindPersonAsync(medicalRecord.Owner, null, null, null, StatusAccount.Active);
+
+                // Find the owner of medical record.
+                owner =
+                    await
+                        _repositoryAccount.FindPersonAsync(medicalRecord.Owner, null, null, null, StatusAccount.Active);
+            }
+            else
+            {
+                if (filter.Owner != null)
+                    owner = await _repositoryAccount.FindPersonAsync(filter.Owner, null, null, null, StatusAccount.Active);
+                else
+                    owner = requester;
+            }
+            
             if (owner == null)
             {
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
@@ -1037,8 +1054,6 @@ namespace Olives.Controllers
                 });
             }
 
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Requester is different from the medical record owner.
             if (requester.Id != owner.Id)

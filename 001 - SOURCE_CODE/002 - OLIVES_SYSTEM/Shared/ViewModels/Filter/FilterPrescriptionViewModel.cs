@@ -13,7 +13,12 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         ///     Medical record which contains prescription.
         /// </summary>
-        public int MedicalRecord { get; set; }
+        public int? MedicalRecord { get; set; }
+
+        /// <summary>
+        /// Id of prescription owner.
+        /// </summary>
+        public int? Owner { get; set; }
 
         [NumericPropertyCompare("MaxFrom", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]

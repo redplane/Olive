@@ -260,9 +260,14 @@ namespace Shared.Repositories
 
             // By default, take all prescriptions.
             IQueryable<Prescription> prescriptions = context.Prescriptions;
+            
+            // Medical record is defined.
+            if (filter.MedicalRecord != null)
+                prescriptions = prescriptions.Where(x => x.MedicalRecordId == filter.MedicalRecord);
 
-            // Firstly, only take prescription of a target medical record.
-            prescriptions = prescriptions.Where(x => x.MedicalRecordId == filter.MedicalRecord);
+            // Owner is defined.
+            if (filter.Owner != null)
+                prescriptions = prescriptions.Where(x => x.Owner == filter.Owner.Value);
 
             // From is defined.
             if (filter.MinFrom != null) prescriptions = prescriptions.Where(x => x.From >= filter.MinFrom);

@@ -39,6 +39,18 @@ namespace Olives.ViewModels.Edit
         public Gender? Gender { get; set; }
 
         /// <summary>
+        ///     Password of this account.
+        /// </summary>
+        [MinLength(Values.MinPasswordLength, ErrorMessageResourceType = typeof(Language),
+            ErrorMessageResourceName = "MinLengthPassword")]
+        [MaxLength(Values.MaxPasswordLength, ErrorMessageResourceType = typeof(Language),
+            ErrorMessageResourceName = "MaxLengthPassword")]
+        [RegexMatch(Regexes.Password, ErrorMessageResourceType = typeof(Language),
+            ErrorMessageResourceName = "RegexPassword")]
+        public string Password { get; set; }
+
+
+        /// <summary>
         ///     Phone number which is used for contacting.
         /// </summary>
         [RegexMatch(Regexes.Phone, ErrorMessageResourceType = typeof (Language),

@@ -97,6 +97,10 @@ namespace Olives.Controllers
             if (editor.Birthday != null)
                 requester.Birthday = editor.Birthday;
 
+            // Password is defined.
+            if (!string.IsNullOrWhiteSpace(editor.Password))
+                requester.Password = editor.Password;
+
             // Gender is defined.
             if (editor.Gender != null)
                 requester.Gender = (byte) editor.Gender;
@@ -108,7 +112,7 @@ namespace Olives.Controllers
             // Address is defined.
             if (!string.IsNullOrWhiteSpace(editor.Address))
                 requester.Address = editor.Address;
-
+            
             // Update person full name.
             requester.FullName = requester.FirstName + " " + requester.LastName;
 
@@ -287,7 +291,7 @@ namespace Olives.Controllers
 
         [Route("api/doctor/profile")]
         [HttpPut]
-        [OlivesAuthorize(new[] {Role.Patient})]
+        [OlivesAuthorize(new[] {Role.Doctor})]
         public async Task<HttpResponseMessage> EditDoctorProfile([FromBody] EditDoctorProfileViewModel editor)
         {
             // Filter hasn't been initialized. Initialize it and do validation.
@@ -315,6 +319,10 @@ namespace Olives.Controllers
             // Phone is defined.
             if (!string.IsNullOrWhiteSpace(editor.Phone))
                 requester.Phone = editor.Phone;
+
+            // Password is defined.
+            if (!string.IsNullOrWhiteSpace(editor.Password))
+                requester.Password = editor.Password;
 
             // Save account.
             requester = await _repositoryAccount.InitializePersonAsync(requester);
@@ -618,6 +626,11 @@ namespace Olives.Controllers
             }
         }
 
+        /// <summary>
+        /// This function is for posting image as account avatar.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
         [Route("api/account/avatar")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
@@ -736,7 +749,7 @@ namespace Olives.Controllers
                 }
             }
         }
-
+        
         #endregion
 
         #region Login
