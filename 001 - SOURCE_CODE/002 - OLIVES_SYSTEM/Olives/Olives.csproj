@@ -155,6 +155,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Site.css" />
+    <Content Include="Emails\FindPassword.html" />
     <Content Include="Emails\Activation.html" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -199,7 +200,7 @@
     <Compile Include="Controllers\RateController.cs" />
     <Compile Include="Controllers\RelationshipController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\AccountVerifyController.cs" />
+    <Compile Include="Controllers\ServiceController.cs" />
     <Compile Include="Controllers\MedicalController.cs" />
     <Compile Include="Controllers\AddictionController.cs" />
     <Compile Include="Controllers\BloodPressureController.cs" />
@@ -211,10 +212,10 @@
     <Compile Include="Controllers\ParentController.cs" />
     <Compile Include="Controllers\SpecialtyController.cs" />
     <Compile Include="Interfaces\IEmailService.cs" />
-    <Compile Include="Models\ApplicationSetting.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ApplicationSetting.cs" />
     <Compile Include="Models\EmailTemplate.cs" />
     <Compile Include="Models\EmailTemplateCore.cs" />
     <Compile Include="Models\ServerPath.cs" />
@@ -229,6 +230,9 @@
     <Compile Include="ViewModels\Edit\EditPrescriptionViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditAllergyViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditAppointmentViewModel.cs" />
+    <Compile Include="ViewModels\Edit\ForgotPasswordViewModel.cs" />
+    <Compile Include="ViewModels\Edit\InitializeNewPasswordViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterAnotherPatientViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterRelatedPeopleViewModel.cs" />
     <Compile Include="ViewModels\FindPatientViewModel.cs" />
     <Compile Include="ViewModels\EditPatientStatusViewModel.cs" />

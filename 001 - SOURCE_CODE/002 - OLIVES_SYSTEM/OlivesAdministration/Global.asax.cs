@@ -1,4 +1,7 @@
-﻿using System.Web;
+﻿using System;
+using System.Configuration;
+using System.IO;
+using System.Web;
 using System.Web.Http;
 using System.Web.Routing;
 using Autofac;
@@ -7,8 +10,10 @@ using log4net.Config;
 using Newtonsoft.Json;
 using OlivesAdministration.Attributes;
 using OlivesAdministration.Controllers;
+using OlivesAdministration.Models;
 using OlivesAdministration.Module;
 using Shared.Interfaces;
+using Shared.Models;
 using Shared.Repositories;
 
 namespace OlivesAdministration
@@ -22,6 +27,41 @@ namespace OlivesAdministration
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
+            #endregion
+
+
+            #region General application configuration
+
+            // Initialize an instance of application setting.
+            var applicationSetting = new ApplicationSetting();
+
+            // Retrieve file name which stores database configuration.
+            var applicationConfig = ConfigurationManager.AppSettings["ApplicationConfigFile"];
+
+            // Find the file on physical path.
+            var applicationConfigFile = Server.MapPath($"~/{applicationConfig}.json");
+            // TODO: Implement IoC for this instance
+            // Invalid application configuration file.
+            if (!File.Exists(applicationConfigFile))
+                throw new NotImplementedException($"{applicationConfigFile} is required to make server run properly.");
+
+            var info = File.ReadAllText(applicationConfigFile);
+            applicationSetting = JsonConvert.DeserializeObject<ApplicationSetting>(info);
+
+            // Invalid avatar storage folder.
+            var fullPublicStoragePath = Server.MapPath(applicationSetting.AvatarStorage.Relative);
+            if (!Directory.Exists(fullPublicStoragePath))
+                Directory.CreateDirectory(fullPublicStoragePath);
+            // Update application public storage.
+            applicationSetting.AvatarStorage.Absolute = fullPublicStoragePath;
+
+            // Invalid private storage folder.
+            var fullPrivateStoragePath = Server.MapPath(applicationSetting.PrivateStorage.Relative);
+            if (!Directory.Exists(fullPrivateStoragePath))
+                Directory.CreateDirectory(fullPrivateStoragePath);
+            // Update application private storage folder.
+            applicationSetting.PrivateStorage.Absolute = fullPrivateStoragePath;
+            
             #endregion
 
             #region IoC Initialization

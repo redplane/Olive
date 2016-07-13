@@ -1,15 +1,9 @@
 ﻿using Newtonsoft.Json;
 
-namespace Olives.Models
+namespace OlivesAdministration.Models
 {
     public class ApplicationSetting
     {
-        /// <summary>
-        ///     Simple mail transfer protocol setting properties.
-        /// </summary>
-        [JsonProperty("smtpSetting")]
-        public SmtpSetting SmtpSetting { get; set; }
-
         /// <summary>
         ///     Folder where avatar files should be stored.
         /// </summary>

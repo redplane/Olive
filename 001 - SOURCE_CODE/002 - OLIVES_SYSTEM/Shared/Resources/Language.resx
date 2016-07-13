@@ -437,4 +437,15 @@
     <value>W027</value>
     <comment>Warn front-end the rated is not found.</comment>
   </data>
+  <data name="OliveForgotPasswordEmailTitle" xml:space="preserve">
+    <value>Olive find password</value>
+  </data>
+  <data name="WarnAccountInvalid" xml:space="preserve">
+    <value>W028</value>
+    <comment>Warn front-end the account is invalid.</comment>
+  </data>
+  <data name="WarnTokenExpired" xml:space="preserve">
+    <value>W028</value>
+    <comment>Warn front-end the token is expired.</comment>
+  </data>
 </root>

@@ -194,7 +194,7 @@ namespace Shared.Repositories
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        public async Task<bool> ActivatePatientAccount(string code)
+        public async Task<bool> InitializePatientActivation(string code)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -204,7 +204,7 @@ namespace Shared.Repositories
                 try
                 {
                     var results = from p in context.People
-                        join c in context.ActivationCodes.Where(x => x.Code.Equals(code)) on p.Id equals c.Owner
+                        join c in context.AccountCodes.Where(x => x.Code.Equals(code) && x.Type == (byte)TypeAccountCode.Activation) on p.Id equals c.Owner
                         select new
                         {
                             Person = p,
@@ -232,7 +232,7 @@ namespace Shared.Repositories
                     var activationCode = result.Code;
                     person.Status = (byte) StatusAccount.Active;
                     context.People.AddOrUpdate(person);
-                    context.ActivationCodes.Remove(activationCode);
+                    context.AccountCodes.Remove(activationCode);
                     await context.SaveChangesAsync();
                     // Commit the transaction.
                     transaction.Commit();
@@ -340,59 +340,20 @@ namespace Shared.Repositories
             var results = from p in people
                 join d in doctors on p.Id equals d.Id
                 join s in specialties on d.SpecialtyId equals s.Id
-                select new
-                {
-                    Person = p,
-                    Doctor = d,
-                    TrainedSpecialty = s
-                };
+                select d;
 
             var responseFilter = new ResponseDoctorFilter();
             responseFilter.Total = await results.CountAsync();
 
             // How many records should be skipped.
             var skippedRecords = filter.Page*filter.Records;
-            var filteredResults = results
+
+            responseFilter.Doctors = await results
                 .OrderBy(x => x.Person.Status)
                 .Skip(skippedRecords)
                 .Take(filter.Records)
-                .Select(x => new DoctorViewModel
-                {
-                    Address = x.Person.Address,
-                    Birthday = x.Person.Birthday,
-                    Created = x.Person.Created,
-                    Email = x.Person.Email,
-                    FirstName = x.Person.FirstName,
-                    Gender = (Gender) x.Person.Gender,
-                    Id = x.Person.Id,
-                    LastModified = x.Person.LastModified,
-                    LastName = x.Person.LastName,
-                    Money = x.Doctor.Money,
-                    Rank = x.Doctor.Rank ?? 0,
-                    Phone = x.Person.Phone,
-                    Role = (byte) Role.Doctor,
-                    Password = x.Person.Password,
-                    Status = (StatusAccount) x.Person.Status,
-                    Photo = x.Person.Photo,
-                    Voters = x.Doctor.Voters,
-                    Specialty = new SpecialtyViewModel
-                    {
-                        Id = x.TrainedSpecialty.Id,
-                        Name = x.TrainedSpecialty.Name
-                    },
-                    City = new CityViewModel
-                    {
-                        Id = x.Doctor.City.Id,
-                        Name = x.Doctor.City.Name,
-                        Country = new CountryViewModel
-                        {
-                            Id = x.Doctor.City.CountryId,
-                            Name = x.Doctor.City.CountryName
-                        }
-                    }
-                });
-
-            responseFilter.Users = await filteredResults.ToListAsync();
+                .ToListAsync();
+                
             return responseFilter;
         }
 
@@ -541,7 +502,7 @@ namespace Shared.Repositories
 
             // Find the person whose activation code matches the condition.
             var results = from p in context.People
-                join a in context.ActivationCodes.Where(x => x.Code.Equals(code)) on p.Id equals a.Owner
+                join a in context.AccountCodes.Where(x => x.Code.Equals(code)) on p.Id equals a.Owner
                 select p;
 
             // Count the number of matched records.

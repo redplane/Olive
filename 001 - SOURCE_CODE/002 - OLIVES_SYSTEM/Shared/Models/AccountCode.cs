@@ -12,10 +12,11 @@ namespace Shared.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class ActivationCode
+    public partial class AccountCode
     {
         public int Owner { get; set; }
         public string Code { get; set; }
+        public byte Type { get; set; }
         public System.DateTime Expired { get; set; }
     
         public virtual Person Person { get; set; }

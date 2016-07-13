@@ -87,6 +87,7 @@
     <Compile Include="Enumerations\Filter\NoteResultSort.cs" />
     <Compile Include="Enumerations\Filter\RatingResultSort.cs" />
     <Compile Include="Enumerations\RoleRelationship.cs" />
+    <Compile Include="Enumerations\TypeAccountCode.cs" />
     <Compile Include="Enumerations\TypeRelation.cs" />
     <Compile Include="Enumerations\StatusRelation.cs" />
     <Compile Include="Enumerations\SortDirection.cs" />
@@ -118,7 +119,7 @@
     <Compile Include="Interfaces\IRepositorySugarblood.cs" />
     <Compile Include="Interfaces\IRepositoryHeartbeat.cs" />
     <Compile Include="Interfaces\IRepositorySpecialty.cs" />
-    <Compile Include="Models\ActivationCode.cs">
+    <Compile Include="Models\AccountCode.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Addiction.cs">
@@ -185,6 +186,7 @@
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ResponseErrror.cs" />
+    <Compile Include="Models\ServerPath.cs" />
     <Compile Include="Models\Specialty.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
@@ -199,7 +201,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\RepositoryAccount.cs" />
-    <Compile Include="Repositories\RepositoryActivationCode.cs" />
+    <Compile Include="Repositories\RepositoryCode.cs" />
     <Compile Include="Repositories\RepositoryAddiction.cs" />
     <Compile Include="Repositories\RepositoryHeartbeat.cs" />
     <Compile Include="Repositories\RepositoryMedical.cs" />

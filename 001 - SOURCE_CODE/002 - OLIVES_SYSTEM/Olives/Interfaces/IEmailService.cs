@@ -31,8 +31,9 @@ namespace Olives.Interfaces
         /// <param name="lastName"></param>
         /// <param name="code"></param>
         /// <param name="url"></param>
-        Task<bool> SendActivationCode(string to, string subject, string firstName, string lastName,
-            ActivationCode code, string url);
+        /// <param name="type"></param>
+        Task<bool> InitializeTokenEmail(string to, string subject, string firstName, string lastName,
+            AccountCode code, string url, string type);
 
         /// <summary>
         ///     Load email template from specific files.

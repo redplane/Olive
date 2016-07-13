@@ -154,19 +154,20 @@ namespace Olives.Controllers
                     Maker = new
                     {
                         Id = x.Maker,
-                        x.MakerFirstName,
-                        x.MakerLastName
+                        FirstName = x.MakerFirstName,
+                        LastName = x.MakerLastName
                     },
                     Target = new
                     {
                         Id = x.Target,
-                        x.TargetFirstName,
-                        x.TargetLastName
+                        FirstName = x.TargetFirstName,
+                        LastName = x.TargetLastName
                     },
                     x.Comment,
                     x.Created,
                     x.LastModified
-                })
+                }),
+                result.Total
             });
         }
 

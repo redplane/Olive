@@ -125,7 +125,7 @@ namespace Shared.Interfaces
         ///     Activate patient's account by search person id.
         /// </summary>
         /// <param name="code"></param>
-        Task<bool> ActivatePatientAccount(string code);
+        Task<bool> InitializePatientActivation(string code);
 
         #endregion
 

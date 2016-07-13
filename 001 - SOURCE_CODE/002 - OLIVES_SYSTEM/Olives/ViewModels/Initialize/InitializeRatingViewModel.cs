@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Shared.Attributes;
 using Shared.Constants;
 using Shared.Resources;
 
@@ -14,7 +15,7 @@ namespace Olives.ViewModels.Initialize
         /// <summary>
         ///     Email of rated person.
         /// </summary>
-        [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "RequireEmail")]
+        [RequiredIf("Target", null, ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "RequireEmail")]
         [MaxLength(FieldLength.EmailMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidEmailMaximumLength")]
         [RegularExpression(Regexes.Email, ErrorMessageResourceType = typeof (Language),

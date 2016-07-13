@@ -9,9 +9,11 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
+using Olives.Constants;
 using Olives.Interfaces;
 using Olives.Models;
 using Olives.ViewModels.Edit;
+using Olives.ViewModels.Filter;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
@@ -58,7 +60,7 @@ namespace Olives.Controllers
         #region Patient
 
         /// <summary>
-        ///     Find a doctor by using specific id.
+        ///     Find a patient by using specific id.
         /// </summary>
         /// <returns></returns>
         [Route("api/patient/profile")]
@@ -161,6 +163,61 @@ namespace Olives.Controllers
             });
         }
 
+        /// <summary>
+        /// Filter a list of another patient.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [Route("api/people/filter")]
+        [HttpPost]
+        [OlivesAuthorize(new[] { Role.Patient })]
+        public async Task<HttpResponseMessage> FilterAnotherPeople([FromBody] FilterAnotherPatientViewModel filter)
+        {
+            // Filter hasn't been initialized.
+            if (filter == null)
+            {
+                filter = new FilterAnotherPatientViewModel();
+                Validate(filter);
+            }    
+
+            // Request parameters are invalid.
+            if (!ModelState.IsValid)
+            {
+                _log.Error("Request parameters are invalid. Errors sent to client");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            var patientFilter = new FilterPatientViewModel();
+            patientFilter.Email = filter.Email;
+            patientFilter.Phone = filter.Phone;
+            patientFilter.Name = filter.Name;
+            patientFilter.MinBirthday = filter.MinBirthday;
+            patientFilter.MaxBirthday = filter.MaxBirthday;
+            patientFilter.Gender = filter.Gender;
+            
+            patientFilter.Role = (int) Role.Patient;
+            patientFilter.Status = (int) StatusAccount.Active;
+            
+            // Call the filter function.
+            var result = await _repositoryAccount.FilterPatientAsync(patientFilter);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                Users = result.Users.Select(x => new
+                {
+                    x.Id,
+                    x.FirstName,
+                    x.LastName,
+                    x.Birthday,
+                    x.Phone,
+                    Photo =
+                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Photo, Values.StandardImageExtension),
+                    x.Address
+                }),
+                result.Total
+            });
+        }
+
         #endregion
 
         #region Doctor
@@ -256,23 +313,23 @@ namespace Olives.Controllers
             var results = await _repositoryAccount.FilterDoctorAsync(filter);
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Doctors = results.Users.Select(x => new
+                Doctors = results.Doctors.Select(x => new
                 {
                     x.Id,
-                    x.FirstName,
-                    x.LastName,
-                    x.Birthday,
-                    x.Email,
-                    x.Gender,
-                    x.Address,
+                    x.Person.FirstName,
+                    x.Person.LastName,
+                    x.Person.Birthday,
+                    x.Person.Email,
+                    x.Person.Gender,
+                    x.Person.Address,
                     Photo =
-                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Photo, Values.StandardImageExtension),
-                    x.Phone,
+                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Person.Photo, Values.StandardImageExtension),
+                    x.Person.Phone,
                     x.Rank,
                     Specialty = new
                     {
-                        x.Specialty.Id,
-                        x.Specialty.Name
+                        Id = x.SpecialtyId,
+                        Name = x.SpecialtyName
                     },
                     City = new
                     {
@@ -419,16 +476,16 @@ namespace Olives.Controllers
 
                 // Initialize an activation code.
                 var activationCode =
-                    await _repositoryActivationCode.InitializeActivationCodeAsync(patient.Person.Id, DateTime.Now);
+                    await _repositoryActivationCode.InitializeAccountCodeAsync(patient.Person.Id, TypeAccountCode.Activation, DateTime.Now);
 
                 // Url construction.
                 var url = Url.Link("Default",
-                    new {controller = "AccountVerify", action = "Index", code = activationCode.Code});
+                    new {controller = "Service", action = "Verify", code = activationCode.Code});
 
                 // Send the activation code email.
                 await
-                    _emailService.SendActivationCode(person.Email, Language.OliveActivationCodeEmailTitle,
-                        person.FirstName, person.LastName, activationCode, url);
+                    _emailService.InitializeTokenEmail(person.Email, Language.OliveActivationCodeEmailTitle,
+                        person.FirstName, person.LastName, activationCode, url, EmailType.Activation);
 
                 // Tell doctor to wait for admin confirmation.
                 return Request.CreateResponse(HttpStatusCode.OK, new
@@ -750,6 +807,130 @@ namespace Olives.Controllers
             }
         }
         
+        /// <summary>
+        ///     Request an email contains forgot password token asynchronously.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        [Route("api/account/forgot")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> FindLostPassword([FromBody] ForgotPasswordViewModel info)
+        {
+            // Information hasn't been initialize.
+            if (info == null)
+            {
+                // Initialize the default instance and do the validation.
+                info = new ForgotPasswordViewModel();
+                Validate(info);
+            }
+
+            // Invalid model state.
+            if (!ModelState.IsValid)
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+
+            // Check whether email has been used or not.
+            var result = await _repositoryAccount.FindPersonAsync(null, info.Email, null, null, StatusAccount.Active);
+
+            // Found a patient. This means email has been used before.
+            if (result == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound,
+                    new
+                    {
+                        Error = $"{Language.WarnAccountInvalid}"
+                    });
+            }
+            
+            try
+            {
+                // Initialize an activation code.
+                var findPasswordToken =
+                    await _repositoryActivationCode.InitializeAccountCodeAsync(result.Id, TypeAccountCode.ForgotPassword, DateTime.Now);
+
+                // Url construction.
+                var url = Url.Link("Default",
+                    new { controller = "Service", action = "FindPassword" });
+
+                // Send the activation code email.
+                await
+                    _emailService.InitializeTokenEmail(info.Email, Language.OliveForgotPasswordEmailTitle,
+                        result.FirstName, result.LastName, findPasswordToken, url, EmailType.FindPassword);
+
+                // Tell doctor to wait for admin confirmation.
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch (Exception exception)
+            {
+                // There is something wrong with server.
+                // Log the error.
+                _log.Error($"Cannot create account: '{result.Email}'", exception);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+        }
+
+        /// <summary>
+        ///     Request an email contains forgot password token asynchronously.
+        /// </summary>
+        /// <param name="initializer"></param>
+        /// <returns></returns>
+        [Route("api/account/forgot")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> SubmitLostPassword([FromBody] InitializeNewPasswordViewModel initializer)
+        {
+            // Information hasn't been initialize.
+            if (initializer == null)
+            {
+                // Initialize the default instance and do the validation.
+                initializer = new InitializeNewPasswordViewModel();
+                Validate(initializer);
+            }
+
+            // Invalid model state.
+            if (!ModelState.IsValid)
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+
+            // Check whether email has been used or not.
+            var token =
+                await
+                    _repositoryActivationCode.FindAccountCodeAsync(null, (byte) TypeAccountCode.ForgotPassword,
+                        initializer.Token);
+            
+            // Token couldn't be found.
+            if (token == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound,
+                    new
+                    {
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
+            }
+
+            // Token is expired.
+            if (DateTime.Now > token.Expired)
+            {
+                return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                {
+                    Error = $"{Language.WarnTokenExpired}"
+                });
+            }
+
+            try
+            {
+                // Update client new password.
+                await _repositoryActivationCode.InitializeNewAccountPassword(token, initializer.Password);
+
+                // Tell doctor to wait for admin confirmation.
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch (Exception exception)
+            {
+                // There is something wrong with server.
+                // Log the error.
+                _log.Error($"Cannot create account: '{token.Person.Email}'", exception);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+        }
+        
         #endregion
 
         #region Login
@@ -919,16 +1100,16 @@ namespace Olives.Controllers
             #endregion
 
             // Initialize activation code.
-            var activationCode = await _repositoryActivationCode.InitializeActivationCodeAsync(account.Id, DateTime.Now);
+            var activationToken = await _repositoryActivationCode.InitializeAccountCodeAsync(account.Id, TypeAccountCode.Activation, DateTime.Now);
 
             // Url construction.
             var url = Url.Link("Default",
-                new {controller = "AccountVerify", action = "Index", code = activationCode.Code});
+                new {controller = "Service", action = "Verify", code = activationToken.Code});
 
             // Write an email to user to notify him/her to activate account.
             await
-                _emailService.SendActivationCode(info.Email, Language.OliveActivationCodeEmailTitle, account.FirstName,
-                    account.LastName, activationCode, url);
+                _emailService.InitializeTokenEmail(info.Email, Language.OliveActivationCodeEmailTitle, account.FirstName,
+                    account.LastName, activationToken, url, EmailType.Activation);
 
             // Respond status 200 with no content to notify user to check email for activation code.
             return Request.CreateResponse(HttpStatusCode.OK);

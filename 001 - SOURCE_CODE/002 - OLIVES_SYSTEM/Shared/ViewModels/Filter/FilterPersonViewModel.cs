@@ -77,7 +77,7 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         ///     Amount of money user's must be higher than.
         /// </summary>
-        [NumericPropertyCompare("MinMoney", Comparision = Comparision.LowerEqual,
+        [NumericPropertyCompare("MaxMoney", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         public double? MinMoney { get; set; }
 

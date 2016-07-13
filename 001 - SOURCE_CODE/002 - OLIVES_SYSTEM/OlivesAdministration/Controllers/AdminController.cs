@@ -3,8 +3,11 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using OlivesAdministration.Models;
+using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
+using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels;
 
@@ -19,6 +22,11 @@ namespace OlivesAdministration.Controllers
         /// </summary>
         private readonly IRepositoryAccount _repositoryAccount;
 
+        /// <summary>
+        /// Application setting.
+        /// </summary>
+        private readonly ApplicationSetting _applicationSetting;
+
         #endregion
 
         #region Constructors
@@ -27,9 +35,11 @@ namespace OlivesAdministration.Controllers
         ///     Initialize an instance of AdminController.
         /// </summary>
         /// <param name="repositoryAccount"></param>
-        public AdminController(IRepositoryAccount repositoryAccount)
+        /// <param name="applicationSetting"></param>
+        public AdminController(IRepositoryAccount repositoryAccount, ApplicationSetting applicationSetting)
         {
             _repositoryAccount = repositoryAccount;
+            _applicationSetting = applicationSetting;
         }
 
         #endregion
@@ -42,52 +52,49 @@ namespace OlivesAdministration.Controllers
         /// </summary>
         /// <param name="loginViewModel"></param>
         /// <returns></returns>
+        [Route("api/admin/login")]
         [HttpPost]
         public async Task<HttpResponseMessage> Login([FromBody] LoginViewModel loginViewModel)
         {
             // Invalid model state.
             if (!ModelState.IsValid)
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-
-            // Update role Admin to login view model.
-            loginViewModel.Role = (byte) Role.Admin;
-
+            
             // Pass parameter to login function. 
-            var results = await _repositoryAccount.LoginAsync(loginViewModel);
+            var admin =
+                await
+                    _repositoryAccount.FindPersonAsync(null, loginViewModel.Email, loginViewModel.Password,
+                        (byte) Role.Admin, StatusAccount.Active);
 
             // If no result return, that means no account.
-            if (results == null)
+            if (admin == null)
             {
-                ModelState.AddModelError("Credential", Language.InvalidLoginInfo);
-                return Request.CreateResponse(HttpStatusCode.NotFound, RetrieveValidationErrors(ModelState));
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
             }
-
-            // Results conflict with each other.
-            if (results.Count != 1)
+            
+            return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                ModelState.AddModelError("Credential", Language.LoginConflict);
-                return Request.CreateResponse(HttpStatusCode.Conflict, RetrieveValidationErrors(ModelState));
-            }
-
-            var result = results.Select(x => new
-            {
-                x.Id,
-                x.LastName,
-                x.FirstName,
-                x.Birthday,
-                x.Gender,
-                x.Email,
-                x.Password,
-                x.Phone,
-                x.Created,
-                x.Address,
-                x.Role,
-                x.Status,
-                x.Photo,
-                x.LastModified
-            }).FirstOrDefault();
-
-            return Request.CreateResponse(HttpStatusCode.OK, new {User = result});
+                User = new
+                {
+                    admin.Id,
+                    admin.LastName,
+                    admin.FirstName,
+                    admin.Birthday,
+                    admin.Gender,
+                    admin.Email,
+                    admin.Password,
+                    admin.Phone,
+                    admin.Created,
+                    admin.Address,
+                    admin.Role,
+                    admin.Status,
+                    Photo = InitializeUrl(_applicationSetting.AvatarStorage.Relative, admin.Photo, Values.StandardImageExtension),
+                    admin.LastModified
+                }
+            });
         }
 
         #endregion

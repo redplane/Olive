@@ -11,7 +11,7 @@ namespace Shared.ViewModels.Filter
     {
         [InEnumerationsArray(new object[] {PartnerFilterMode.ParterIsDater, PartnerFilterMode.PartnerIsRequester},
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
-        public PartnerFilterMode Mode { get; set; }
+        public PartnerFilterMode? Mode { get; set; }
 
         public int Partner { get; set; }
 

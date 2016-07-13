@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using OlivesAdministration.Attributes;
+using OlivesAdministration.Models;
+using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Resources;
@@ -22,6 +25,10 @@ namespace OlivesAdministration.Controllers
         /// </summary>
         private readonly IRepositoryAccount _repositoryAccount;
 
+        /// <summary>
+        ///  Class stores application settings information.
+        /// </summary>
+        private readonly ApplicationSetting _applicationSetting;
         #endregion
 
         #region Constructors
@@ -30,9 +37,11 @@ namespace OlivesAdministration.Controllers
         ///     Initialize an instance of DoctorController
         /// </summary>
         /// <param name="repositoryAccount"></param>
-        public DoctorController(IRepositoryAccount repositoryAccount)
+        /// <param name="applicationSetting"></param>
+        public DoctorController(IRepositoryAccount repositoryAccount, ApplicationSetting applicationSetting)
         {
             _repositoryAccount = repositoryAccount;
+            _applicationSetting = applicationSetting;
         }
 
         #endregion
@@ -47,19 +56,6 @@ namespace OlivesAdministration.Controllers
         [OlivesAuthorize(new[] {Role.Admin})]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
-            #region ModelState validation
-
-            // Invalid model state.
-            if (!ModelState.IsValid)
-            {
-                // Because model is invalid. Treat this as invalid request.
-                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-            }
-
-            #endregion
-
-            #region Results handling
-
             // Retrieve filtered result asynchronously.
             var doctor = await _repositoryAccount.FindDoctorAsync(id, null);
 
@@ -71,13 +67,9 @@ namespace OlivesAdministration.Controllers
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-
-            #endregion
-
+            
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                User = new
-                {
                     Doctor = new
                     {
                         doctor.Id,
@@ -92,50 +84,83 @@ namespace OlivesAdministration.Controllers
                         doctor.Person.Role,
                         doctor.Person.Photo,
                         doctor.Rank,
-                        Specialty = doctor.SpecialtyName,
+                        Specialty = new
+                        {
+                            Id = doctor.SpecialtyId,
+                            Name = doctor.SpecialtyName
+                        },
                         doctor.Voters,
                         doctor.Money,
                         doctor.Person.Created,
                         doctor.Person.LastModified
                     }
-                }
             });
         }
 
         /// <summary>
         ///     Filter doctors by using specific conditions.
         /// </summary>
-        /// <param name="info"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
         [Route("api/doctor/filter")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Admin})]
-        public async Task<HttpResponseMessage> Filter([FromBody] FilterDoctorViewModel info)
+        public async Task<HttpResponseMessage> Filter([FromBody] FilterDoctorViewModel filter)
         {
-            #region ModelState validation
-
-            //// Request parameters haven't been initialized.
-            //if (info == null)
-            //    return Request.CreateResponse(HttpStatusCode.BadRequest, Language.InvalidRequestParameters);
+            // Request parameters haven't been initialized.
+            if (filter == null)
+            {
+                // Initialize the parameters and do validation.
+                filter = new FilterDoctorViewModel();
+                Validate(filter);
+            }
 
             // Invalid data validation.
             if (!ModelState.IsValid)
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-
-            #endregion
-
-            #region Result handling
-
+            
             // Retrieve result from server.
-            var result = await _repositoryAccount.FilterDoctorAsync(info);
-
-            // Result hasn't been initialized. Initialize it.
-            if (result.Users == null)
-                result.Users = new List<DoctorViewModel>();
-
-            #endregion
-
-            return Request.CreateResponse(HttpStatusCode.OK, result);
+            var result = await _repositoryAccount.FilterDoctorAsync(filter);
+            
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                Users = result.Doctors.Select(x => new
+                {
+                     x.Id,
+                     x.Person.FirstName,
+                     x.Person.LastName,
+                     x.Person.Email,
+                     x.Person.Password,
+                     x.Person.Birthday,
+                     x.Person.Gender,
+                     x.Person.Address,
+                     City = new
+                     {
+                         x.City.Id,
+                         x.City.Name
+                     },
+                     Country = new
+                     {
+                         x.City.Country.Id,
+                         x.City.Country.Name
+                     },
+                     x.Person.Phone,
+                     x.Person.Role,
+                     x.Person.Status,
+                     Photo = InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Person.Photo, Values.StandardImageExtension),
+                     x.Rank,
+                     Specialty = new
+                     {
+                         Id = x.SpecialtyId,
+                         Name = x.SpecialtyName
+                     },
+                     x.Voters,
+                     x.Money,
+                     x.Person.Created,
+                     x.Person.LastModified
+                }),
+                result.Total
+            });
         }
     }
 }

@@ -23,10 +23,12 @@ namespace Shared.ViewModels.Filter
             ErrorMessageResourceName = "ValueIsInvalid")]
         public int? Specialty { get; set; }
 
+        [Range(0, 5, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeFromTo")]
         [NumericPropertyCompare("MaxRank", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         public double? MinRank { get; set; }
 
+        [Range(0, 5, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeFromTo")]
         [NumericPropertyCompare("MinRank", Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public double? MaxRank { get; set; }
@@ -34,7 +36,7 @@ namespace Shared.ViewModels.Filter
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsInvalid")]
-        public int Page { get; set; }
+        public int Page { get; set; } = FieldLength.PageIndexMin;
 
         [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]

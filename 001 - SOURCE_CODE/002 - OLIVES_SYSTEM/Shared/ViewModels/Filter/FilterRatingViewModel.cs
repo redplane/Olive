@@ -31,19 +31,7 @@ namespace Shared.ViewModels.Filter
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? MaxCreated { get; set; }
-
-        [NumericPropertyCompare("MaxLastModified", Comparision = Comparision.LowerEqual,
-            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
-        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
-        public double? MinLastModified { get; set; }
-
-        [NumericPropertyCompare("MinLastModified", Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
-        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
-        public double? MaxLastModified { get; set; }
-
+        
         /// <summary>
         ///     Value which rating must be greater than.
         /// </summary>
@@ -64,14 +52,14 @@ namespace Shared.ViewModels.Filter
         ///     Which property should be used for sorting.
         /// </summary>
         [InEnumerationsArray(
-            new object[] {RatingResultSort.Value, RatingResultSort.Created, RatingResultSort.LastModified},
+            new object[] {RatingResultSort.Value, RatingResultSort.Created},
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
-        public RatingResultSort Sort { get; set; }
+        public RatingResultSort Sort { get; set; } = RatingResultSort.Value;
 
         /// <summary>
         ///     Whether records should be sorted ascendingly or decendingly.
         /// </summary>
-        public SortDirection Direction { get; set; }
+        public SortDirection Direction { get; set; } = SortDirection.Decending;
 
         /// <summary>
         ///     Index of result page.

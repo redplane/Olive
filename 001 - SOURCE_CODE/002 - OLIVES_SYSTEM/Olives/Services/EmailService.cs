@@ -123,8 +123,9 @@ namespace Olives.Services
         /// <param name="lastName"></param>
         /// <param name="code"></param>
         /// <param name="url"></param>
-        public async Task<bool> SendActivationCode(string to, string subject, string firstName, string lastName,
-            ActivationCode code, string url)
+        /// <param name="type"></param>
+        public async Task<bool> InitializeTokenEmail(string to, string subject, string firstName, string lastName,
+            AccountCode code, string url, string type)
         {
             try
             {
@@ -137,7 +138,7 @@ namespace Olives.Services
                 };
 
                 //// Render email body from template with given information.
-                var render = Render.StringToString(Templates[EmailType.Activation].Content, data);
+                var render = Render.StringToString(Templates[type].Content, data);
 
                 // Initialize mail message.
                 var mailMessage = new MailMessage();

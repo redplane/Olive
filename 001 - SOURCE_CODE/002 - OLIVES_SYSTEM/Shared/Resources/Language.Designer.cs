@@ -448,6 +448,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Olive find password.
+        /// </summary>
+        public static string OliveForgotPasswordEmailTitle {
+            get {
+                return ResourceManager.GetString("OliveForgotPasswordEmailTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please access your email to verify this account.
         /// </summary>
         public static string PatientAccountPending {
@@ -709,6 +718,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to W028.
+        /// </summary>
+        public static string WarnAccountInvalid {
+            get {
+                return ResourceManager.GetString("WarnAccountInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to W012.
         /// </summary>
         public static string WarnAccountNotLogin {
@@ -939,6 +957,15 @@ namespace Shared.Resources {
         public static string WarnTheRatedNotFound {
             get {
                 return ResourceManager.GetString("WarnTheRatedNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W028.
+        /// </summary>
+        public static string WarnTokenExpired {
+            get {
+                return ResourceManager.GetString("WarnTokenExpired", resourceCulture);
             }
         }
     }

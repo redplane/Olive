@@ -54,7 +54,7 @@ namespace Shared.Repositories
                 results = results.Where(x => x.Maker == filter.Partner);
             else if (filter.Mode == PartnerFilterMode.ParterIsDater)
                 results = results.Where(x => x.Dater == filter.Partner);
-
+            
             // Created is specified.
             if (filter.MinCreated != null)
                 results = results.Where(x => x.Created >= filter.MinCreated);

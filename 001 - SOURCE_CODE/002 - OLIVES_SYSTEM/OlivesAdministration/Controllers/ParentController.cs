@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Web.Http;
@@ -53,6 +54,25 @@ namespace OlivesAdministration.Controllers
             }
 
             base.Initialize(controllerContext);
+        }
+
+        /// <summary>
+        ///     Construct full url path.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="file"></param>
+        /// <param name="extension"></param>
+        /// <returns></returns>
+        protected string InitializeUrl(string path, string file, string extension)
+        {
+            // File or path is invalid
+            if (string.IsNullOrWhiteSpace(path) || string.IsNullOrWhiteSpace(file))
+                return null;
+
+            if (!string.IsNullOrWhiteSpace(extension))
+                file = $"{file}.{extension}";
+            var fullPath = Path.Combine(path, file);
+            return Url.Content(fullPath);
         }
     }
 }

@@ -84,11 +84,7 @@ namespace Shared.Repositories
             // Created is defined.
             if (filter.MinCreated != null) ratings = ratings.Where(x => x.Created >= filter.MinCreated.Value);
             if (filter.MaxCreated != null) ratings = ratings.Where(x => x.Created <= filter.MaxCreated.Value);
-
-            // Last modified is defined.
-            if (filter.MinLastModified != null) ratings = ratings.Where(x => x.LastModified >= filter.MinLastModified);
-            if (filter.MaxLastModified != null) ratings = ratings.Where(x => x.LastModified <= filter.MaxLastModified);
-
+            
             // Value is defined.
             if (filter.MinValue != null) ratings = ratings.Where(x => x.Value >= filter.MinValue.Value);
             if (filter.MaxValue != null) ratings = ratings.Where(x => x.Value <= filter.MaxValue.Value);
@@ -102,9 +98,6 @@ namespace Shared.Repositories
                         case RatingResultSort.Created:
                             ratings = ratings.OrderBy(x => x.Created);
                             break;
-                        case RatingResultSort.LastModified:
-                            ratings = ratings.OrderBy(x => x.LastModified);
-                            break;
                         default:
                             ratings = ratings.OrderBy(x => x.Value);
                             break;
@@ -115,9 +108,6 @@ namespace Shared.Repositories
                     {
                         case RatingResultSort.Created:
                             ratings = ratings.OrderByDescending(x => x.Created);
-                            break;
-                        case RatingResultSort.LastModified:
-                            ratings = ratings.OrderByDescending(x => x.LastModified);
                             break;
                         default:
                             ratings = ratings.OrderByDescending(x => x.Value);

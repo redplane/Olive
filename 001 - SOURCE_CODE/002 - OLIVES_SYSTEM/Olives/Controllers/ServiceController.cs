@@ -8,7 +8,7 @@ using Shared.Resources;
 
 namespace Olives.Controllers
 {
-    public class AccountVerifyController : Controller
+    public class ServiceController : Controller
     {
         /// <summary>
         ///     Instance of module which is used for logging.
@@ -30,7 +30,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Initialize an instance of AccountVerifyController with given information.
         /// </summary>
-        public AccountVerifyController(IRepositoryAccount repositoryAccount,
+        public ServiceController(IRepositoryAccount repositoryAccount,
             IRepositoryActivationCode repositoryActivationCode, ILog log)
         {
             _repositoryAccount = repositoryAccount;
@@ -46,7 +46,7 @@ namespace Olives.Controllers
         /// <param name="code"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ActionResult> Index(string code)
+        public async Task<ActionResult> Verify(string code)
         {
             // Invalid activation code.
             if (string.IsNullOrWhiteSpace(code))
@@ -59,15 +59,7 @@ namespace Olives.Controllers
             try
             {
                 // Activate the account.
-                await _repositoryAccount.ActivatePatientAccount(code);
-            }
-            catch (InstanceNotFoundException instanceNotFoundException)
-            {
-                _log.Error(instanceNotFoundException.Message);
-                ViewBag.Message = Language.MessageInvalidActivationCode;
-                ViewBag.IsError = true;
-
-                return View();
+                await _repositoryAccount.InitializePatientActivation(code);
             }
             catch (Exception exception)
             {
@@ -79,6 +71,16 @@ namespace Olives.Controllers
             ViewBag.Message = Language.MessageAccountActivatedSuccessfully;
             ViewBag.IsError = false;
 
+            return View();
+        }
+
+        /// <summary>
+        /// This function is for displaying a view to find password.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult FindPassword()
+        {
             return View();
         }
     }

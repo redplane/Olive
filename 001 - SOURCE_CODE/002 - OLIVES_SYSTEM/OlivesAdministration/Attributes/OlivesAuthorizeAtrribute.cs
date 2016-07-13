@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -8,7 +7,6 @@ using System.Web.Http.Controllers;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
-using Shared.Models;
 using Shared.Resources;
 
 namespace OlivesAdministration.Attributes
@@ -21,7 +19,7 @@ namespace OlivesAdministration.Attributes
         /// <param name="roles"></param>
         public OlivesAuthorize(Role[] roles)
         {
-            Roles = Array.ConvertAll(roles, x => (int) x);
+            Roles = Array.ConvertAll(roles, x => (int)x);
         }
 
         /// <summary>
@@ -45,7 +43,7 @@ namespace OlivesAdministration.Attributes
                 actionContext.Request.Headers.Where(
                     x =>
                         !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountEmail, StringComparison.InvariantCultureIgnoreCase))
+                        x.Key.Equals(HeaderFields.RequestAccountEmail))
                     .Select(x => x.Value.FirstOrDefault())
                     .FirstOrDefault();
 
@@ -53,16 +51,17 @@ namespace OlivesAdministration.Attributes
                 actionContext.Request.Headers.Where(
                     x =>
                         !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountPassword, StringComparison.InvariantCultureIgnoreCase))
+                        x.Key.Equals(HeaderFields.RequestAccountPassword))
                     .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
 
             // Invalid account name or password.
             if (string.IsNullOrEmpty(accountEmail) || string.IsNullOrEmpty(accountPassword))
             {
                 // Treat this request is unauthorized.
-                var responseError = new ResponseErrror();
-                responseError.Errors = new List<string> {Language.MustAuthorize};
-                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, responseError);
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
+                {
+                    Error = $"{Language.WarnAccountNotLogin}"
+                });
 
                 return;
             }
@@ -73,19 +72,50 @@ namespace OlivesAdministration.Attributes
             // No person has been found.
             if (person == null)
             {
-                var responseError = new ResponseErrror();
-                responseError.Errors = new List<string> {Language.MustAuthorize};
-                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, responseError);
+                // Treat this request is unauthorized.
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
+                {
+                    Error = $"{Language.WarnAccountNotLogin}"
+                });
+                return;
+            }
+
+            // Account has been disabled.
+            if ((StatusAccount)person.Status == StatusAccount.Inactive)
+            {
+                // Treat the login isn't successful because of disabled account.
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
+                {
+                    Error = $"{Language.WarnDisabledAccount}"
+                });
 
                 return;
             }
 
+            // Account is still pending.
+            if ((StatusAccount)person.Status == StatusAccount.Pending)
+            {
+                // Treat the login isn't successful because of pending account.
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
+                {
+                    Error = $"{Language.WarnPendingAccount}"
+                });
+
+                return;
+            }
+
+            // Account role isn't enough to access the function.
             if (!Roles.Any(x => x == person.Role))
             {
-                var responseError = new ResponseErrror();
-                responseError.Errors = new List<string> {Language.RequestForbidden};
-                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Forbidden, responseError);
+                // Role isn't valid. Tell the client the access is forbidden.
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Forbidden, new
+                {
+                    Error = $"{Language.WarnForbiddenAccessMethod}"
+                });
             }
+
+            // Store the requester information in action argument.
+            actionContext.ActionArguments[HeaderFields.RequestAccountStorage] = person;
         }
     }
 }

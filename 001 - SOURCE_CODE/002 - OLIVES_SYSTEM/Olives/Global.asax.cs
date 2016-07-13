@@ -16,6 +16,7 @@ using Olives.Models;
 using Olives.Module;
 using Olives.Services;
 using Shared.Interfaces;
+using Shared.Models;
 using Shared.Repositories;
 
 namespace Olives
@@ -42,7 +43,7 @@ namespace Olives
             //builder.RegisterType<AdminController>().InstancePerRequest();
 
             builder.RegisterType<AccountController>().InstancePerRequest();
-            builder.RegisterType<AccountVerifyController>().InstancePerRequest();
+            builder.RegisterType<ServiceController>().InstancePerRequest();
             builder.RegisterType<AllergyController>().InstancePerRequest();
             builder.RegisterType<AppointmentController>().InstancePerRequest();
             builder.RegisterType<SpecialtyController>().InstancePerRequest();
@@ -122,7 +123,7 @@ namespace Olives
                 .SingleInstance();
 
             //  Repository activation code registration.
-            builder.RegisterType<RepositoryActivationCode>()
+            builder.RegisterType<RepositoryCode>()
                 .As<IRepositoryActivationCode>()
                 .SingleInstance();
 

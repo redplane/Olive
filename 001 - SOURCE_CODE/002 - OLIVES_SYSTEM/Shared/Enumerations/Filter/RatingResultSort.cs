@@ -3,7 +3,6 @@
     public enum RatingResultSort
     {
         Value,
-        Created,
-        LastModified
+        Created
     }
 }
