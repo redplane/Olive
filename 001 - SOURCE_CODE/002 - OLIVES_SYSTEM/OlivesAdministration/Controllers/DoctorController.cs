@@ -29,6 +29,7 @@ namespace OlivesAdministration.Controllers
         ///  Class stores application settings information.
         /// </summary>
         private readonly ApplicationSetting _applicationSetting;
+
         #endregion
 
         #region Constructors
