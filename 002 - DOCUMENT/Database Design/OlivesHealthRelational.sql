@@ -1,8 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 -- DROP TABLES
 ---------------------------------------------------------------------------------------------------
-DROP TABLE Doctor;
 DROP TABLE Relation;
+DROP TABLE Doctor;
 DROP TABLE Appointment;
 DROP TABLE Specialty;
 DROP TABLE Heartbeat;
@@ -10,17 +10,17 @@ DROP TABLE Sugarblood;
 DROP TABLE BloodPressure;
 DROP TABLE Patient;
 DROP TABLE Allergy;
-DROP TABLE ActivationCode;
+DROP TABLE AccountCode;
 DROP TABLE Addiction;
-
+DROP TABLE Rating;
 DROP TABLE City;
 DROP TABLE Country;
 DROP TABLE MedicalImage;
-DROP TABLE PrescriptedMedicine;
 DROP TABLE Prescription;
 DROP TABLE ExperimentNote;
 DROP TABLE MedicalRecord;
 DROP TABLE Person;
+
 ---------------------------------------------------------------------------------------------------
 
 -- Specialty table.
@@ -112,12 +112,15 @@ CREATE TABLE BloodPressure
 )
 
 -- Activation code table.
-CREATE TABLE ActivationCode
+CREATE TABLE AccountCode
 (
-	Owner				INT NOT NULL PRIMARY KEY,
+	Owner				INT NOT NULL,
 	Code				VARCHAR(10),
+	Type				TINYINT NOT NULL,
 	Expired				DATETIME NOT NULL,
-	FOREIGN KEY (Owner) REFERENCES Person(Id)
+	
+	FOREIGN KEY (Owner) REFERENCES Person(Id),
+	PRIMARY KEY (Owner, Type)
 )
 
 -- Appointment table.
@@ -246,27 +249,14 @@ CREATE TABLE Prescription
 	MedicalRecordId			INT NOT NULL,
 	[From]					FLOAT NOT NULL,
 	[To]					FLOAT NOT NULL,
+	Name					NVARCHAR(32),
+	Medicine				NVARCHAR(MAX),
 	Note					NVARCHAR(128),
 	Created					FLOAT NOT NULL,
 	LastModified			FLOAT,
 
 	FOREIGN KEY (MedicalRecordId)	REFERENCES MedicalRecord(Id),
 	FOREIGN KEY (Owner)				REFERENCES Person(Id)
-)
-
-CREATE TABLE PrescriptedMedicine
-(
-	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	PrescriptionId			INT NOT NULL,
-	Owner					INT NOT NULL,
-	MedicineName			NVARCHAR(32) NOT NULL,
-	Quantity				FLOAT NOT NULL,
-	Unit					NVARCHAR(16) NOT NULL,
-	Note					NVARCHAR(128),
-	Expired					FLOAT NOT NULL,
-
-	FOREIGN KEY (PrescriptionId) REFERENCES Prescription(Id),
-	FOREIGN KEY (Owner) REFERENCES Person(Id)
 )
 
 CREATE TABLE ExperimentNote
@@ -281,6 +271,24 @@ CREATE TABLE ExperimentNote
 	
 	FOREIGN KEY (MedicalRecordId) REFERENCES MedicalRecord(Id),
 	FOREIGN KEY (Owner) REFERENCES Person(Id)
+)
+
+CREATE TABLE Rating 
+(
+	Maker					INT NOT NULL,
+	MakerFirstName			NVARCHAR(32),
+	MakerLastName			NVARCHAR(32),
+	Target					INT NOT NULL,
+	TargetFirstName			NVARCHAR(32),
+	TargetLastName			NVARCHAR(32),
+	Value					INT NOT NULL,
+	Comment					NVARCHAR(128),
+	Created					FLOAT NOT NULL,
+	LastModified			FLOAT,
+
+	FOREIGN KEY (Maker) REFERENCES Patient(Id),
+	FOREIGN KEY (Target) REFERENCES Doctor(Id),
+	PRIMARY KEY (Maker, Target)
 )
 
 SELECT * FROM Person
