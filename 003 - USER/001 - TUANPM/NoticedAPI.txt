@@ -1,0 +1,7 @@
++) API :
+	- [GET]api/doctor
+	- [POST]api/doctor/filter
+	- [POST]api/account/doctor
+		- Status : 200
+		- Status : 404 (W030)
+		- Status : 404 ()
