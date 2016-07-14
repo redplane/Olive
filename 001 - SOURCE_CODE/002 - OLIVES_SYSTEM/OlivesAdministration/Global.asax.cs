@@ -108,6 +108,9 @@ namespace OlivesAdministration
             // Log4net module registration (this is for logging)
             builder.RegisterModule<Log4NetModule>();
 
+            // Application setting instance.
+            builder.RegisterInstance(applicationSetting).As<ApplicationSetting>();
+            
             #endregion
 
             builder.RegisterWebApiFilterProvider(GlobalConfiguration.Configuration);
@@ -115,12 +118,7 @@ namespace OlivesAdministration
             GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
 
             #endregion
-
-            XmlConfigurator.Configure();
-            GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings.ReferenceLoopHandling =
-                ReferenceLoopHandling.Ignore;
-            GlobalConfiguration.Configuration.Formatters.Remove(
-                GlobalConfiguration.Configuration.Formatters.XmlFormatter);
+            
         }
     }
 }

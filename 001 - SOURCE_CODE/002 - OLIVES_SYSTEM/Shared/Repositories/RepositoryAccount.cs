@@ -41,41 +41,7 @@ namespace Shared.Repositories
 
             return await patients.FirstOrDefaultAsync();
         }
-
-        /// <summary>
-        ///     Find a patient by using id.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<IList<PatientViewModel>> FindPatientAsync(int id)
-        {
-            var context = new OlivesHealthEntities();
-            var results = from person in context.People.Where(x => x.Id == id)
-                join patient in context.Patients.Where(x => x.Id == id) on person.Id equals patient.Id
-                where person.Id == id
-                select new PatientViewModel
-                {
-                    Address = person.Address,
-                    Birthday = person.Birthday,
-                    Created = person.Created,
-                    Email = person.Email,
-                    FirstName = person.FirstName,
-                    Gender = (Gender) person.Gender,
-                    LastModified = person.LastModified,
-                    LastName = person.LastName,
-                    Money = 0,
-                    Password = person.Password,
-                    Phone = person.Phone,
-                    Photo = person.Photo,
-                    Role = person.Role,
-                    Status = (StatusAccount) person.Status,
-                    Height = patient.Height,
-                    Weight = patient.Weight
-                };
-
-            return await results.ToListAsync();
-        }
-
+        
         /// <summary>
         ///     Filter doctor by using specific conditions asynchronously.
         /// </summary>
@@ -83,18 +49,14 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<ResponsePatientFilter> FilterPatientAsync(FilterPatientViewModel filter)
         {
+            // Database context initialization.
             var context = new OlivesHealthEntities();
 
             // Join the table first.
-            var results = context.People
-                .Where(x => x.Role == (byte) Role.Patient)
-                .Join(context.Patients, p => p.Id, d => d.Id,
-                    (p, d) => new
-                    {
-                        Person = p,
-                        Patient = d
-                    });
-
+            var results = from person in context.People.Where(x => x.Role == (byte) Role.Patient)
+                join patient in context.Patients on person.Id equals patient.Id
+                select patient;
+            
             #region Result filter
 
             // Filter doctor by using email.
@@ -129,10 +91,10 @@ namespace Shared.Repositories
 
             // Filter by money.
             if (filter.MinMoney != null)
-                results = results.Where(x => x.Patient.Money >= filter.MinMoney);
+                results = results.Where(x => x.Money >= filter.MinMoney);
 
             if (filter.MaxMoney != null)
-                results = results.Where(x => x.Patient.Money <= filter.MaxMoney);
+                results = results.Where(x => x.Money <= filter.MaxMoney);
 
             // Filter by created.
             if (filter.MinCreated != null)
@@ -146,47 +108,27 @@ namespace Shared.Repositories
                 results = results.Where(x => x.Person.Status == filter.Status);
 
             // Filter by height.
-            if (filter.MinHeight != null) results = results.Where(x => x.Patient.Height >= filter.MinHeight);
-            if (filter.MaxHeight != null) results = results.Where(x => x.Patient.Height <= filter.MaxHeight);
+            if (filter.MinHeight != null) results = results.Where(x => x.Height >= filter.MinHeight);
+            if (filter.MaxHeight != null) results = results.Where(x => x.Height <= filter.MaxHeight);
 
             // Filter by weight.
-            if (filter.MinWeight != null) results = results.Where(x => x.Patient.Weight >= filter.MinWeight);
-            if (filter.MaxWeight != null) results = results.Where(x => x.Patient.Weight <= filter.MaxWeight);
+            if (filter.MinWeight != null) results = results.Where(x => x.Weight >= filter.MinWeight);
+            if (filter.MaxWeight != null) results = results.Where(x => x.Weight <= filter.MaxWeight);
 
             #endregion
 
-            var responseFilter = new ResponsePatientFilter();
-            responseFilter.Total = await results.CountAsync();
+            var response = new ResponsePatientFilter();
+            response.Total = await results.CountAsync();
 
             // How many records should be skipped.
             var skippedRecords = filter.Page*filter.Records;
-            var filteredResults = results
+            response.Patients = await results
                 .OrderBy(x => x.Person.Status)
                 .Skip(skippedRecords)
                 .Take(filter.Records)
-                .Select(x => new PatientViewModel
-                {
-                    Address = x.Person.Address,
-                    Birthday = x.Person.Birthday,
-                    Created = x.Person.Created,
-                    Email = x.Person.Email,
-                    FirstName = x.Person.FirstName,
-                    Gender = (Gender) x.Person.Gender,
-                    Id = x.Person.Id,
-                    LastModified = x.Person.LastModified,
-                    LastName = x.Person.LastName,
-                    Money = x.Patient.Money,
-                    Phone = x.Person.Phone,
-                    Role = (byte) Role.Doctor,
-                    Password = x.Person.Password,
-                    Status = (StatusAccount) x.Person.Status,
-                    Photo = x.Person.Photo,
-                    Height = x.Patient.Height,
-                    Weight = x.Patient.Weight
-                });
-
-            responseFilter.Users = await filteredResults.ToListAsync();
-            return responseFilter;
+                .ToListAsync();
+            
+            return response;
         }
 
         /// <summary>

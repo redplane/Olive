@@ -125,7 +125,7 @@ namespace OlivesAdministration.Controllers
             
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Users = result.Doctors.Select(x => new
+                Doctors = result.Doctors.Select(x => new
                 {
                      x.Id,
                      x.Person.FirstName,

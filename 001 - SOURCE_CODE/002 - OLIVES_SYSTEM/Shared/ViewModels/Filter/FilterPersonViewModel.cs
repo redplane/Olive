@@ -73,21 +73,7 @@ namespace Shared.ViewModels.Filter
         [InEnumerationsArray(new object[] {Enumerations.Gender.Female, Enumerations.Gender.Male},
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "InvalidGender")]
         public int? Gender { get; set; }
-
-        /// <summary>
-        ///     Amount of money user's must be higher than.
-        /// </summary>
-        [NumericPropertyCompare("MaxMoney", Comparision = Comparision.LowerEqual,
-            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
-        public double? MinMoney { get; set; }
-
-        /// <summary>
-        ///     Amount of money user's must be lower than.
-        /// </summary>
-        [NumericPropertyCompare("MinMoney", Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
-        public double? MaxMoney { get; set; }
-
+        
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MaxCreated", Comparision = Comparision.LowerEqual,

@@ -203,16 +203,16 @@ namespace Olives.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Users = result.Users.Select(x => new
+                Users = result.Patients.Select(x => new
                 {
                     x.Id,
-                    x.FirstName,
-                    x.LastName,
-                    x.Birthday,
-                    x.Phone,
+                    x.Person.FirstName,
+                    x.Person.LastName,
+                    x.Person.Birthday,
+                    x.Person.Phone,
                     Photo =
-                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Photo, Values.StandardImageExtension),
-                    x.Address
+                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Person.Photo, Values.StandardImageExtension),
+                    x.Person.Address
                 }),
                 result.Total
             });
