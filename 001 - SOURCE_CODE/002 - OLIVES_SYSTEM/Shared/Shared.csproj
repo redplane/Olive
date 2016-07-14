@@ -82,7 +82,7 @@
     <Compile Include="Attributes\RegexMatchAttribute.cs" />
     <Compile Include="Attributes\RequiredIfAttribute.cs" />
     <Compile Include="Attributes\ValueStringLengthAttribute.cs" />
-    <Compile Include="Enumerations\Filter\CityResultSort.cs" />
+    <Compile Include="Enumerations\Filter\PlaceFilterSort.cs" />
     <Compile Include="Enumerations\Filter\ExperimentFilterSort.cs" />
     <Compile Include="Enumerations\Filter\NoteResultSort.cs" />
     <Compile Include="Enumerations\Filter\RatingResultSort.cs" />
@@ -134,12 +134,6 @@
     <Compile Include="Models\BloodPressure.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\City.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Country.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\Doctor.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
@@ -174,6 +168,9 @@
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Person.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Place.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Prescription.cs">
@@ -223,17 +220,14 @@
       <DependentUpon>Language.vi.resx</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\AccountViewModel.cs" />
-    <Compile Include="ViewModels\CityViewModel.cs" />
     <Compile Include="ViewModels\CountryViewModel.cs" />
     <Compile Include="ViewModels\ExperimentInfoViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterAddictionViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterAllergyViewModel.cs" />
     <Compile Include="ViewModels\BloodPressureViewModel.cs" />
-    <Compile Include="ViewModels\DoctorViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterAppointmentViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterBloodPressureViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterCityViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterCountryViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterPlaceViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterExperimentViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterHeatbeatViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMedicalImageViewModel.cs" />
@@ -258,8 +252,7 @@
     <Compile Include="ViewModels\Initialize\InitializeSugarbloodViewModel.cs" />
     <Compile Include="ViewModels\RelatedDoctorViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseAddictionFilter.cs" />
-    <Compile Include="ViewModels\Response\ResponseCityFilter.cs" />
-    <Compile Include="ViewModels\Response\ResponseCountryFilter.cs" />
+    <Compile Include="ViewModels\Response\ResponsePlaceFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseAllergyFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseAppointment.cs" />
     <Compile Include="ViewModels\Response\ResponseAppointmentFilter.cs" />

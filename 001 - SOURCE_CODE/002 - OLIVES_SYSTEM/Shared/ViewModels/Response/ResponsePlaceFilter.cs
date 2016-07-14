@@ -3,12 +3,12 @@ using Shared.Models;
 
 namespace Shared.ViewModels.Response
 {
-    public class ResponseCountryFilter
+    public class ResponsePlaceFilter
     {
         /// <summary>
         ///     List of filtered allergies.
         /// </summary>
-        public IList<Country> Countries { get; set; }
+        public IList<Place> Places { get; set; }
 
         /// <summary>
         ///     Total records match the specific conditions.

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using OlivesAdministration.Attributes;
+using OlivesAdministration.ViewModels;
+using OlivesAdministration.ViewModels.Edit;
 using OlivesAdministration.ViewModels.Initialize;
 using Shared.Enumerations;
 using Shared.Interfaces;
@@ -15,6 +17,7 @@ using Shared.ViewModels.Filter;
 
 namespace OlivesAdministration.Controllers
 {
+    [Route("api/place")]
     [OlivesAuthorize(new[] {Role.Admin})]
     public class PlaceController : ApiParentController
     {
@@ -47,305 +50,215 @@ namespace OlivesAdministration.Controllers
 
         #endregion
 
-        #region Country
-
+        #region Methods
+        
         /// <summary>
-        ///     Find a country by using specific id.
+        /// Find a place by using id asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Route("api/country")]
         [HttpGet]
-        public async Task<HttpResponseMessage> RetrieveCountry([FromUri] int id)
+        public async Task<HttpResponseMessage> FindPlace([FromUri] int id)
         {
-            // Using id to find country.
-            var country = await _repositoryPlace.FindCountryAsync(id, null, null);
-
-            // Records hasn't been found or not unique, treat the result as not found.
-            if (country == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
-            
-            // Return the city information.
-            return Request.CreateResponse(HttpStatusCode.OK, new
-            {
-                Country = new
-                {
-                    country.Id,
-                    country.Name
-                }
-            });
-        }
-
-        /// <summary>
-        ///     Create a country.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <returns></returns>
-        [Route("api/country")]
-        [HttpPost]
-        public async Task<HttpResponseMessage> CreateCountry([FromBody] InitializeCountryViewModel info)
-        {
-            // Model hasn't been initialized.
-            if (info == null)
-            {
-                info = new InitializeCountryViewModel();
-                Validate(info);
-            }
-
-            // Retrieve model error.
-            if (!ModelState.IsValid)
-                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-
-            // Find the country whether it has been registered before or not.
-            var countries = await _repositoryPlace.FindCountryAsync(null, info.Name,
-                StringComparison.InvariantCultureIgnoreCase);
-
-            // Country was created before.
-            if (countries != null)
-            {
-                return Request.CreateResponse(HttpStatusCode.Conflict, new
-                {
-                    Error = $"{Language.WarnRecordConflict}"
-                });
-            }
-
-            // Initialize an instance of Country.
-            var country = new Country();
-            country.Name = info.Name;
-
-            // Save country to database.
-            await _repositoryPlace.InitializeCountryAsync(country);
-            return Request.CreateResponse(HttpStatusCode.OK, new
-            {
-                Country = new
-                {
-                    country.Id,
-                    country.Name
-                }
-            });
-        }
-
-        /// <summary>
-        ///     Find a country by using id and edit its information.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="info"></param>
-        /// <returns></returns>
-        [Route("api/country")]
-        [HttpPut]
-        public async Task<HttpResponseMessage> EditCountry([FromUri] int id, [FromBody] InitializeCountryViewModel info)
-        {
-            // Model hasn't been initialized.
-            if (info == null)
-            {
-                info = new InitializeCountryViewModel();
-                Validate(info);
-            }
-
-            // Retrieve model error.
-            if (!ModelState.IsValid)
-            {
-                // TODO: Log error to file.
-                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-            }
-            
-            #region Country validation
-
-            // Find the country by using id.
-            var country = await _repositoryPlace.FindCountryAsync(id, null, null);
-
-            // No record has been found or found record is not unique.
-            if (country == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
-            
-            // Check whether country name has been used before or not.
-            var target =
-                await _repositoryPlace.FindCountryAsync(null, info.Name, StringComparison.InvariantCultureIgnoreCase);
-
-            // Record has been created before.
-            if (target != null)
-            {
-                return Request.CreateResponse(HttpStatusCode.Conflict, new
-                {
-                    Error = $"{Language.WarnRecordConflict}"
-                });
-            }
-
-            #endregion
-
-            // Update information of country
-            country.Name = info.Name;
-
             try
             {
-                // Save edited information to database.
-                await _repositoryPlace.EditCountryAsync(country);
+                // Find the place by using id.
+                var place = await _repositoryPlace.FindPlaceAsync(id, null, null, null, null);
 
-                // Send the edited information to client.
+                // Place is not found.
+                if (place == null)
+                {
+                    // Log the error.
+                    _log.Error($"Place [Id: {id}] is not found");
+
+                    // Respond status to client.
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
+                }
+
+                // Tell client result has been found.    
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
-                    Country = new
+                    Place = new
                     {
-                        country.Id,
-                        country.Name
+                        place.Id,
+                        place.City,
+                        place.Country
                     }
                 });
             }
             catch (Exception exception)
             {
-                // Log the error to file.
+                // Unexpected error happens, log the error.
                 _log.Error(exception.Message, exception);
+
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new
+                {
+                    Error = $"{Language.WarnInternalServerError}"
+                });
+            }
+
+        }
+
+        /// <summary>
+        /// Initialize a place asynchronously.
+        /// </summary>
+        /// <param name="initializer"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<HttpResponseMessage> InitializePlace([FromBody] InitializePlaceViewModel initializer)
+        {
+            // Initializer hasn't been initialized.
+            if (initializer == null)
+            {
+                // Initialize it and do validation.
+                initializer = new InitializePlaceViewModel();
+                Validate(initializer);
+            }
+
+            // Request paramters are invalid.
+            if (!ModelState.IsValid)
+            {
+                // Log the error.
+                _log.Error("Request parameters are invalid. Errors sent to client");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            // Find the place with the city and country to prevent duplicates.
+            var place =
+                await
+                    _repositoryPlace.FindPlaceAsync(null, initializer.City, StringComparison.InvariantCultureIgnoreCase,
+                        initializer.Country, StringComparison.InvariantCultureIgnoreCase);
+
+            // Place already exists.
+            if (place != null)
+            {
+                // Log the error.
+                _log.Error($"Place [City : {initializer.City} | Country : {initializer.Country}] already exists");
+
+                // Tell the client the request is conflicted.
+                return Request.CreateResponse(HttpStatusCode.Conflict, new
+                {
+                    Error = $"{Language.WarnRecordConflict}"
+                });
+            }
+
+            // Initialize a new place.
+            place = new Place();
+            place.City = initializer.City;
+            place.Country = initializer.Country;
+
+            try
+            {
+                // Try to initialize a new place to database.
+                place = await _repositoryPlace.InitializePlaceAsync(place);
+
+                // Log the result.
+                _log.Info($"Created place [Id: {place.Id} | City: {place.City} | Country: {place.Country}] successfully");
+
+                // Tell the client about the result.
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    Place = new
+                    {
+                        place.Id,
+                        place.City,
+                        place.Country
+                    }
+                });
+            }
+            catch (Exception exception)
+            {
+                // Log the error.
+                _log.Error(exception.Message, exception);
+
+                // Tell the client about the error.
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
         }
 
         /// <summary>
-        ///     Filter countries by using given conditions.
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
-        [Route("api/country/filter")]
-        [HttpPost]
-        public async Task<HttpResponseMessage> FilerCountries([FromBody] FilterCountryViewModel filter)
-        {
-            // Filter hasn't been initialized.
-            if (filter == null)
-            {
-                filter = new FilterCountryViewModel();
-                Validate(filter);
-            }
-
-            // Invalid filter information.
-            if (!ModelState.IsValid)
-                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-
-            var results = await _repositoryPlace.FilterCountryAsync(filter);
-            return Request.CreateResponse(HttpStatusCode.OK, results);
-        }
-
-        #endregion
-
-        #region City
-
-        /// <summary>
-        ///     Find a city by using specific id.
+        /// Modify a place asynchronously.
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="editor"></param>
         /// <returns></returns>
-        [Route("api/city")]
-        [HttpGet]
-        public async Task<HttpResponseMessage> GetCity([FromUri] int id)
+        [HttpPut]
+        public async Task<HttpResponseMessage> ModifyPlace([FromUri] int id, [FromBody] EditPlaceViewModel editor)
         {
-            // Using id to find country.
-            var cities = await _repositoryPlace.FindCityAsync(id);
-
-            // Records hasn't been found or not unique, treat the result as not found.
-            if (cities == null || cities.Count != 1)
+            // Editor hasn't been initialized.
+            if (editor == null)
             {
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
+                editor = new EditPlaceViewModel();
+                Validate(editor);
             }
 
-            // Retrieve the first result.
-            var city = cities.FirstOrDefault();
-
-            // Country is invalid.
-            if (city == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
-
-            // Return the city information.
-            return Request.CreateResponse(HttpStatusCode.OK, new
-            {
-                City = new
-                {
-                    city.Id,
-                    city.Name,
-                    Country = new
-                    {
-                        Id = city.CountryId,
-                        Name = city.CountryName
-                    }
-                }
-            });
-        }
-
-        /// <summary>
-        ///     Initialize a city which belongs to a country asynchronously.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <returns></returns>
-        [Route("api/city")]
-        [HttpPost]
-        public async Task<HttpResponseMessage> InitializeCity([FromBody] InitializeCityViewModel info)
-        {
-            // Parameters haven't been initialized.
-            if (info == null)
-            {
-                // Initialize and do validation.
-                info = new InitializeCityViewModel();
-                Validate(info);
-            }
-
-            // Invalid parameters detected.
+            // Request parameters are invalid.
             if (!ModelState.IsValid)
-                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-            
-            // Find the country by using id.
-            var country = await _repositoryPlace.FindCountryAsync(info.Country, null, null);
-            if (country == null)
             {
+                // Log error.
+                _log.Error("Request parameters are invalid. Errors sent to client");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            // Find the place by id.
+            var place = await _repositoryPlace.FindPlaceAsync(id, null, null, null, null);
+            
+            // Place is invalid.
+            if (place == null)
+            {
+                // Log the error.
+                _log.Error($"Place [Id: {id}] isn't found");
+
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Error = $"{Language.WarnCountryNotFound}"
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-            
-            // Initialize a city instance.
-            var city = new City();
-            city.Name = info.Name;
-            city.CountryId = country.Id;
-            city.CountryName = country.Name;
+
+            // Find the place by city & country.
+            var targetPlace = await _repositoryPlace.FindPlaceAsync(null, editor.City,
+                StringComparison.InvariantCultureIgnoreCase, editor.Country, StringComparison.InvariantCultureIgnoreCase);
+
+            // The place already exists.
+            if (targetPlace != null)
+            {
+                // Log the error.
+                _log.Error($"Place [City : {editor.City} | Country : {editor.Country}] already exists.");
+
+                // Tell the client about result.
+                return Request.CreateResponse(HttpStatusCode.Conflict, new
+                {
+                    Error = $"{Language.WarnRecordConflict}"
+                });
+            }
+
+            // Edit the information.
+            place.City = editor.City;
+            place.Country = editor.Country;
 
             try
             {
-                // Save newly created city instance to database.
-                await _repositoryPlace.InitializeCityAsync(city);
+                // Modify place information.
+                place = await _repositoryPlace.ModifyPlaceAsync(place.Id, place);
 
-                _log.Info($"Created city[{city.Id}] : {city.Name} successfully");
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
-                    City = new
+                    Place = new
                     {
-                        city.Id,
-                        city.Name,
-                        Country = new
-                        {
-                            country.Id,
-                            country.Name
-                        }
+                        place.Id,
+                        place.City,
+                        place.Country
                     }
                 });
             }
             catch (Exception exception)
             {
+                // Log the error and respond information to client.
                 _log.Error(exception.Message, exception);
+
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new
                 {
                     Error = $"{Language.WarnInternalServerError}"
@@ -354,27 +267,58 @@ namespace OlivesAdministration.Controllers
         }
 
         /// <summary>
-        ///     Filter and retrieve list of city with given information.
+        /// Filter place by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        [Route("api/city/filter")]
+        [Route("api/place/filter")]
         [HttpPost]
-        public async Task<HttpResponseMessage> FilterCity([FromBody] FilterCityViewModel filter)
+        public async Task<HttpResponseMessage> FilterPlace([FromBody] FilterPlaceViewModel filter)
         {
-            // Filter model hasn't been initialized.
+            // Filter hasn't been initialized.
             if (filter == null)
             {
-                filter = new FilterCityViewModel();
+                // Initialize the filter and do validation.
+                filter = new FilterPlaceViewModel();
                 Validate(filter);
             }
 
-            // Invalid model state.
+            // Request parameters are invalid.
             if (!ModelState.IsValid)
-                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            {
+                // Log the error to file.
+                _log.Error("Request parameters are invalid. Errors sent to client");
 
-            var results = await _repositoryPlace.FilterCityAsync(filter);
-            return Request.CreateResponse(HttpStatusCode.OK, results);
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            try
+            {
+                // Filter and retrieve the result.
+                var result = await _repositoryPlace.FilterPlacesAsync(filter);
+
+                // Tell the client about the result.
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    Places = result.Places.Select(x => new
+                    {
+                        x.Id,
+                        x.City,
+                        x.Country
+                    }),
+                    result.Total
+                });
+            }
+            catch (Exception exception)
+            {
+                // Log the exception.
+                _log.Error(exception.Message, exception);
+
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new
+                {
+                    Error = $"{Language.WarnInternalServerError}"
+                });
+            }
         }
 
         #endregion

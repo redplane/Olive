@@ -32,8 +32,6 @@ namespace Shared.Models
         public virtual DbSet<Allergy> Allergies { get; set; }
         public virtual DbSet<Appointment> Appointments { get; set; }
         public virtual DbSet<BloodPressure> BloodPressures { get; set; }
-        public virtual DbSet<City> Cities { get; set; }
-        public virtual DbSet<Country> Countries { get; set; }
         public virtual DbSet<Doctor> Doctors { get; set; }
         public virtual DbSet<ExperimentNote> ExperimentNotes { get; set; }
         public virtual DbSet<Heartbeat> Heartbeats { get; set; }
@@ -41,6 +39,7 @@ namespace Shared.Models
         public virtual DbSet<MedicalRecord> MedicalRecords { get; set; }
         public virtual DbSet<Patient> Patients { get; set; }
         public virtual DbSet<Person> People { get; set; }
+        public virtual DbSet<Place> Places { get; set; }
         public virtual DbSet<Prescription> Prescriptions { get; set; }
         public virtual DbSet<Rating> Ratings { get; set; }
         public virtual DbSet<Relation> Relations { get; set; }

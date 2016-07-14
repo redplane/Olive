@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Shared.Models;
 using Shared.ViewModels.Filter;
@@ -9,63 +10,44 @@ namespace Shared.Interfaces
 {
     public interface IRepositoryPlace
     {
-        #region Country
-
         /// <summary>
-        ///     Find list of countries by using id.
+        /// Find place by using id asynchronously.
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="name"></param>
-        /// <param name="nameComparision"></param>
-        /// <returns></returns>
-        Task<Country> FindCountryAsync(int? id, string name, StringComparison? nameComparision);
-
-        /// <summary>
-        ///     Initialize a country asynchronously.
-        /// </summary>
-        /// <param name="country"></param>
-        /// <returns></returns>
-        Task<Country> InitializeCountryAsync(Country country);
-
-        /// <summary>
-        ///     Edit a country asynchronously.
-        /// </summary>
-        /// <param name="country"></param>
-        /// <returns></returns>
-        Task<Country> EditCountryAsync(Country country);
-
-        /// <summary>
-        ///     Filter countries list asynchronously with given conditions.
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
-        Task<ResponseCountryFilter> FilterCountryAsync(FilterCountryViewModel filter);
-
-        #endregion
-
-        #region City
-
-        /// <summary>
-        ///     Find list of cities by using id.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<IList<City>> FindCityAsync(int id);
-
-        /// <summary>
-        ///     Initialize a city to database asynchronously.
-        /// </summary>
         /// <param name="city"></param>
+        /// <param name="cityComparision"></param>
+        /// <param name="country"></param>
+        /// <param name="countryComparison"></param>
         /// <returns></returns>
-        Task<City> InitializeCityAsync(City city);
+        Task<Place> FindPlaceAsync(int? id, string city, StringComparison? cityComparision, string country, StringComparison? countryComparison);
 
         /// <summary>
-        ///     Filter a city asynchronously with given conditions.
+        /// Initialize a place asynchronously.
+        /// </summary>
+        /// <param name="place"></param>
+        /// <returns></returns>
+        Task<Place> InitializePlaceAsync(Place place);
+
+        /// <summary>
+        /// Modify a place by using id asynchronously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="place"></param>
+        /// <returns></returns>
+        Task<Place> ModifyPlaceAsync(int id, Place place);
+
+        /// <summary>
+        /// Delete place by using id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<int> DeletePlaceAsync(int id);
+
+        /// <summary>
+        /// Filter places by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        Task<ResponseCityFilter> FilterCityAsync(FilterCityViewModel filter);
-
-        #endregion
+        Task<ResponsePlaceFilter> FilterPlacesAsync(FilterPlaceViewModel filter);
     }
 }

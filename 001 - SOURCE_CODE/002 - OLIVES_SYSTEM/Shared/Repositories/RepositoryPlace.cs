@@ -8,7 +8,6 @@ using Shared.Enumerations;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
@@ -16,285 +15,120 @@ namespace Shared.Repositories
 {
     public class RepositoryPlace : IRepositoryPlace
     {
-        #region Country
-
-        /// <summary>
-        ///     Find countries by using id.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="name"></param>
-        /// <param name="nameComparision"></param>
-        /// <returns></returns>
-        public async Task<Country> FindCountryAsync(int? id, string name, StringComparison? nameComparision)
+        public Task<int> DeletePlaceAsync(int id)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
-            if (id == null && string.IsNullOrWhiteSpace(name))
-                throw new Exception("Id or name must be specified.");
-
-            // Find the countries using id.
-            IQueryable<Country> results = context.Countries;
-
-            // Id has been specified.
-            if (id != null)
-                results = results.Where(x => x.Id == id);
-
-            // Name has been specified.
-            if (!string.IsNullOrWhiteSpace(name))
-                results = results.Where(x => x.Name.Equals(name, nameComparision ?? StringComparison.Ordinal));
-            
-            return await results.FirstOrDefaultAsync();
-        }
-
-
-        /// <summary>
-        ///     Initialize a country asynchronously.
-        /// </summary>
-        /// <param name="country"></param>
-        /// <returns></returns>
-        public async Task<Country> InitializeCountryAsync(Country country)
-        {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
-            // Add/update data to table.
-            context.Countries.AddOrUpdate(country);
-            await context.SaveChangesAsync();
-
-            return country;
+            throw new NotImplementedException();
         }
 
         /// <summary>
-        ///     Edit a country asynchronously.
-        /// </summary>
-        /// <param name="country">Id of country that will be edited.</param>
-        /// <returns></returns>
-        public async Task<Country> EditCountryAsync(Country country)
-        {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
-            // Begin a transaction.
-            // We have to use transaction because when city's name is changed, all country name fields in city table should be changed.    
-            using (var transaction = context.Database.BeginTransaction())
-            {
-                try
-                {
-                    // Initialize/update a record.
-                    context.Countries.AddOrUpdate(country);
-                    
-                    // Save change asynchronously.
-                    await context.SaveChangesAsync();
-                    transaction.Commit();
-
-                    return country;
-                }
-                catch
-                {
-                    // Exception occurs, rollback the transaction to prevent data from being changed.
-                    transaction.Rollback();
-                    throw;
-                }
-            }
-        }
-
-        /// <summary>
-        ///     Filter countries list asynchronously with given conditions.
+        /// 
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<ResponseCountryFilter> FilterCountryAsync(FilterCountryViewModel filter)
+        public async Task<ResponsePlaceFilter> FilterPlacesAsync(FilterPlaceViewModel filter)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
-            // Take all result set.
-            IQueryable<Country> results = context.Countries;
+            // By default, take all records.
+            IQueryable<Place> places = context.Places;
 
-            #region Filter 
+            // City is defined.
+            if (!string.IsNullOrWhiteSpace(filter.City))
+                places = places.Where(x => x.City.Contains(filter.City));
 
-            // Name has been specified.
-            if (!string.IsNullOrWhiteSpace(filter.Name))
-                results = results.Where(x => x.Name.Contains(filter.Name));
-
-            // Count the matched results.
-            var total = await results.CountAsync();
-
-            // Sort the result.
-            if (filter.Direction == SortDirection.Ascending)
-                results = results.OrderBy(x => x.Name);
-            else
-                results = results.OrderByDescending(x => x.Name);
-
-            #endregion
-
-            // Do pagination.
-            var skippedRecords = filter.Page * filter.Records;
-
-            var filterResponse = new ResponseCountryFilter();
-            filterResponse.Countries = await results.Skip(skippedRecords)
-                .Take(filter.Records)
-                .ToListAsync();
-
-            filterResponse.Total = total;
-
-            return filterResponse;
-        }
-
-        #endregion
-
-        #region City
-
-        /// <summary>
-        ///     Find a list of cities by using id.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<IList<City>> FindCityAsync(int id)
-        {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
-            // Find the countries using id.
-            var results = context.Cities.Where(x => x.Id == id);
-
-            return await results.ToListAsync();
-        }
-
-        /// <summary>
-        ///     Initialize a city to database.
-        /// </summary>
-        /// <param name="city"></param>
-        /// <returns></returns>
-        public async Task<City> InitializeCityAsync(City city)
-        {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
-            // Find the countries using id.
-            context.Cities.AddOrUpdate(city);
-            await context.SaveChangesAsync();
-
-            return city;
-        }
-
-        /// <summary>
-        ///     Filter a list of cities asynchronously with given information.
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
-        public async Task<ResponseCityFilter> FilterCityAsync(FilterCityViewModel filter)
-        {
-            // Database context initialize.
-            var context = new OlivesHealthEntities();
-
-            // By default, take all cities.
-            IQueryable<City> cities = context.Cities;
-
-            // By default, take all countries.
-            IQueryable<Country> countries = context.Countries;
-
-            #region Cities filter
-
-            // City name is specified.
-            if (!string.IsNullOrWhiteSpace(filter.Name))
-                cities = cities.Where(x => x.Name.Contains(filter.Name));
-
-            #endregion
-
-            #region Countries filter
-
-            // Country id has been specified.
-            if (filter.CountryId != null)
-            {
-                cities = cities.Where(x => x.CountryId == filter.CountryId);
-                countries = countries.Where(x => x.Id == filter.CountryId);
-            }
-
-            // Country name has been specified.
-            if (!string.IsNullOrWhiteSpace(filter.CountryName))
-                countries = countries.Where(x => x.Name.Contains(filter.CountryName));
-
-            #endregion
+            // Country is defined.
+            if (!string.IsNullOrEmpty(filter.Country))
+                places = places.Where(x => x.Country.Contains(filter.Country));
 
             // Response initialization.
-            var response = new ResponseCityFilter();
+            var response = new ResponsePlaceFilter();
 
-            // Join tables and retrieve all records.
-            var results = from city in cities
-                          join country in countries on city.CountryId equals country.Id
-                          select new
-                          {
-                              Cities = city,
-                              Countries = country
-                          };
-
-            // Calculate the total records.
-            response.Total = await results.CountAsync();
-
-            // Calculate the number of records should be skipped.
-            var skippedRecords = filter.Page * filter.Records;
-
-            #region Sort
-
-            switch (filter.Sort)
+            // Result sorting.
+            switch (filter.Direction)
             {
-                case CityResultSort.CityId:
-                    if (filter.Direction == SortDirection.Ascending)
+                case SortDirection.Ascending:
+                    switch (filter.Sort)
                     {
-                        results = results.OrderBy(x => x.Cities.Id);
-                        break;
+                        case PlaceFilterSort.City:
+                            places = places.OrderBy(x => x.City);
+                            break;
+                        case PlaceFilterSort.Country:
+                            places = places.OrderBy(x => x.Country);
+                            break;
+                        default:
+                            places = places.OrderBy(x => x.Id);
+                            break;
                     }
-                    results = results.OrderByDescending(x => x.Cities.Id);
-                    break;
-
-                case CityResultSort.CountryId:
-                    if (filter.Direction == SortDirection.Ascending)
-                    {
-                        results = results.OrderBy(x => x.Countries.Id);
-                        break;
-                    }
-                    results = results.OrderByDescending(x => x.Countries.Id);
-                    break;
-                case CityResultSort.CountryName:
-                    if (filter.Direction == SortDirection.Ascending)
-                    {
-                        results = results.OrderBy(x => x.Countries.Name);
-                        break;
-                    }
-                    results = results.OrderByDescending(x => x.Countries.Name);
                     break;
                 default:
-                    if (filter.Direction == SortDirection.Ascending)
+                    switch (filter.Sort)
                     {
-                        results = results.OrderBy(x => x.Cities.Name);
-                        break;
+                        case PlaceFilterSort.City:
+                            places = places.OrderByDescending(x => x.City);
+                            break;
+                        case PlaceFilterSort.Country:
+                            places = places.OrderByDescending(x => x.Country);
+                            break;
+                        default:
+                            places = places.OrderByDescending(x => x.Id);
+                            break;
                     }
-                    results = results.OrderByDescending(x => x.Cities.Name);
                     break;
             }
 
-            #endregion
-
-            // Response records construction.
-            response.Cities = await results.Skip(skippedRecords)
+            // Count the total matched results.
+            response.Total = await places.CountAsync();
+            
+            // Result taking.
+            response.Places = await places.Skip(filter.Page*filter.Records)
                 .Take(filter.Records)
-                .Select(x => new CityViewModel
-                {
-                    Id = x.Cities.Id,
-                    Name = x.Cities.Name,
-                    Country = new CountryViewModel
-                    {
-                        Id = x.Countries.Id,
-                        Name = x.Countries.Name
-                    }
-                })
                 .ToListAsync();
 
             return response;
         }
 
-        #endregion
+        /// <summary>
+        /// Find the place by using specific conditions asynchronously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="city"></param>
+        /// <param name="cityComparision"></param>
+        /// <param name="country"></param>
+        /// <param name="countryComparison"></param>
+        /// <returns></returns>
+        public async Task<Place> FindPlaceAsync(int? id, string city, StringComparison? cityComparision, string country, StringComparison? countryComparison)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // By default, take all places.
+            IQueryable<Place> places = context.Places;
+
+            // Id is specified.
+            if (id != null)
+                places = places.Where(x => x.Id == id);
+
+            // City is defined.
+            if (city != null)
+                places = places.Where(x => x.City.Equals(city, cityComparision ?? StringComparison.Ordinal));
+
+            // Country is defined.
+            if (country != null)
+                places = places.Where(x => x.Country.Equals(country, countryComparison ?? StringComparison.Ordinal));
+
+            // Take the first result.
+            return await places.FirstOrDefaultAsync();
+        }
+
+        public Task<Place> InitializePlaceAsync(Place place)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Place> ModifyPlaceAsync(int id, Place place)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

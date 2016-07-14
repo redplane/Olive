@@ -31,21 +31,11 @@ CREATE TABLE Specialty
 )
 
 -- Country table.
-CREATE TABLE Country
+CREATE TABLE Place
 (
 	Id					INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	Name				NVARCHAR(64) NOT NULL
-)
-
--- City table.
-CREATE TABLE City
-(
-	Id					INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	CountryId			INT NOT NULL,
-	Name				NVARCHAR(64) NOT NULL,
-	CountryName			NVARCHAR(64) NOT NULL
-
-	FOREIGN KEY (CountryId) REFERENCES Country(Id)
+	City				NVARCHAR(64) NOT NULL,
+	Country				NVARCHAR(64) NOT NULL,
 )
 
 -- Person table.
@@ -195,14 +185,16 @@ CREATE TABLE Doctor
 	Id					INT NOT NULL PRIMARY KEY,
 	Rank				FLOAT,
 	SpecialtyId			INT NOT NULL,
-	SpecialtyName		NVARCHAR(32) NOT NULL,
-	Voters				INT			NOT NULL,
-	Money				INT			NOT NULL,
-	CityId				INT			NOT NULL,
+	SpecialtyName		NVARCHAR(32)	NOT NULL,
+	Voters				INT				NOT NULL,
+	Money				INT				NOT NULL,
+	PlaceId				INT				NOT NULL,
+	City				NVARCHAR(64)	NOT NULL,
+	Country				NVARCHAR(64)	NOT NULL,
 
 	FOREIGN KEY (Id) REFERENCES Person(Id),
 	FOREIGN KEY (SpecialtyId) REFERENCES Specialty(Id),
-	FOREIGN KEY (CityId) REFERENCES City(Id)
+	FOREIGN KEY (PlaceId) REFERENCES Place(Id)
 );
 
 -- Patient information.

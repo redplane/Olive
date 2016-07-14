@@ -12,20 +12,18 @@ namespace Shared.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class City
+    public partial class Place
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public City()
+        public Place()
         {
             this.Doctors = new HashSet<Doctor>();
         }
     
         public int Id { get; set; }
-        public int CountryId { get; set; }
-        public string Name { get; set; }
-        public string CountryName { get; set; }
+        public string City { get; set; }
+        public string Country { get; set; }
     
-        public virtual Country Country { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Doctor> Doctors { get; set; }
     }

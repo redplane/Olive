@@ -119,15 +119,11 @@ namespace OlivesAdministration.Controllers
                     x.Person.Birthday,
                     x.Person.Gender,
                     x.Person.Address,
-                    City = new
+                    Place = new
                     {
-                        x.City.Id,
-                        x.City.Name
-                    },
-                    Country = new
-                    {
-                        x.City.Country.Id,
-                        x.City.Country.Name
+                        Id = x.PlaceId,
+                        x.City,
+                        x.Country
                     },
                     x.Person.Phone,
                     x.Person.Role,

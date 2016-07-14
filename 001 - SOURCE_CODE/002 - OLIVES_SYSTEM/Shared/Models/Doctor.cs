@@ -26,10 +26,12 @@ namespace Shared.Models
         public string SpecialtyName { get; set; }
         public int Voters { get; set; }
         public int Money { get; set; }
-        public int CityId { get; set; }
+        public int PlaceId { get; set; }
+        public string City { get; set; }
+        public string Country { get; set; }
     
-        public virtual City City { get; set; }
         public virtual Person Person { get; set; }
+        public virtual Place Place { get; set; }
         public virtual Specialty Specialty { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Rating> Ratings { get; set; }
