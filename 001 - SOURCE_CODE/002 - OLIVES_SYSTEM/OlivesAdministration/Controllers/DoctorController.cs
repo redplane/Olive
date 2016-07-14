@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using log4net;
 using OlivesAdministration.Attributes;
 using OlivesAdministration.Models;
 using Shared.Constants;
@@ -23,10 +24,11 @@ namespace OlivesAdministration.Controllers
         /// </summary>
         /// <param name="repositoryAccount"></param>
         /// <param name="applicationSetting"></param>
-        public DoctorController(IRepositoryAccount repositoryAccount, ApplicationSetting applicationSetting)
+        public DoctorController(IRepositoryAccount repositoryAccount, ILog log, ApplicationSetting applicationSetting)
         {
             _repositoryAccount = repositoryAccount;
             _applicationSetting = applicationSetting;
+            _log = log;
         }
 
         #endregion
@@ -47,6 +49,8 @@ namespace OlivesAdministration.Controllers
             // No result has been found.
             if (doctor == null)
             {
+                // Log error.
+                _log.Error($"Cannot find the doctor [Id : {id}]");
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
                     Error = $"{Language.WarnRecordNotFound}"
@@ -67,12 +71,18 @@ namespace OlivesAdministration.Controllers
                     doctor.Person.Address,
                     doctor.Person.Phone,
                     doctor.Person.Role,
-                    doctor.Person.Photo,
+                    Photo = InitializeUrl(_applicationSetting.AvatarStorage.Absolute, doctor.Person.Photo, Values.StandardImageExtension),
                     doctor.Rank,
                     Specialty = new
                     {
                         Id = doctor.SpecialtyId,
                         Name = doctor.SpecialtyName
+                    },
+                    Place = new
+                    {
+                        Id = doctor.PlaceId,
+                        doctor.City,
+                        doctor.Country
                     },
                     doctor.Voters,
                     doctor.Money,
@@ -102,8 +112,11 @@ namespace OlivesAdministration.Controllers
 
             // Invalid data validation.
             if (!ModelState.IsValid)
+            {
+                // Log the error.
+                
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-
+            }
             // Retrieve result from server.
             var result = await _repositoryAccount.FilterDoctorAsync(filter);
 
@@ -119,23 +132,20 @@ namespace OlivesAdministration.Controllers
                     x.Person.Birthday,
                     x.Person.Gender,
                     x.Person.Address,
-                    Place = new
-                    {
-                        Id = x.PlaceId,
-                        x.City,
-                        x.Country
-                    },
                     x.Person.Phone,
                     x.Person.Role,
-                    x.Person.Status,
-                    Photo =
-                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Person.Photo,
-                            Values.StandardImageExtension),
+                    Photo = InitializeUrl(_applicationSetting.AvatarStorage.Absolute, x.Person.Photo, Values.StandardImageExtension),
                     x.Rank,
                     Specialty = new
                     {
                         Id = x.SpecialtyId,
                         Name = x.SpecialtyName
+                    },
+                    Place = new
+                    {
+                        Id = x.PlaceId,
+                        x.City,
+                        x.Country
                     },
                     x.Voters,
                     x.Money,
@@ -152,6 +162,11 @@ namespace OlivesAdministration.Controllers
         ///     Instance of repository account.
         /// </summary>
         private readonly IRepositoryAccount _repositoryAccount;
+
+        /// <summary>
+        /// Instance for logging management.
+        /// </summary>
+        private readonly ILog _log;
 
         /// <summary>
         ///     Class stores application settings information.
