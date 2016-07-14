@@ -18,7 +18,7 @@ namespace Shared.Interfaces
         /// <param name="name"></param>
         /// <param name="nameComparision"></param>
         /// <returns></returns>
-        Task<IList<Country>> FindCountryAsync(int? id, string name, StringComparison? nameComparision);
+        Task<Country> FindCountryAsync(int? id, string name, StringComparison? nameComparision);
 
         /// <summary>
         ///     Initialize a country asynchronously.

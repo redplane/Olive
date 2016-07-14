@@ -59,7 +59,7 @@ namespace Shared.Interfaces
         ///     Summary person by using role.
         /// </summary>
         /// <returns></returns>
-        Task<IList<StatusSummaryViewModel>> SummarizePersonRole(byte? role);
+        Task<IList<StatusSummaryViewModel>> SummarizePersonRoleAsync(byte? role);
 
         /// <summary>
         ///     Initialize or update person information asynchronously.

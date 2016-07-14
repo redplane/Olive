@@ -26,7 +26,7 @@ namespace Shared.ViewModels.Filter
         /// </summary>
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidPageIndex")]
+            ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public int Page { get; set; } = 0;
 
         /// <summary>

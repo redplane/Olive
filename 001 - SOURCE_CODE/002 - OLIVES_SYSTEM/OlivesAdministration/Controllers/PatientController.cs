@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -9,9 +8,7 @@ using OlivesAdministration.Models;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
-using Shared.Models;
 using Shared.Resources;
-using Shared.ViewModels;
 using Shared.ViewModels.Filter;
 
 namespace OlivesAdministration.Controllers
@@ -19,20 +16,6 @@ namespace OlivesAdministration.Controllers
     [Route("api/patient")]
     public class PatientController : ApiParentController
     {
-        #region Properties
-
-        /// <summary>
-        ///     Repository account DI
-        /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
-
-        /// <summary>
-        /// Class stores application settings.
-        /// </summary>
-        private readonly ApplicationSetting _applicationSetting;
-
-        #endregion
-
         #region Constructors
 
         /// <summary>
@@ -48,6 +31,20 @@ namespace OlivesAdministration.Controllers
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        ///     Repository account DI
+        /// </summary>
+        private readonly IRepositoryAccount _repositoryAccount;
+
+        /// <summary>
+        ///     Class stores application settings.
+        /// </summary>
+        private readonly ApplicationSetting _applicationSetting;
+
+        #endregion
+
         #region Methods
 
         /// <summary>
@@ -56,7 +53,7 @@ namespace OlivesAdministration.Controllers
         /// <param name="id">Id of patient</param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] { Role.Admin })]
+        [OlivesAuthorize(new[] {Role.Admin})]
         public async Task<HttpResponseMessage> Get(int id)
         {
             // Retrieve list of patients.
@@ -105,7 +102,7 @@ namespace OlivesAdministration.Controllers
         /// <returns></returns>
         [Route("api/patient/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Admin })]
+        [OlivesAuthorize(new[] {Role.Admin})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterPatientViewModel filter)
         {
             // Filter hasn't been initialized . Initialize it.
@@ -124,7 +121,7 @@ namespace OlivesAdministration.Controllers
 
             // Filter patient by using specific conditions.
             var result = await _repositoryAccount.FilterPatientAsync(filter);
-            
+
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 Patients = result.Patients.Select(x => new
@@ -142,7 +139,9 @@ namespace OlivesAdministration.Controllers
                     x.Person.Gender,
                     x.Person.Status,
                     x.Person.Address,
-                    Photo = InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Person.Photo, Values.StandardImageExtension),
+                    Photo =
+                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Person.Photo,
+                            Values.StandardImageExtension),
                     x.Money,
                     x.Height,
                     x.Weight

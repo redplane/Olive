@@ -19,7 +19,7 @@ namespace OlivesAdministration.Attributes
         /// <param name="roles"></param>
         public OlivesAuthorize(Role[] roles)
         {
-            Roles = Array.ConvertAll(roles, x => (int)x);
+            Roles = Array.ConvertAll(roles, x => (int) x);
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace OlivesAdministration.Attributes
             }
 
             // Account has been disabled.
-            if ((StatusAccount)person.Status == StatusAccount.Inactive)
+            if ((StatusAccount) person.Status == StatusAccount.Inactive)
             {
                 // Treat the login isn't successful because of disabled account.
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new
@@ -93,7 +93,7 @@ namespace OlivesAdministration.Attributes
             }
 
             // Account is still pending.
-            if ((StatusAccount)person.Status == StatusAccount.Pending)
+            if ((StatusAccount) person.Status == StatusAccount.Pending)
             {
                 // Treat the login isn't successful because of pending account.
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, new

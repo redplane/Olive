@@ -501,7 +501,7 @@ namespace Shared.Repositories
         ///     Summary person by using role.
         /// </summary>
         /// <returns></returns>
-        public async Task<IList<StatusSummaryViewModel>> SummarizePersonRole(byte? role)
+        public async Task<IList<StatusSummaryViewModel>> SummarizePersonRoleAsync(byte? role)
         {
             var context = new OlivesHealthEntities();
             IQueryable<Person> result = context.People;

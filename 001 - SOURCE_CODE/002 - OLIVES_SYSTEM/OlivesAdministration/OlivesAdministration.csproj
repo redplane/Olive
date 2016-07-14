@@ -217,6 +217,7 @@
     <Compile Include="ViewModels\EditStatusViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeCityViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeCountryViewModel.cs" />
+    <Compile Include="ViewModels\Statistic\StatusSummary.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

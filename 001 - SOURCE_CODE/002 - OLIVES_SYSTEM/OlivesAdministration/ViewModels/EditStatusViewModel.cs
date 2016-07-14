@@ -1,9 +1,16 @@
-﻿namespace OlivesAdministration.ViewModels
+﻿using Shared.Attributes;
+using Shared.Enumerations;
+using Shared.Resources;
+
+namespace OlivesAdministration.ViewModels
 {
     public class EditStatusViewModel
     {
-        public int Id { get; set; }
-
-        public byte Status { get; set; }
+        /// <summary>
+        ///     Status of account.
+        /// </summary>
+        [InEnumerationsArray(new object[] {StatusAccount.Active, StatusAccount.Inactive, StatusAccount.Pending},
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
+        public StatusAccount Status { get; set; }
     }
 }

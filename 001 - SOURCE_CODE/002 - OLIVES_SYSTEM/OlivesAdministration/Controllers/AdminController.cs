@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -7,7 +6,6 @@ using OlivesAdministration.Models;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
-using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels;
 
@@ -15,20 +13,6 @@ namespace OlivesAdministration.Controllers
 {
     public class AdminController : ApiParentController
     {
-        #region Properties
-
-        /// <summary>
-        ///     Repository account.
-        /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
-
-        /// <summary>
-        /// Application setting.
-        /// </summary>
-        private readonly ApplicationSetting _applicationSetting;
-
-        #endregion
-
         #region Constructors
 
         /// <summary>
@@ -59,7 +43,7 @@ namespace OlivesAdministration.Controllers
             // Invalid model state.
             if (!ModelState.IsValid)
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-            
+
             // Pass parameter to login function. 
             var admin =
                 await
@@ -74,7 +58,7 @@ namespace OlivesAdministration.Controllers
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-            
+
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 User = new
@@ -91,11 +75,27 @@ namespace OlivesAdministration.Controllers
                     admin.Address,
                     admin.Role,
                     admin.Status,
-                    Photo = InitializeUrl(_applicationSetting.AvatarStorage.Relative, admin.Photo, Values.StandardImageExtension),
+                    Photo =
+                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, admin.Photo,
+                            Values.StandardImageExtension),
                     admin.LastModified
                 }
             });
         }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        ///     Repository account.
+        /// </summary>
+        private readonly IRepositoryAccount _repositoryAccount;
+
+        /// <summary>
+        ///     Application setting.
+        /// </summary>
+        private readonly ApplicationSetting _applicationSetting;
 
         #endregion
     }

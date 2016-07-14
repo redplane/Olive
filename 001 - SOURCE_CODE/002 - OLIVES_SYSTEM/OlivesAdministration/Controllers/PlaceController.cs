@@ -56,24 +56,12 @@ namespace OlivesAdministration.Controllers
         /// <returns></returns>
         [Route("api/country")]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetCountry([FromUri] int id)
+        public async Task<HttpResponseMessage> RetrieveCountry([FromUri] int id)
         {
             // Using id to find country.
-            var countries = await _repositoryPlace.FindCountryAsync(id, null, null);
+            var country = await _repositoryPlace.FindCountryAsync(id, null, null);
 
             // Records hasn't been found or not unique, treat the result as not found.
-            if (countries == null || countries.Count != 1)
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
-
-            // Retrieve the first result.
-            var country = countries.FirstOrDefault();
-
-            // Country is invalid.
             if (country == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -81,7 +69,7 @@ namespace OlivesAdministration.Controllers
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-
+            
             // Return the city information.
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -161,24 +149,17 @@ namespace OlivesAdministration.Controllers
 
             // Retrieve model error.
             if (!ModelState.IsValid)
+            {
+                // TODO: Log error to file.
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-
-            #region Id validation
+            }
+            
+            #region Country validation
 
             // Find the country by using id.
-            var countries = await _repositoryPlace.FindCountryAsync(id, null, null);
+            var country = await _repositoryPlace.FindCountryAsync(id, null, null);
 
             // No record has been found or found record is not unique.
-            if (countries == null || countries.Count != 1)
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
-
-            // Retrieve the first queried result.
-            var country = countries.FirstOrDefault();
             if (country == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -186,17 +167,13 @@ namespace OlivesAdministration.Controllers
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-
-            #endregion
-
-            #region Name validation
-
+            
             // Check whether country name has been used before or not.
             var target =
                 await _repositoryPlace.FindCountryAsync(null, info.Name, StringComparison.InvariantCultureIgnoreCase);
 
             // Record has been created before.
-            if (target != null && target.Count > 0)
+            if (target != null)
             {
                 return Request.CreateResponse(HttpStatusCode.Conflict, new
                 {
@@ -226,6 +203,7 @@ namespace OlivesAdministration.Controllers
             }
             catch (Exception exception)
             {
+                // Log the error to file.
                 _log.Error(exception.Message, exception);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
@@ -328,21 +306,9 @@ namespace OlivesAdministration.Controllers
             // Invalid parameters detected.
             if (!ModelState.IsValid)
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-
-            #region Country validation
-
+            
             // Find the country by using id.
-            var countries = await _repositoryPlace.FindCountryAsync(info.Country, null, null);
-            if (countries == null || countries.Count != 1)
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnCountryNotFound}"
-                });
-            }
-
-            // Find the first query country.
-            var country = countries.FirstOrDefault();
+            var country = await _repositoryPlace.FindCountryAsync(info.Country, null, null);
             if (country == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -350,9 +316,7 @@ namespace OlivesAdministration.Controllers
                     Error = $"{Language.WarnCountryNotFound}"
                 });
             }
-
-            #endregion
-
+            
             // Initialize a city instance.
             var city = new City();
             city.Name = info.Name;

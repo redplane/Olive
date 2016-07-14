@@ -53,24 +53,12 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/country")]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetCountry([FromUri] int id)
+        public async Task<HttpResponseMessage> RetrieveCountry([FromUri] int id)
         {
             // Using id to find country.
-            var countries = await _repositoryPlace.FindCountryAsync(id, null, null);
+            var country = await _repositoryPlace.FindCountryAsync(id, null, null);
 
             // Records hasn't been found or not unique, treat the result as not found.
-            if (countries == null || countries.Count != 1)
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
-
-            // Retrieve the first result.
-            var country = countries.FirstOrDefault();
-
-            // Country is invalid.
             if (country == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -78,7 +66,7 @@ namespace Olives.Controllers
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-
+            
             // Return the city information.
             return Request.CreateResponse(HttpStatusCode.OK, new
             {

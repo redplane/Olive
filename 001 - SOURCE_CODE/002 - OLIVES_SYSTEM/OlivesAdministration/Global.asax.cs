@@ -6,14 +6,12 @@ using System.Web.Http;
 using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.WebApi;
-using log4net.Config;
 using Newtonsoft.Json;
 using OlivesAdministration.Attributes;
 using OlivesAdministration.Controllers;
 using OlivesAdministration.Models;
 using OlivesAdministration.Module;
 using Shared.Interfaces;
-using Shared.Models;
 using Shared.Repositories;
 
 namespace OlivesAdministration
@@ -28,7 +26,6 @@ namespace OlivesAdministration
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
             #endregion
-
 
             #region General application configuration
 
@@ -61,7 +58,7 @@ namespace OlivesAdministration
                 Directory.CreateDirectory(fullPrivateStoragePath);
             // Update application private storage folder.
             applicationSetting.PrivateStorage.Absolute = fullPrivateStoragePath;
-            
+
             #endregion
 
             #region IoC Initialization
@@ -110,7 +107,7 @@ namespace OlivesAdministration
 
             // Application setting instance.
             builder.RegisterInstance(applicationSetting).As<ApplicationSetting>();
-            
+
             #endregion
 
             builder.RegisterWebApiFilterProvider(GlobalConfiguration.Configuration);
@@ -118,7 +115,6 @@ namespace OlivesAdministration
             GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
 
             #endregion
-            
         }
     }
 }

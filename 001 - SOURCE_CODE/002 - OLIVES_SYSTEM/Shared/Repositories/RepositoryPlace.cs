@@ -25,36 +25,26 @@ namespace Shared.Repositories
         /// <param name="name"></param>
         /// <param name="nameComparision"></param>
         /// <returns></returns>
-        public async Task<IList<Country>> FindCountryAsync(int? id, string name, StringComparison? nameComparision)
+        public async Task<Country> FindCountryAsync(int? id, string name, StringComparison? nameComparision)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
-            // This variable is to check whether condition has been used or not.
-            var conditionDeclared = false;
+            if (id == null && string.IsNullOrWhiteSpace(name))
+                throw new Exception("Id or name must be specified.");
 
             // Find the countries using id.
             IQueryable<Country> results = context.Countries;
 
             // Id has been specified.
             if (id != null)
-            {
                 results = results.Where(x => x.Id == id);
-                conditionDeclared = true;
-            }
 
             // Name has been specified.
             if (!string.IsNullOrWhiteSpace(name))
-            {
                 results = results.Where(x => x.Name.Equals(name, nameComparision ?? StringComparison.Ordinal));
-                conditionDeclared = true;
-            }
-
-            // No condition has been specified.
-            if (!conditionDeclared)
-                return null;
-
-            return await results.ToListAsync();
+            
+            return await results.FirstOrDefaultAsync();
         }
 
 
@@ -78,7 +68,7 @@ namespace Shared.Repositories
         /// <summary>
         ///     Edit a country asynchronously.
         /// </summary>
-        /// <param name="country"></param>
+        /// <param name="country">Id of country that will be edited.</param>
         /// <returns></returns>
         public async Task<Country> EditCountryAsync(Country country)
         {
@@ -91,10 +81,10 @@ namespace Shared.Repositories
             {
                 try
                 {
+                    // Initialize/update a record.
                     context.Countries.AddOrUpdate(country);
-                    await context.Cities.Where(x => x.CountryId == country.Id)
-                        .ForEachAsync(x => x.CountryName = country.Name);
-
+                    
+                    // Save change asynchronously.
                     await context.SaveChangesAsync();
                     transaction.Commit();
 
@@ -140,7 +130,7 @@ namespace Shared.Repositories
             #endregion
 
             // Do pagination.
-            var skippedRecords = filter.Page*filter.Records;
+            var skippedRecords = filter.Page * filter.Records;
 
             var filterResponse = new ResponseCountryFilter();
             filterResponse.Countries = await results.Skip(skippedRecords)
@@ -233,18 +223,18 @@ namespace Shared.Repositories
 
             // Join tables and retrieve all records.
             var results = from city in cities
-                join country in countries on city.CountryId equals country.Id
-                select new
-                {
-                    Cities = city,
-                    Countries = country
-                };
+                          join country in countries on city.CountryId equals country.Id
+                          select new
+                          {
+                              Cities = city,
+                              Countries = country
+                          };
 
             // Calculate the total records.
             response.Total = await results.CountAsync();
 
             // Calculate the number of records should be skipped.
-            var skippedRecords = filter.Page*filter.Records;
+            var skippedRecords = filter.Page * filter.Records;
 
             #region Sort
 

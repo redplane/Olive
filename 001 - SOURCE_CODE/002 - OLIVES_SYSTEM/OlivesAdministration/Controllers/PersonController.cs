@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -6,18 +6,17 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using OlivesAdministration.Attributes;
 using OlivesAdministration.ViewModels;
+using OlivesAdministration.ViewModels.Statistic;
 using Shared.Enumerations;
 using Shared.Interfaces;
-using Shared.Models;
 using Shared.Resources;
-using Shared.ViewModels;
 
 namespace OlivesAdministration.Controllers
 {
     [Route("api/person")]
     public class PersonController : ApiParentController
     {
-        #region Dependency injections
+        #region Properties
 
         /// <summary>
         ///     Repository account DI
@@ -41,71 +40,87 @@ namespace OlivesAdministration.Controllers
 
         #region Methods
 
+        /// <summary>
+        ///     This function is for modifying personal status.
+        /// </summary>
+        /// <param name="id">Id of account.</param>
+        /// <param name="modifier"></param>
+        /// <returns></returns>
         [Route("api/person/status")]
-        [HttpPost]
+        [HttpPut]
         [OlivesAuthorize(new[] {Role.Admin})]
-        public async Task<HttpResponseMessage> Status(EditStatusViewModel info)
+        public async Task<HttpResponseMessage> Status([FromUri] int id, [FromBody] EditStatusViewModel modifier)
         {
-            #region Model validation
+            // Modifier hasn't been initialized.
+            if (modifier == null)
+            {
+                // Initialize modifier and do validation.
+                modifier = new EditStatusViewModel();
+                Validate(modifier);
+            }
 
+            // Request parameters are invalid.
             if (!ModelState.IsValid)
+            {
+                // TODO: Log error to file.
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-
-            #endregion
+            }
 
             // Find the person from database using unique identity.
-            var person = await _repositoryAccount.FindPersonAsync(info.Id, null, null, null, null);
+            var person = await _repositoryAccount.FindPersonAsync(id, null, null, null, null);
 
             // No person has been found.
             if (person == null)
             {
-                // Response error construction.
-                var responseError = new ResponseErrror();
-                responseError.Errors = new List<string>();
-
-                responseError.Errors.Add(Language.InvalidPerson);
-                return Request.CreateResponse(HttpStatusCode.NotFound, responseError);
-            }
-
-            // Change account status and retrieve the process result.
-            var result = await _repositoryAccount.EditPersonStatusAsync(info.Id, info.Status);
-
-            // Error happens while changing account status.
-            if (result == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, new
+                // TODO: Log the error to file.
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Error = $"{Language.WarnInternalServerError}"
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 
-            if ((StatusAccount) info.Status == StatusAccount.Active)
-                return Request.CreateResponse(HttpStatusCode.OK);
+            // Change account status and retrieve the process result.
+            person.Status = (byte) modifier.Status;
 
-            return Request.CreateResponse(HttpStatusCode.OK);
+            try
+            {
+                // Save changes to database.
+                await _repositoryAccount.InitializePersonAsync(person);
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch (Exception)
+            {
+                // TODO: Log the exception to file.
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
         }
 
-        [Route("api/person/statistic/status")]
+        /// <summary>
+        ///     Statistic people role.
+        /// </summary>
+        /// <param name="summarizer"></param>
+        /// <returns></returns>
+        [Route("api/person/status/statistic")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Admin})]
-        public async Task<HttpResponseMessage> Statistic([FromBody] StatusSummaryViewModel info)
+        public async Task<HttpResponseMessage> Statistic([FromBody] StatusSummary summarizer)
         {
-            #region Model validation
-
             // Information hasn't been initialized. Initialize and validate it.
-            if (info == null)
+            if (summarizer == null)
             {
-                info = new StatusSummaryViewModel();
-                Validate(info);
+                summarizer = new StatusSummary();
+                Validate(summarizer);
             }
 
+            // Request parameters are invalid.
             if (!ModelState.IsValid)
+            {
+                // TODO: Log the error to file.
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-
-            #endregion
+            }
 
             // Find the person from database using unique identity.
-            var summaryResult = await _repositoryAccount.SummarizePersonRole(info.Role);
+            var summaryResult = await _repositoryAccount.SummarizePersonRoleAsync(summarizer.Role);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {

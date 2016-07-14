@@ -1,17 +1,20 @@
-﻿using Shared.Attributes;
-using Shared.Resources;
-
-namespace Shared.ViewModels
+﻿namespace Shared.ViewModels
 {
     public class StatusSummaryViewModel
     {
-        [InEnumerationsArray(new object[] {Enumerations.Role.Patient, Enumerations.Role.Doctor},
-            ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidRole")]
-        public byte? Role { get; set; }
+        /// <summary>
+        /// Role which is used for statistic.
+        /// </summary>
+        public byte Role { get; set; }
 
+        /// <summary>
+        /// Status of role.
+        /// </summary>
         public int Status { get; set; }
 
+        /// <summary>
+        /// Total role.
+        /// </summary>
         public long Total { get; set; }
     }
 }
