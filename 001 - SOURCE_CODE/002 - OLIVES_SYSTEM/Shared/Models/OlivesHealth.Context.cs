@@ -33,6 +33,7 @@ namespace Shared.Models
         public virtual DbSet<Doctor> Doctors { get; set; }
         public virtual DbSet<ExperimentNote> ExperimentNotes { get; set; }
         public virtual DbSet<Heartbeat> Heartbeats { get; set; }
+        public virtual DbSet<MedicalCategory> MedicalCategories { get; set; }
         public virtual DbSet<MedicalImage> MedicalImages { get; set; }
         public virtual DbSet<MedicalNote> MedicalNotes { get; set; }
         public virtual DbSet<MedicalRecord> MedicalRecords { get; set; }

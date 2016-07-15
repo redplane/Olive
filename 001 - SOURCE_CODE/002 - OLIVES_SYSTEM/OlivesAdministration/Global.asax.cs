@@ -37,7 +37,7 @@ namespace OlivesAdministration
 
             // Find the file on physical path.
             var applicationConfigFile = Server.MapPath($"~/{applicationConfig}.json");
-            // TODO: Implement IoC for this instance
+            
             // Invalid application configuration file.
             if (!File.Exists(applicationConfigFile))
                 throw new NotImplementedException($"{applicationConfigFile} is required to make server run properly.");
@@ -74,6 +74,7 @@ namespace OlivesAdministration
             builder.RegisterType<PatientController>().InstancePerRequest();
             builder.RegisterType<PersonController>().InstancePerRequest();
             builder.RegisterType<PlaceController>().InstancePerRequest();
+            builder.RegisterType<MedicalController>().InstancePerRequest();
 
             #endregion
 
@@ -89,6 +90,10 @@ namespace OlivesAdministration
             // Repository place registration.
             builder.RegisterType<RepositoryPlace>()
                 .As<IRepositoryPlace>()
+                .SingleInstance();
+
+            builder.RegisterType<RepositoryMedical>()
+                .As<IRepositoryMedical>()
                 .SingleInstance();
 
             #endregion

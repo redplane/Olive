@@ -202,6 +202,7 @@
     <Compile Include="Controllers\DoctorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ApiParentController.cs" />
+    <Compile Include="Controllers\MedicalController.cs" />
     <Compile Include="Controllers\PatientController.cs" />
     <Compile Include="Controllers\PersonController.cs" />
     <Compile Include="Controllers\PlaceController.cs" />
@@ -216,6 +217,7 @@
     <Compile Include="ViewModels\InitializePatientViewModel.cs" />
     <Compile Include="ViewModels\EditPatientStatusViewModel.cs" />
     <Compile Include="ViewModels\EditStatusViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializeMedicalCategoryViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePlaceViewModel.cs" />
     <Compile Include="ViewModels\Statistic\StatusSummary.cs" />
   </ItemGroup>

@@ -1626,7 +1626,91 @@ namespace Olives.Controllers
                 result.Total
             });
         }
-        
+
+        #endregion
+
+        #region Medical category
+
+        /// <summary>
+        ///     Find a medical note by using id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Route("api/medical/category")]
+        [HttpGet]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        public async Task<HttpResponseMessage> RetrieveCategory([FromUri] int id)
+        {
+            // Find the category.
+            var category = await _repositoryMedical.FindMedicalCategoryAsync(id, null, null);
+
+            // Category is not found.
+            if (category == null)
+            {
+                // Log the error.
+                _log.Error($"Category [Id: {id}] is doesn't exist");
+
+                // Respond client.
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                MedicalCategory = new
+                {
+                    category.Id,
+                    category.Name,
+                    category.Created,
+                    category.LastModified
+                }
+            });
+        }
+
+        /// <summary>
+        /// Filter medical categories asynchronously.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [Route("api/medical/category/filter")]
+        [HttpPost]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        public async Task<HttpResponseMessage> FilterCategories([FromBody] FilterMedicalCategoryViewModel filter)
+        {
+            // Filter hasn't been initialized before.
+            if (filter == null)
+            {
+                filter = new FilterMedicalCategoryViewModel();
+                Validate(filter);
+            }
+
+            // Request parameters are invalid.
+            if (!ModelState.IsValid)
+            {
+                // Log the error and respond client.
+                _log.Error("Request parameters are invalid. Errors sent to client.");
+
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            // Do the filter.
+            var result = await _repositoryMedical.FilterMedicalCategoryAsync(filter);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                MedicalCategories = result.MedicalCategories.Select(x => new
+                {
+                    x.Id,
+                    x.Name,
+                    x.Created,
+                    x.LastModified
+                }),
+                result.Total
+            });
+        }
+
         #endregion
 
         #endregion

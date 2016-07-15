@@ -15,7 +15,7 @@ using Shared.ViewModels.Filter;
 namespace Olives.Controllers
 {
     [Route("api/place")]
-    [OlivesAuthorize(new[] {Role.Admin})]
+    [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
     public class PlaceController : ApiParentController
     {
         #region Constructors

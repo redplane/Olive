@@ -82,6 +82,7 @@
     <Compile Include="Attributes\RegexMatchAttribute.cs" />
     <Compile Include="Attributes\RequiredIfAttribute.cs" />
     <Compile Include="Attributes\ValueStringLengthAttribute.cs" />
+    <Compile Include="Enumerations\Filter\MedicalCategoryFilterSort.cs" />
     <Compile Include="Enumerations\Filter\MedicalNoteFilterSort.cs" />
     <Compile Include="Enumerations\Filter\MedicalRecordFilterSort.cs" />
     <Compile Include="Enumerations\Filter\PlaceFilterSort.cs" />
@@ -142,6 +143,9 @@
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Heartbeat.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MedicalCategory.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\MedicalImage.cs">
@@ -228,6 +232,7 @@
     <Compile Include="ViewModels\BloodPressureViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterAppointmentViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterBloodPressureViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterMedicalCategoryViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMedicalNoteViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPlaceViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterExperimentViewModel.cs" />
@@ -239,6 +244,7 @@
     <Compile Include="ViewModels\Filter\FilterRatingViewModel.cs" />
     <Compile Include="ViewModels\MedicineInfoViewModel.cs" />
     <Compile Include="ViewModels\RelativeViewModel.cs" />
+    <Compile Include="ViewModels\Response\ResponseMedicalCategoryFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseMedicalNoteFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseNoteDelete.cs" />
     <Compile Include="ViewModels\Response\ResponseRatingFilter.cs" />
