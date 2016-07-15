@@ -380,7 +380,7 @@ namespace Shared.Repositories
             // Password is specified.
             if (!string.IsNullOrEmpty(password))
                 result = result.Where(x => x.Password.Equals(password));
-
+            
             // Role is specified.
             if (role != null)
                 result = result.Where(x => x.Role == role);

@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using log4net;
 using OlivesAdministration.Models;
 using Shared.Constants;
 using Shared.Enumerations;
@@ -20,10 +21,12 @@ namespace OlivesAdministration.Controllers
         /// </summary>
         /// <param name="repositoryAccount"></param>
         /// <param name="applicationSetting"></param>
-        public AdminController(IRepositoryAccount repositoryAccount, ApplicationSetting applicationSetting)
+        /// <param name="log"></param>
+        public AdminController(IRepositoryAccount repositoryAccount, ApplicationSetting applicationSetting, ILog log)
         {
             _repositoryAccount = repositoryAccount;
             _applicationSetting = applicationSetting;
+            _log = log;
         }
 
         #endregion
@@ -40,6 +43,13 @@ namespace OlivesAdministration.Controllers
         [HttpPost]
         public async Task<HttpResponseMessage> Login([FromBody] LoginViewModel loginViewModel)
         {
+            // Model hasn't been initialized.
+            if (loginViewModel == null)
+            {
+                loginViewModel = new LoginViewModel();
+                Validate(loginViewModel);
+            }
+            
             // Invalid model state.
             if (!ModelState.IsValid)
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
@@ -96,6 +106,12 @@ namespace OlivesAdministration.Controllers
         ///     Application setting.
         /// </summary>
         private readonly ApplicationSetting _applicationSetting;
+
+        /// <summary>
+        /// Instance for logging.
+        /// </summary>
+        private readonly ILog _log;
+
 
         #endregion
     }
