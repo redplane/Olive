@@ -7,13 +7,12 @@ using System.Web.Http;
 using log4net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OlivesAdministration.Models;
-using OlivesAdministrationUnitTest.Repositories;
+using OlivesAdministration.Test.Repositories;
 using Shared.Enumerations;
-using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels;
 
-namespace OlivesAdministrationUnitTest.Controllers.AdminController
+namespace OlivesAdministration.Test.Controllers.AdminController
 {
     [TestClass]
     public class Login

@@ -9,7 +9,7 @@ using Shared.ViewModels;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
-namespace OlivesAdministrationUnitTest.Repositories
+namespace OlivesAdministration.Test.Repositories
 {
     public class RepositoryAccount : IRepositoryAccount
     {
