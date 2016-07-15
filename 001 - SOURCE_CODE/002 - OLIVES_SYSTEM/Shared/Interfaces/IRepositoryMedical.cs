@@ -7,6 +7,8 @@ namespace Shared.Interfaces
 {
     public interface IRepositoryMedical
     {
+        #region Medical record
+
         /// <summary>
         ///     Initialize / edit a medical record asynchronously.
         /// </summary>
@@ -27,6 +29,10 @@ namespace Shared.Interfaces
         /// <param name="filter"></param>
         /// <returns></returns>
         Task<ResponseMedicalRecordFilter> FilterMedicalRecordAsync(FilterMedicalRecordViewModel filter);
+
+        #endregion
+
+        #region Medical image
 
         /// <summary>
         ///     Initialize / update medical image.
@@ -49,6 +55,8 @@ namespace Shared.Interfaces
         /// <param name="owner"></param>
         /// <returns></returns>
         Task<int> DeleteMedicalImageAsync(int id, int? owner);
+
+        #endregion
 
         #region Prescription
 
@@ -108,6 +116,31 @@ namespace Shared.Interfaces
         /// <returns></returns>
         Task<int> DeleteExperimentNotesAsync(int experimentId);
 
+        #endregion
+
+        #region Medical note
+
+        /// <summary>
+        /// Find the medical note by using id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<MedicalNote> FindMedicalNoteAsync(int id);
+
+        /// <summary>
+        /// Initialize medical note by using specific information.
+        /// </summary>
+        /// <param name="medicalNote"></param>
+        /// <returns></returns>
+        Task<MedicalNote> InitializeMedicalNoteAsync(MedicalNote medicalNote);
+
+        /// <summary>
+        /// Filter medical note by using conditions.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        Task<ResponseMedicalNoteFilter> FilterMedicalNotesAsync(FilterMedicalNoteViewModel filter);
+        
         #endregion
     }
 }

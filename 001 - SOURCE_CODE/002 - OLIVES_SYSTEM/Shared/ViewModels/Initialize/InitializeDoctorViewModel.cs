@@ -30,7 +30,7 @@ namespace Shared.ViewModels.Initialize
         /// </summary>
         [NumericCompare(1, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsInvalid")]
-        public int City { get; set; }
+        public int Place { get; set; }
 
         /// <summary>
         ///     Rank of doctor.

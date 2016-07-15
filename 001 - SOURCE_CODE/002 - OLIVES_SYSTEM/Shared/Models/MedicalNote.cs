@@ -12,19 +12,19 @@ namespace Shared.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Relation
+    public partial class MedicalNote
     {
         public int Id { get; set; }
-        public int Source { get; set; }
-        public string SourceFirstName { get; set; }
-        public string SourceLastName { get; set; }
-        public int Target { get; set; }
-        public string TargetFirstName { get; set; }
-        public string TargetLastName { get; set; }
+        public int MedicalRecordId { get; set; }
+        public int Creator { get; set; }
+        public int Owner { get; set; }
+        public string Note { get; set; }
+        public double Time { get; set; }
         public double Created { get; set; }
-        public byte Status { get; set; }
+        public Nullable<double> LastModified { get; set; }
     
         public virtual Person Person { get; set; }
+        public virtual MedicalRecord MedicalRecord { get; set; }
         public virtual Person Person1 { get; set; }
     }
 }

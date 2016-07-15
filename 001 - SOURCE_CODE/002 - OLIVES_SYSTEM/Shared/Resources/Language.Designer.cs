@@ -871,6 +871,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to W031.
+        /// </summary>
+        public static string WarnPlaceNotFound {
+            get {
+                return ResourceManager.GetString("WarnPlaceNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to W025.
         /// </summary>
         public static string WarnPrescriptionExpired {
@@ -943,6 +952,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to W030.
+        /// </summary>
+        public static string WarnSpecialtyNotFound {
+            get {
+                return ResourceManager.GetString("WarnSpecialtyNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to W015.
         /// </summary>
         public static string WarnTargetAccountNotFound {
@@ -961,7 +979,7 @@ namespace Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to W028.
+        ///   Looks up a localized string similar to W029.
         /// </summary>
         public static string WarnTokenExpired {
             get {

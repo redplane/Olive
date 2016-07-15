@@ -175,12 +175,10 @@ namespace Shared.Interfaces
         /// <param name="requester"></param>
         /// <param name="partner"></param>
         /// <param name="role"></param>
-        /// <param name="type"></param>
         /// <param name="status"></param>
         /// <param name="page"></param>
         /// <param name="records"></param>
-        Task<ResponseRelationshipFilter> FilterRelationshipAsync(int requester, int? partner, RoleRelationship? role,
-            TypeRelation? type, StatusRelation? status, int page, int records);
+        Task<ResponseRelationshipFilter> FilterRelationshipAsync(int requester, int? partner, RoleRelationship? role, StatusRelation? status, int page, int records);
 
         /// <summary>
         ///     Filter related doctors.
@@ -192,18 +190,7 @@ namespace Shared.Interfaces
         /// <returns></returns>
         Task<ResponseRelatedDoctorFilter> FilterRelatedDoctorAsync(int requester, StatusRelation? status, int page,
             int records);
-
-        /// <summary>
-        ///     Filter related doctors.
-        /// </summary>
-        /// <param name="requester"></param>
-        /// <param name="status"></param>
-        /// <param name="page"></param>
-        /// <param name="records"></param>
-        /// <returns></returns>
-        Task<ResponseRelativeFilter> FilterRelativeAsync(int requester, StatusRelation? status, int page,
-            int records);
-
+        
         #endregion
     }
 }

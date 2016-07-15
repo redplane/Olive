@@ -102,6 +102,8 @@ namespace Olives.Controllers
                 MedicalRecord = new
                 {
                     result.Id,
+                    result.Owner,
+                    result.Creator,
                     result.Info,
                     result.Time,
                     result.Created,
@@ -192,6 +194,7 @@ namespace Olives.Controllers
             // Only filter and receive the first result.
             var medicalRecord = new MedicalRecord();
             medicalRecord.Owner = info.Owner.Value;
+            
             medicalRecord.Info = JsonConvert.SerializeObject(info.Infos);
             medicalRecord.Time = info.Time;
             medicalRecord.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
@@ -204,6 +207,8 @@ namespace Olives.Controllers
                 MedicalRecord = new
                 {
                     result.Id,
+                    result.Owner,
+                    result.Creator,
                     result.Info,
                     result.Time,
                     result.Created
@@ -327,23 +332,13 @@ namespace Olives.Controllers
 
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
-            // No owner is specified. That means the requester wants to filter his/her records.
-            if (filter.Owner == null)
+            
+            // Requester is a patient. He/she can only see his/her medical record.
+            if (requester.Role == (byte) Role.Patient)
                 filter.Owner = requester.Id;
             else
-            {
-                // Find the relationship between the requester and the owner.
-                // Check the relationship between them.
-                var relationship = await _repositoryAccount.FindRelationshipAsync(requester.Id, filter.Owner.Value,
-                    (byte) StatusAccount.Active);
-                if (relationship == null || relationship.Count < 1)
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                    {
-                        Error = $"{Language.WarnRelationNotExist}"
-                    });
-            }
-
+                filter.Creator = requester.Id;
+            
             // Filter medical records.
             var results = await _repositoryMedical.FilterMedicalRecordAsync(filter);
 
@@ -353,6 +348,7 @@ namespace Olives.Controllers
                 {
                     x.Id,
                     x.Owner,
+                    x.Creator,
                     x.Info,
                     x.Time,
                     x.Created,
@@ -1350,6 +1346,287 @@ namespace Olives.Controllers
             }
         }
 
+        #endregion
+
+        #region Medical note
+
+        /// <summary>
+        ///     Find a medical note by using id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Route("api/medical/note")]
+        [HttpGet]
+        [OlivesAuthorize(new[] { Role.Doctor})]
+        public async Task<HttpResponseMessage> RetrieveMedicalNote([FromUri] int id)
+        {
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Find the medical record by using id.
+            var result = await _repositoryMedical.FindMedicalNoteAsync(id);
+
+            // No result has been received.
+            if (result == null)
+            {
+                // Tell client no record has been found.
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
+
+            // Requester is requesting to see the personal note of another person.
+            if (requester.Id != result.Owner)
+            {
+                // Tell client no record has been found.
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                MedicalNote = new
+                {
+                    result.Id,
+                    MedicalRecord = result.MedicalRecordId,
+                    result.Owner,
+                    result.Creator,
+                    result.Note,
+                    result.Time,
+                    result.Created,
+                    result.LastModified
+                }
+            });
+        }
+
+        /// <summary>
+        ///     Add a medical record asyncrhonously.
+        /// </summary>
+        /// <param name="initializer"></param>
+        /// <returns></returns>
+        [Route("api/medical/note")]
+        [HttpPost]
+        [OlivesAuthorize(new[] { Role.Doctor})]
+        public async Task<HttpResponseMessage> InitializeMedicalNote([FromBody] InitializeMedicalNoteViewModel initializer)
+        {
+            // Model hasn't been initialized.
+            if (initializer == null)
+            {
+                // Initialize it and do the validation.
+                initializer = new InitializeMedicalNoteViewModel();
+                Validate(initializer);
+            }
+
+            // Invalid model state.
+            if (!ModelState.IsValid)
+            {
+                _log.Error("Request parameters are invalid. Error sent to client.");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            
+            // Find the medical record.
+            var medicalRecord = await _repositoryMedical.FindMedicalRecordAsync(initializer.MedicalRecord);
+
+            // No medical record has been found.
+            if (medicalRecord == null)
+            {
+                // Log the error and tell client about the result.
+                _log.Error($"Medical record [Id: {initializer.MedicalRecord}] is not found");
+
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnMedicalRecordNotFound}"
+                });
+            }
+
+            // Find the active patient.
+            var owner = await _repositoryAccount.FindPersonAsync(medicalRecord.Owner, null, null, (byte)Role.Patient,
+                StatusAccount.Active);
+
+            // Owner is not found.
+            if (owner == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                {
+                    Error = $"{Language.WarnOwnerNotActive}"
+                });
+            }
+
+            // Find the relationship between requester and the record owner.
+            var relationship =
+                await _repositoryAccount.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
+                    (byte)StatusRelation.Active);
+
+            // No relationship is found between 2 people.
+            if (relationship == null || relationship.Count < 1)
+                return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                {
+                    Error = $"{Language.WarnHasNoRelationship}"
+                });
+            
+            
+            // Initialize an instance of MedicalNote.
+            var medicalNote = new MedicalNote();
+            medicalNote.MedicalRecordId = initializer.MedicalRecord;
+            medicalNote.Creator = requester.Id;
+            medicalNote.Owner = medicalRecord.Owner;
+            medicalNote.Note = initializer.Note;
+            medicalNote.Time = initializer.Time;
+            medicalNote.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+
+            // Insert a new allergy to database.
+            medicalNote = await _repositoryMedical.InitializeMedicalNoteAsync(medicalNote);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                MedicalNote = new
+                {
+                    medicalNote.Id,
+                    MedicalRecord = medicalRecord.Id,
+                    medicalNote.Owner,
+                    medicalNote.Note,
+                    medicalNote.Time,
+                    medicalNote.Created
+                }
+            });
+        }
+
+        /// <summary>
+        ///     Add a medical record asyncrhonously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="modifier"></param>
+        /// <returns></returns>
+        [Route("api/medical/note")]
+        [HttpPut]
+        [OlivesAuthorize(new[] { Role.Doctor })]
+        public async Task<HttpResponseMessage> ModifyMedicalNote([FromUri] int id, [FromBody] EditMedicalNoteViewModel modifier)
+        {
+            // Model hasn't been initialized.
+            if (modifier == null)
+            {
+                // Initialize it and do the validation.
+                modifier = new EditMedicalNoteViewModel();
+                Validate(modifier);
+            }
+
+            // Invalid model state.
+            if (!ModelState.IsValid)
+            {
+                _log.Error("Request parameters are invalid. Error sent to client.");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            // Find the medical note.
+            var medicalNote = await _repositoryMedical.FindMedicalNoteAsync(id);
+
+            // Medical note is not found.
+            if (medicalNote == null)
+            {
+                // Log the error and tell client about the result.
+                _log.Error($"Medical note [Id: {id}] is not found");
+
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
+
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Requester is not the medical note creator.
+            if (requester.Id != medicalNote.Creator)
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            
+            // Note is defined.
+            if (modifier.Note != null)
+                medicalNote.Note = modifier.Note;
+            
+            // Time is defined.
+            if (modifier.Time != null)
+                medicalNote.Time = modifier.Time.Value;
+
+            medicalNote.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+
+            // Insert a new allergy to database.
+            var result = await _repositoryMedical.InitializeMedicalNoteAsync(medicalNote);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                MedicalNote = new
+                {
+                    result.Id,
+                    MedicalRecord = result.MedicalRecordId,
+                    result.Owner,
+                    result.Note,
+                    result.Time,
+                    result.Created,
+                    result.LastModified
+                }
+            });
+        }
+
+        /// <summary>
+        ///     Add a medical record asyncrhonously.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [Route("api/medical/note/filter")]
+        [HttpPost]
+        [OlivesAuthorize(new[] { Role.Doctor })]
+        public async Task<HttpResponseMessage> FilterMedicalNote([FromBody] FilterMedicalNoteViewModel filter)
+        {
+            // Model hasn't been initialized.
+            if (filter == null)
+            {
+                // Initialize it and do the validation.
+                filter = new FilterMedicalNoteViewModel();
+                Validate(filter);
+            }
+
+            // Invalid model state.
+            if (!ModelState.IsValid)
+            {
+                _log.Error("Request parameters are invalid. Error sent to client.");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+            
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Requester is a doctor, therefore, he/she is the medical note creator.
+            filter.Creator = requester.Id;
+
+            // Insert a new allergy to database.
+            var result = await _repositoryMedical.FilterMedicalNotesAsync(filter);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                MedicalNotes = result.MedicalNotes.Select(x => new
+                {
+                    x.Id,
+                    MedicalRecord = x.MedicalRecordId,
+                    x.Owner,
+                    x.Creator,
+                    x.Note,
+                    x.Time,
+                    x.Created,
+                    x.LastModified
+                }),
+                result.Total
+            });
+        }
+        
         #endregion
 
         #endregion

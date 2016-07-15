@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Data.Entity.Validation;
 using System.Linq;
+using System.Security.Permissions;
 using Newtonsoft.Json;
 using Shared.Constants;
 using Shared.Enumerations;
@@ -101,23 +103,23 @@ namespace DataInitializer
         {
             try
             {
-                // Data context initialization.
+                // Database context initialization.
                 var context = new OlivesHealthEntities();
 
-                var country = new Country();
-                country.Name = $"Country";
-                context.Countries.Add(country);
-                
                 for (var i = 0; i < max; i++)
                 {
-                    var city = new City();
-                    city.Name = $"City[{i}]";
-                    city.CountryId = country.Id;
-                    city.CountryName = country.Name;
+                    var place = new Place();
 
-                    context.Cities.AddOrUpdate(city);
+                    for (var j = 0; j < 10; j++)
+                    {
+                        place.City = $"City[{j}]";
+                        place.Country = $"Country[{j}]";
+                    }
+
+                    context.Places.Add(place);
                 }
 
+                // Save database changes.
                 context.SaveChanges();
             }
             catch (DbEntityValidationException e)
@@ -167,10 +169,10 @@ namespace DataInitializer
             try
             {
                 var context = new OlivesHealthEntities();
-                var city = context.Cities.FirstOrDefault();
+                var places = context.Places.ToList();
                 var specialty = context.Specialties.FirstOrDefault();
 
-                if (city == null)
+                if (places.Count < 1)
                     throw new Exception("No city is available.");
 
                 if (specialty == null)
@@ -198,10 +200,14 @@ namespace DataInitializer
                     else
                         person.Status = (byte)StatusAccount.Inactive;
 
+                    var place = places[random.Next(places.Count)];
+
                     var doctor = new Doctor();
                     doctor.SpecialtyId = 1;
                     doctor.Person = person;
-                    doctor.City = city;
+                    doctor.PlaceId = place.Id;
+                    doctor.City = place.City;
+                    doctor.Country = place.Country;
                     doctor.Rank = random.Next(0, 10);
                     doctor.SpecialtyName = specialty.Name;
                     doctor.Specialty = specialty;
@@ -355,21 +361,6 @@ namespace DataInitializer
 
                     Console.WriteLine($"Prescription[{p}] has been created");
                 }
-
-                //for (var e = 0; e < 5; e++)
-                //{
-                //    var experimentNote = new ExperimentNote();
-                //    experimentNote.Owner = medicalRecord.Owner;
-                //    experimentNote.MedicalRecordId = medicalRecord.Id;
-                //    experimentNote.Created = epochCurrentTime;
-
-                //    var infos = new Dictionary<string, double>();
-                //    for (var d = 0; d < 5; d++)
-                //        infos.Add($"Key[{d}]", d);
-
-                //    experimentNote = _repositoryMedical.InitializeExperimentNote(experimentNote, infos).Result;
-
-                //}
             }
         }
 
@@ -381,7 +372,8 @@ namespace DataInitializer
             var secondQuater = quarter * 2;
             var thirdQuater = quarter * 3;
 
-            var currentEpochTime = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            var toTime = EpochTimeHelper.Instance.DateTimeToEpochTime(new DateTime(2016, 12, 31));
+
             for (var i = 0; i < max; i++)
             {
                 var dayAdd = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now.AddDays(1));
@@ -409,11 +401,18 @@ namespace DataInitializer
                     appointment.MakerLastName = doctor.LastName;
                 }
 
-                appointment.From = currentEpochTime;
+                if (i > 12)
+                    i = 12;
+                if (i < 1)
+                    i = 1;
+
+                var fromTime = new DateTime(2016, i, 20);
+                var epochFromTime = EpochTimeHelper.Instance.DateTimeToEpochTime(fromTime);
+                
+                appointment.From = epochFromTime;
                 appointment.To = 100;
                 appointment.Note = $"Note[{i}]";
-                appointment.Created = currentEpochTime;
-                appointment.LastModified = dayAdd;
+                appointment.Created = epochFromTime;
 
                 if (i <= quarter)
                     appointment.Status = (byte)StatusAppointment.Cancelled;

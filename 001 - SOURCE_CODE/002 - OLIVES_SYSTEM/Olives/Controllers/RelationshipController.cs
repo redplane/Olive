@@ -100,13 +100,7 @@ namespace Olives.Controllers
             relation.TargetLastName = person.LastName;
             relation.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
             relation.Status = (byte) StatusRelation.Pending;
-
-            // Patient send request to doctor or vice versa.
-            if (targetRole == Role.Patient)
-                relation.Type = (byte) TypeRelation.Relative;
-            else
-                relation.Type = (byte) TypeRelation.Treatment;
-
+            
             await _repositoryAccount.InitializeRelationAsync(relation);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
@@ -126,7 +120,6 @@ namespace Olives.Controllers
                         FirstName = relation.TargetFirstName,
                         LastName = relation.TargetLastName
                     },
-                    relation.Type,
                     relation.Created,
                     relation.Status
                 }
@@ -179,7 +172,6 @@ namespace Olives.Controllers
                         FirstName = relationship.TargetFirstName,
                         LastName = relationship.TargetLastName
                     },
-                    relationship.Type,
                     relationship.Created,
                     relationship.Status
                 }
@@ -287,71 +279,7 @@ namespace Olives.Controllers
                 result.Total
             });
         }
-
-        /// <summary>
-        ///     Filter relative by using conditions.
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
-        [Route("api/relationship/filter/relative")]
-        [HttpPost]
-        [OlivesAuthorize(new[] {Role.Patient})]
-        public async Task<HttpResponseMessage> FilterRelative([FromBody] FilterRelatedPeopleViewModel filter)
-        {
-            #region Parameters validation
-
-            // Filter hasn't been initialized.
-            if (filter == null)
-            {
-                filter = new FilterRelatedPeopleViewModel();
-                Validate(filter);
-            }
-
-            // Validation is not successful.
-            if (!ModelState.IsValid)
-            {
-                _log.Error("Parameters are invalid. Errors sent to client.");
-                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-            }
-
-            #endregion
-
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
-            // Filter the relationship.
-            var result =
-                await
-                    _repositoryAccount.FilterRelativeAsync(requester.Id, filter.Status, filter.Page, filter.Records);
-
-            // Throw the list back to client.
-            return Request.CreateResponse(HttpStatusCode.OK, new
-            {
-                Relationships = result.List.Select(x => new
-                {
-                    Relative = new
-                    {
-                        x.Relative.Id,
-                        x.Relative.Email,
-                        x.Relative.FirstName,
-                        x.Relative.LastName,
-                        x.Relative.Birthday,
-                        x.Relative.Phone,
-                        x.Relative.Gender,
-                        x.Relative.Role,
-                        x.Relative.Status,
-                        x.Relative.Address,
-                        Photo =
-                            InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Relative.Photo,
-                                Values.StandardImageExtension)
-                    },
-                    Status = x.RelationshipStatus,
-                    x.Created
-                }),
-                result.Total
-            });
-        }
-
+        
         #endregion
 
         #region Properties

@@ -445,7 +445,14 @@
     <comment>Warn front-end the account is invalid.</comment>
   </data>
   <data name="WarnTokenExpired" xml:space="preserve">
-    <value>W028</value>
+    <value>W029</value>
     <comment>Warn front-end the token is expired.</comment>
+  </data>
+  <data name="WarnPlaceNotFound" xml:space="preserve">
+    <value>W031</value>
+  </data>
+  <data name="WarnSpecialtyNotFound" xml:space="preserve">
+    <value>W030</value>
+    <comment>Warn front-end specialty is not found.</comment>
   </data>
 </root>

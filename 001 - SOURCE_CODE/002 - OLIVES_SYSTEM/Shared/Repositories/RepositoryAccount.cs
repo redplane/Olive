@@ -795,12 +795,11 @@ namespace Shared.Repositories
         /// <param name="requester"></param>
         /// <param name="partner"></param>
         /// <param name="role"></param>
-        /// <param name="type"></param>
         /// <param name="status"></param>
         /// <param name="page"></param>
         /// <param name="records"></param>
         public async Task<ResponseRelationshipFilter> FilterRelationshipAsync(int requester, int? partner,
-            RoleRelationship? role, TypeRelation? type, StatusRelation? status, int page, int records)
+            RoleRelationship? role, StatusRelation? status, int page, int records)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -829,11 +828,7 @@ namespace Shared.Repositories
             }
             else
                 relationships = relationships.Where(x => x.Source == requester || x.Target == requester);
-
-            // Type is defined.
-            if (type != null)
-                relationships = relationships.Where(x => x.Type == (byte) type.Value);
-
+            
             // Status is defined.
             if (status != null)
                 relationships = relationships.Where(x => x.Status == (byte) status.Value);
@@ -870,7 +865,7 @@ namespace Shared.Repositories
             IQueryable<Relation> relationships = context.Relations;
 
             // Take the relationship whose source is requester and type is provide treatment.
-            relationships = relationships.Where(x => x.Source == requester && x.Type == (byte) TypeRelation.Treatment);
+            relationships = relationships.Where(x => x.Source == requester);
 
             // Status is defined.
             if (status != null)
@@ -897,53 +892,7 @@ namespace Shared.Repositories
 
             return response;
         }
-
-        /// <summary>
-        ///     Filter relative by using specific conditions.
-        /// </summary>
-        /// <param name="requester"></param>
-        /// <param name="status"></param>
-        /// <param name="page"></param>
-        /// <param name="records"></param>
-        /// <returns></returns>
-        public async Task<ResponseRelativeFilter> FilterRelativeAsync(int requester, StatusRelation? status, int page,
-            int records)
-        {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
-            // By default, take all relationship.
-            IQueryable<Relation> relationships = context.Relations;
-
-            // Take the relationship whose source is requester and type is provide treatment.
-            relationships = relationships.Where(x => x.Source == requester && x.Type == (byte) TypeRelation.Relative);
-
-            // Status is defined.
-            if (status != null)
-                relationships = relationships.Where(x => x.Status == (byte) status.Value);
-
-            // Take all people who are doctor.
-            IQueryable<Person> relatives = context.People;
-
-            var fullResult = from r in relationships
-                join relative in relatives on r.Target equals relative.Id
-                select new RelativeViewModel
-                {
-                    Relative = relative,
-                    RelationshipStatus = r.Status,
-                    Created = r.Created
-                };
-
-            var response = new ResponseRelativeFilter();
-            response.Total = await fullResult.CountAsync();
-            response.List = await fullResult.OrderByDescending(x => x.Created)
-                .Skip(page*records)
-                .Take(records)
-                .ToListAsync();
-
-            return response;
-        }
-
+        
         #endregion
 
         #endregion

@@ -12,6 +12,8 @@ namespace Shared.ViewModels.Filter
     {
         public int? Owner { get; set; }
 
+        public int? Creator { get; set; }
+
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MaxTime", Comparision = Comparision.LowerEqual,
@@ -51,7 +53,7 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         ///     Which property should be used for sorting.
         /// </summary>
-        public NoteResultSort Sort { get; set; } = NoteResultSort.Time;
+        public MedicalRecordFilterSort Sort { get; set; } = MedicalRecordFilterSort.LastModified;
 
         /// <summary>
         ///     Whether record should be sorted ascendingly or decendingly.

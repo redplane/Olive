@@ -31,5 +31,10 @@ namespace Olives.ViewModels.Edit
         [RegexMatch(Regexes.Password, ErrorMessageResourceType = typeof(Language),
             ErrorMessageResourceName = "RegexPassword")]
         public string Password { get; set; }
+
+        /// <summary>
+        /// Id of place where doctor works.
+        /// </summary>
+        public int? Place { get; set; }
     }
 }

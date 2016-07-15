@@ -14,6 +14,8 @@ namespace Shared.Repositories
 {
     public class RepositoryMedical : IRepositoryMedical
     {
+        #region Medical record
+
         /// <summary>
         ///     Initialize / edit a medical record asynchronously.
         /// </summary>
@@ -64,6 +66,8 @@ namespace Shared.Repositories
             return info;
         }
 
+        #endregion
+
         #region Medical images
 
         /// <summary>
@@ -99,7 +103,7 @@ namespace Shared.Repositories
             response.Total = await medicalImages.CountAsync();
 
             // Calculate how many record should be skipped.
-            var skippedRecords = filter.Records*filter.Page;
+            var skippedRecords = filter.Records * filter.Page;
             medicalImages = medicalImages.Skip(skippedRecords)
                 .Take(filter.Records);
 
@@ -145,6 +149,10 @@ namespace Shared.Repositories
             // By default, take all records.
             IQueryable<MedicalRecord> medicalRecords = context.MedicalRecords;
 
+            // Creator is specified.
+            if (filter.Creator != null)
+                medicalRecords = medicalRecords.Where(x => x.Creator == filter.Creator);
+
             // Owner is specified.
             if (filter.Owner != null)
                 medicalRecords = medicalRecords.Where(x => x.Owner == filter.Owner);
@@ -163,12 +171,45 @@ namespace Shared.Repositories
             if (filter.MaxLastModified != null)
                 medicalRecords = medicalRecords.Where(x => x.LastModified <= filter.MaxLastModified);
 
+            // Result sorting
+            switch (filter.Direction)
+            {
+                case SortDirection.Ascending:
+                    switch (filter.Sort)
+                    {
+                        case MedicalRecordFilterSort.Created:
+                            medicalRecords = medicalRecords.OrderBy(x => x.Created);
+                            break;
+                        case MedicalRecordFilterSort.Time:
+                            medicalRecords = medicalRecords.OrderBy(x => x.Time);
+                            break;
+                        default:
+                            medicalRecords = medicalRecords.OrderBy(x => x.LastModified);
+                            break;
+                    }
+                    break;
+                default:
+                    switch (filter.Sort)
+                    {
+                        case MedicalRecordFilterSort.Created:
+                            medicalRecords = medicalRecords.OrderByDescending(x => x.Created);
+                            break;
+                        case MedicalRecordFilterSort.Time:
+                            medicalRecords = medicalRecords.OrderByDescending(x => x.Time);
+                            break;
+                        default:
+                            medicalRecords = medicalRecords.OrderByDescending(x => x.LastModified);
+                            break;
+                    }
+                    break;
+            }
+
             // Calculate the total result.
             var response = new ResponseMedicalRecordFilter();
             response.Total = await medicalRecords.CountAsync();
 
             // Calculate the number of records should be skipped.
-            var skippedRecords = filter.Page*filter.Records;
+            var skippedRecords = filter.Page * filter.Records;
             medicalRecords = medicalRecords.Skip(skippedRecords)
                 .Take(filter.Records);
 
@@ -260,7 +301,7 @@ namespace Shared.Repositories
 
             // By default, take all prescriptions.
             IQueryable<Prescription> prescriptions = context.Prescriptions;
-            
+
             // Medical record is defined.
             if (filter.MedicalRecord != null)
                 prescriptions = prescriptions.Where(x => x.MedicalRecordId == filter.MedicalRecord);
@@ -309,7 +350,7 @@ namespace Shared.Repositories
             }
 
             // Calculate the number of records should be skipped.
-            var skippedRecord = filter.Page*filter.Records;
+            var skippedRecord = filter.Page * filter.Records;
 
             // Response initialization.
             var response = new ResponsePrescriptionFilterViewModel();
@@ -402,6 +443,136 @@ namespace Shared.Repositories
                     throw;
                 }
             }
+        }
+
+        #endregion
+
+        #region Medical note
+
+        /// <summary>
+        /// Find the medical note by using id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<MedicalNote> FindMedicalNoteAsync(int id)
+        {
+            // Database context initialization
+            var context = new OlivesHealthEntities();
+
+            // Find the medical note by using id.
+            return await context.MedicalNotes.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        /// <summary>
+        /// Initialize a medical note asynchronously.
+        /// </summary>
+        /// <param name="medicalNote"></param>
+        /// <returns></returns>
+        public async Task<MedicalNote> InitializeMedicalNoteAsync(MedicalNote medicalNote)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // Initialize/update medical notes.
+            context.MedicalNotes.AddOrUpdate(medicalNote);
+
+            // Save changes.
+            await context.SaveChangesAsync();
+
+            return medicalNote;
+        }
+
+        /// <summary>
+        /// Filter medical notes asynchronously by using conditions.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public async Task<ResponseMedicalNoteFilter> FilterMedicalNotesAsync(FilterMedicalNoteViewModel filter)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // By default, take all record by searching creator id.
+            IQueryable<MedicalNote> medicalNotes = context.MedicalNotes;
+            medicalNotes = medicalNotes.Where(x => x.Creator == filter.Creator);
+
+            // Medical record is defined.
+            if (filter.MedicalRecord != null)
+                medicalNotes = medicalNotes.Where(x => x.MedicalRecordId == filter.MedicalRecord);
+
+            // Owner is specified.
+            if (filter.Owner != null)
+                medicalNotes = medicalNotes.Where(x => x.Owner == filter.Owner);
+
+            // Note is specified.
+            if (filter.Note != null)
+                medicalNotes = medicalNotes.Where(x => x.Note.Contains(filter.Note));
+
+            // Time is specified.
+            if (filter.MinTime != null) medicalNotes = medicalNotes.Where(x => x.Time >= filter.MinTime);
+            if (filter.MaxTime != null) medicalNotes = medicalNotes.Where(x => x.Time <= filter.MaxTime);
+
+            // Created is defined.
+            if (filter.MinCreated != null) medicalNotes = medicalNotes.Where(x => x.Created >= filter.MinCreated);
+            if (filter.MaxCreated != null) medicalNotes = medicalNotes.Where(x => x.Created <= filter.MaxCreated);
+
+            // Last modified is defined.
+            if (filter.MinLastModified != null)
+                medicalNotes = medicalNotes.Where(x => x.LastModified >= filter.MinLastModified);
+            if (filter.MaxLastModified != null)
+                medicalNotes = medicalNotes.Where(x => x.LastModified <= filter.MaxLastModified);
+
+            // Result sort.
+            switch (filter.Direction)
+            {
+                case SortDirection.Ascending:
+                    switch (filter.Sort)
+                    {
+                        case MedicalNoteFilterSort.Created:
+                            medicalNotes = medicalNotes.OrderBy(x => x.Created);
+                            break;
+                        case MedicalNoteFilterSort.Note:
+                            medicalNotes = medicalNotes.OrderBy(x => x.Note);
+                            break;
+                        case MedicalNoteFilterSort.Time:
+                            medicalNotes = medicalNotes.OrderBy(x => x.Time);
+                            break;
+                        default:
+                            medicalNotes = medicalNotes.OrderBy(x => x.LastModified);
+                            break;
+                    }
+                    break;
+                default:
+                    switch (filter.Sort)
+                    {
+                        case MedicalNoteFilterSort.Created:
+                            medicalNotes = medicalNotes.OrderByDescending(x => x.Created);
+                            break;
+                        case MedicalNoteFilterSort.Note:
+                            medicalNotes = medicalNotes.OrderByDescending(x => x.Note);
+                            break;
+                        case MedicalNoteFilterSort.Time:
+                            medicalNotes = medicalNotes.OrderByDescending(x => x.Time);
+                            break;
+                        default:
+                            medicalNotes = medicalNotes.OrderByDescending(x => x.LastModified);
+                            break;
+                    }
+                    break;
+            }
+
+            // Response initialization.
+            var response = new ResponseMedicalNoteFilter();
+
+            // Calculate the total matched records.
+            response.Total = await medicalNotes.CountAsync();
+
+            // Truncate the results.
+            response.MedicalNotes = await medicalNotes.Skip(filter.Page * filter.Records)
+                .Take(filter.Records)
+                .ToListAsync();
+
+            return response;
         }
 
         #endregion

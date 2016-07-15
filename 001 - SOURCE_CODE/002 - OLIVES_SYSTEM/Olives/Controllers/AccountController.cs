@@ -250,30 +250,30 @@ namespace Olives.Controllers
                     doctor.Id,
                     doctor.Person.FirstName,
                     doctor.Person.LastName,
-                    doctor.Person.Birthday,
                     doctor.Person.Email,
+                    doctor.Person.Password,
+                    doctor.Person.Birthday,
                     doctor.Person.Gender,
                     doctor.Person.Address,
-                    Photo =
-                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, doctor.Person.Photo,
-                            Values.StandardImageExtension),
                     doctor.Person.Phone,
+                    doctor.Person.Role,
+                    Photo = InitializeUrl(_applicationSetting.AvatarStorage.Absolute, doctor.Person.Photo, Values.StandardImageExtension),
                     doctor.Rank,
                     Specialty = new
                     {
-                        doctor.Specialty.Id,
-                        doctor.Specialty.Name
+                        Id = doctor.SpecialtyId,
+                        Name = doctor.SpecialtyName
                     },
-                    City = new
+                    Place = new
                     {
-                        doctor.City.Id,
-                        doctor.City.Name,
-                        Country = new
-                        {
-                            doctor.City.Country.Id,
-                            doctor.City.Country.Name
-                        }
-                    }
+                        Id = doctor.PlaceId,
+                        doctor.City,
+                        doctor.Country
+                    },
+                    doctor.Voters,
+                    doctor.Money,
+                    doctor.Person.Created,
+                    doctor.Person.LastModified
                 }
             });
         }
@@ -318,34 +318,40 @@ namespace Olives.Controllers
                     x.Id,
                     x.Person.FirstName,
                     x.Person.LastName,
-                    x.Person.Birthday,
                     x.Person.Email,
+                    x.Person.Password,
+                    x.Person.Birthday,
                     x.Person.Gender,
                     x.Person.Address,
-                    Photo =
-                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Person.Photo, Values.StandardImageExtension),
                     x.Person.Phone,
+                    x.Person.Role,
+                    Photo = InitializeUrl(_applicationSetting.AvatarStorage.Absolute, x.Person.Photo, Values.StandardImageExtension),
                     x.Rank,
                     Specialty = new
                     {
                         Id = x.SpecialtyId,
                         Name = x.SpecialtyName
                     },
-                    City = new
+                    Place = new
                     {
-                        x.City.Id,
-                        x.City.Name,
-                        Country = new
-                        {
-                            x.City.Country.Id,
-                            x.City.Country.Name
-                        }
-                    }
+                        Id = x.PlaceId,
+                        x.City,
+                        x.Country
+                    },
+                    x.Voters,
+                    x.Money,
+                    x.Person.Created,
+                    x.Person.LastModified
                 }),
                 results.Total
             });
         }
 
+        /// <summary>
+        /// Edit doctor profile.
+        /// </summary>
+        /// <param name="editor"></param>
+        /// <returns></returns>
         [Route("api/doctor/profile")]
         [HttpPut]
         [OlivesAuthorize(new[] {Role.Doctor})]
@@ -381,32 +387,63 @@ namespace Olives.Controllers
             if (!string.IsNullOrWhiteSpace(editor.Password))
                 requester.Password = editor.Password;
 
-            // Save account.
-            requester = await _repositoryAccount.InitializePersonAsync(requester);
-
-            // Respond information to client.
-            return Request.CreateResponse(HttpStatusCode.OK, new
+            // Place is defined.
+            if (editor.Place != null)
             {
-                User = new
+                // Find the place by using id.
+                var place = _repositoryPlace.FindPlaceAsync(editor.Place, null, null, null, null);
+                
+                // Place is not found.
+                if (place == null)
                 {
-                    requester.Id,
-                    requester.Email,
-                    requester.Password,
-                    requester.FirstName,
-                    requester.LastName,
-                    requester.Birthday,
-                    requester.Phone,
-                    requester.Gender,
-                    requester.Role,
-                    requester.Created,
-                    requester.LastModified,
-                    requester.Status,
-                    requester.Address,
-                    Photo =
-                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, requester.Photo,
-                            Values.StandardImageExtension)
+                    // Log the error.
+                    _log.Error($"Place [Id: {editor.Place}] couldn't be found");
+
+                    // Tell the client about the result.
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Error = $"{Language.WarnPlaceNotFound}"
+                    });
                 }
-            });
+            }
+
+            try
+            {
+
+                // Save account.
+                requester = await _repositoryAccount.InitializePersonAsync(requester);
+
+                // Respond information to client.
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    User = new
+                    {
+                        requester.Id,
+                        requester.Email,
+                        requester.Password,
+                        requester.FirstName,
+                        requester.LastName,
+                        requester.Birthday,
+                        requester.Phone,
+                        requester.Gender,
+                        requester.Role,
+                        requester.Created,
+                        requester.LastModified,
+                        requester.Status,
+                        requester.Address,
+                        Photo =
+                            InitializeUrl(_applicationSetting.AvatarStorage.Relative, requester.Photo,
+                                Values.StandardImageExtension)
+                    }
+                });
+            }
+            catch (Exception exception)
+            {
+                // Log the exception.
+                _log.Error(exception.Message, exception);
+
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
         }
 
         #endregion
@@ -432,7 +469,11 @@ namespace Olives.Controllers
 
             // Invalid model state.
             if (!ModelState.IsValid)
+            {
+                // Log the error.
+                _log.Error("Request parameters are invalid. Errors sent to client.");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
 
             // Check whether email has been used or not.
             var result = await _repositoryAccount.FindPersonAsync(null, info.Email, null, null, null);
@@ -522,77 +563,60 @@ namespace Olives.Controllers
         /// <summary>
         ///     Sign up as a patient asynchronously.
         /// </summary>
-        /// <param name="info"></param>
+        /// <param name="initializer"></param>
         /// <returns></returns>
         [Route("api/account/doctor")]
         [HttpPost]
-        public async Task<HttpResponseMessage> RegisterDoctor([FromBody] InitializeDoctorViewModel info)
+        public async Task<HttpResponseMessage> RegisterDoctor([FromBody] InitializeDoctorViewModel initializer)
         {
             #region Information validation
-
-            #region ModelState validation
-
+            
             // Information hasn't been initialize.
-            if (info == null)
+            if (initializer == null)
             {
                 // Initialize the default instance and do the validation.
-                info = new InitializeDoctorViewModel();
-                Validate(info);
+                initializer = new InitializeDoctorViewModel();
+                Validate(initializer);
             }
 
             // Invalid model state.
             if (!ModelState.IsValid)
+            {
+                _log.Error("Request parameters are invalid. Errors sent to client.");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-
-            #endregion
-
-            #region Specialty validation
+            }
 
             // Find the list of speciaties match with searched condition.
-            var specialty = await _repositorySpecialty.FindSpecialtyAsync(info.Specialty);
+            var specialty = await _repositorySpecialty.FindSpecialtyAsync(initializer.Specialty);
 
             // Invalid results set.
             if (specialty == null)
             {
-                return Request.CreateResponse(HttpStatusCode.BadRequest,
-                    new
-                    {
-                        Errors = new[] {string.Format(Language.ValueIsInvalid, "Specialty")}
-                    });
+                // Log the error.
+                _log.Error($"Specialty[Id : {initializer.Specialty}] is not found.");
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnSpecialtyNotFound}"
+                });
             }
+            
+            // Find the place by using id.
+            var place = await _repositoryPlace.FindPlaceAsync(initializer.Place, null, null, null, null);
 
-            #endregion
-
-            #region City validation
-
-            // Find the list of city match with condition.
-            var cities = await _repositoryPlace.FindCityAsync(info.City);
-            if (cities == null || cities.Count != 1)
+            // Place is not found.
+            if (place == null)
             {
-                return Request.CreateResponse(HttpStatusCode.BadRequest,
-                    new
-                    {
-                        Errors = new[] {string.Format(Language.ValueIsInvalid, "City")}
-                    });
+                // Log the error.
+                _log.Error($"Place [Id : {initializer.Place}] is not found.");
+
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnPlaceNotFound}"
+                });
             }
-
-            // Retrieve the first queried result.
-            var city = cities.FirstOrDefault();
-            if (city == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest,
-                    new
-                    {
-                        Errors = new[] {string.Format(Language.ValueIsInvalid, "City")}
-                    });
-            }
-
-            #endregion
-
-            #region Person validation
 
             // Check whether email has been used or not.
-            var result = await _repositoryAccount.FindPersonAsync(null, info.Email, null, null, null);
+            var result = await _repositoryAccount.FindPersonAsync(null, initializer.Email, null, null, null);
 
             // Found a person. This means email has been used before.
             if (result != null)
@@ -603,30 +627,34 @@ namespace Olives.Controllers
                         Error = $"{Language.WarnAccountAlreadyExists}"
                     });
             }
-
-            #endregion
-
+            
             #endregion
 
             // Account initialization.
             var person = new Person();
-            person.FirstName = info.FirstName;
-            person.LastName = info.LastName;
+            var doctor = new Doctor();
+
+            person.FirstName = initializer.FirstName;
+            person.LastName = initializer.LastName;
             person.FullName = person.FirstName + " " + person.LastName;
-            person.Birthday = info.Birthday;
-            person.Gender = (byte) info.Gender;
-            person.Email = info.Email;
-            person.Password = info.Password;
-            person.Phone = info.Phone;
-            person.Address = info.Address;
+            person.Birthday = initializer.Birthday;
+            person.Gender = (byte)initializer.Gender;
+            person.Email = initializer.Email;
+            person.Password = initializer.Password;
+            person.Phone = initializer.Phone;
+            person.Address = initializer.Address;
             person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
             person.Role = (byte) Role.Doctor;
             person.Status = (byte) StatusAccount.Pending;
-
-            var doctor = new Doctor();
+            
+            // Update specialty information.
             doctor.SpecialtyId = specialty.Id;
             doctor.SpecialtyName = specialty.Name;
-            doctor.CityId = city.Id;
+
+            // Update place information.
+            doctor.PlaceId = place.Id;
+            doctor.City = place.City;
+            doctor.Country = place.Country;
 
             // Assign personal information to patient.
             person.Doctor = doctor;
@@ -645,32 +673,23 @@ namespace Olives.Controllers
                         doctor.Person.FirstName,
                         doctor.Person.LastName,
                         doctor.Person.Email,
+                        doctor.Person.Password,
                         doctor.Person.Birthday,
                         doctor.Person.Gender,
                         doctor.Person.Address,
                         doctor.Person.Phone,
                         doctor.Person.Role,
-                        doctor.Person.Status,
-                        doctor.Person.Photo,
-                        doctor.Money,
                         Specialty = new
                         {
-                            specialty.Id,
-                            specialty.Name
+                            Id = doctor.SpecialtyId,
+                            Name = doctor.SpecialtyName
                         },
-                        City = new
+                        Place = new
                         {
-                            city.Id,
-                            city.Name
-                        },
-                        Country = new
-                        {
-                            city.Country.Id,
-                            city.Country.Name
-                        },
-                        doctor.Rank,
-                        doctor.Voters,
-                        doctor.Person.Created
+                            Id = doctor.PlaceId,
+                            doctor.City,
+                            doctor.Country
+                        }
                     }
                 });
             }

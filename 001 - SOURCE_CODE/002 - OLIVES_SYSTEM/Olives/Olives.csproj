@@ -197,6 +197,7 @@
     <Compile Include="Attributes\MedicineListKeyValidateAttribute.cs" />
     <Compile Include="Attributes\OlivesAuthorizeAtrribute.cs" />
     <Compile Include="Constants\EmailType.cs" />
+    <Compile Include="Controllers\PlaceController.cs" />
     <Compile Include="Controllers\RateController.cs" />
     <Compile Include="Controllers\RelationshipController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -204,7 +205,6 @@
     <Compile Include="Controllers\MedicalController.cs" />
     <Compile Include="Controllers\AddictionController.cs" />
     <Compile Include="Controllers\BloodPressureController.cs" />
-    <Compile Include="Controllers\PlaceController.cs" />
     <Compile Include="Controllers\SugarbloodController.cs" />
     <Compile Include="Controllers\HeartbeatController.cs" />
     <Compile Include="Controllers\AllergyController.cs" />
@@ -224,6 +224,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\EmailService.cs" />
     <Compile Include="ViewModels\ActivationSendViewModel.cs" />
+    <Compile Include="ViewModels\Edit\EditMedicalNoteViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditMedicalRecordViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditDoctorProfileViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditPatientProfileViewModel.cs" />
@@ -240,6 +241,7 @@
     <Compile Include="ViewModels\Initialize\InitializeAppointmentViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAvatarViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalExperiment.cs" />
+    <Compile Include="ViewModels\Initialize\InitializeMedicalNoteViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePrescriptedMedicineViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePrescriptionViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeRatingViewModel.cs" />
