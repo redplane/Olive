@@ -20,6 +20,11 @@ namespace OlivesAdministration.Test.Repositories
         /// </summary>
         public List<Person> People { get; set; }
 
+        /// <summary>
+        /// List of doctors in system.
+        /// </summary>
+        public List<Doctor> Doctors { get; set; } 
+
         #endregion
 
         #region Constructor
@@ -31,6 +36,9 @@ namespace OlivesAdministration.Test.Repositories
         {
             // Initialize a list of account into system.
             People = new List<Person>();
+
+            // Initialize a list of doctors into system.
+            Doctors = new List<Doctor>();
         }
 
         #endregion
@@ -70,9 +78,18 @@ namespace OlivesAdministration.Test.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<Doctor> FindDoctorAsync(int id, StatusAccount? status)
+        public async Task<Doctor> FindDoctorAsync(int id, StatusAccount? status)
         {
-            throw new NotImplementedException();
+            IEnumerable<Doctor> doctors = new List<Doctor>(Doctors);
+
+            // Find doctors by using id.
+            doctors = doctors.Where(x => x.Id == id);
+
+            // Status is defined.
+            if (status != null)
+                doctors = doctors.Where(x => x.Person.Status == (byte)status);
+
+            return doctors.FirstOrDefault();
         }
 
         public Task<Patient> FindPatientAsync(int id, byte? status)
