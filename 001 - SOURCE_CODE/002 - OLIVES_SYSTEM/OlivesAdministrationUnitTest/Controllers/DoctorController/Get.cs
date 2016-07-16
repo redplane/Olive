@@ -16,7 +16,7 @@ using Shared.ViewModels;
 namespace OlivesAdministration.Test.Controllers.DoctorController
 {
     [TestClass]
-    public class RetrieveDoctor
+    public class Get
     {
         #region Properties
 
@@ -37,13 +37,13 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         /// <summary>
         /// Initialize an instance of Login with default settings.
         /// </summary>
-        public RetrieveDoctor()
+        public Get()
         {
             // Initialize RepositoryAccount.
             _repositoryAccount = new RepositoryAccount();
 
             // Initialize fake log instance.
-            var log = LogManager.GetLogger(typeof(RetrieveDoctor));
+            var log = LogManager.GetLogger(typeof(Get));
 
             // Initialize fake application setting instance.
             var applicationSetting = new ApplicationSetting();
