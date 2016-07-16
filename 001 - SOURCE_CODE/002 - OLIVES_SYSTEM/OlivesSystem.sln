@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olives", "Olives\Olives.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultipartDataMediaFormatter", "MultipartDataMediaFormatter\MultipartDataMediaFormatter.csproj", "{1F851995-9C6B-4B34-82AF-AC4E075F00C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OlivesAdministrationUnitTest", "OlivesAdministrationUnitTest\OlivesAdministrationUnitTest.csproj", "{B4541E99-C6BD-4B01-BFB5-F53A8ECC8C5B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OlivesAdministration.Test", "OlivesAdministrationUnitTest\OlivesAdministration.Test.csproj", "{B4541E99-C6BD-4B01-BFB5-F53A8ECC8C5B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
