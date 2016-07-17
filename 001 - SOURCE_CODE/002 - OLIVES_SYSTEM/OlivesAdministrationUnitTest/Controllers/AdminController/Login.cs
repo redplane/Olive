@@ -77,6 +77,7 @@ namespace OlivesAdministration.Test.Controllers.AdminController
 
         /// <summary>
         /// Login is failed due to invalid information.
+        /// Status: Deactive
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -108,8 +109,127 @@ namespace OlivesAdministration.Test.Controllers.AdminController
             // Compare the result thrown back.
             Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
         }
-       
 
+
+        /// <summary>
+        /// Login is failed due to invalid information.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task BlankEmail()
+        {
+            // Forging a deactivated account.
+            var account = new Person();
+            account.Id = 1;
+            account.Email = "";
+            account.Password = "password199x";
+            account.Role = (byte)Role.Admin;
+            account.Status = (byte)StatusAccount.Inactive;
+
+            // Add the fake person to list.
+            _repositoryAccount.People = new List<Person>();
+            _repositoryAccount.People.Clear();
+            _repositoryAccount.People.Add(account);
+
+            // Initialize login request parameters.
+            var loginViewModel = new LoginViewModel();
+            loginViewModel.Email = null;
+            loginViewModel.Password = account.Password;
+
+            // Call the login function.
+            // Response will be NotFound because no valid account is found.
+            // In Reality, the respond might be diffrent.
+            var response = await _adminController.Login(loginViewModel);
+            Debug.WriteLine(response);
+
+            // Compare the result thrown back.
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
+        }
+
+        /// <summary>
+        /// Login is failed due to invalid information.
+        /// Role: Not Admin
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task AdminAndNormalAccountDuplicateEmail()
+        {
+            // Forging a deactivated account.
+            var account = new Person();
+            account.Id = 1;
+            account.Email = "admin@admin.com";
+            account.Password = "password199x";
+            account.Role = (byte)Role.Admin;
+            account.Status = (byte)StatusAccount.Active;
+
+            var account2 = new Person();
+            account.Id = 2;
+            account.Email = "admin@admin.com";
+            account.Password = "password199x";
+            account.Role = (byte)Role.Doctor;
+            account.Status = (byte)StatusAccount.Active;
+
+            var account3 = new Person();
+            account.Id = 3;
+            account.Email = "admin@admin.com";
+            account.Password = "password199x";
+            account.Role = (byte)Role.Patient;
+            account.Status = (byte)StatusAccount.Active;
+
+            // Add the fake person to list.
+            _repositoryAccount.People = new List<Person>();
+            _repositoryAccount.People.Clear();
+            _repositoryAccount.People.Add(account);
+
+            // Initialize login request parameters.
+            var loginViewModel = new LoginViewModel();
+            loginViewModel.Email = account.Email;
+            loginViewModel.Password = account.Password;
+
+            // Call the login function.
+            // Response will be NotFound because no valid account is found.
+            // In Reality, the respond might be diffrent.
+            var response = await _adminController.Login(loginViewModel);
+            Debug.WriteLine(response);
+
+            // Compare the result thrown back.
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.Conflict); // might be Forbidden.
+        }
+
+        /// <summary>
+        /// Login is failed due to invalid information.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task StatusOK()
+        {
+            // Forging a deactivated account.
+            var account = new Person();
+            account.Id = 1;
+            account.Email = "admin@admin.admin";
+            account.Password = "password199x";
+            account.Role = (byte)Role.Admin;
+            account.Status = (byte)StatusAccount.Inactive;
+
+            // Add the fake person to list.
+            _repositoryAccount.People = new List<Person>();
+            _repositoryAccount.People.Clear();
+            _repositoryAccount.People.Add(account);
+
+            // Initialize login request parameters.
+            var loginViewModel = new LoginViewModel();
+            loginViewModel.Email = account.Email;
+            loginViewModel.Password = account.Password;
+
+            // Call the login function.
+            // Response will be NotFound because no valid account is found.
+            // In Reality, the respond might be diffrent.
+            var response = await _adminController.Login(loginViewModel);
+            Debug.WriteLine(response);
+
+            // Compare the result thrown back.
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
+        }
         #endregion
     }
 }
