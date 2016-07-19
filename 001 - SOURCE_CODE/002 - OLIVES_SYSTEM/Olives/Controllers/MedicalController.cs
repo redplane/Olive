@@ -1177,7 +1177,7 @@ namespace Olives.Controllers
                 var fileName = Guid.NewGuid().ToString("N");
 
                 // Save the image first.
-                var fullPath = Path.Combine(_applicationSetting.PrivateStorage.Absolute,
+                var fullPath = Path.Combine(_applicationSetting.PrescriptionStorage.Absolute,
                     $"{fileName}.{Values.StandardImageExtension}");
                 medicalImageFile.Save(fullPath);
 
@@ -1334,7 +1334,7 @@ namespace Olives.Controllers
                     x.Owner,
                     x.Creator,
                     Image = Convert.ToBase64String(
-                        File.ReadAllBytes(Path.Combine(_applicationSetting.PrivateStorage.Absolute,
+                        File.ReadAllBytes(Path.Combine(_applicationSetting.PrescriptionStorage.Absolute,
                             $"{x.Image}.{Values.StandardImageExtension}"))),
                     x.Created
 

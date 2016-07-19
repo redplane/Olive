@@ -218,7 +218,6 @@
     <Compile Include="Models\ApplicationSetting.cs" />
     <Compile Include="Models\EmailTemplate.cs" />
     <Compile Include="Models\EmailTemplateCore.cs" />
-    <Compile Include="Models\ServerPath.cs" />
     <Compile Include="Models\SmtpSetting.cs" />
     <Compile Include="Module\Log4NetModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
