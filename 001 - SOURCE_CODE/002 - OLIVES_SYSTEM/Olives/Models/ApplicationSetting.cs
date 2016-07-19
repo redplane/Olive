@@ -23,7 +23,7 @@ namespace Olives.Models
         [JsonProperty("privateStorage")]
         public Shared.Models.ServerPath PrivateStorage { get; set; }
         
-        [JsonProperty("prescriptionStorage")]
+        [JsonProperty("prescriptionImageStorage")]
         public ServerPath PrescriptionStorage { get; set; }
     }
 }

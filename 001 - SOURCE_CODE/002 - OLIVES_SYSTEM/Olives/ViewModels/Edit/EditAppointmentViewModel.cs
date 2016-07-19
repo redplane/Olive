@@ -25,7 +25,6 @@ namespace Olives.ViewModels.Edit
         /// <summary>
         ///     Appointment note.
         /// </summary>
-        [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueIsRequired")]
         [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Note { get; set; }

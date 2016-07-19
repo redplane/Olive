@@ -32,5 +32,8 @@
   },
   "privateStorage": {
     "relative": "~/App_Data/PrivateStorage"
+  },
+  "prescriptionImageStorage": {
+    "relative": "~/App_Data/PrescriptionImage"
   }
 }

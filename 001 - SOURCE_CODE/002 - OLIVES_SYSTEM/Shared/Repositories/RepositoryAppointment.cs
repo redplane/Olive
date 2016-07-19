@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 using Shared.Enumerations;
@@ -22,7 +23,7 @@ namespace Shared.Repositories
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
-            context.Appointments.Add(info);
+            context.Appointments.AddOrUpdate(info);
             await context.SaveChangesAsync();
 
             return info;
