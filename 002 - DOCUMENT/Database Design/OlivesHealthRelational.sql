@@ -1,24 +1,25 @@
 ---------------------------------------------------------------------------------------------------
 -- DROP TABLES
 ---------------------------------------------------------------------------------------------------
-DROP TABLE Relation;
-DROP TABLE Doctor;
-DROP TABLE Appointment;
-DROP TABLE Specialty;
-DROP TABLE Heartbeat;
-DROP TABLE Sugarblood;
-DROP TABLE BloodPressure;
-DROP TABLE Patient;
-DROP TABLE Allergy;
-DROP TABLE AccountCode;
-DROP TABLE Addiction;
-DROP TABLE Rating;
-DROP TABLE City;
-DROP TABLE Country;
 DROP TABLE MedicalImage;
-DROP TABLE Prescription;
+DROP TABLE MedicalNote;
 DROP TABLE ExperimentNote;
+DROP TABLE Prescription;
 DROP TABLE MedicalRecord;
+DROP TABLE MedicalCategory;
+DROP TABLE AccountCode;
+DROP TABLE Allergy;
+DROP TABLE Addiction;
+DROP TABLE SugarBlood;
+DROP TABLE BloodPressure;
+DROP TABLE Heartbeat;
+DROP TABLE Appointment;
+DROP TABLE Rating;
+DROP TABLE Relation;
+DROP TABLE Patient;
+DROP TABLE Doctor;
+DROP TABLE Place;
+DROP TABLE Specialty;
 DROP TABLE Person;
 
 ---------------------------------------------------------------------------------------------------
@@ -144,7 +145,6 @@ CREATE TABLE Relation
 	Target				INT NOT NULL,
 	TargetFirstName		NVARCHAR(32) NOT NULL,
 	TargetLastName		NVARCHAR(32) NOT NULL,
-	Type				TINYINT NOT NULL,
 	Created				FLOAT NOT NULL,
 	Status				TINYINT NOT NULL,
 
@@ -213,12 +213,14 @@ CREATE TABLE MedicalRecord
 (
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	Owner					INT NOT NULL,
+	Creator					INT NOT NULL,
 	Info					NVARCHAR(MAX),
 	Time					FLOAT NOT NULL,
 	Created					FLOAT NOT NULL,
 	LastModified			FLOAT,
 
-	FOREIGN KEY (Owner) REFERENCES Person(Id) 
+	FOREIGN KEY (Owner) REFERENCES Person(Id) ,
+	FOREIGN KEY (Creator) REFERENCES Person(Id)
 )
 
 -- Medical image table
@@ -232,6 +234,23 @@ CREATE TABLE MedicalImage
 	
 	FOREIGN KEY (MedicalRecordId) REFERENCES MedicalRecord(Id),
 	FOREIGN KEY (Owner) REFERENCES Person(Id)					
+)
+
+-- Medical note table
+CREATE TABLE MedicalNote
+(
+	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	MedicalRecordId			INT NOT NULL,
+	Creator					INT NOT NULL,
+	Owner					INT NOT NULL,
+	Note					NVARCHAR(128),
+	Time					FLOAT NOT NULL,
+	Created					FLOAT NOT NULL,
+	LastModified			FLOAT,
+
+	FOREIGN KEY (Owner) REFERENCES Person(Id),
+	FOREIGN KEY (Creator) REFERENCES Person(Id),
+	FOREIGN KEY (MedicalRecordId) REFERENCES MedicalRecord(Id), 
 )
 
 CREATE TABLE Prescription
@@ -281,6 +300,14 @@ CREATE TABLE Rating
 	FOREIGN KEY (Maker) REFERENCES Patient(Id),
 	FOREIGN KEY (Target) REFERENCES Doctor(Id),
 	PRIMARY KEY (Maker, Target)
+)
+
+CREATE Table MedicalCategory
+(
+	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	Name					NVARCHAR(32),
+	Created					FLOAT NOT NULL,
+	LastModified			FLOAT
 )
 
 SELECT * FROM Person

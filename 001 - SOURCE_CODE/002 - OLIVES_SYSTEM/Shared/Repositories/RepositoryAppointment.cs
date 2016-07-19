@@ -41,13 +41,8 @@ namespace Shared.Repositories
             var context = new OlivesHealthEntities();
 
             // By default, take all records.
-            var results = from p in context.People.Where(x => x.Id == requester)
-                from a in context.Appointments
-                where
-                    p != null &&
-                    ((filter.Mode == PartnerFilterMode.PartnerIsRequester && p.Id == a.Dater) ||
-                     (filter.Mode == PartnerFilterMode.ParterIsDater && p.Id == a.Maker))
-                select a;
+            IQueryable<Appointment> results = context.Appointments;
+            results = results.Where(x => x.Dater == requester || x.Maker == requester);
 
             // Filter by partner.
             if (filter.Mode == PartnerFilterMode.PartnerIsRequester)
@@ -96,28 +91,6 @@ namespace Shared.Repositories
             response.Appointments = await results.OrderBy(x => x.Status)
                 .Skip(skippedRecords)
                 .Take(filter.Records)
-                .Select(x => new AppointmentViewModel
-                {
-                    Id = x.Id,
-                    Created = x.Created,
-                    Dater = new PersonViewModel
-                    {
-                        Id = x.Dater,
-                        FirstName = x.DaterFirstName,
-                        LastName = x.DaterLastName
-                    },
-                    Maker = new PersonViewModel
-                    {
-                        Id = x.Maker,
-                        FirstName = x.MakerFirstName,
-                        LastName = x.MakerLastName
-                    },
-                    From = x.From,
-                    To = x.To,
-                    LastModified = x.LastModified,
-                    Note = x.Note,
-                    Status = (StatusAccount) x.Status
-                })
                 .ToListAsync();
 
             return response;

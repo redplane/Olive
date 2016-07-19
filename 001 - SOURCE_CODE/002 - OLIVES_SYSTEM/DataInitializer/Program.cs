@@ -27,70 +27,71 @@ namespace DataInitializer
             if (a is IDictionary)
                 Console.WriteLine("A is dictionary");
 
-            InitializePlaces(50);
-            InitializeSpecialties(50);
-            InitializeDoctor(50);
-            InitializePatient(50);
-            InitializeAdmin(50);
-            InitializeHeartbeatNote("patient26@gmail.com", 90);
-            InitializeSugarbloodNote("patient26@gmail.com", 90);
-            InitializeBloodPressureNote("patient26@gmail.com", 90);
-            InitializeAllergyNote("patient26@gmail.com", 90);
+            //InitializeCategory(50);
+            //InitializePlaces(50);
+            //InitializeSpecialties(50);
+            //InitializeDoctor(50);
+            //InitializePatient(50);
+            //InitializeAdmin(50);
+            //InitializeHeartbeatNote("patient26@gmail.com", 90);
+            //InitializeSugarbloodNote("patient26@gmail.com", 90);
+            //InitializeBloodPressureNote("patient26@gmail.com", 90);
+            //InitializeAllergyNote("patient26@gmail.com", 90);
 
             var sourcePatient = _repositoryAccount.FindPerson(null, "patient26@gmail.com", null, (byte)Role.Patient);
             var sourceDoctor = _repositoryAccount.FindPerson(null, "doctor26@gmail.com", null, (byte)Role.Doctor);
-            InitializeMedicalRecord(sourcePatient, 2);
+            //InitializeMedicalRecord(sourcePatient, sourceDoctor, 2);
 
             #region Relationship create
 
-            for (var i = 26; i < 50; i++)
-            {
-                var patient = _repositoryAccount.FindPerson(null, $"patient{i}@gmail.com", null, (byte)Role.Patient);
-                var doctor = _repositoryAccount.FindPerson(null, $"doctor{i}@gmail.com", null, (byte)Role.Doctor);
+            //for (var i = 26; i < 50; i++)
+            //{
+            //    var patient = _repositoryAccount.FindPerson(null, $"patient{i}@gmail.com", null, (byte)Role.Patient);
+            //    var doctor = _repositoryAccount.FindPerson(null, $"doctor{i}@gmail.com", null, (byte)Role.Doctor);
 
-                if (patient != null)
-                    Console.WriteLine($"Found {patient.Email} for creating relationship");
-                else
-                {
-                    Console.WriteLine($"Cannot find {patient.Email} for creating relationship");
-                    Console.WriteLine("---");
-                    continue;
-                }
+            //    if (patient != null)
+            //        Console.WriteLine($"Found {patient.Email} for creating relationship");
+            //    else
+            //    {
+            //        Console.WriteLine($"Cannot find {patient.Email} for creating relationship");
+            //        Console.WriteLine("---");
+            //        continue;
+            //    }
 
-                if (doctor != null)
-                    Console.WriteLine($"Found {doctor.Email} for creating relationship");
-                else
-                {
-                    Console.WriteLine($"Cannot find {doctor.Email} for creating relationship");
-                    Console.WriteLine("---");
-                    continue;
-                }
+            //    if (doctor != null)
+            //        Console.WriteLine($"Found {doctor.Email} for creating relationship");
+            //    else
+            //    {
+            //        Console.WriteLine($"Cannot find {doctor.Email} for creating relationship");
+            //        Console.WriteLine("---");
+            //        continue;
+            //    }
 
-                var relationship = new Relation();
-                relationship.Source = patient.Id;
-                relationship.SourceFirstName = patient.FirstName;
-                relationship.SourceLastName = patient.LastName;
+            //    var relationship = new Relation();
+            //    relationship.Source = patient.Id;
+            //    relationship.SourceFirstName = patient.FirstName;
+            //    relationship.SourceLastName = patient.LastName;
 
-                relationship.Target = doctor.Id;
-                relationship.TargetFirstName = doctor.FirstName;
-                relationship.TargetLastName = doctor.LastName;
+            //    relationship.Target = doctor.Id;
+            //    relationship.TargetFirstName = doctor.FirstName;
+            //    relationship.TargetLastName = doctor.LastName;
 
-                relationship.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            //    relationship.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
 
-                if (i > 40)
-                    relationship.Status = (byte)StatusRelation.Pending;
-                else
-                    relationship.Status = (byte)StatusRelation.Active;
+            //    if (i > 40)
+            //        relationship.Status = (byte)StatusRelation.Pending;
+            //    else
+            //        relationship.Status = (byte)StatusRelation.Active;
 
-                relationship = _repositoryAccount.InitializeRelationAsync(relationship).Result;
-                Console.WriteLine($"Created relationship. Id : {relationship.Id}");
-            }
+            //    relationship = _repositoryAccount.InitializeRelationAsync(relationship).Result;
+            //    Console.WriteLine($"Created relationship. Id : {relationship.Id}");
+            //}
 
             #endregion
 
             #region Appointment create
 
-            InitializeAppointment(sourcePatient, sourceDoctor, 60);
+            InitializeAppointment(sourcePatient, sourceDoctor, 50);
 
             #endregion
         }
@@ -312,7 +313,7 @@ namespace DataInitializer
             context.SaveChanges();
         }
 
-        private static void InitializeMedicalRecord(Person patient, int records)
+        private static void InitializeMedicalRecord(Person patient, Person doctor,int records)
         {
             var epochCurrentTime = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
             for (var i = 0; i < records; i++)
@@ -321,6 +322,7 @@ namespace DataInitializer
                 var epochFromTime = EpochTimeHelper.Instance.DateTimeToEpochTime(fromTime);
 
                 var medicalRecord = new MedicalRecord();
+                medicalRecord.Creator = doctor.Id;
                 medicalRecord.Owner = patient.Id;
 
                 var info = new Dictionary<string, string>();
@@ -374,10 +376,11 @@ namespace DataInitializer
 
             var toTime = EpochTimeHelper.Instance.DateTimeToEpochTime(new DateTime(2016, 12, 31));
 
+            var month = 1;
+            var year = 2016;
+
             for (var i = 0; i < max; i++)
             {
-                var dayAdd = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now.AddDays(1));
-
                 var appointment = new Appointment();
 
                 if (i < half)
@@ -401,16 +404,13 @@ namespace DataInitializer
                     appointment.MakerLastName = doctor.LastName;
                 }
 
-                if (i > 12)
-                    i = 12;
-                if (i < 1)
-                    i = 1;
+                
 
-                var fromTime = new DateTime(2016, i, 20);
+                var fromTime = new DateTime(year, month, 20);
                 var epochFromTime = EpochTimeHelper.Instance.DateTimeToEpochTime(fromTime);
                 
                 appointment.From = epochFromTime;
-                appointment.To = 100;
+                appointment.To = toTime;
                 appointment.Note = $"Note[{i}]";
                 appointment.Created = epochFromTime;
 
@@ -424,6 +424,12 @@ namespace DataInitializer
                     appointment.Status = (byte)StatusAppointment.Done;
 
                 context.Appointments.Add(appointment);
+
+                if (month >= 12)
+                {
+                    month = 1;
+                    year++;
+                }
             }
 
             context.SaveChanges();
@@ -456,6 +462,21 @@ namespace DataInitializer
             context.SaveChanges();
         }
 
+        private static void InitializeCategory(int records)
+        {
+            var context = new OlivesHealthEntities();
+            var currentTime = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            for (var i = 0; i < records; i++)
+            {
+                var medicalCategory = new MedicalCategory();
+                medicalCategory.Created = currentTime;
+                medicalCategory.Name = $"MedicalCategory[{i}]";
+
+                context.MedicalCategories.Add(medicalCategory);
+            }
+
+            context.SaveChanges();
+        }
         #region Personal records
 
         /// <summary>

@@ -446,22 +446,23 @@ namespace Olives.Controllers
                     x.Created,
                     Dater = new
                     {
-                        x.Dater.Id,
-                        x.Dater.FirstName,
-                        x.Dater.LastName
+                        Id = x.Dater,
+                        FirstName = x.DaterFirstName,
+                        LastName = x.DaterLastName
                     },
                     Maker = new
                     {
-                        x.Maker.Id,
-                        x.Maker.FirstName,
-                        x.Maker.LastName
+                        Id = x.Maker,
+                        FirstName = x.MakerFirstName,
+                        LastName = x.MakerLastName
                     },
                     x.From,
                     x.To,
                     x.LastModified,
                     x.Note,
                     x.Status
-                })
+                }),
+                response.Total
             });
         }
 
