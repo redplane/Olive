@@ -943,6 +943,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to W032.
+        /// </summary>
+        public static string WarnRequesterNotCreator {
+            get {
+                return ResourceManager.GetString("WarnRequesterNotCreator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to W022.
         /// </summary>
         public static string WarnRoleIsForbidden {

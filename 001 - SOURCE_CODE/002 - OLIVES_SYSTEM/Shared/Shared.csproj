@@ -88,6 +88,7 @@
     <Compile Include="Enumerations\Filter\PlaceFilterSort.cs" />
     <Compile Include="Enumerations\Filter\ExperimentFilterSort.cs" />
     <Compile Include="Enumerations\Filter\NoteResultSort.cs" />
+    <Compile Include="Enumerations\Filter\PrescriptionImageFilterMode.cs" />
     <Compile Include="Enumerations\Filter\RatingResultSort.cs" />
     <Compile Include="Enumerations\RoleRelationship.cs" />
     <Compile Include="Enumerations\TypeAccountCode.cs" />
@@ -184,6 +185,9 @@
     <Compile Include="Models\Prescription.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\PrescriptionImage.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Rating.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
@@ -196,9 +200,6 @@
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SugarBlood.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\sysdiagram.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -240,13 +241,16 @@
     <Compile Include="ViewModels\Filter\FilterMedicalImageViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMedicalRecordViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPatientViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterPrescriptionImageViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPrescriptionViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterRatingViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializePrescriptionImageViewModel.cs" />
     <Compile Include="ViewModels\MedicineInfoViewModel.cs" />
     <Compile Include="ViewModels\RelativeViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseMedicalCategoryFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseMedicalNoteFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseNoteDelete.cs" />
+    <Compile Include="ViewModels\Response\ResponsePrescriptionImageFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseRatingFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseRelativeFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseRelatedDoctorFilter.cs" />

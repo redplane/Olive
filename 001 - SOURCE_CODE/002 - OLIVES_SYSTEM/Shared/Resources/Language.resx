@@ -455,4 +455,7 @@
     <value>W030</value>
     <comment>Warn front-end specialty is not found.</comment>
   </data>
+  <data name="WarnRequesterNotCreator" xml:space="preserve">
+    <value>W032</value>
+  </data>
 </root>

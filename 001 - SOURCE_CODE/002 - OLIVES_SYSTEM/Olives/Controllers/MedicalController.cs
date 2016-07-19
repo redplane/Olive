@@ -57,11 +57,11 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/medical/record")]
         [HttpGet]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find the medical record by using id.
             var result = await _repositoryMedical.FindMedicalRecordAsync(id);
@@ -83,7 +83,7 @@ namespace Olives.Controllers
                 var relationships =
                     await
                         _repositoryAccount.FindRelationshipAsync(requester.Id, result.Owner,
-                            (byte) StatusRelation.Active);
+                            (byte)StatusRelation.Active);
                 var relationship = relationships.FirstOrDefault();
 
                 // There is no relationship between these 2 people
@@ -119,7 +119,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/medical/record")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> Post([FromBody] InitializeMedicalRecordViewModel info)
         {
             // Model hasn't been initialized.
@@ -138,7 +138,7 @@ namespace Olives.Controllers
             }
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Owner of medical record should be the requester.
             if (info.Owner == null)
@@ -146,7 +146,7 @@ namespace Olives.Controllers
                 info.Owner = requester.Id;
 
                 // Doctors cannot create medical record for themselves.
-                if (requester.Role == (byte) Role.Doctor)
+                if (requester.Role == (byte)Role.Doctor)
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
@@ -159,14 +159,14 @@ namespace Olives.Controllers
             if (requester.Id != info.Owner)
             {
                 // Patient can only create medical record for himself/herself.
-                if (requester.Role == (byte) Role.Patient)
+                if (requester.Role == (byte)Role.Patient)
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
                         Error = $"{Language.WarnRoleIsForbidden}"
                     });
 
                 // Find the active patient.
-                var owner = await _repositoryAccount.FindPersonAsync(info.Owner, null, null, (byte) Role.Patient,
+                var owner = await _repositoryAccount.FindPersonAsync(info.Owner, null, null, (byte)Role.Patient,
                     StatusAccount.Active);
 
                 // Owner is not found.
@@ -181,7 +181,7 @@ namespace Olives.Controllers
                 // Find the relationship between requester and the record owner.
                 var relationship =
                     await _repositoryAccount.FindRelationshipAsync(requester.Id, info.Owner.Value,
-                        (byte) StatusRelation.Active);
+                        (byte)StatusRelation.Active);
 
                 // No relationship is found between 2 people.
                 if (relationship == null || relationship.Count < 1)
@@ -194,7 +194,7 @@ namespace Olives.Controllers
             // Only filter and receive the first result.
             var medicalRecord = new MedicalRecord();
             medicalRecord.Owner = info.Owner.Value;
-            
+
             medicalRecord.Info = JsonConvert.SerializeObject(info.Infos);
             medicalRecord.Time = info.Time;
             medicalRecord.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
@@ -224,7 +224,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/medical/record")]
         [HttpPut]
-        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
+        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
         public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] EditMedicalRecordViewModel info)
         {
             // Model hasn't been initialized.
@@ -243,7 +243,7 @@ namespace Olives.Controllers
             }
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find the record first.
             var medicalRecord = await _repositoryMedical.FindMedicalRecordAsync(id);
@@ -261,7 +261,7 @@ namespace Olives.Controllers
             {
                 // Find the active patient.
                 var owner =
-                    await _repositoryAccount.FindPersonAsync(medicalRecord.Owner, null, null, (byte) Role.Patient,
+                    await _repositoryAccount.FindPersonAsync(medicalRecord.Owner, null, null, (byte)Role.Patient,
                         StatusAccount.Active);
 
                 // Owner is not found.
@@ -275,7 +275,7 @@ namespace Olives.Controllers
 
                 // Check the relationship between them.
                 var relationship = await _repositoryAccount.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
-                    (byte) StatusAccount.Active);
+                    (byte)StatusAccount.Active);
                 if (relationship == null || relationship.Count < 1)
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
@@ -312,7 +312,7 @@ namespace Olives.Controllers
 
         [Route("api/medical/record/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
+        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
         public async Task<HttpResponseMessage> FilterMedicalRecord([FromBody] FilterMedicalRecordViewModel filter)
         {
             // Model hasn't been initialized.
@@ -331,14 +331,14 @@ namespace Olives.Controllers
             }
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
             // Requester is a patient. He/she can only see his/her medical record.
-            if (requester.Role == (byte) Role.Patient)
+            if (requester.Role == (byte)Role.Patient)
                 filter.Owner = requester.Id;
             else
                 filter.Creator = requester.Id;
-            
+
             // Filter medical records.
             var results = await _repositoryMedical.FilterMedicalRecordAsync(filter);
 
@@ -369,7 +369,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/medical/image")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> InitializeMedicalImage([FromBody] InitializeMedicalImageViewModel info)
         {
             // Model hasn't been initialized.
@@ -406,7 +406,7 @@ namespace Olives.Controllers
             }
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find the medical record.
             var medicalRecord = await _repositoryMedical.FindMedicalRecordAsync(info.MedicalRecord);
@@ -422,7 +422,7 @@ namespace Olives.Controllers
             if (requester.Id != medicalRecord.Owner)
             {
                 // Patient can only create medical record for himself/herself.
-                if (requester.Role == (byte) Role.Patient)
+                if (requester.Role == (byte)Role.Patient)
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
                         Error = $"{Language.WarnRoleIsForbidden}"
@@ -430,7 +430,7 @@ namespace Olives.Controllers
 
                 // Find the relationship between requester and the record owner.
                 var relationship = await _repositoryAccount.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
-                    (byte) StatusRelation.Active);
+                    (byte)StatusRelation.Active);
 
                 // No relationship is found between 2 people.
                 if (relationship == null || relationship.Count < 1)
@@ -489,11 +489,11 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/medical/image")]
         [HttpDelete]
-        [OlivesAuthorize(new[] {Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Patient })]
         public async Task<HttpResponseMessage> DeleteMedicalImage([FromBody] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             try
             {
@@ -526,7 +526,7 @@ namespace Olives.Controllers
 
         [Route("api/medical/image/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> FilterMedicalImage([FromBody] FilterMedicalImageViewModel info)
         {
             // Model hasn't been initialized.
@@ -545,7 +545,7 @@ namespace Olives.Controllers
             }
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find the medical record.
             var medicalRecord = await _repositoryMedical.FindMedicalRecordAsync(info.MedicalRecord);
@@ -561,7 +561,7 @@ namespace Olives.Controllers
             if (requester.Id != medicalRecord.Owner)
             {
                 // Patient can only create medical record for himself/herself.
-                if (requester.Role == (byte) Role.Patient)
+                if (requester.Role == (byte)Role.Patient)
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
                         Error = $"{Language.WarnRoleIsForbidden}"
@@ -569,7 +569,7 @@ namespace Olives.Controllers
 
                 // Find the relationship between requester and the record owner.
                 var relationship = await _repositoryAccount.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
-                    (byte) StatusRelation.Active);
+                    (byte)StatusRelation.Active);
 
                 // No relationship is found between 2 people.
                 if (relationship == null || relationship.Count < 1)
@@ -621,11 +621,11 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/medical/prescription")]
         [HttpGet]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> RetrievePrescription([FromUri] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             #region Prescription validation
 
@@ -662,7 +662,7 @@ namespace Olives.Controllers
             {
                 // Find the relationship between requester and owner.
                 var relationships = await _repositoryAccount.FindRelationshipAsync(requester.Id, owner.Id,
-                    (byte) StatusRelation.Active);
+                    (byte)StatusRelation.Active);
 
                 // No active relationship is found.
                 if (relationships == null || relationships.Count < 1)
@@ -700,7 +700,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/medical/prescription")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> InitializePrescription([FromBody] InitializePrescriptionViewModel info)
         {
             #region Parameters validation
@@ -739,7 +739,7 @@ namespace Olives.Controllers
             #region Medical record owner validation
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Requester is different from the medical record owner.
             if (requester.Id != medicalRecord.Owner)
@@ -757,7 +757,7 @@ namespace Olives.Controllers
                 }
 
                 // Patient cannot give another person prescription.
-                if (owner.Role == (byte) Role.Patient)
+                if (owner.Role == (byte)Role.Patient)
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
@@ -767,7 +767,7 @@ namespace Olives.Controllers
 
                 // Find the relationship between requester and owner.
                 var relationships = await _repositoryAccount.FindRelationshipAsync(requester.Id, owner.Id,
-                    (byte) StatusRelation.Active);
+                    (byte)StatusRelation.Active);
 
                 // No active relationship is found.
                 if (relationships == null || relationships.Count < 1)
@@ -781,7 +781,7 @@ namespace Olives.Controllers
             else
             {
                 // Doctor cannot create prescription for him/herself.
-                if (requester.Role == (byte) Role.Doctor)
+                if (requester.Role == (byte)Role.Doctor)
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
@@ -831,7 +831,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/medical/prescription")]
         [HttpPut]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> EditPrescription([FromUri] int id,
             [FromBody] EditPrescriptionViewModel info)
         {
@@ -877,13 +877,13 @@ namespace Olives.Controllers
             }
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Requester is different from the medical record owner.
             if (requester.Id != owner.Id)
             {
                 // Patient cannot give another person prescription.
-                if (owner.Role == (byte) Role.Patient)
+                if (owner.Role == (byte)Role.Patient)
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
@@ -893,7 +893,7 @@ namespace Olives.Controllers
 
                 // Find the relationship between requester and owner.
                 var relationships = await _repositoryAccount.FindRelationshipAsync(requester.Id, owner.Id,
-                    (byte) StatusRelation.Active);
+                    (byte)StatusRelation.Active);
 
                 // No active relationship is found.
                 if (relationships == null || relationships.Count < 1)
@@ -907,7 +907,7 @@ namespace Olives.Controllers
             else
             {
                 // Doctor cannot create prescription for him/herself.
-                if (requester.Role == (byte) Role.Doctor)
+                if (requester.Role == (byte)Role.Doctor)
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
@@ -961,11 +961,11 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/medical/prescription")]
         [HttpDelete]
-        [OlivesAuthorize(new[] {Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Patient })]
         public async Task<HttpResponseMessage> DeletePrescription([FromUri] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Patient can only delete his/her record.
             var deletedRecords = await _repositoryMedical.DeletePrescriptionAsync(id, requester.Id);
@@ -989,7 +989,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/medical/prescription/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> FilterPrescription([FromBody] FilterPrescriptionViewModel filter)
         {
             #region Parameters validation
@@ -1012,7 +1012,7 @@ namespace Olives.Controllers
 
             // Retrieve information of person who sent request.
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+
             #region Owner validation
 
             Person owner;
@@ -1041,7 +1041,7 @@ namespace Olives.Controllers
                 else
                     owner = requester;
             }
-            
+
             if (owner == null)
             {
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
@@ -1056,7 +1056,7 @@ namespace Olives.Controllers
             {
                 // Find the relationship between requester and owner.
                 var relationships = await _repositoryAccount.FindRelationshipAsync(requester.Id, owner.Id,
-                    (byte) StatusRelation.Active);
+                    (byte)StatusRelation.Active);
 
                 // No active relationship is found.
                 if (relationships == null || relationships.Count < 1)
@@ -1093,6 +1093,260 @@ namespace Olives.Controllers
 
         #endregion
 
+        #region Medical prescription image
+
+        /// <summary>
+        /// Initialize a prescription image
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("api/medical/prescription/image")]
+        public async Task<HttpResponseMessage> InitializePrescriptionImage([FromBody] InitializePrescriptionImageViewModel initializer)
+        {
+            // Initialize hasn't been initialized.
+            if (initializer == null)
+            {
+                // Initialize it.
+                initializer = new InitializePrescriptionImageViewModel();
+
+                // Do validation.
+                Validate(initializer);
+            }
+
+            // Request parameters are invalid.
+            if (!ModelState.IsValid)
+            {
+                // Log the error.
+                _log.Error("Request parameters are invalid. Errors sent to client.");
+
+                // Respond status back to server.
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            Image medicalImageFile = null;
+
+            // Medical image validation.
+            try
+            {
+                var memoryStream = new MemoryStream(initializer.Image.Buffer);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                medicalImageFile = Image.FromStream(memoryStream);
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception.Message, exception);
+                return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                {
+                    Error = $"{Language.WarnImageIncorrectFormat}"
+                });
+            }
+
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Find the medical prescription.
+            var prescription = await _repositoryMedical.FindPrescriptionAsync(initializer.Prescription);
+            if (prescription == null)
+            {
+                // Writing log.
+                _log.Error($"Prescription [{initializer.Prescription}] is not found.");
+
+                // Respond the warning to client.
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
+
+            // Requester is not the creator of prescription.
+            if (requester.Id != prescription.Owner)
+            {
+                // Log the error first.
+                _log.Error($"Requester [Id: {requester.Id}] is different from the Creator [Id: {prescription.Owner}]");
+
+                // Tell the client, the action is forbidden.
+                return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                {
+                    Error = $"{Language.WarnRequesterNotCreator}"
+                });
+            }
+
+            try
+            {
+                // Generate file name and save the file first.
+                var fileName = Guid.NewGuid().ToString("N");
+
+                // Save the image first.
+                var fullPath = Path.Combine(_applicationSetting.PrivateStorage.Absolute,
+                    $"{fileName}.{Values.StandardImageExtension}");
+                medicalImageFile.Save(fullPath);
+
+                // Initialize a prescription image.
+                var prescriptionImage = new PrescriptionImage();
+                prescriptionImage.Image = fileName;
+                prescriptionImage.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+                prescriptionImage.Creator = requester.Id;
+
+                // Save the prescription image to database.
+                await _repositoryMedical.InitializePrescriptionImage(prescriptionImage);
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch (Exception exception)
+            {
+                // Something is wrong with server.
+                _log.Error(exception.Message, exception);
+
+                // Tell the client there is something wrong with the server.
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new
+                {
+                    Error = $"{Language.WarnInternalServerError}"
+                });
+            }
+        }
+
+        /// <summary>
+        /// Initialize a prescription image
+        /// </summary>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("api/medical/prescription/image")]
+        public async Task<HttpResponseMessage> DeletePrescriptionImage([FromUri] int id)
+        {
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Find the medical prescription.
+            var prescriptionImage = await _repositoryMedical.FindPrescriptionImageAsync(id);
+            if (prescriptionImage == null)
+            {
+                // Writing log.
+                _log.Error($"Prescription [{id}] is not found.");
+
+                // Respond the warning to client.
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
+
+            // Requester is not the creator of prescription.
+            if (requester.Id != prescriptionImage.Creator)
+            {
+                // Log the error first.
+                _log.Error($"Requester [Id: {requester.Id}] is different from the Creator [Id: {prescriptionImage.Creator}]");
+
+                // Tell the client, the action is forbidden.
+                return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                {
+                    Error = $"{Language.WarnRequesterNotCreator}"
+                });
+            }
+
+            try
+            {
+                // Find the prescription image and delete 'em.
+                var records = await _repositoryMedical.DeletePrescriptionImageAsync(id);
+
+                if (records < 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
+                }
+
+                try
+                {
+                    // Save the image first.
+                    var fullPath = Path.Combine(_applicationSetting.PrivateStorage.Absolute,
+                        $"{prescriptionImage.Image}.{Values.StandardImageExtension}");
+
+                    // Initialize a prescription image.
+                    File.Delete(fullPath);
+                }
+                catch (Exception exception)
+                {
+                    // File cannot be deleted for a reason.
+                    // Log the error and continue.
+                    _log.Error(exception.Message, exception);
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch (Exception exception)
+            {
+                // Something is wrong with server.
+                _log.Error(exception.Message, exception);
+
+                // Tell the client there is something wrong with the server.
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new
+                {
+                    Error = $"{Language.WarnInternalServerError}"
+                });
+            }
+        }
+
+        /// <summary>
+        /// Filter prescription image by using conditions.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("api/medical/prescription/image/filter")]
+        public async Task<HttpResponseMessage> FilterPrescriptionImage([FromBody] FilterPrescriptionImageViewModel filter)
+        {
+            // Filter hasn't been initialized.
+            if (filter == null)
+            {
+                // Initialize it.
+                filter = new FilterPrescriptionImageViewModel();
+
+                // Do the validation.
+                Validate(filter);
+            }
+
+            // Request paramters are invalid.
+            if (!ModelState.IsValid)
+            {
+                // Log the error.
+                _log.Error("Request parameters are invalid. Errors sent to client.");
+
+                // Respond result to client.
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Requester initialization.
+            filter.Requester = requester.Id;
+
+            // Do the filter.
+            var result = await _repositoryMedical.FilterPrescriptionImageAsync(filter);
+
+            // Respond filtered results to client.
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                PrescriptionImages = result.PrescriptionImages.Select(x => new
+                {
+                    x.Id,
+                    Prescription = x.PrescriptionId,
+                    x.Owner,
+                    x.Creator,
+                    Image = Convert.ToBase64String(
+                        File.ReadAllBytes(Path.Combine(_applicationSetting.PrivateStorage.Absolute,
+                            $"{x.Image}.{Values.StandardImageExtension}"))),
+                    x.Created
+
+
+                }),
+                result.Total
+            });
+
+        }
+
+        #endregion
+
         #region Medical experiment
 
         /// <summary>
@@ -1102,7 +1356,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/medical/experiment")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> InitializeMedialExperiment(
             [FromBody] InitializeMedicalExperiment initializer)
         {
@@ -1134,13 +1388,13 @@ namespace Olives.Controllers
             }
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Requester is different from the medical owner.
             if (requester.Id != medicalRecord.Owner)
             {
                 // Patient cannot note experiment result to another person.
-                if (requester.Role == (byte) Role.Patient)
+                if (requester.Role == (byte)Role.Patient)
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
@@ -1152,7 +1406,7 @@ namespace Olives.Controllers
                 var relationship =
                     await
                         _repositoryAccount.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
-                            (byte) StatusRelation.Active);
+                            (byte)StatusRelation.Active);
 
                 // No relationship is found
                 if (relationship == null)
@@ -1206,7 +1460,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/medical/experiment")]
         [HttpPut]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> ModifyMedialExperimentNote([FromUri] int experiment,
             [FromBody] EditMedicalExperiment modifier)
         {
@@ -1228,13 +1482,13 @@ namespace Olives.Controllers
             var experimentNote = await _repositoryMedical.FindExperimentNoteAsync(experiment);
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Requester is different from the medical owner.
             if (requester.Id != experimentNote.Owner)
             {
                 // Patient cannot note experiment result to another person.
-                if (requester.Role == (byte) Role.Patient)
+                if (requester.Role == (byte)Role.Patient)
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
@@ -1246,7 +1500,7 @@ namespace Olives.Controllers
                 var relationship =
                     await
                         _repositoryAccount.FindRelationshipAsync(requester.Id, experimentNote.Owner,
-                            (byte) StatusRelation.Active);
+                            (byte)StatusRelation.Active);
 
                 // No relationship is found
                 if (relationship == null)
@@ -1301,7 +1555,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/medical/experiment")]
         [HttpDelete]
-        [OlivesAuthorize(new[] {Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Patient })]
         public async Task<HttpResponseMessage> DeleteMedialExperimentNote([FromUri] int experiment)
         {
             // Request parameters are invalid.
@@ -1315,7 +1569,7 @@ namespace Olives.Controllers
             var experimentNote = await _repositoryMedical.FindExperimentNoteAsync(experiment);
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Requester is different from the medical owner.
             if (requester.Id != experimentNote.Owner)
@@ -1357,7 +1611,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/medical/note")]
         [HttpGet]
-        [OlivesAuthorize(new[] { Role.Doctor})]
+        [OlivesAuthorize(new[] { Role.Doctor })]
         public async Task<HttpResponseMessage> RetrieveMedicalNote([FromUri] int id)
         {
             // Retrieve information of person who sent request.
@@ -1409,7 +1663,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/medical/note")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Doctor})]
+        [OlivesAuthorize(new[] { Role.Doctor })]
         public async Task<HttpResponseMessage> InitializeMedicalNote([FromBody] InitializeMedicalNoteViewModel initializer)
         {
             // Model hasn't been initialized.
@@ -1429,7 +1683,7 @@ namespace Olives.Controllers
 
             // Retrieve information of person who sent request.
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+
             // Find the medical record.
             var medicalRecord = await _repositoryMedical.FindMedicalRecordAsync(initializer.MedicalRecord);
 
@@ -1469,8 +1723,8 @@ namespace Olives.Controllers
                 {
                     Error = $"{Language.WarnHasNoRelationship}"
                 });
-            
-            
+
+
             // Initialize an instance of MedicalNote.
             var medicalNote = new MedicalNote();
             medicalNote.MedicalRecordId = initializer.MedicalRecord;
@@ -1547,11 +1801,11 @@ namespace Olives.Controllers
                 {
                     Error = $"{Language.WarnRecordNotFound}"
                 });
-            
+
             // Note is defined.
             if (modifier.Note != null)
                 medicalNote.Note = modifier.Note;
-            
+
             // Time is defined.
             if (modifier.Time != null)
                 medicalNote.Time = modifier.Time.Value;
@@ -1600,7 +1854,7 @@ namespace Olives.Controllers
                 _log.Error("Request parameters are invalid. Error sent to client.");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
-            
+
             // Retrieve information of person who sent request.
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 

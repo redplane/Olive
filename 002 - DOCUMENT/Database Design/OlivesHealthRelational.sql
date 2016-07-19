@@ -2,10 +2,11 @@
 -- DROP TABLES
 ---------------------------------------------------------------------------------------------------
 DROP TABLE MedicalImage;
-DROP TABLE MedicalNote;
 DROP TABLE ExperimentNote;
 DROP TABLE Prescription;
+DROP TABLE PrescriptionImage;
 DROP TABLE MedicalRecord;
+DROP TABLE MedicalNote;
 DROP TABLE MedicalCategory;
 DROP TABLE AccountCode;
 DROP TABLE Allergy;
@@ -268,6 +269,20 @@ CREATE TABLE Prescription
 
 	FOREIGN KEY (MedicalRecordId)	REFERENCES MedicalRecord(Id),
 	FOREIGN KEY (Owner)				REFERENCES Person(Id)
+)
+
+
+-- Prescription image table
+CREATE TABLE PrescriptionImage
+(
+	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	PrescriptionId			INT NOT NULL,
+	Image					NVARCHAR(32) NOT NULL,
+	Owner					INT NOT NULL,
+	Creator					INT NOT NULL,
+	Created					FLOAT NOT NULL,
+	FOREIGN KEY (PrescriptionId) REFERENCES Prescription(Id),
+	FOREIGN KEY (Creator) REFERENCES Person(Id)					
 )
 
 CREATE TABLE ExperimentNote

@@ -366,6 +366,126 @@ namespace Shared.Repositories
 
         #endregion
 
+        #region Prescription image
+
+        /// <summary>
+        /// Find the prescription image asynchronously by using id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<PrescriptionImage> FindPrescriptionImageAsync(int id)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // Find the prescription image by using id.
+            var prescriptionImage = await context.PrescriptionImages.FirstOrDefaultAsync(x => x.Id == id);
+            return prescriptionImage;
+        }
+
+        /// <summary>
+        /// Initialize an image for prescription.
+        /// </summary>
+        /// <param name="prescriptionImage"></param>
+        /// <returns></returns>
+        public async Task<PrescriptionImage> InitializePrescriptionImage(PrescriptionImage prescriptionImage)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    context.PrescriptionImages.AddOrUpdate(prescriptionImage);
+                    await context.SaveChangesAsync();
+                    transaction.Commit();
+
+                    return prescriptionImage;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Delete prescription image by using id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<int> DeletePrescriptionImageAsync(int id)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // By default, take all records.
+            IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
+
+            // Find the medical image by using id.
+            prescriptionImages = prescriptionImages.Where(x => x.Id == id);
+
+            context.PrescriptionImages.RemoveRange(prescriptionImages);
+            return await context.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Filter prescription image.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public async Task<ResponsePrescriptionImageFilter> FilterPrescriptionImageAsync(
+            FilterPrescriptionImageViewModel filter)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // By default, take all result.
+            IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
+
+            // Base on the filter mode to decide requester is data creator or owner.
+            if (filter.Mode == PrescriptionImageFilterMode.RequesterIsCreator)
+            {
+                prescriptionImages = prescriptionImages.Where(x => x.Creator == filter.Requester);
+                if (filter.Partner != null)
+                    prescriptionImages = prescriptionImages.Where(x => x.Owner == filter.Partner);
+            }
+            else if (filter.Mode == PrescriptionImageFilterMode.RequesterIsOwner)
+            {
+                prescriptionImages = prescriptionImages.Where(x => x.Owner == filter.Requester);
+                if (filter.Partner != null)
+                    prescriptionImages = prescriptionImages.Where(x => x.Creator == filter.Partner);
+            }
+            else
+            {
+                prescriptionImages =
+                    prescriptionImages.Where(x => x.Creator == filter.Requester || x.Owner == filter.Requester);
+            }
+            
+            // Filter response initialization.
+            var response = new ResponsePrescriptionImageFilter();
+            
+            // Count the condition matched results.
+            response.Total = await prescriptionImages.CountAsync();
+
+            // Calculate the skipped result.
+            var skippedResult = filter.Page*filter.Records;
+
+            // Truncate the result.
+            response.PrescriptionImages = await prescriptionImages.Skip(skippedResult)
+                .Take(filter.Records)
+                .ToListAsync();
+
+            // By default, sort by created date decendingly.
+            prescriptionImages = prescriptionImages.OrderByDescending(x => x.Created);
+
+            return response;
+        }
+
+        #endregion
+
         #region Experiment
 
         /// <summary>
