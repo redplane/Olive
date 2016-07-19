@@ -117,15 +117,24 @@ namespace Shared.Repositories
 
             #endregion
 
+            // Response initialization.
             var response = new ResponsePatientFilter();
+
+            // Caculate the total matched results.
             response.Total = await results.CountAsync();
 
-            // How many records should be skipped.
-            var skippedRecords = filter.Page*filter.Records;
+            // Order by status.
+            results = results.OrderBy(x => x.Person.Status);
+
+            // Record is specified.
+            if (filter.Records != null)
+            {
+                results = results.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
+
+            // Take the list of filtered patient.
             response.Patients = await results
-                .OrderBy(x => x.Person.Status)
-                .Skip(skippedRecords)
-                .Take(filter.Records)
                 .ToListAsync();
             
             return response;
@@ -284,17 +293,24 @@ namespace Shared.Repositories
                 join s in specialties on d.SpecialtyId equals s.Id
                 select d;
 
+            // Response initialization.
             var responseFilter = new ResponseDoctorFilter();
-            responseFilter.Total = await results.CountAsync();
 
-            // How many records should be skipped.
-            var skippedRecords = filter.Page*filter.Records;
+            // Total matched result.
+            responseFilter.Total = await results.CountAsync();
+            
+            // Sort by status.
+            results = results.OrderBy(x => x.Person.Status);
+
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                results = results.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
 
             responseFilter.Doctors = await results
-                .OrderBy(x => x.Person.Status)
-                .Skip(skippedRecords)
-                .Take(filter.Records)
-                .ToListAsync();
+                 .ToListAsync();
                 
             return responseFilter;
         }
@@ -856,7 +872,7 @@ namespace Shared.Repositories
         /// <param name="records"></param>
         /// <returns></returns>
         public async Task<ResponseRelatedDoctorFilter> FilterRelatedDoctorAsync(int requester, StatusRelation? status,
-            int page, int records)
+            int page, int? records)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -885,10 +901,15 @@ namespace Shared.Repositories
 
             var response = new ResponseRelatedDoctorFilter();
             response.Total = await fullResult.CountAsync();
-            response.List = await fullResult.OrderByDescending(x => x.Created)
-                .Skip(page*records)
-                .Take(records)
-                .ToListAsync();
+
+            fullResult = fullResult.OrderByDescending(x => x.Created);
+            if (records != null)
+                fullResult = fullResult.Skip(page*records.Value)
+                    .Take(records.Value);
+            
+                
+            // Return the filtered list.
+            response.List = await fullResult.ToListAsync();
 
             return response;
         }

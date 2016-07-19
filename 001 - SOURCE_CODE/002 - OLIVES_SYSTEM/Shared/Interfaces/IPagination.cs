@@ -4,6 +4,6 @@
     {
         int Page { get; set; }
 
-        int Records { get; set; }
+        int? Records { get; set; }
     }
 }

@@ -141,8 +141,14 @@ namespace Shared.Repositories
                     break;
             }
 
-            response.Sugarbloods = await results.Skip(skippedRecords)
-                .Take(filter.Records)
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                results = results.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
+
+            response.Sugarbloods = await results
                 .Select(x => new SugarbloodViewModel
                 {
                     Id = x.Id,

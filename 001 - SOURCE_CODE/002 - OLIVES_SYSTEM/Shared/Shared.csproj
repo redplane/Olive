@@ -106,10 +106,7 @@
     <Compile Include="Enumerations\Comparision.cs" />
     <Compile Include="Helpers\CodeGeneratorHelper.cs" />
     <Compile Include="Helpers\EpochTimeHelper.cs" />
-    <Compile Include="Interfaces\IDoctor.cs" />
     <Compile Include="Interfaces\IPagination.cs" />
-    <Compile Include="Interfaces\IPatient.cs" />
-    <Compile Include="Interfaces\IPerson.cs" />
     <Compile Include="Interfaces\IRepositoryAccount.cs" />
     <Compile Include="Interfaces\IRepositoryActivationCode.cs" />
     <Compile Include="Interfaces\IRepositoryAddiction.cs" />
@@ -289,7 +286,6 @@
     <Compile Include="ViewModels\Filter\FilterPersonViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePersonViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
-    <Compile Include="ViewModels\Response\ResponsePersonFilter.cs" />
     <Compile Include="ViewModels\SugarbloodViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

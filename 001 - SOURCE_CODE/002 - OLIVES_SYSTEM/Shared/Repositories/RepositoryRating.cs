@@ -125,9 +125,15 @@ namespace Shared.Repositories
             // Calculate the matched results.
             response.Total = await ratings.CountAsync();
 
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                ratings = ratings.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
+
             // Initialize a list of filtered rate.
-            response.Rates = await ratings.Skip(skippedRecords)
-                .Take(filter.Records)
+            response.Rates = await ratings
                 .ToListAsync();
 
             return response;

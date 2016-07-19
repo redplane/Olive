@@ -165,9 +165,15 @@ namespace Shared.Repositories
                     break;
             }
 
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                results = results.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
+
             // Summarize results.
-            response.Heartbeats = await results.Skip(skippedRecords)
-                .Take(filter.Records)
+            response.Heartbeats = await results
                 .Select(x => new HeartbeatViewModel
                 {
                     Created = x.Created,

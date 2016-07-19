@@ -189,7 +189,7 @@ namespace Shared.Interfaces
         /// <param name="records"></param>
         /// <returns></returns>
         Task<ResponseRelatedDoctorFilter> FilterRelatedDoctorAsync(int requester, StatusRelation? status, int page,
-            int records);
+            int? records);
         
         #endregion
     }

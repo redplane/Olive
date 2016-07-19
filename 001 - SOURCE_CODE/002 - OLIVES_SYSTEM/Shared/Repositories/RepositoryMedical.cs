@@ -102,11 +102,14 @@ namespace Shared.Repositories
             // Count the number of records matched with the conditions.
             response.Total = await medicalImages.CountAsync();
 
-            // Calculate how many record should be skipped.
-            var skippedRecords = filter.Records * filter.Page;
-            medicalImages = medicalImages.Skip(skippedRecords)
-                .Take(filter.Records);
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                medicalImages = medicalImages.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
 
+            // Calculate how many record should be skipped.
             response.MedicalImages = await medicalImages.ToListAsync();
             return response;
         }
@@ -208,11 +211,13 @@ namespace Shared.Repositories
             var response = new ResponseMedicalRecordFilter();
             response.Total = await medicalRecords.CountAsync();
 
-            // Calculate the number of records should be skipped.
-            var skippedRecords = filter.Page * filter.Records;
-            medicalRecords = medicalRecords.Skip(skippedRecords)
-                .Take(filter.Records);
-
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                medicalRecords = medicalRecords.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
+            
             response.MedicalRecords = await medicalRecords.ToListAsync();
 
             return response;
@@ -355,10 +360,16 @@ namespace Shared.Repositories
             // Response initialization.
             var response = new ResponsePrescriptionFilterViewModel();
             response.Total = await prescriptions.CountAsync();
+            
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                prescriptions = prescriptions.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
 
             // Retrieve the list of results.
-            response.Prescriptions = await prescriptions.Skip(skippedRecord)
-                .Take(filter.Records)
+            response.Prescriptions = await prescriptions
                 .ToListAsync();
 
             return response;
@@ -470,17 +481,20 @@ namespace Shared.Repositories
             // Count the condition matched results.
             response.Total = await prescriptionImages.CountAsync();
 
-            // Calculate the skipped result.
-            var skippedResult = filter.Page*filter.Records;
-
-            // Truncate the result.
-            response.PrescriptionImages = await prescriptionImages.Skip(skippedResult)
-                .Take(filter.Records)
-                .ToListAsync();
-
             // By default, sort by created date decendingly.
             prescriptionImages = prescriptionImages.OrderByDescending(x => x.Created);
+            
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                prescriptionImages = prescriptionImages.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
 
+            // Truncate the result.
+            response.PrescriptionImages = await prescriptionImages
+                .ToListAsync();
+            
             return response;
         }
 
@@ -687,9 +701,15 @@ namespace Shared.Repositories
             // Calculate the total matched records.
             response.Total = await medicalNotes.CountAsync();
 
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                medicalNotes = medicalNotes.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
+
             // Truncate the results.
-            response.MedicalNotes = await medicalNotes.Skip(filter.Page * filter.Records)
-                .Take(filter.Records)
+            response.MedicalNotes = await medicalNotes
                 .ToListAsync();
 
             return response;
@@ -810,9 +830,14 @@ namespace Shared.Repositories
             // Count the total matched result.
             response.Total = await categories.CountAsync();
 
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                categories = categories.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
             // Do pagination.
-            response.MedicalCategories = await categories.Skip(filter.Page*filter.Records)
-                .Take(filter.Records)
+            response.MedicalCategories = await categories
                 .ToListAsync();
 
             return response;

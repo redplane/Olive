@@ -167,8 +167,14 @@ namespace Shared.Repositories
                     break;
             }
 
-            response.BloodPressures = await results.Skip(skippedRecords)
-                .Take(filter.Records)
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                results = results.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
+
+            response.BloodPressures = await results
                 .Select(x => new BloodPressureViewModel
                 {
                     Id = x.Id,

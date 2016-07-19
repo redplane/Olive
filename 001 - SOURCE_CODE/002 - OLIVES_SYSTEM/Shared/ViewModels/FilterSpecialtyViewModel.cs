@@ -32,6 +32,6 @@ namespace Shared.ViewModels
         /// </summary>
         [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]
-        public int Records { get; set; } = FieldLength.RecordMax;
+        public int? Records { get; set; }
     }
 }

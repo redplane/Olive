@@ -80,9 +80,15 @@ namespace Shared.Repositories
             // Count the total matched results.
             response.Total = await places.CountAsync();
             
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                places = places.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
+
             // Result taking.
-            response.Places = await places.Skip(filter.Page*filter.Records)
-                .Take(filter.Records)
+            response.Places = await places
                 .ToListAsync();
 
             return response;
