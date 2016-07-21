@@ -2,7 +2,7 @@
 
 namespace Olives.WebJob.Interfaces
 {
-    public interface IRepositoryActivationCode
+    public interface IRepositoryOlives
     {
         /// <summary>
         /// Find the expired activation code and delete 'em

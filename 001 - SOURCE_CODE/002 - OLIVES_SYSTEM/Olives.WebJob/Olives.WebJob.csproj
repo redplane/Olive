@@ -56,10 +56,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interfaces\IRepositoryActivationCode.cs" />
+    <Compile Include="Interfaces\IRepositoryOlives.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\RepositoryActivationCode.cs" />
+    <Compile Include="Repositories\RepositoryOlives.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

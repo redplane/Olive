@@ -43,98 +43,113 @@ namespace Shared.Repositories
         }
         
         /// <summary>
-        ///     Filter doctor by using specific conditions asynchronously.
+        ///     Filter patient by using specific conditions asynchronously.
         /// </summary>
         /// <param name="filter"></param>
+        /// <param name="requester"></param>
         /// <returns></returns>
-        public async Task<ResponsePatientFilter> FilterPatientAsync(FilterPatientViewModel filter)
+        public async Task<ResponsePatientFilter> FilterPatientAsync(FilterPatientViewModel filter, Person requester = null)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
-            // Join the table first.
-            var results = from person in context.People.Where(x => x.Role == (byte) Role.Patient)
-                join patient in context.Patients on person.Id equals patient.Id
-                select patient;
+            // Response initialization.
+            var response = new ResponsePatientFilter();
             
-            #region Result filter
+            // By default, take all patients.
+            IQueryable<Patient> patients = context.Patients;
 
+            // Requester is defined, this means only related patients can be shown up.
+            if (requester != null)
+            {
+                // Requester's role is not a doctor.
+                if (requester.Role != (byte) Role.Doctor)
+                {
+                    response.Patients = new List<Patient>();
+                    response.Total = 0;
+                    return response;
+                }
+
+                // Take all relations which requester takes part in.
+                IQueryable<Relation> relationships = context.Relations;
+                relationships = relationships.Where(x => x.Target == requester.Id);
+
+                patients = from p in patients
+                    join r in relationships on p.Id equals r.Source
+                    select p;
+            }
+            
             // Filter doctor by using email.
             if (!string.IsNullOrEmpty(filter.Email))
-                results = results.Where(x => x.Person.Email.Contains(filter.Email));
+                patients = patients.Where(x => x.Person.Email.Contains(filter.Email));
 
             // Filter doctor by using phone number.
             if (!string.IsNullOrEmpty(filter.Phone))
-                results = results.Where(x => x.Person.Phone.Contains(filter.Phone));
+                patients = patients.Where(x => x.Person.Phone.Contains(filter.Phone));
 
             // Filter by last modified.
             if (filter.MinLastModified != null)
-                results = results.Where(x => x.Person.LastModified >= filter.MinLastModified);
+                patients = patients.Where(x => x.Person.LastModified >= filter.MinLastModified);
 
             if (filter.MaxLastModified != null)
-                results = results.Where(x => x.Person.LastModified <= filter.MaxLastModified);
+                patients = patients.Where(x => x.Person.LastModified <= filter.MaxLastModified);
 
             // Filter by using name
             if (!string.IsNullOrEmpty(filter.Name))
-                results = results.Where(x => x.Person.FullName.Contains(filter.Name));
+                patients = patients.Where(x => x.Person.FullName.Contains(filter.Name));
 
             // Filter by using birthday.
             if (filter.MinBirthday != null)
-                results = results.Where(x => x.Person.Birthday >= filter.MinBirthday);
+                patients = patients.Where(x => x.Person.Birthday >= filter.MinBirthday);
 
             if (filter.MaxBirthday != null)
-                results = results.Where(x => x.Person.Birthday <= filter.MaxBirthday);
+                patients = patients.Where(x => x.Person.Birthday <= filter.MaxBirthday);
 
             // Filter by gender.
             if (filter.Gender != null)
-                results = results.Where(x => x.Person.Gender == filter.Gender);
+                patients = patients.Where(x => x.Person.Gender == filter.Gender);
 
             // Filter by money.
             if (filter.MinMoney != null)
-                results = results.Where(x => x.Money >= filter.MinMoney);
+                patients = patients.Where(x => x.Money >= filter.MinMoney);
 
             if (filter.MaxMoney != null)
-                results = results.Where(x => x.Money <= filter.MaxMoney);
+                patients = patients.Where(x => x.Money <= filter.MaxMoney);
 
             // Filter by created.
             if (filter.MinCreated != null)
-                results = results.Where(x => x.Person.Created >= filter.MinCreated);
+                patients = patients.Where(x => x.Person.Created >= filter.MinCreated);
 
             if (filter.MaxCreated != null)
-                results = results.Where(x => x.Person.Created <= filter.MaxCreated);
+                patients = patients.Where(x => x.Person.Created <= filter.MaxCreated);
 
             // Filter by status.
             if (filter.Status != null)
-                results = results.Where(x => x.Person.Status == filter.Status);
+                patients = patients.Where(x => x.Person.Status == filter.Status);
 
             // Filter by height.
-            if (filter.MinHeight != null) results = results.Where(x => x.Height >= filter.MinHeight);
-            if (filter.MaxHeight != null) results = results.Where(x => x.Height <= filter.MaxHeight);
+            if (filter.MinHeight != null) patients = patients.Where(x => x.Height >= filter.MinHeight);
+            if (filter.MaxHeight != null) patients = patients.Where(x => x.Height <= filter.MaxHeight);
 
             // Filter by weight.
-            if (filter.MinWeight != null) results = results.Where(x => x.Weight >= filter.MinWeight);
-            if (filter.MaxWeight != null) results = results.Where(x => x.Weight <= filter.MaxWeight);
-
-            #endregion
-
-            // Response initialization.
-            var response = new ResponsePatientFilter();
-
+            if (filter.MinWeight != null) patients = patients.Where(x => x.Weight >= filter.MinWeight);
+            if (filter.MaxWeight != null) patients = patients.Where(x => x.Weight <= filter.MaxWeight);
+            
             // Caculate the total matched results.
-            response.Total = await results.CountAsync();
+            response.Total = await patients.CountAsync();
 
             // Order by status.
-            results = results.OrderBy(x => x.Person.Status);
+            patients = patients.OrderBy(x => x.Person.Status);
 
             // Record is specified.
             if (filter.Records != null)
             {
-                results = results.Skip(filter.Page*filter.Records.Value)
+                patients = patients.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
             // Take the list of filtered patient.
-            response.Patients = await results
+            response.Patients = await patients
                 .ToListAsync();
             
             return response;
@@ -262,6 +277,11 @@ namespace Shared.Repositories
             #endregion
 
             #region Doctors
+            
+            // Filter doctor by place.
+            if (!string.IsNullOrWhiteSpace(filter.City)) doctors = doctors.Where(x => x.City.Contains(filter.City));
+            if (!string.IsNullOrWhiteSpace(filter.Country))
+                doctors = doctors.Where(x => x.Country.Contains(filter.Country));
 
             // Filter by money.
             if (filter.MinMoney != null) doctors = doctors.Where(x => x.Money >= filter.MinMoney);

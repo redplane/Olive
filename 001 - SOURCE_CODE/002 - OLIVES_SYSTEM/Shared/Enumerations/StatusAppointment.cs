@@ -5,6 +5,7 @@
         Cancelled,
         Pending,
         Active,
-        Done
+        Done,
+        Expired
     }
 }

@@ -106,13 +106,15 @@ namespace Shared.Interfaces
         /// <param name="status"></param>
         /// <returns></returns>
         Task<Patient> FindPatientAsync(int id, byte? status);
-        
+
         /// <summary>
-        ///     Filter doctor by using specific conditions.
+        ///     Filter patient by using specific conditions asynchronously.
         /// </summary>
         /// <param name="filter"></param>
+        /// <param name="requester"></param>
         /// <returns></returns>
-        Task<ResponsePatientFilter> FilterPatientAsync(FilterPatientViewModel filter);
+        Task<ResponsePatientFilter> FilterPatientAsync(FilterPatientViewModel filter,
+            Person requester = null);
 
         /// <summary>
         ///     Activate patient's account by search person id.
