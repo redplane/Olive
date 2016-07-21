@@ -257,7 +257,7 @@ namespace Olives.Controllers
                     doctor.Person.Address,
                     doctor.Person.Phone,
                     doctor.Person.Role,
-                    Photo = InitializeUrl(_applicationSetting.AvatarStorage.Absolute, doctor.Person.Photo, Values.StandardImageExtension),
+                    Photo = InitializeUrl(_applicationSetting.AvatarStorage.Relative, doctor.Person.Photo, Values.StandardImageExtension),
                     doctor.Rank,
                     Specialty = new
                     {
