@@ -55,7 +55,7 @@ namespace Olives
 
             #region IoC registration
 
-            #region Repository & services
+            #region Repository
 
             // Repository account registration.
             builder.RegisterType<RepositoryAccount>()
@@ -109,6 +109,10 @@ namespace Olives
                 .As<IRepositoryRating>()
                 .SingleInstance();
 
+            #endregion
+
+            #region Services
+
             // Email service.
             var emailService = new EmailService(applicationSetting.SmtpSetting);
 
@@ -126,6 +130,11 @@ namespace Olives
             builder.RegisterType<EmailService>()
                 .As<IEmailService>()
                 .OnActivating(e => e.ReplaceInstance(emailService))
+                .SingleInstance();
+
+            // File service.
+            builder.RegisterType<FileService>()
+                .As<IFileService>()
                 .SingleInstance();
 
             #endregion

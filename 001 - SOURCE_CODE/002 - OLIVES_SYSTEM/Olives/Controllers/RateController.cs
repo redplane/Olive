@@ -100,7 +100,7 @@ namespace Olives.Controllers
             rating.Target = rated.Id;
             rating.TargetFirstName = rated.FirstName;
             rating.TargetLastName = rated.LastName;
-            rating.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            rating.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
             rating.Value = (byte) initializer.Rate;
 
             // Initialize rating.

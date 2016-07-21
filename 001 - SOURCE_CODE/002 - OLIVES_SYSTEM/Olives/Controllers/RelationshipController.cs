@@ -98,7 +98,7 @@ namespace Olives.Controllers
             relation.Target = target;
             relation.TargetFirstName = person.FirstName;
             relation.TargetLastName = person.LastName;
-            relation.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            relation.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
             relation.Status = (byte) StatusRelation.Pending;
             
             await _repositoryAccount.InitializeRelationAsync(relation);

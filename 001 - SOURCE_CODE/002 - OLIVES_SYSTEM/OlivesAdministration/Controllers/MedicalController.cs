@@ -168,7 +168,7 @@ namespace OlivesAdministration.Controllers
 
             // Update information.
             medicalCategory.Name = modifier.Name;
-            medicalCategory.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            medicalCategory.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
             // Save changes.
             await _repositoryMedical.InitializeMedicalCategoryAsync(medicalCategory);

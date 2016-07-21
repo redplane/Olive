@@ -132,7 +132,7 @@ namespace Olives.Controllers
             addiction.Owner = requester.Id;
             addiction.Cause = info.Cause;
             addiction.Note = info.Note;
-            addiction.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            addiction.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
             // Insert a new allergy to database.
             var result = await _repositoryAddiction.InitializeAddictionAsync(addiction);
@@ -195,7 +195,7 @@ namespace Olives.Controllers
                 result.Note = info.Note;
 
             // Update the last time record was lastly modified.
-            result.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            result.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
             // Update record to database.
             result = await _repositoryAddiction.InitializeAddictionAsync(result);

@@ -34,7 +34,7 @@ namespace Olives.WebJob.Repositories
                     // By default, find all the expired tokens.
                     IQueryable<AccountCode> expiredTokens = context.AccountCodes;
                     expiredTokens = expiredTokens.Where(x => x.Type == (byte) TypeAccountCode.Activation);
-                    expiredTokens = expiredTokens.Where(x => x.Expired <= DateTime.Now);
+                    expiredTokens = expiredTokens.Where(x => x.Expired <= DateTime.UtcNow);
                     
                     // Join 2 tables : Person and AccountToken to find the invalid account.
                     var expireCollection = from p in expiredAccounts
@@ -100,5 +100,6 @@ namespace Olives.WebJob.Repositories
             var records = await context.SaveChangesAsync();
             return records;
         }
+        
     }
 }

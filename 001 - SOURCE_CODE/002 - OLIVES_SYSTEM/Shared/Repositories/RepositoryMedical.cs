@@ -125,18 +125,21 @@ namespace Shared.Repositories
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
-            // By default, take all records.
-            IQueryable<MedicalImage> medicalImages = context.MedicalImages;
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                // By default, take all records.
+                IQueryable<MedicalImage> medicalImages = context.MedicalImages;
+                
+                // Find the medical image by using id.
+                medicalImages = medicalImages.Where(x => x.Id == id);
 
-            // Find the medical image by using id.
-            medicalImages = medicalImages.Where(x => x.Id == id);
-
-            // Owner is specified.
-            if (owner != null)
-                medicalImages = medicalImages.Where(x => x.Owner == owner);
-
-            context.MedicalImages.RemoveRange(medicalImages);
-            return await context.SaveChangesAsync();
+                // Owner is specified.
+                if (owner != null)
+                    medicalImages = medicalImages.Where(x => x.Owner == owner);
+                
+                context.MedicalImages.RemoveRange(medicalImages);
+                return await context.SaveChangesAsync();
+            }
         }
 
         /// <summary>

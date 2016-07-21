@@ -225,7 +225,7 @@ namespace Olives.Controllers
             appointment.From = info.From ?? 0;
             appointment.To = info.To ?? 0;
             appointment.Note = info.Note;
-            appointment.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            appointment.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
             appointment.Status = (byte) StatusAppointment.Pending;
 
             #endregion

@@ -9,6 +9,7 @@ using System.Web.Http;
 using log4net;
 using Newtonsoft.Json;
 using Olives.Attributes;
+using Olives.Interfaces;
 using Olives.Models;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
@@ -34,13 +35,15 @@ namespace Olives.Controllers
         /// <param name="repositoryAccount"></param>
         /// <param name="repositoryMedical"></param>
         /// <param name="log"></param>
+        /// <param name="fileService"></param>
         /// <param name="applicationSetting"></param>
         public MedicalController(IRepositoryAccount repositoryAccount, IRepositoryMedical repositoryMedical,
-            ILog log, ApplicationSetting applicationSetting)
+            ILog log, IFileService fileService, ApplicationSetting applicationSetting)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryMedical = repositoryMedical;
             _log = log;
+            _fileService = fileService;
             _applicationSetting = applicationSetting;
         }
 
@@ -197,7 +200,7 @@ namespace Olives.Controllers
 
             medicalRecord.Info = JsonConvert.SerializeObject(info.Infos);
             medicalRecord.Time = info.Time;
-            medicalRecord.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            medicalRecord.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
             // Insert a new allergy to database.
             var result = await _repositoryMedical.InitializeMedicalRecordAsync(medicalRecord);
@@ -292,7 +295,7 @@ namespace Olives.Controllers
                 medicalRecord.Time = info.Time.Value;
 
             // Update the last time
-            medicalRecord.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            medicalRecord.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
             // Insert a new allergy to database.
             var result = await _repositoryMedical.InitializeMedicalRecordAsync(medicalRecord);
@@ -448,16 +451,14 @@ namespace Olives.Controllers
 
                 var imageName = Guid.NewGuid().ToString("N");
                 medicalImage.Image = imageName;
-                medicalImage.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
-
-                // Convert image to base64.
-                var base64Image = Convert.ToBase64String(info.File.Buffer);
-
-                // Save the image first.
-                var fullPath = Path.Combine(_applicationSetting.PrivateStorage.Absolute,
+                medicalImage.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+                medicalImage.FullPath = Path.Combine(_applicationSetting.PrivateStorage.Absolute,
                     $"{imageName}.{Values.StandardImageExtension}");
-                medicalImageFile.Save(fullPath);
-
+                
+                // Save the image first.
+                medicalImageFile.Save(medicalImage.FullPath);
+                
+                // Update image full path.
                 // Save the medical record to database.
                 await _repositoryMedical.InitializeMedicalImageAsync(medicalImage);
 
@@ -466,7 +467,6 @@ namespace Olives.Controllers
                     medicalImage.Id,
                     MedicalRecord = medicalImage.MedicalRecordId,
                     medicalImage.Owner,
-                    Image = base64Image,
                     medicalImage.Created
                 });
             }
@@ -589,10 +589,7 @@ namespace Olives.Controllers
                     {
                         x.Id,
                         x.Created,
-                        Image =
-                            Convert.ToBase64String(
-                                File.ReadAllBytes(Path.Combine(_applicationSetting.PrivateStorage.Absolute,
-                                    $"{x.Image}.{Values.StandardImageExtension}"))),
+                        Image = _fileService.EncodeFileBase64(x.FullPath),
                         x.Owner,
                         MedicalRecord = x.MedicalRecordId
                     }),
@@ -626,9 +623,7 @@ namespace Olives.Controllers
         {
             // Retrieve information of person who sent request.
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
-            #region Prescription validation
-
+            
             // Find the prescription by using id.
             var prescription = await _repositoryMedical.FindPrescriptionAsync(id);
 
@@ -640,11 +635,7 @@ namespace Olives.Controllers
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-
-            #endregion
-
-            #region Prescription owner validation
-
+            
             // Find the owner of medical record.
             var owner =
                 await _repositoryAccount.FindPersonAsync(prescription.Owner, null, null, null, StatusAccount.Active);
@@ -674,9 +665,7 @@ namespace Olives.Controllers
                     });
                 }
             }
-
-            #endregion
-
+            
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 Prescription = new
@@ -803,7 +792,7 @@ namespace Olives.Controllers
                 prescription.Medicine = JsonConvert.SerializeObject(info.Medicines);
 
             prescription.Note = info.Note;
-            prescription.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            prescription.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
             // Initialize prescription to database.
             prescription = await _repositoryMedical.InitializePrescriptionAsync(prescription);
@@ -933,7 +922,7 @@ namespace Olives.Controllers
                 prescription.Note = info.Note;
 
             // Update last modified time.
-            prescription.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            prescription.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
             // Initialize prescription to database.
             prescription = await _repositoryMedical.InitializePrescriptionAsync(prescription);
@@ -1123,14 +1112,14 @@ namespace Olives.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
 
-            Image medicalImageFile = null;
+            Image prescriptionImageFile = null;
 
             // Medical image validation.
             try
             {
                 var memoryStream = new MemoryStream(initializer.Image.Buffer);
                 memoryStream.Seek(0, SeekOrigin.Begin);
-                medicalImageFile = Image.FromStream(memoryStream);
+                prescriptionImageFile = Image.FromStream(memoryStream);
             }
             catch (Exception exception)
             {
@@ -1175,16 +1164,19 @@ namespace Olives.Controllers
             {
                 // Generate file name and save the file first.
                 var fileName = Guid.NewGuid().ToString("N");
-
-                // Save the image first.
+                
+                // Full path construction.
                 var fullPath = Path.Combine(_applicationSetting.PrescriptionStorage.Absolute,
                     $"{fileName}.{Values.StandardImageExtension}");
-                medicalImageFile.Save(fullPath);
+
+                // Save the image first.
+                prescriptionImageFile.Save(fullPath);
 
                 // Initialize a prescription image.
                 var prescriptionImage = new PrescriptionImage();
                 prescriptionImage.Image = fileName;
-                prescriptionImage.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+                prescriptionImage.FullPath = fullPath;
+                prescriptionImage.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
                 prescriptionImage.Creator = requester.Id;
 
                 // Save the prescription image to database.
@@ -1419,7 +1411,7 @@ namespace Olives.Controllers
             // Initialize note.
             var note = new ExperimentNote();
             note.Info = JsonConvert.SerializeObject(initializer.Infos);
-            note.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            note.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
             note.MedicalRecordId = initializer.MedicalRecord;
             note.Name = initializer.Name;
             note.Owner = medicalRecord.Owner;
@@ -1522,7 +1514,7 @@ namespace Olives.Controllers
                     experimentNote.Info = JsonConvert.SerializeObject(modifier.Infos);
 
                 // Update the last modified time.
-                experimentNote.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+                experimentNote.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
                 var failedRecords = await _repositoryMedical.InitializeExperimentNote(experimentNote);
 
                 // No record is failed.
@@ -1732,7 +1724,7 @@ namespace Olives.Controllers
             medicalNote.Owner = medicalRecord.Owner;
             medicalNote.Note = initializer.Note;
             medicalNote.Time = initializer.Time;
-            medicalNote.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            medicalNote.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
             // Insert a new allergy to database.
             medicalNote = await _repositoryMedical.InitializeMedicalNoteAsync(medicalNote);
@@ -1810,7 +1802,7 @@ namespace Olives.Controllers
             if (modifier.Time != null)
                 medicalNote.Time = modifier.Time.Value;
 
-            medicalNote.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            medicalNote.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
             // Insert a new allergy to database.
             var result = await _repositoryMedical.InitializeMedicalNoteAsync(medicalNote);
@@ -1986,8 +1978,16 @@ namespace Olives.Controllers
         /// </summary>
         private readonly ILog _log;
 
+        /// <summary>
+        /// Application setting.
+        /// </summary>
         private readonly ApplicationSetting _applicationSetting;
 
+        /// <summary>
+        /// Service which provides functions to handle file operations.
+        /// </summary>
+        private readonly IFileService _fileService;
+        
         #endregion
     }
 }

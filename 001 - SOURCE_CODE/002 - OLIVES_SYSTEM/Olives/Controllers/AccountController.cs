@@ -134,7 +134,7 @@ namespace Olives.Controllers
             #endregion
 
             // Update the last modified.
-            requester.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            requester.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
             // Update the patient.
             requester = await _repositoryAccount.EditPersonProfileAsync(requester.Id, requester);
@@ -499,7 +499,7 @@ namespace Olives.Controllers
             person.Email = info.Email;
             person.Password = info.Password;
             person.Phone = info.Phone;
-            person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
             person.Role = (byte) Role.Patient;
             person.Status = (byte) StatusAccount.Pending;
 
@@ -518,7 +518,7 @@ namespace Olives.Controllers
 
                 // Initialize an activation code.
                 var activationCode =
-                    await _repositoryActivationCode.InitializeAccountCodeAsync(patient.Person.Id, TypeAccountCode.Activation, DateTime.Now);
+                    await _repositoryActivationCode.InitializeAccountCodeAsync(patient.Person.Id, TypeAccountCode.Activation, DateTime.UtcNow);
 
                 // Url construction.
                 var url = Url.Link("Default",
@@ -644,7 +644,7 @@ namespace Olives.Controllers
             person.Password = initializer.Password;
             person.Phone = initializer.Phone;
             person.Address = initializer.Address;
-            person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
             person.Role = (byte) Role.Doctor;
             person.Status = (byte) StatusAccount.Pending;
             
@@ -865,7 +865,7 @@ namespace Olives.Controllers
             {
                 // Initialize an activation code.
                 var findPasswordToken =
-                    await _repositoryActivationCode.InitializeAccountCodeAsync(result.Id, TypeAccountCode.ForgotPassword, DateTime.Now);
+                    await _repositoryActivationCode.InitializeAccountCodeAsync(result.Id, TypeAccountCode.ForgotPassword, DateTime.UtcNow);
 
                 // Url construction.
                 var url = Url.Link("Default",
@@ -926,7 +926,7 @@ namespace Olives.Controllers
             }
 
             // Token is expired.
-            if (DateTime.Now > token.Expired)
+            if (DateTime.UtcNow > token.Expired)
             {
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
@@ -1120,7 +1120,7 @@ namespace Olives.Controllers
             #endregion
 
             // Initialize activation code.
-            var activationToken = await _repositoryActivationCode.InitializeAccountCodeAsync(account.Id, TypeAccountCode.Activation, DateTime.Now);
+            var activationToken = await _repositoryActivationCode.InitializeAccountCodeAsync(account.Id, TypeAccountCode.Activation, DateTime.UtcNow);
 
             // Url construction.
             var url = Url.Link("Default",

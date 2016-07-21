@@ -18,6 +18,7 @@ namespace Shared.Models
         public int MedicalRecordId { get; set; }
         public int Owner { get; set; }
         public string Image { get; set; }
+        public string FullPath { get; set; }
         public double Created { get; set; }
     
         public virtual MedicalRecord MedicalRecord { get; set; }
