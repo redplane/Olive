@@ -63,7 +63,9 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         #region Methods
 
         /// <summary>
-        /// Doctor is invalid.
+        /// Condition : Doctor exists in system.
+        /// Action : Find the doctor with an id which doesn't exist in database.
+        /// Expected result : Status 404 should be returned.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -86,6 +88,34 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
 
             Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
         }
+
+        /// <summary>
+        /// Condition : Doctor exists in system.
+        /// Action : Find the doctor with the existed doctor id in database.
+        /// Expected result : Status 200 should be returned.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task FindValidDoctor()
+        {
+            var doctor = new Doctor();
+            doctor.Id = 1;
+            doctor.City = "City";
+            doctor.Country = "Country";
+            doctor.Money = 10;
+            doctor.PlaceId = 1;
+            doctor.Rank = 1;
+
+            // Forging data.
+            _repositoryAccount.Doctors = new List<Doctor>();
+            _repositoryAccount.Doctors.Add(doctor);
+
+            // Get an invalid doctor.
+            var response = await _doctorController.Get(1);
+
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+        }
+
 
         #endregion
     }
