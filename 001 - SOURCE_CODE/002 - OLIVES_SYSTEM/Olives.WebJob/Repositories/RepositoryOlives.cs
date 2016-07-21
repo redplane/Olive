@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -100,6 +102,47 @@ namespace Olives.WebJob.Repositories
             var records = await context.SaveChangesAsync();
             return records;
         }
-        
+
+        /// <summary>
+        /// This function is for searching and cleaning enlisted junk files.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<int> CleanJunkFiles(List<Exception> exceptions)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            foreach (var junkFile in context.JunkFiles)
+            {
+                try
+                {
+                    // File is empty.
+                    if (string.IsNullOrWhiteSpace(junkFile.FullPath))
+                    {
+                        context.JunkFiles.Remove(junkFile);
+                        continue;
+                    }
+
+                    // File doesn't exist anymore.
+                    if (!File.Exists(junkFile.FullPath))
+                    {
+                        context.JunkFiles.Remove(junkFile);
+                        continue;
+                    }
+
+                    File.Delete(junkFile.FullPath);
+                    context.JunkFiles.Remove(junkFile);
+                }
+                catch (Exception exception)
+                {
+                    exceptions.Add(exception);
+                }
+            }
+
+            // Save the changes.
+            var records = await context.SaveChangesAsync();
+
+            return records;
+        }
     }
 }

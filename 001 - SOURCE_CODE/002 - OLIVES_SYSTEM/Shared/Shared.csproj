@@ -143,6 +143,9 @@
     <Compile Include="Models\Heartbeat.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\JunkFile.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\MedicalCategory.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>

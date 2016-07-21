@@ -124,21 +124,51 @@ namespace Shared.Repositories
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-
+            
             using (var transaction = context.Database.BeginTransaction())
             {
-                // By default, take all records.
-                IQueryable<MedicalImage> medicalImages = context.MedicalImages;
-                
-                // Find the medical image by using id.
-                medicalImages = medicalImages.Where(x => x.Id == id);
+                try
+                {
+                    // By default, take all records.
+                    IQueryable<MedicalImage> medicalImages = context.MedicalImages;
 
-                // Owner is specified.
-                if (owner != null)
-                    medicalImages = medicalImages.Where(x => x.Owner == owner);
+                    // Find the medical image by using id.
+                    medicalImages = medicalImages.Where(x => x.Id == id);
+
+                    // Owner is specified.
+                    if (owner != null)
+                        medicalImages = medicalImages.Where(x => x.Owner == owner);
+
+                    // Go through every record and put the file path to must deleted list.
+                    await medicalImages.ForEachAsync(x =>
+                    {
+                        // This step is to tell background worker to take care the file which should be deleted.
+                        var junkFile = new JunkFile();
+                        junkFile.FullPath = x.FullPath;
+                        context.JunkFiles.Add(junkFile);
+                    });
+
+                    // Remove all medical image records
+                    context.MedicalImages.RemoveRange(medicalImages);
+
+                    // Count the number of affected records.
+                    var records = await context.SaveChangesAsync();
+
+                    // Confirm doing transaction.
+                    transaction.Commit();
+
+                    // Tell the calling function the number of affected records.
+                    return records;
+                }
+                catch
+                {
+                    // Error happens, rollback the transaction first.
+                    transaction.Rollback();
+
+                    // Let the calling function handle the exception.
+                    throw;
+                }
                 
-                context.MedicalImages.RemoveRange(medicalImages);
-                return await context.SaveChangesAsync();
             }
         }
 
@@ -435,14 +465,46 @@ namespace Shared.Repositories
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
-            // By default, take all records.
-            IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // By default, take all records.
+                    IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
 
-            // Find the medical image by using id.
-            prescriptionImages = prescriptionImages.Where(x => x.Id == id);
+                    // Find the medical image by using id.
+                    prescriptionImages = prescriptionImages.Where(x => x.Id == id);
 
-            context.PrescriptionImages.RemoveRange(prescriptionImages);
-            return await context.SaveChangesAsync();
+                    // Go through every images we found, enlist each one to junk files list.
+                    await prescriptionImages.ForEachAsync(x =>
+                    {
+                        // Enlist the file to junk file.
+                        var junkFile = new JunkFile();
+                        junkFile.FullPath = x.FullPath;
+                        context.JunkFiles.Add(junkFile);
+                    });
+
+                    context.PrescriptionImages.RemoveRange(prescriptionImages);
+
+                    // Count the number of affected records.
+                    var records = await context.SaveChangesAsync();
+
+                    // Commit the transaction.
+                    transaction.Commit();
+
+                    // Tell the caller function the number of affected records.
+                    return records;
+                }
+                catch
+                {
+                    // Exception is thrown, rollback the transaction first.
+                    transaction.Rollback();
+
+                    // Throw the exception to the calling function.
+                    throw;
+                }
+            }
+                
         }
 
         /// <summary>

@@ -107,6 +107,13 @@
           <Property Name="Created" Type="float" Nullable="false" />
           <Property Name="LastModified" Type="float" />
         </EntityType>
+        <EntityType Name="JunkFile">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FullPath" Type="nvarchar(max)" />
+        </EntityType>
         <EntityType Name="MedicalCategory">
           <Key>
             <PropertyRef Name="Id" />
@@ -622,6 +629,7 @@
           <EntitySet Name="Doctor" EntityType="Self.Doctor" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ExperimentNote" EntityType="Self.ExperimentNote" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Heartbeat" EntityType="Self.Heartbeat" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="JunkFile" EntityType="Self.JunkFile" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MedicalCategory" EntityType="Self.MedicalCategory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MedicalImage" EntityType="Self.MedicalImage" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MedicalNote" EntityType="Self.MedicalNote" Schema="dbo" store:Type="Tables" />
@@ -765,6 +773,7 @@
           <EntitySet Name="Doctors" EntityType="OlivesHealthModel.Doctor" />
           <EntitySet Name="ExperimentNotes" EntityType="OlivesHealthModel.ExperimentNote" />
           <EntitySet Name="Heartbeats" EntityType="OlivesHealthModel.Heartbeat" />
+          <EntitySet Name="JunkFiles" EntityType="OlivesHealthModel.JunkFile" />
           <EntitySet Name="MedicalCategories" EntityType="OlivesHealthModel.MedicalCategory" />
           <EntitySet Name="MedicalImages" EntityType="OlivesHealthModel.MedicalImage" />
           <EntitySet Name="MedicalNotes" EntityType="OlivesHealthModel.MedicalNote" />
@@ -1009,6 +1018,13 @@
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
           <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Heartbeat__LastM__033C6B35" FromRole="Heartbeat" ToRole="Person" />
+        </EntityType>
+        <EntityType Name="JunkFile">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FullPath" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="MedicalCategory">
           <Key>
@@ -1672,6 +1688,14 @@
                 <ScalarProperty Name="Time" ColumnName="Time" />
                 <ScalarProperty Name="Rate" ColumnName="Rate" />
                 <ScalarProperty Name="Owner" ColumnName="Owner" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="JunkFiles">
+            <EntityTypeMapping TypeName="OlivesHealthModel.JunkFile">
+              <MappingFragment StoreEntitySet="JunkFile">
+                <ScalarProperty Name="FullPath" ColumnName="FullPath" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
