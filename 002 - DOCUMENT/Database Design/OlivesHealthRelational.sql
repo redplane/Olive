@@ -231,6 +231,7 @@ CREATE TABLE MedicalImage
 	MedicalRecordId			INT NOT NULL,
 	Owner					INT NOT NULL,
 	Image					NVARCHAR(32) NOT NULL,
+	FullPath				NVARCHAR(MAX) NOT NULL,
 	Created					FLOAT NOT NULL,
 	
 	FOREIGN KEY (MedicalRecordId) REFERENCES MedicalRecord(Id),
@@ -317,12 +318,18 @@ CREATE TABLE Rating
 	PRIMARY KEY (Maker, Target)
 )
 
-CREATE Table MedicalCategory
+CREATE TABLE MedicalCategory
 (
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	Name					NVARCHAR(32),
 	Created					FLOAT NOT NULL,
 	LastModified			FLOAT
+)
+
+CREATE TABLE AbandonedFile
+(
+	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	FullPath				NVARCHAR(MAX)
 )
 
 SELECT * FROM Person
