@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.CodeDom;
+using System.ComponentModel.DataAnnotations;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
@@ -22,14 +23,18 @@ namespace Shared.ViewModels.Filter
         [NumericPropertyCompare("MinMoney", Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public double? MaxMoney { get; set; }
-
+        
+        /// <summary>
+        ///     Name of city where doctor lives.
+        /// </summary>
+        [StringLength(FieldLength.CityNameMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        public string City { get; set; }
 
         /// <summary>
-        ///     Id of city where doctor lives.
+        /// Name of country where doctor lives.
         /// </summary>
-        [NumericCompare(1, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "ValueIsInvalid")]
-        public int? City { get; set; }
+        [StringLength(FieldLength.CityNameMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        public string Country { get; set; }
 
         /// <summary>
         ///     Id of doctor's specialty.
@@ -55,6 +60,6 @@ namespace Shared.ViewModels.Filter
 
         [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]
-        public int Records { get; set; } = FieldLength.RecordMax;
+        public int? Records { get; set; }
     }
 }

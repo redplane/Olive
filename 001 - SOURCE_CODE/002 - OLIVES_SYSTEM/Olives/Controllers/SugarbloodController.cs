@@ -123,7 +123,7 @@ namespace Olives.Controllers
             sugarblood.Owner = requester.Id;
             sugarblood.Value = info.Value;
             sugarblood.Note = info.Note;
-            sugarblood.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            sugarblood.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
             sugarblood.Time = info.Time;
 
             // Insert a new allergy to database.
@@ -204,7 +204,7 @@ namespace Olives.Controllers
             result.Time = info.Time;
             result.Note = info.Note;
             result.Value = info.Value;
-            result.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            result.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
             // Update allergy.
             result = await _repositorySugarblood.InitializeSugarbloodNoteAsync(result);

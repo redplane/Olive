@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 using Shared.Enumerations;
@@ -22,7 +23,7 @@ namespace Shared.Repositories
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
-            context.Appointments.Add(info);
+            context.Appointments.AddOrUpdate(info);
             await context.SaveChangesAsync();
 
             return info;
@@ -87,10 +88,17 @@ namespace Shared.Repositories
             // Count the records first.
             response.Total = await results.CountAsync();
 
-            var skippedRecords = filter.Page*filter.Records;
+            // By default, sort by last modified decending.
+            results = results.OrderByDescending(x => x.LastModified);
+
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                results = results.Skip(filter.Page * filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
+            
             response.Appointments = await results.OrderBy(x => x.Status)
-                .Skip(skippedRecords)
-                .Take(filter.Records)
                 .ToListAsync();
 
             return response;

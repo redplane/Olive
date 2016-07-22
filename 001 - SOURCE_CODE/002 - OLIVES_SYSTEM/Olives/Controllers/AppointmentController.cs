@@ -48,7 +48,7 @@ namespace Olives.Controllers
         [Route("api/appointment")]
         [HttpGet]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> RetrieveAppointment([FromUri] int id)
+        public async Task<HttpResponseMessage> FindAppointment([FromUri] int id)
         {
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
@@ -142,7 +142,7 @@ namespace Olives.Controllers
         [Route("api/appointment")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> Post([FromBody] InitializeAppointmentViewModel info)
+        public async Task<HttpResponseMessage> InitializeAppointment([FromBody] InitializeAppointmentViewModel info)
         {
             #region Model validation
 
@@ -225,7 +225,7 @@ namespace Olives.Controllers
             appointment.From = info.From ?? 0;
             appointment.To = info.To ?? 0;
             appointment.Note = info.Note;
-            appointment.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            appointment.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
             appointment.Status = (byte) StatusAppointment.Pending;
 
             #endregion
@@ -266,7 +266,7 @@ namespace Olives.Controllers
         [Route("api/appointment")]
         [HttpPut]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> Post([FromUri] int id, [FromBody] EditAppointmentViewModel info)
+        public async Task<HttpResponseMessage> EditAppointment([FromUri] int id, [FromBody] EditAppointmentViewModel info)
         {
             #region Model validation
 
@@ -413,7 +413,7 @@ namespace Olives.Controllers
         [Route("api/appointment/filter")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> Filter([FromBody] FilterAppointmentViewModel filter)
+        public async Task<HttpResponseMessage> FilterAppointment([FromBody] FilterAppointmentViewModel filter)
         {
             #region ModelState result
 

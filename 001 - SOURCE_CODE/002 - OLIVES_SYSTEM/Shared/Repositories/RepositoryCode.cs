@@ -42,7 +42,7 @@ namespace Shared.Repositories
 
             var accountCode = new AccountCode();
             accountCode.Code = code;
-            accountCode.Expired = DateTime.Now.AddHours(Values.ActivationCodeHourDuration);
+            accountCode.Expired = DateTime.UtcNow.AddHours(Values.ActivationCodeHourDuration);
             accountCode.Owner = owner;
             accountCode.Type = (byte) type;
 

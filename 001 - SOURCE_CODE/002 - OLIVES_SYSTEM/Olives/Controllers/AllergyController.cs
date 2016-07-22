@@ -136,7 +136,7 @@ namespace Olives.Controllers
             allergy.Name = info.Name;
             allergy.Cause = info.Cause;
             allergy.Note = info.Note;
-            allergy.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            allergy.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
             // Insert a new allergy to database.
             var result = await _repositoryAllergy.InitializeAllergyAsync(allergy);
@@ -213,7 +213,7 @@ namespace Olives.Controllers
                 allergy.Note = info.Note;
 
             // Update time when the record was lastly modified.
-            allergy.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            allergy.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
             // Update allergy.
             allergy = await _repositoryAllergy.InitializeAllergyAsync(allergy);

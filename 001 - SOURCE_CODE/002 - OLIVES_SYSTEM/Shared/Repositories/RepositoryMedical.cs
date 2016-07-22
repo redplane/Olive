@@ -102,11 +102,14 @@ namespace Shared.Repositories
             // Count the number of records matched with the conditions.
             response.Total = await medicalImages.CountAsync();
 
-            // Calculate how many record should be skipped.
-            var skippedRecords = filter.Records * filter.Page;
-            medicalImages = medicalImages.Skip(skippedRecords)
-                .Take(filter.Records);
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                medicalImages = medicalImages.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
 
+            // Calculate how many record should be skipped.
             response.MedicalImages = await medicalImages.ToListAsync();
             return response;
         }
@@ -121,19 +124,52 @@ namespace Shared.Repositories
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
+            
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // By default, take all records.
+                    IQueryable<MedicalImage> medicalImages = context.MedicalImages;
 
-            // By default, take all records.
-            IQueryable<MedicalImage> medicalImages = context.MedicalImages;
+                    // Find the medical image by using id.
+                    medicalImages = medicalImages.Where(x => x.Id == id);
 
-            // Find the medical image by using id.
-            medicalImages = medicalImages.Where(x => x.Id == id);
+                    // Owner is specified.
+                    if (owner != null)
+                        medicalImages = medicalImages.Where(x => x.Owner == owner);
 
-            // Owner is specified.
-            if (owner != null)
-                medicalImages = medicalImages.Where(x => x.Owner == owner);
+                    // Go through every record and put the file path to must deleted list.
+                    await medicalImages.ForEachAsync(x =>
+                    {
+                        // This step is to tell background worker to take care the file which should be deleted.
+                        var junkFile = new JunkFile();
+                        junkFile.FullPath = x.FullPath;
+                        context.JunkFiles.Add(junkFile);
+                    });
 
-            context.MedicalImages.RemoveRange(medicalImages);
-            return await context.SaveChangesAsync();
+                    // Remove all medical image records
+                    context.MedicalImages.RemoveRange(medicalImages);
+
+                    // Count the number of affected records.
+                    var records = await context.SaveChangesAsync();
+
+                    // Confirm doing transaction.
+                    transaction.Commit();
+
+                    // Tell the calling function the number of affected records.
+                    return records;
+                }
+                catch
+                {
+                    // Error happens, rollback the transaction first.
+                    transaction.Rollback();
+
+                    // Let the calling function handle the exception.
+                    throw;
+                }
+                
+            }
         }
 
         /// <summary>
@@ -208,11 +244,13 @@ namespace Shared.Repositories
             var response = new ResponseMedicalRecordFilter();
             response.Total = await medicalRecords.CountAsync();
 
-            // Calculate the number of records should be skipped.
-            var skippedRecords = filter.Page * filter.Records;
-            medicalRecords = medicalRecords.Skip(skippedRecords)
-                .Take(filter.Records);
-
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                medicalRecords = medicalRecords.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
+            
             response.MedicalRecords = await medicalRecords.ToListAsync();
 
             return response;
@@ -355,12 +393,173 @@ namespace Shared.Repositories
             // Response initialization.
             var response = new ResponsePrescriptionFilterViewModel();
             response.Total = await prescriptions.CountAsync();
+            
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                prescriptions = prescriptions.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
 
             // Retrieve the list of results.
-            response.Prescriptions = await prescriptions.Skip(skippedRecord)
-                .Take(filter.Records)
+            response.Prescriptions = await prescriptions
                 .ToListAsync();
 
+            return response;
+        }
+
+        #endregion
+
+        #region Prescription image
+
+        /// <summary>
+        /// Find the prescription image asynchronously by using id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<PrescriptionImage> FindPrescriptionImageAsync(int id)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // Find the prescription image by using id.
+            var prescriptionImage = await context.PrescriptionImages.FirstOrDefaultAsync(x => x.Id == id);
+            return prescriptionImage;
+        }
+
+        /// <summary>
+        /// Initialize an image for prescription.
+        /// </summary>
+        /// <param name="prescriptionImage"></param>
+        /// <returns></returns>
+        public async Task<PrescriptionImage> InitializePrescriptionImage(PrescriptionImage prescriptionImage)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    context.PrescriptionImages.AddOrUpdate(prescriptionImage);
+                    await context.SaveChangesAsync();
+                    transaction.Commit();
+
+                    return prescriptionImage;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Delete prescription image by using id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<int> DeletePrescriptionImageAsync(int id)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // By default, take all records.
+                    IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
+
+                    // Find the medical image by using id.
+                    prescriptionImages = prescriptionImages.Where(x => x.Id == id);
+
+                    // Go through every images we found, enlist each one to junk files list.
+                    await prescriptionImages.ForEachAsync(x =>
+                    {
+                        // Enlist the file to junk file.
+                        var junkFile = new JunkFile();
+                        junkFile.FullPath = x.FullPath;
+                        context.JunkFiles.Add(junkFile);
+                    });
+
+                    context.PrescriptionImages.RemoveRange(prescriptionImages);
+
+                    // Count the number of affected records.
+                    var records = await context.SaveChangesAsync();
+
+                    // Commit the transaction.
+                    transaction.Commit();
+
+                    // Tell the caller function the number of affected records.
+                    return records;
+                }
+                catch
+                {
+                    // Exception is thrown, rollback the transaction first.
+                    transaction.Rollback();
+
+                    // Throw the exception to the calling function.
+                    throw;
+                }
+            }
+                
+        }
+
+        /// <summary>
+        /// Filter prescription image.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public async Task<ResponsePrescriptionImageFilter> FilterPrescriptionImageAsync(
+            FilterPrescriptionImageViewModel filter)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // By default, take all result.
+            IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
+
+            // Base on the filter mode to decide requester is data creator or owner.
+            if (filter.Mode == PrescriptionImageFilterMode.RequesterIsCreator)
+            {
+                prescriptionImages = prescriptionImages.Where(x => x.Creator == filter.Requester);
+                if (filter.Partner != null)
+                    prescriptionImages = prescriptionImages.Where(x => x.Owner == filter.Partner);
+            }
+            else if (filter.Mode == PrescriptionImageFilterMode.RequesterIsOwner)
+            {
+                prescriptionImages = prescriptionImages.Where(x => x.Owner == filter.Requester);
+                if (filter.Partner != null)
+                    prescriptionImages = prescriptionImages.Where(x => x.Creator == filter.Partner);
+            }
+            else
+            {
+                prescriptionImages =
+                    prescriptionImages.Where(x => x.Creator == filter.Requester || x.Owner == filter.Requester);
+            }
+            
+            // Filter response initialization.
+            var response = new ResponsePrescriptionImageFilter();
+            
+            // Count the condition matched results.
+            response.Total = await prescriptionImages.CountAsync();
+
+            // By default, sort by created date decendingly.
+            prescriptionImages = prescriptionImages.OrderByDescending(x => x.Created);
+            
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                prescriptionImages = prescriptionImages.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
+
+            // Truncate the result.
+            response.PrescriptionImages = await prescriptionImages
+                .ToListAsync();
+            
             return response;
         }
 
@@ -567,9 +766,15 @@ namespace Shared.Repositories
             // Calculate the total matched records.
             response.Total = await medicalNotes.CountAsync();
 
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                medicalNotes = medicalNotes.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
+
             // Truncate the results.
-            response.MedicalNotes = await medicalNotes.Skip(filter.Page * filter.Records)
-                .Take(filter.Records)
+            response.MedicalNotes = await medicalNotes
                 .ToListAsync();
 
             return response;
@@ -690,9 +895,14 @@ namespace Shared.Repositories
             // Count the total matched result.
             response.Total = await categories.CountAsync();
 
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                categories = categories.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
             // Do pagination.
-            response.MedicalCategories = await categories.Skip(filter.Page*filter.Records)
-                .Take(filter.Records)
+            response.MedicalCategories = await categories
                 .ToListAsync();
 
             return response;

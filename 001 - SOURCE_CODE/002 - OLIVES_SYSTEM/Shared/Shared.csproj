@@ -88,6 +88,7 @@
     <Compile Include="Enumerations\Filter\PlaceFilterSort.cs" />
     <Compile Include="Enumerations\Filter\ExperimentFilterSort.cs" />
     <Compile Include="Enumerations\Filter\NoteResultSort.cs" />
+    <Compile Include="Enumerations\Filter\PrescriptionImageFilterMode.cs" />
     <Compile Include="Enumerations\Filter\RatingResultSort.cs" />
     <Compile Include="Enumerations\RoleRelationship.cs" />
     <Compile Include="Enumerations\TypeAccountCode.cs" />
@@ -105,10 +106,7 @@
     <Compile Include="Enumerations\Comparision.cs" />
     <Compile Include="Helpers\CodeGeneratorHelper.cs" />
     <Compile Include="Helpers\EpochTimeHelper.cs" />
-    <Compile Include="Interfaces\IDoctor.cs" />
     <Compile Include="Interfaces\IPagination.cs" />
-    <Compile Include="Interfaces\IPatient.cs" />
-    <Compile Include="Interfaces\IPerson.cs" />
     <Compile Include="Interfaces\IRepositoryAccount.cs" />
     <Compile Include="Interfaces\IRepositoryActivationCode.cs" />
     <Compile Include="Interfaces\IRepositoryAddiction.cs" />
@@ -143,6 +141,9 @@
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Heartbeat.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\JunkFile.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\MedicalCategory.cs">
@@ -184,6 +185,9 @@
     <Compile Include="Models\Prescription.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\PrescriptionImage.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Rating.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
@@ -196,9 +200,6 @@
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SugarBlood.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\sysdiagram.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -240,13 +241,16 @@
     <Compile Include="ViewModels\Filter\FilterMedicalImageViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMedicalRecordViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPatientViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterPrescriptionImageViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPrescriptionViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterRatingViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializePrescriptionImageViewModel.cs" />
     <Compile Include="ViewModels\MedicineInfoViewModel.cs" />
     <Compile Include="ViewModels\RelativeViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseMedicalCategoryFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseMedicalNoteFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseNoteDelete.cs" />
+    <Compile Include="ViewModels\Response\ResponsePrescriptionImageFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseRatingFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseRelativeFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseRelatedDoctorFilter.cs" />
@@ -285,7 +289,6 @@
     <Compile Include="ViewModels\Filter\FilterPersonViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePersonViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
-    <Compile Include="ViewModels\Response\ResponsePersonFilter.cs" />
     <Compile Include="ViewModels\SugarbloodViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

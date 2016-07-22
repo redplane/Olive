@@ -41,66 +41,21 @@ namespace Olives
 
             //// ...or you can register individual controlllers manually.
             //builder.RegisterType<AdminController>().InstancePerRequest();
-
-            builder.RegisterType<AccountController>().InstancePerRequest();
-            builder.RegisterType<ServiceController>().InstancePerRequest();
-            builder.RegisterType<AllergyController>().InstancePerRequest();
-            builder.RegisterType<AppointmentController>().InstancePerRequest();
-            builder.RegisterType<SpecialtyController>().InstancePerRequest();
-
-            builder.RegisterType<AddictionController>().InstancePerRequest();
-            builder.RegisterType<HeartbeatController>().InstancePerRequest();
-            builder.RegisterType<SugarbloodController>().InstancePerRequest();
-            builder.RegisterType<BloodPressureController>().InstancePerRequest();
-
-            builder.RegisterType<MedicalController>().InstancePerRequest();
-            builder.RegisterType<PlaceController>().InstancePerRequest();
-            builder.RegisterType<RelationshipController>().InstancePerRequest();
-            builder.RegisterType<RateController>().InstancePerRequest();
-
+            builder.RegisterApiControllers(typeof (WebApiApplication).Assembly);
+            builder.RegisterControllers(typeof (WebApiApplication).Assembly);
+            
             #endregion
 
             #region General application configuration
 
             // Initialize an instance of application setting.
-            var applicationSetting = new ApplicationSetting();
-
-            // Retrieve file name which stores database configuration.
-            var applicationConfig = ConfigurationManager.AppSettings["ApplicationConfigFile"];
-
-            // Find the file on physical path.
-            var applicationConfigFile = Server.MapPath($"~/{applicationConfig}.json");
-
-            // Invalid application configuration file.
-            if (!File.Exists(applicationConfigFile))
-                throw new NotImplementedException($"{applicationConfigFile} is required to make server run properly.");
-
-            var info = File.ReadAllText(applicationConfigFile);
-            applicationSetting = JsonConvert.DeserializeObject<ApplicationSetting>(info);
-
-            // Invalid avatar storage folder.
-            var fullPublicStoragePath = Server.MapPath(applicationSetting.AvatarStorage.Relative);
-            if (!Directory.Exists(fullPublicStoragePath))
-                Directory.CreateDirectory(fullPublicStoragePath);
-            // Update application public storage.
-            applicationSetting.AvatarStorage.Absolute = fullPublicStoragePath;
-
-            // Invalid private storage folder.
-            var fullPrivateStoragePath = Server.MapPath(applicationSetting.PrivateStorage.Relative);
-            if (!Directory.Exists(fullPrivateStoragePath))
-                Directory.CreateDirectory(fullPrivateStoragePath);
-            // Update application private storage folder.
-            applicationSetting.PrivateStorage.Absolute = fullPrivateStoragePath;
-
-            // Stmp setting is invalid
-            if (applicationSetting.SmtpSetting == null || !applicationSetting.SmtpSetting.IsValid())
-                throw new NotImplementedException("Email configuration hasn't been configured.");
+            var applicationSetting = LoadApplicationSetting();
 
             #endregion
 
             #region IoC registration
 
-            #region Repository & services
+            #region Repository
 
             // Repository account registration.
             builder.RegisterType<RepositoryAccount>()
@@ -154,6 +109,10 @@ namespace Olives
                 .As<IRepositoryRating>()
                 .SingleInstance();
 
+            #endregion
+
+            #region Services
+
             // Email service.
             var emailService = new EmailService(applicationSetting.SmtpSetting);
 
@@ -171,6 +130,11 @@ namespace Olives
             builder.RegisterType<EmailService>()
                 .As<IEmailService>()
                 .OnActivating(e => e.ReplaceInstance(emailService))
+                .SingleInstance();
+
+            // File service.
+            builder.RegisterType<FileService>()
+                .As<IFileService>()
                 .SingleInstance();
 
             #endregion
@@ -200,6 +164,70 @@ namespace Olives
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 
             #endregion
+        }
+
+        /// <summary>
+        /// This function is for loading application setting.
+        /// </summary>
+        /// <returns></returns>
+        private ApplicationSetting LoadApplicationSetting()
+        {
+            // Initialize an instance of application setting.
+            var applicationSetting = new ApplicationSetting();
+
+            // Retrieve file name which stores database configuration.
+            var applicationConfig = ConfigurationManager.AppSettings["ApplicationConfigFile"];
+
+            // Find the file on physical path.
+            var applicationConfigFile = Server.MapPath($"~/{applicationConfig}.json");
+
+            // Invalid application configuration file.
+            if (!File.Exists(applicationConfigFile))
+                throw new NotImplementedException($"{applicationConfigFile} is required to make server run properly.");
+
+            var info = File.ReadAllText(applicationConfigFile);
+            applicationSetting = JsonConvert.DeserializeObject<ApplicationSetting>(info);
+
+            #region Avatar storage folder
+
+            var fullPublicStoragePath = Server.MapPath(applicationSetting.AvatarStorage.Relative);
+            if (!Directory.Exists(fullPublicStoragePath))
+                Directory.CreateDirectory(fullPublicStoragePath);
+
+            // Update application public storage.
+            applicationSetting.AvatarStorage.Absolute = fullPublicStoragePath;
+
+            #endregion
+
+            #region Private storage folder
+
+            // Invalid private storage folder.
+            var fullPrivateStoragePath = Server.MapPath(applicationSetting.PrivateStorage.Relative);
+            if (!Directory.Exists(fullPrivateStoragePath))
+                Directory.CreateDirectory(fullPrivateStoragePath);
+
+            // Update application private storage folder.
+            applicationSetting.PrivateStorage.Absolute = fullPrivateStoragePath;
+
+            #endregion
+
+            #region Prescription storage folder
+
+            // Invalid private storage folder.
+            var fullPrescriptionImagePath = Server.MapPath(applicationSetting.PrescriptionStorage.Relative);
+            if (!Directory.Exists(fullPrescriptionImagePath))
+                Directory.CreateDirectory(fullPrescriptionImagePath);
+
+            // Update application private storage folder.
+            applicationSetting.PrescriptionStorage.Absolute = fullPrescriptionImagePath;
+
+            #endregion
+
+            // Stmp setting is invalid
+            if (applicationSetting.SmtpSetting == null || !applicationSetting.SmtpSetting.IsValid())
+                throw new NotImplementedException("Email configuration hasn't been configured.");
+
+            return applicationSetting;
         }
     }
 }

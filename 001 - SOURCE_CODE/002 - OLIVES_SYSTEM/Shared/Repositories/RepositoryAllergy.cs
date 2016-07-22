@@ -61,13 +61,18 @@ namespace Shared.Repositories
 
             // Count the matched records before result truncation.
             response.Total = await results.CountAsync();
+            
+            // By default, order by last modified.
+            results = results.OrderByDescending(x => x.LastModified);
 
-            // Calculate how many record should be skipped.
-            var skippedRecords = filter.Records*filter.Page;
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                results = results.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
 
-            response.Allergies = await results.OrderBy(x => x.Name)
-                .Skip(skippedRecords)
-                .Take(filter.Records)
+            response.Allergies = await results
                 .ToListAsync();
 
             return response;

@@ -134,7 +134,7 @@ namespace Olives.Controllers
             #endregion
 
             // Update the last modified.
-            requester.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            requester.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
             // Update the patient.
             requester = await _repositoryAccount.EditPersonProfileAsync(requester.Id, requester);
@@ -170,7 +170,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/people/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Patient })]
+        [OlivesAuthorize(new[] {  Role.Doctor })]
         public async Task<HttpResponseMessage> FilterAnotherPeople([FromBody] FilterAnotherPatientViewModel filter)
         {
             // Filter hasn't been initialized.
@@ -187,19 +187,20 @@ namespace Olives.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
 
-            var patientFilter = new FilterPatientViewModel();
-            patientFilter.Email = filter.Email;
-            patientFilter.Phone = filter.Phone;
-            patientFilter.Name = filter.Name;
-            patientFilter.MinBirthday = filter.MinBirthday;
-            patientFilter.MaxBirthday = filter.MaxBirthday;
-            patientFilter.Gender = filter.Gender;
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
             
-            patientFilter.Role = (int) Role.Patient;
-            patientFilter.Status = (int) StatusAccount.Active;
+            // Filter initialization.
+            var filterPatient = new FilterPatientViewModel();
+            filterPatient.Email = filter.Email;
+            filterPatient.Phone = filter.Phone;
+            filterPatient.Name = filter.Name;
+            filterPatient.MinBirthday = filter.MinBirthday;
+            filterPatient.MaxBirthday = filter.MaxBirthday;
+            filterPatient.Gender = filter.Gender;
             
             // Call the filter function.
-            var result = await _repositoryAccount.FilterPatientAsync(patientFilter);
+            var result = await _repositoryAccount.FilterPatientAsync(filterPatient, requester);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -257,7 +258,7 @@ namespace Olives.Controllers
                     doctor.Person.Address,
                     doctor.Person.Phone,
                     doctor.Person.Role,
-                    Photo = InitializeUrl(_applicationSetting.AvatarStorage.Absolute, doctor.Person.Photo, Values.StandardImageExtension),
+                    Photo = InitializeUrl(_applicationSetting.AvatarStorage.Relative, doctor.Person.Photo, Values.StandardImageExtension),
                     doctor.Rank,
                     Specialty = new
                     {
@@ -498,7 +499,7 @@ namespace Olives.Controllers
             person.Email = info.Email;
             person.Password = info.Password;
             person.Phone = info.Phone;
-            person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
             person.Role = (byte) Role.Patient;
             person.Status = (byte) StatusAccount.Pending;
 
@@ -517,7 +518,7 @@ namespace Olives.Controllers
 
                 // Initialize an activation code.
                 var activationCode =
-                    await _repositoryActivationCode.InitializeAccountCodeAsync(patient.Person.Id, TypeAccountCode.Activation, DateTime.Now);
+                    await _repositoryActivationCode.InitializeAccountCodeAsync(patient.Person.Id, TypeAccountCode.Activation, DateTime.UtcNow);
 
                 // Url construction.
                 var url = Url.Link("Default",
@@ -643,7 +644,7 @@ namespace Olives.Controllers
             person.Password = initializer.Password;
             person.Phone = initializer.Phone;
             person.Address = initializer.Address;
-            person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
             person.Role = (byte) Role.Doctor;
             person.Status = (byte) StatusAccount.Pending;
             
@@ -864,7 +865,7 @@ namespace Olives.Controllers
             {
                 // Initialize an activation code.
                 var findPasswordToken =
-                    await _repositoryActivationCode.InitializeAccountCodeAsync(result.Id, TypeAccountCode.ForgotPassword, DateTime.Now);
+                    await _repositoryActivationCode.InitializeAccountCodeAsync(result.Id, TypeAccountCode.ForgotPassword, DateTime.UtcNow);
 
                 // Url construction.
                 var url = Url.Link("Default",
@@ -925,7 +926,7 @@ namespace Olives.Controllers
             }
 
             // Token is expired.
-            if (DateTime.Now > token.Expired)
+            if (DateTime.UtcNow > token.Expired)
             {
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
@@ -1119,7 +1120,7 @@ namespace Olives.Controllers
             #endregion
 
             // Initialize activation code.
-            var activationToken = await _repositoryActivationCode.InitializeAccountCodeAsync(account.Id, TypeAccountCode.Activation, DateTime.Now);
+            var activationToken = await _repositoryActivationCode.InitializeAccountCodeAsync(account.Id, TypeAccountCode.Activation, DateTime.UtcNow);
 
             // Url construction.
             var url = Url.Link("Default",

@@ -91,11 +91,16 @@ namespace Shared.Repositories
 
             // Response initialization.
             var response = new ResponseAddictionFilter();
-
+            
             // Count the number of matched records.
             response.Total = await addictions.CountAsync();
-            response.Addictions = await addictions.Skip(skippedRecords)
-                .Take(filter.Records)
+
+            if (filter.Records != null)
+            {
+                addictions = addictions.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
+            response.Addictions = await addictions
                 .ToListAsync();
 
             return response;

@@ -131,7 +131,7 @@ namespace Olives.Controllers
             bloodPressure.Systolic = info.Systolic;
             bloodPressure.Time = info.Time;
             bloodPressure.Note = info.Note;
-            bloodPressure.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            bloodPressure.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
             // Insert a new allergy to database.
             var result = await _repositoryBloodPressure.InitializeBloodPressureNoteAsync(bloodPressure);
@@ -223,7 +223,7 @@ namespace Olives.Controllers
             result.Systolic = info.Systolic;
             result.Time = info.Time;
             result.Note = info.Note;
-            result.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            result.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
             // Update allergy.
             result = await _repositoryBloodPressure.InitializeBloodPressureNoteAsync(result);

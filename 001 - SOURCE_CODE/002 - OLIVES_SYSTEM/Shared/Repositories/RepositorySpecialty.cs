@@ -59,12 +59,15 @@ namespace Shared.Repositories
             // Count the matching results.
             response.Total = await results.CountAsync();
 
-            // Finally, do the pagination.
-            var skippedRecords = filter.Page*filter.Records;
-            results = results
-                .OrderBy(x => x.Name)
-                .Skip(skippedRecords)
-                .Take(filter.Records);
+            // By default, order record by name ascendingly.
+            results = results.OrderBy(x => x.Name);
+
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                results = results.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
 
             // Retrieve the specialty list.
             response.Specialties = await results.ToListAsync();

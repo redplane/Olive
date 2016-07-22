@@ -122,7 +122,7 @@ namespace Olives.Controllers
             heartbeat.Rate = info.Rate;
             heartbeat.Note = info.Note;
             heartbeat.Time = info.Time;
-            heartbeat.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            heartbeat.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
             // Insert a new allergy to database.
             var result = await _repositoryHeartbeat.InitializeHeartbeatNoteAsync(heartbeat);

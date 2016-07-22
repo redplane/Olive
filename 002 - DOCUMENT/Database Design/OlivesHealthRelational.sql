@@ -2,10 +2,11 @@
 -- DROP TABLES
 ---------------------------------------------------------------------------------------------------
 DROP TABLE MedicalImage;
-DROP TABLE MedicalNote;
 DROP TABLE ExperimentNote;
 DROP TABLE Prescription;
+DROP TABLE PrescriptionImage;
 DROP TABLE MedicalRecord;
+DROP TABLE MedicalNote;
 DROP TABLE MedicalCategory;
 DROP TABLE AccountCode;
 DROP TABLE Allergy;
@@ -230,6 +231,7 @@ CREATE TABLE MedicalImage
 	MedicalRecordId			INT NOT NULL,
 	Owner					INT NOT NULL,
 	Image					NVARCHAR(32) NOT NULL,
+	FullPath				NVARCHAR(MAX) NOT NULL,
 	Created					FLOAT NOT NULL,
 	
 	FOREIGN KEY (MedicalRecordId) REFERENCES MedicalRecord(Id),
@@ -270,6 +272,20 @@ CREATE TABLE Prescription
 	FOREIGN KEY (Owner)				REFERENCES Person(Id)
 )
 
+
+-- Prescription image table
+CREATE TABLE PrescriptionImage
+(
+	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	PrescriptionId			INT NOT NULL,
+	Image					NVARCHAR(32) NOT NULL,
+	Owner					INT NOT NULL,
+	Creator					INT NOT NULL,
+	Created					FLOAT NOT NULL,
+	FOREIGN KEY (PrescriptionId) REFERENCES Prescription(Id),
+	FOREIGN KEY (Creator) REFERENCES Person(Id)					
+)
+
 CREATE TABLE ExperimentNote
 (
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -302,12 +318,18 @@ CREATE TABLE Rating
 	PRIMARY KEY (Maker, Target)
 )
 
-CREATE Table MedicalCategory
+CREATE TABLE MedicalCategory
 (
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	Name					NVARCHAR(32),
 	Created					FLOAT NOT NULL,
 	LastModified			FLOAT
+)
+
+CREATE TABLE AbandonedFile
+(
+	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	FullPath				NVARCHAR(MAX)
 )
 
 SELECT * FROM Person
