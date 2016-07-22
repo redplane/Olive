@@ -69,8 +69,10 @@
   <ItemGroup>
     <Compile Include="Controllers\AdminController\Login.cs" />
     <Compile Include="Controllers\DoctorController\Get.cs" />
+    <Compile Include="Controllers\MedicalController\InitializeMedicalCategory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\RepositoryAccount.cs" />
+    <Compile Include="Repositories\RepositoryMedical.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OlivesAdministration\OlivesAdministration.csproj">
@@ -85,6 +87,9 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controllers\HomeController\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

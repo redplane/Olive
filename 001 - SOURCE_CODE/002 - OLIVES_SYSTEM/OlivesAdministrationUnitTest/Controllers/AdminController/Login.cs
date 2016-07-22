@@ -61,6 +61,7 @@ namespace OlivesAdministration.Test.Controllers.AdminController
 
         #region Methods
 
+        
         /// <summary>
         /// Login throws bad request because submited information isn't initialized.
         /// </summary>
@@ -136,6 +137,7 @@ namespace OlivesAdministration.Test.Controllers.AdminController
             loginViewModel.Email = null;
             loginViewModel.Password = account.Password;
 
+            _adminController.Validate(loginViewModel);
             // Call the login function.
             // Response will be NotFound because no valid account is found.
             // In Reality, the respond might be diffrent.
@@ -143,57 +145,7 @@ namespace OlivesAdministration.Test.Controllers.AdminController
             Debug.WriteLine(response);
 
             // Compare the result thrown back.
-            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
-        }
-
-        /// <summary>
-        /// Login is failed due to invalid information.
-        /// Role: Not Admin
-        /// </summary>
-        /// <returns></returns>
-        [TestMethod]
-        public async Task AdminAndNormalAccountDuplicateEmail()
-        {
-            // Forging a deactivated account.
-            var account = new Person();
-            account.Id = 1;
-            account.Email = "admin@admin.com";
-            account.Password = "password199x";
-            account.Role = (byte)Role.Admin;
-            account.Status = (byte)StatusAccount.Active;
-
-            var account2 = new Person();
-            account.Id = 2;
-            account.Email = "admin@admin.com";
-            account.Password = "password199x";
-            account.Role = (byte)Role.Doctor;
-            account.Status = (byte)StatusAccount.Active;
-
-            var account3 = new Person();
-            account.Id = 3;
-            account.Email = "admin@admin.com";
-            account.Password = "password199x";
-            account.Role = (byte)Role.Patient;
-            account.Status = (byte)StatusAccount.Active;
-
-            // Add the fake person to list.
-            _repositoryAccount.People = new List<Person>();
-            _repositoryAccount.People.Clear();
-            _repositoryAccount.People.Add(account);
-
-            // Initialize login request parameters.
-            var loginViewModel = new LoginViewModel();
-            loginViewModel.Email = account.Email;
-            loginViewModel.Password = account.Password;
-
-            // Call the login function.
-            // Response will be NotFound because no valid account is found.
-            // In Reality, the respond might be diffrent.
-            var response = await _adminController.Login(loginViewModel);
-            Debug.WriteLine(response);
-
-            // Compare the result thrown back.
-            Assert.AreEqual(response.StatusCode, HttpStatusCode.Conflict); // might be Forbidden.
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
         }
 
         /// <summary>
