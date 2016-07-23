@@ -19,9 +19,10 @@ namespace DataInitializer
 {
     internal class Program
     {
-        private static readonly RepositoryAccount _repositoryAccount = new RepositoryAccount();
-        private static readonly IRepositoryMedical _RepositoryMedical = new RepositoryMedical();
-
+        private static readonly IRepositoryAccount RepositoryAccount = new RepositoryAccount();
+        private static readonly IRepositoryMedicalRecord RepositoryMedical = new RepositoryMedicalRecord();
+        private static readonly IRepositoryPrescription RepositoryPrescription = new RepositoryPrescription();
+        
         private static int MaxRecord = 50;
 
         private static void Main(string[] args)
@@ -45,10 +46,10 @@ namespace DataInitializer
             InitializeAdmin(MaxRecord);
             
             // Find the patient 26.
-            var patient = _repositoryAccount.FindPerson(null, "patient26@gmail.com", null, (byte)Role.Patient);
+            var patient = RepositoryAccount.FindPerson(null, "patient26@gmail.com", null, (byte)Role.Patient);
 
             // Find the doctor 26.
-            var doctor = _repositoryAccount.FindPerson(null, "doctor26@gmail.com", null, (byte)Role.Doctor);
+            var doctor = RepositoryAccount.FindPerson(null, "doctor26@gmail.com", null, (byte)Role.Doctor);
 
             // Initialize medical records collection.
             InitializeMedicalRecord(patient, doctor, 2);
@@ -71,8 +72,8 @@ namespace DataInitializer
 
             for (var i = 26; i < 50; i++)
             {
-                patient = _repositoryAccount.FindPerson(null, $"patient{i}@gmail.com", null, (byte)Role.Patient);
-                doctor = _repositoryAccount.FindPerson(null, $"doctor{i}@gmail.com", null, (byte)Role.Doctor);
+                patient = RepositoryAccount.FindPerson(null, $"patient{i}@gmail.com", null, (byte)Role.Patient);
+                doctor = RepositoryAccount.FindPerson(null, $"doctor{i}@gmail.com", null, (byte)Role.Doctor);
 
                 if (patient != null)
                     Console.WriteLine($"Found {patient.Email} for creating relationship");
@@ -108,7 +109,7 @@ namespace DataInitializer
                 else
                     relationship.Status = (byte)StatusRelation.Active;
 
-                relationship = _repositoryAccount.InitializeRelationAsync(relationship).Result;
+                relationship = RepositoryAccount.InitializeRelationAsync(relationship).Result;
                 Console.WriteLine($"Created relationship. Id : {relationship.Id}");
             }
 
@@ -354,7 +355,7 @@ namespace DataInitializer
                 medicalRecord.LastModified = null;
 
                 // Initialize a new medical record to database.
-                medicalRecord = await _RepositoryMedical.InitializeMedicalRecordAsync(medicalRecord);
+                medicalRecord = await RepositoryMedical.InitializeMedicalRecordAsync(medicalRecord);
 
                 #endregion
 
@@ -386,7 +387,7 @@ namespace DataInitializer
                     prescription.Created = unixFromTime;
                     
                     // Initialize a new medical prescription to database.
-                    prescription = await _RepositoryMedical.InitializePrescriptionAsync(prescription);
+                    prescription = await RepositoryPrescription.InitializePrescriptionAsync(prescription);
                 }
 
                 #endregion

@@ -24,7 +24,7 @@ namespace OlivesAdministration.Controllers
         /// <summary>
         /// Repository of account.
         /// </summary>
-        private readonly IRepositoryMedical _repositoryMedical;
+        private readonly IRepositoryMedicalCategory _repositoryMedicalCategory;
 
         /// <summary>
         /// Instance for logger.
@@ -38,11 +38,11 @@ namespace OlivesAdministration.Controllers
         /// <summary>
         /// Initialize an instance of MedicalController with dependencies.
         /// </summary>
-        /// <param name="repositoryMedical"></param>
+        /// <param name="repositoryMedicalCategory"></param>
         /// <param name="log"></param>
-        public MedicalController(IRepositoryMedical repositoryMedical, ILog log)
+        public MedicalController(IRepositoryMedicalCategory repositoryMedicalCategory, ILog log)
         {
-            _repositoryMedical = repositoryMedical;
+            _repositoryMedicalCategory = repositoryMedicalCategory;
             _log = log;
         }
 
@@ -75,7 +75,7 @@ namespace OlivesAdministration.Controllers
             }
 
             // Find the category by using name.
-            var medicalCategory = await _repositoryMedical.FindMedicalCategoryAsync(null, initializer.Name,
+            var medicalCategory = await _repositoryMedicalCategory.FindMedicalCategoryAsync(null, initializer.Name,
                 StringComparison.CurrentCultureIgnoreCase);
 
             // Record is duplicated.
@@ -95,7 +95,7 @@ namespace OlivesAdministration.Controllers
             medicalCategory.Name = initializer.Name;
 
             // Initialize the category into database.
-            medicalCategory = await _repositoryMedical.InitializeMedicalCategoryAsync(medicalCategory);
+            medicalCategory = await _repositoryMedicalCategory.InitializeMedicalCategoryAsync(medicalCategory);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -135,7 +135,7 @@ namespace OlivesAdministration.Controllers
             }
 
             // Medical category.
-            var medicalCategory = await _repositoryMedical.FindMedicalCategoryAsync(id, null, null);
+            var medicalCategory = await _repositoryMedicalCategory.FindMedicalCategoryAsync(id, null, null);
             
             // Medical category is invalid.
             if (medicalCategory == null)
@@ -152,7 +152,7 @@ namespace OlivesAdministration.Controllers
             // Check for duplicates.
             var dupplicate =
                 await
-                    _repositoryMedical.FindMedicalCategoryAsync(null, modifier.Name,
+                    _repositoryMedicalCategory.FindMedicalCategoryAsync(null, modifier.Name,
                         StringComparison.InvariantCultureIgnoreCase);
 
             if (dupplicate != null)
@@ -171,7 +171,7 @@ namespace OlivesAdministration.Controllers
             medicalCategory.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
             // Save changes.
-            await _repositoryMedical.InitializeMedicalCategoryAsync(medicalCategory);
+            await _repositoryMedicalCategory.InitializeMedicalCategoryAsync(medicalCategory);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -212,7 +212,7 @@ namespace OlivesAdministration.Controllers
             }
 
             // Do the filter.
-            var result = await _repositoryMedical.FilterMedicalCategoryAsync(filter);
+            var result = await _repositoryMedicalCategory.FilterMedicalCategoryAsync(filter);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {

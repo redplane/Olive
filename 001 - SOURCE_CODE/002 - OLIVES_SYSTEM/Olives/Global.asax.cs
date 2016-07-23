@@ -23,6 +23,11 @@ namespace Olives
 {
     public class WebApiApplication : HttpApplication
     {
+        #region Methods
+
+        /// <summary>
+        /// This function is called when web api application is start for the first time.
+        /// </summary>
         protected void Application_Start()
         {
             #region Route configuration
@@ -55,7 +60,7 @@ namespace Olives
 
             #region IoC registration
 
-            #region Repository
+            #region Repositories
 
             // Repository account registration.
             builder.RegisterType<RepositoryAccount>()
@@ -100,14 +105,22 @@ namespace Olives
             builder.RegisterType<RepositoryAppointment>()
                 .As<IRepositoryAppointment>()
                 .SingleInstance();
-
-            builder.RegisterType<RepositoryMedical>()
-                .As<IRepositoryMedical>()
-                .SingleInstance();
-
+            
             builder.RegisterType<RepositoryRating>()
                 .As<IRepositoryRating>()
                 .SingleInstance();
+
+            #region Medical repositories
+
+            builder.RegisterType<RepositoryExperimentNote>().As<IRepositoryExperimentNote>().SingleInstance();
+            builder.RegisterType<RepositoryMedicalCategory>().As<IRepositoryMedicalCategory>().SingleInstance();
+            builder.RegisterType<RepositoryMedicalImage>().As<IRepositoryMedicalImage>().SingleInstance();
+            builder.RegisterType<RepositoryMedicalNote>().As<IRepositoryMedicalNote>().SingleInstance();
+            builder.RegisterType<RepositoryMedicalRecord>().As<IRepositoryMedicalRecord>().SingleInstance();
+            builder.RegisterType<RepositoryPrescription>().As<IRepositoryPrescription>().SingleInstance();
+            builder.RegisterType<RepositoryPrescriptionImage>().As<IRepositoryPrescriptionImage>().SingleInstance();
+
+            #endregion
 
             #endregion
 
@@ -232,5 +245,7 @@ namespace Olives
 
             return applicationSetting;
         }
+
+        #endregion
     }
 }

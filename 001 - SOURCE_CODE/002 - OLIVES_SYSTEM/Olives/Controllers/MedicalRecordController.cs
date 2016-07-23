@@ -34,7 +34,7 @@ namespace Olives.Controllers
         /// <param name="log"></param>
         /// <param name="fileService"></param>
         /// <param name="applicationSetting"></param>
-        public MedicalRecordController(IRepositoryAccount repositoryAccount, IRepositoryMedical repositoryMedical,
+        public MedicalRecordController(IRepositoryAccount repositoryAccount, IRepositoryMedicalRecord repositoryMedical,
             ILog log, IFileService fileService, ApplicationSetting applicationSetting)
         {
             _repositoryAccount = repositoryAccount;
@@ -467,7 +467,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of allergies
         /// </summary>
-        private readonly IRepositoryMedical _repositoryMedical;
+        private readonly IRepositoryMedicalRecord _repositoryMedical;
 
         /// <summary>
         ///     Instance of module which is used for logging.

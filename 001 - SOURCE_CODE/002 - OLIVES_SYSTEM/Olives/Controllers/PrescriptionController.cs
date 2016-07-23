@@ -30,18 +30,16 @@ namespace Olives.Controllers
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
         /// <param name="repositoryAccount"></param>
-        /// <param name="repositoryMedical"></param>
+        /// <param name="repositoryMedicalRecord"></param>
+        /// <param name="repositoryPrescription"></param>
         /// <param name="log"></param>
-        /// <param name="fileService"></param>
-        /// <param name="applicationSetting"></param>
-        public PrescriptionController(IRepositoryAccount repositoryAccount, IRepositoryMedical repositoryMedical,
-            ILog log, IFileService fileService, ApplicationSetting applicationSetting)
+        public PrescriptionController(IRepositoryAccount repositoryAccount, IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryPrescription repositoryPrescription,
+            ILog log)
         {
             _repositoryAccount = repositoryAccount;
-            _repositoryMedical = repositoryMedical;
+            _repositoryMedicalRecord = repositoryMedicalRecord;
+            _repositoryPrescription = repositoryPrescription;
             _log = log;
-            _fileService = fileService;
-            _applicationSetting = applicationSetting;
         }
 
         #endregion
@@ -63,7 +61,7 @@ namespace Olives.Controllers
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find the prescription by using id.
-            var prescription = await _repositoryMedical.FindPrescriptionAsync(id);
+            var prescription = await _repositoryPrescription.FindPrescriptionAsync(id);
 
             // No record is found.
             if (prescription == null)
@@ -177,7 +175,7 @@ namespace Olives.Controllers
             #region Medical record validation
 
             // Find the medical record first.
-            var medicalRecord = await _repositoryMedical.FindMedicalRecordAsync(info.MedicalRecord);
+            var medicalRecord = await _repositoryMedicalRecord.FindMedicalRecordAsync(info.MedicalRecord);
             if (medicalRecord == null)
             {
                 // Tell client no record has been found.
@@ -241,7 +239,7 @@ namespace Olives.Controllers
                 prescription.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
                 // Initialize prescription to database.
-                prescription = await _repositoryMedical.InitializePrescriptionAsync(prescription);
+                prescription = await _repositoryPrescription.InitializePrescriptionAsync(prescription);
 
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
@@ -304,7 +302,7 @@ namespace Olives.Controllers
 
 
             // Find the prescription by using id.
-            var prescription = await _repositoryMedical.FindPrescriptionAsync(id);
+            var prescription = await _repositoryPrescription.FindPrescriptionAsync(id);
             if (prescription == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -375,7 +373,7 @@ namespace Olives.Controllers
                 prescription.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
                 // Initialize prescription to database.
-                prescription = await _repositoryMedical.InitializePrescriptionAsync(prescription);
+                prescription = await _repositoryPrescription.InitializePrescriptionAsync(prescription);
 
                 #endregion
 
@@ -421,7 +419,7 @@ namespace Olives.Controllers
                 var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Patient can only delete his/her record.
-                var records = await _repositoryMedical.DeletePrescriptionAsync(id, requester.Id);
+                var records = await _repositoryPrescription.DeletePrescriptionAsync(id, requester.Id);
 
                 // No record has been deleted.
                 if (records < 1)
@@ -482,7 +480,7 @@ namespace Olives.Controllers
 
 
                 // Filter prescription by using specific conditions.
-                var result = await _repositoryMedical.FilterPrescriptionAsync(filter);
+                var result = await _repositoryPrescription.FilterPrescriptionAsync(filter);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -523,25 +521,19 @@ namespace Olives.Controllers
         private readonly IRepositoryAccount _repositoryAccount;
 
         /// <summary>
-        ///     Repository of allergies
+        ///     Repository of medical record
         /// </summary>
-        private readonly IRepositoryMedical _repositoryMedical;
+        private readonly IRepositoryMedicalRecord _repositoryMedicalRecord;
+
+        /// <summary>
+        ///  Repository of prescription
+        /// </summary>
+        private readonly IRepositoryPrescription _repositoryPrescription;
 
         /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-
-        /// <summary>
-        ///     Application setting.
-        /// </summary>
-        private readonly ApplicationSetting _applicationSetting;
-
-        /// <summary>
-        ///     Service which provides functions to handle file operations.
-        /// </summary>
-        private readonly IFileService _fileService;
-
         #endregion
     }
 }

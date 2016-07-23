@@ -23,19 +23,13 @@ namespace Olives.Controllers
         /// <summary>
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryAccount"></param>
-        /// <param name="repositoryMedical"></param>
+        /// <param name="repositoryMedicalCategory"></param>
         /// <param name="log"></param>
-        /// <param name="fileService"></param>
-        /// <param name="applicationSetting"></param>
-        public MedicalCategoryController(IRepositoryAccount repositoryAccount, IRepositoryMedical repositoryMedical,
-            ILog log, IFileService fileService, ApplicationSetting applicationSetting)
+        public MedicalCategoryController(IRepositoryMedicalCategory repositoryMedicalCategory,
+            ILog log)
         {
-            _repositoryAccount = repositoryAccount;
-            _repositoryMedical = repositoryMedical;
+            _repositoryMedicalCategory = repositoryMedicalCategory;
             _log = log;
-            _fileService = fileService;
-            _applicationSetting = applicationSetting;
         }
 
         #endregion
@@ -52,7 +46,7 @@ namespace Olives.Controllers
         public async Task<HttpResponseMessage> FindCategoryAsync([FromUri] int id)
         {
             // Find the category.
-            var category = await _repositoryMedical.FindMedicalCategoryAsync(id, null, null);
+            var category = await _repositoryMedicalCategory.FindMedicalCategoryAsync(id, null, null);
 
             // Category is not found.
             if (category == null)
@@ -114,7 +108,7 @@ namespace Olives.Controllers
             try
             {
                 // Do the filter.
-                var result = await _repositoryMedical.FilterMedicalCategoryAsync(filter);
+                var result = await _repositoryMedicalCategory.FilterMedicalCategoryAsync(filter);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -142,32 +136,17 @@ namespace Olives.Controllers
         #endregion
 
         #region Properties
-
+        
         /// <summary>
-        ///     Repository of accounts
+        ///  Repository of medical category.
         /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
-
-        /// <summary>
-        ///     Repository of allergies
-        /// </summary>
-        private readonly IRepositoryMedical _repositoryMedical;
-
+        private readonly IRepositoryMedicalCategory _repositoryMedicalCategory;
+        
         /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-
-        /// <summary>
-        ///     Application setting.
-        /// </summary>
-        private readonly ApplicationSetting _applicationSetting;
-
-        /// <summary>
-        ///     Service which provides functions to handle file operations.
-        /// </summary>
-        private readonly IFileService _fileService;
-
+        
         #endregion
     }
 }

@@ -30,18 +30,16 @@ namespace Olives.Controllers
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
         /// <param name="repositoryAccount"></param>
-        /// <param name="repositoryMedical"></param>
+        /// <param name="repositoryMedicalRecord"></param>
+        /// <param name="repositoryExperimentNote"></param>
         /// <param name="log"></param>
-        /// <param name="fileService"></param>
-        /// <param name="applicationSetting"></param>
-        public MedicalExperimentController(IRepositoryAccount repositoryAccount, IRepositoryMedical repositoryMedical,
-            ILog log, IFileService fileService, ApplicationSetting applicationSetting)
+        public MedicalExperimentController(IRepositoryAccount repositoryAccount, IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryExperimentNote repositoryExperimentNote,
+            ILog log)
         {
             _repositoryAccount = repositoryAccount;
-            _repositoryMedical = repositoryMedical;
+            _repositoryMedicalRecord = repositoryMedicalRecord;
+            _repositoryExperimentNote = repositoryExperimentNote;
             _log = log;
-            _fileService = fileService;
-            _applicationSetting = applicationSetting;
         }
 
         #endregion
@@ -82,7 +80,7 @@ namespace Olives.Controllers
             #region Medical record validation
 
             // Find the medical record first.
-            var medicalRecord = await _repositoryMedical.FindMedicalRecordAsync(initializer.MedicalRecord);
+            var medicalRecord = await _repositoryMedicalRecord.FindMedicalRecordAsync(initializer.MedicalRecord);
 
             // Medical record is not found.
             if (medicalRecord == null)
@@ -137,7 +135,7 @@ namespace Olives.Controllers
                 note.Owner = medicalRecord.Owner;
                 note.Creator = requester.Id;
                 
-                note = await _repositoryMedical.InitializeExperimentNote(note);
+                note = await _repositoryExperimentNote.InitializeExperimentNote(note);
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     Note = new
@@ -197,7 +195,7 @@ namespace Olives.Controllers
             #region Role validation
 
             // Find the medical record first.
-            var experimentNote = await _repositoryMedical.FindExperimentNoteAsync(experiment);
+            var experimentNote = await _repositoryExperimentNote.FindExperimentNoteAsync(experiment);
 
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
@@ -235,7 +233,7 @@ namespace Olives.Controllers
                 experimentNote.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
                 // Update the experiment note.
-                experimentNote = await _repositoryMedical.InitializeExperimentNote(experimentNote);
+                experimentNote = await _repositoryExperimentNote.InitializeExperimentNote(experimentNote);
 
                 // Send the list of failed record back to client.
                 return Request.CreateResponse(HttpStatusCode.OK, new
@@ -275,7 +273,7 @@ namespace Olives.Controllers
                 var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Remove note and retrieve the response.
-                var records = await _repositoryMedical.DeleteExperimentNotesAsync(experiment, requester.Id);
+                var records = await _repositoryExperimentNote.DeleteExperimentNotesAsync(experiment, requester.Id);
 
                 // No record has been removed.
                 if (records < 1)
@@ -341,7 +339,7 @@ namespace Olives.Controllers
                 filter.Requester = requester.Id;
 
                 // Do the filter.
-                var result = await _repositoryMedical.FilterExperimentNotesAsync(filter);
+                var result = await _repositoryExperimentNote.FilterExperimentNotesAsync(filter);
 
                 // Tell the client about the filter result.
                 return Request.CreateResponse(HttpStatusCode.OK, new
@@ -382,25 +380,20 @@ namespace Olives.Controllers
         private readonly IRepositoryAccount _repositoryAccount;
 
         /// <summary>
-        ///     Repository of allergies
+        ///     Repository of medical record
         /// </summary>
-        private readonly IRepositoryMedical _repositoryMedical;
+        private readonly IRepositoryMedicalRecord _repositoryMedicalRecord;
+
+        /// <summary>
+        /// Repository experiment note
+        /// </summary>
+        private readonly IRepositoryExperimentNote _repositoryExperimentNote;
 
         /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-
-        /// <summary>
-        ///     Application setting.
-        /// </summary>
-        private readonly ApplicationSetting _applicationSetting;
-
-        /// <summary>
-        ///     Service which provides functions to handle file operations.
-        /// </summary>
-        private readonly IFileService _fileService;
-
+        
         #endregion
     }
 }

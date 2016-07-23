@@ -29,18 +29,16 @@ namespace Olives.Controllers
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
         /// <param name="repositoryAccount"></param>
-        /// <param name="repositoryMedical"></param>
+        /// <param name="repositoryMedicalNote"></param>
+        /// <param name="repositoryMedicalRecord"></param>
         /// <param name="log"></param>
-        /// <param name="fileService"></param>
-        /// <param name="applicationSetting"></param>
-        public MedicalNoteController(IRepositoryAccount repositoryAccount, IRepositoryMedical repositoryMedical,
-            ILog log, IFileService fileService, ApplicationSetting applicationSetting)
+        public MedicalNoteController(IRepositoryAccount repositoryAccount, IRepositoryMedicalNote repositoryMedicalNote, IRepositoryMedicalRecord repositoryMedicalRecord,
+            ILog log)
         {
             _repositoryAccount = repositoryAccount;
-            _repositoryMedical = repositoryMedical;
+            _repositoryMedicalNote = repositoryMedicalNote;
+            _repositoryMedicalRecord = repositoryMedicalRecord;
             _log = log;
-            _fileService = fileService;
-            _applicationSetting = applicationSetting;
         }
 
         #endregion
@@ -62,7 +60,7 @@ namespace Olives.Controllers
             try
             {
                 // Find the medical record by using id.
-                var result = await _repositoryMedical.FindMedicalNoteAsync(id);
+                var result = await _repositoryMedicalNote.FindMedicalNoteAsync(id);
 
                 // No result has been received.
                 if (result == null)
@@ -169,7 +167,7 @@ namespace Olives.Controllers
             #region Medical record validation
 
             // Find the medical record.
-            var medicalRecord = await _repositoryMedical.FindMedicalRecordAsync(initializer.MedicalRecord);
+            var medicalRecord = await _repositoryMedicalRecord.FindMedicalRecordAsync(initializer.MedicalRecord);
 
             // No medical record has been found.
             if (medicalRecord == null)
@@ -227,7 +225,7 @@ namespace Olives.Controllers
                 medicalNote.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
                 // Insert a new allergy to database.
-                medicalNote = await _repositoryMedical.InitializeMedicalNoteAsync(medicalNote);
+                medicalNote = await _repositoryMedicalNote.InitializeMedicalNoteAsync(medicalNote);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -288,7 +286,7 @@ namespace Olives.Controllers
             #region Medical note
 
             // Find the medical note.
-            var medicalNote = await _repositoryMedical.FindMedicalNoteAsync(id);
+            var medicalNote = await _repositoryMedicalNote.FindMedicalNoteAsync(id);
 
             // Medical note is not found.
             if (medicalNote == null)
@@ -338,7 +336,7 @@ namespace Olives.Controllers
                 medicalNote.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
                 // Insert a new allergy to database.
-                var result = await _repositoryMedical.InitializeMedicalNoteAsync(medicalNote);
+                var result = await _repositoryMedicalNote.InitializeMedicalNoteAsync(medicalNote);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -406,7 +404,7 @@ namespace Olives.Controllers
                 filter.Requester = requester.Id;
 
                 // Insert a new allergy to database.
-                var result = await _repositoryMedical.FilterMedicalNotesAsync(filter);
+                var result = await _repositoryMedicalNote.FilterMedicalNotesAsync(filter);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -445,25 +443,20 @@ namespace Olives.Controllers
         private readonly IRepositoryAccount _repositoryAccount;
 
         /// <summary>
-        ///     Repository of allergies
+        ///     Repository of medical notes
         /// </summary>
-        private readonly IRepositoryMedical _repositoryMedical;
+        private readonly IRepositoryMedicalNote _repositoryMedicalNote;
+
+        /// <summary>
+        ///  Repository of medical records.
+        /// </summary>
+        private readonly IRepositoryMedicalRecord _repositoryMedicalRecord;
 
         /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-
-        /// <summary>
-        ///     Application setting.
-        /// </summary>
-        private readonly ApplicationSetting _applicationSetting;
-
-        /// <summary>
-        ///     Service which provides functions to handle file operations.
-        /// </summary>
-        private readonly IFileService _fileService;
-
+        
         #endregion
     }
 }

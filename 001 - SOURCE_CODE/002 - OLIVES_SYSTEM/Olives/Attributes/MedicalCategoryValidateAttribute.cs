@@ -42,11 +42,11 @@ namespace Olives.Attributes
             // Medical record id.
             var medicalRecord = Convert.ToInt32(value);
 
-            // Find an instance of IRepositoryMedical in Dependency Resolver.
-            var repositoryMedical = DependencyResolver.Current.GetService<IRepositoryMedical>();
+            // Find an instance of IRepositoryMedicalCategory in Dependency Resolver.
+            var repositoryMedicalCategory = DependencyResolver.Current.GetService<IRepositoryMedicalCategory>();
 
             // Find the medical inside the repository.
-            var result = repositoryMedical.FindMedicalCategoryAsync(medicalRecord, Name, Comparision).Result;
+            var result = repositoryMedicalCategory.FindMedicalCategoryAsync(medicalRecord, Name, Comparision).Result;
 
             if (result == null)
                 return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));

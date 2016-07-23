@@ -92,8 +92,8 @@ namespace OlivesAdministration
                 .As<IRepositoryPlace>()
                 .SingleInstance();
 
-            builder.RegisterType<RepositoryMedical>()
-                .As<IRepositoryMedical>()
+            builder.RegisterType<RepositoryMedicalRecord>()
+                .As<IRepositoryMedicalRecord>()
                 .SingleInstance();
 
             #endregion

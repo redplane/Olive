@@ -30,15 +30,17 @@ namespace Olives.Controllers
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
         /// <param name="repositoryAccount"></param>
-        /// <param name="repositoryMedical"></param>
+        /// <param name="repositoryPrescription"></param>
+        /// <param name="repositoryPrescriptionImage"></param>
         /// <param name="log"></param>
         /// <param name="fileService"></param>
         /// <param name="applicationSetting"></param>
-        public PrescriptionImageController(IRepositoryAccount repositoryAccount, IRepositoryMedical repositoryMedical,
+        public PrescriptionImageController(IRepositoryAccount repositoryAccount, IRepositoryPrescription repositoryPrescription, IRepositoryPrescriptionImage repositoryPrescriptionImage,
             ILog log, IFileService fileService, ApplicationSetting applicationSetting)
         {
             _repositoryAccount = repositoryAccount;
-            _repositoryMedical = repositoryMedical;
+            _repositoryPrescription = repositoryPrescription;
+            _repositoryPrescriptionImage = repositoryPrescriptionImage;
             _log = log;
             _fileService = fileService;
             _applicationSetting = applicationSetting;
@@ -109,7 +111,7 @@ namespace Olives.Controllers
             #region Prescription validation
 
             // Find the medical prescription.
-            var prescription = await _repositoryMedical.FindPrescriptionAsync(initializer.Prescription);
+            var prescription = await _repositoryPrescription.FindPrescriptionAsync(initializer.Prescription);
 
             // Prescription is not found.
             if (prescription == null)
@@ -167,7 +169,7 @@ namespace Olives.Controllers
                 prescriptionImage.Creator = requester.Id;
 
                 // Save the prescription image to database.
-                await _repositoryMedical.InitializePrescriptionImage(prescriptionImage);
+                await _repositoryPrescriptionImage.InitializePrescriptionImage(prescriptionImage);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -208,7 +210,7 @@ namespace Olives.Controllers
             try
             {
                 // Find the prescription image and delete 'em.
-                var records = await _repositoryMedical.DeletePrescriptionImageAsync(id, requester.Id);
+                var records = await _repositoryPrescriptionImage.DeletePrescriptionImageAsync(id, requester.Id);
 
                 if (records < 0)
                 {
@@ -281,7 +283,7 @@ namespace Olives.Controllers
             try
             {
                 // Do the filter.
-                var result = await _repositoryMedical.FilterPrescriptionImageAsync(filter);
+                var result = await _repositoryPrescriptionImage.FilterPrescriptionImageAsync(filter);
 
                 // Respond filtered results to client.
                 return Request.CreateResponse(HttpStatusCode.OK, new
@@ -318,11 +320,16 @@ namespace Olives.Controllers
         ///     Repository of accounts
         /// </summary>
         private readonly IRepositoryAccount _repositoryAccount;
+        
+        /// <summary>
+        /// Repository of prescription images.
+        /// </summary>
+        private readonly IRepositoryPrescriptionImage _repositoryPrescriptionImage;
 
         /// <summary>
-        ///     Repository of allergies
+        /// Repository of prescriptions.
         /// </summary>
-        private readonly IRepositoryMedical _repositoryMedical;
+        private readonly IRepositoryPrescription _repositoryPrescription;
 
         /// <summary>
         ///     Instance of module which is used for logging.

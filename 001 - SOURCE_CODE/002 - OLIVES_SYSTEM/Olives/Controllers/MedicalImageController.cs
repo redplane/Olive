@@ -30,15 +30,17 @@ namespace Olives.Controllers
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
         /// <param name="repositoryAccount"></param>
-        /// <param name="repositoryMedical"></param>
+        /// <param name="repositoryMedicalRecord"></param>
+        /// <param name="repositoryMedicalImage"></param>
         /// <param name="log"></param>
         /// <param name="fileService"></param>
         /// <param name="applicationSetting"></param>
-        public MedicalImageController(IRepositoryAccount repositoryAccount, IRepositoryMedical repositoryMedical,
+        public MedicalImageController(IRepositoryAccount repositoryAccount, IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryMedicalImage repositoryMedicalImage,
             ILog log, IFileService fileService, ApplicationSetting applicationSetting)
         {
             _repositoryAccount = repositoryAccount;
-            _repositoryMedical = repositoryMedical;
+            _repositoryMedicalRecord = repositoryMedicalRecord;
+            _repositoryMedicalImage = repositoryMedicalImage;
             _log = log;
             _fileService = fileService;
             _applicationSetting = applicationSetting;
@@ -104,7 +106,7 @@ namespace Olives.Controllers
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find the medical record.
-            var medicalRecord = await _repositoryMedical.FindMedicalRecordAsync(info.MedicalRecord);
+            var medicalRecord = await _repositoryMedicalRecord.FindMedicalRecordAsync(info.MedicalRecord);
             if (medicalRecord == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -156,7 +158,7 @@ namespace Olives.Controllers
 
                 // Update image full path.
                 // Save the medical record to database.
-                await _repositoryMedical.InitializeMedicalImageAsync(medicalImage);
+                await _repositoryMedicalImage.InitializeMedicalImageAsync(medicalImage);
 
                 // Tell the client about the result of upload.
                 return Request.CreateResponse(HttpStatusCode.OK, new
@@ -196,7 +198,7 @@ namespace Olives.Controllers
             try
             {
                 // Remove the addiction of the requester.
-                var affectedRecords = await _repositoryMedical.DeleteMedicalImageAsync(id, requester.Id);
+                var affectedRecords = await _repositoryMedicalImage.DeleteMedicalImageAsync(id, requester.Id);
 
                 // No record has been affected.
                 if (affectedRecords < 1)
@@ -260,7 +262,7 @@ namespace Olives.Controllers
             try
             {
                 // Filter medical images by using specific conditions.
-                var results = await _repositoryMedical.FilterMedicalImageAsync(info);
+                var results = await _repositoryMedicalImage.FilterMedicalImageAsync(info);
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     MedicalImages = results.MedicalImages.Select(x => new
@@ -296,9 +298,14 @@ namespace Olives.Controllers
         private readonly IRepositoryAccount _repositoryAccount;
 
         /// <summary>
-        ///     Repository of allergies
+        ///     Repository of medical record
         /// </summary>
-        private readonly IRepositoryMedical _repositoryMedical;
+        private readonly IRepositoryMedicalRecord _repositoryMedicalRecord;
+
+        /// <summary>
+        ///  Repository of medical image.
+        /// </summary>
+        private readonly IRepositoryMedicalImage _repositoryMedicalImage;
 
         /// <summary>
         ///     Instance of module which is used for logging.
