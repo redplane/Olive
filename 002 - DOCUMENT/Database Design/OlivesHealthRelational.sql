@@ -3,10 +3,10 @@
 ---------------------------------------------------------------------------------------------------
 DROP TABLE MedicalImage;
 DROP TABLE ExperimentNote;
-DROP TABLE Prescription;
-DROP TABLE PrescriptionImage;
-DROP TABLE MedicalRecord;
 DROP TABLE MedicalNote;
+DROP TABLE PrescriptionImage;
+DROP TABLE Prescription;
+DROP TABLE MedicalRecord;
 DROP TABLE MedicalCategory;
 DROP TABLE AccountCode;
 DROP TABLE Allergy;
@@ -22,7 +22,7 @@ DROP TABLE Doctor;
 DROP TABLE Place;
 DROP TABLE Specialty;
 DROP TABLE Person;
-
+DROP TABLE JunkFile;
 ---------------------------------------------------------------------------------------------------
 
 -- Specialty table.
@@ -209,19 +209,29 @@ CREATE TABLE Patient
 	FOREIGN KEY (Id) REFERENCES Person(Id)
 )
 
+CREATE TABLE MedicalCategory
+(
+	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	Name					NVARCHAR(32),
+	Created					FLOAT NOT NULL,
+	LastModified			FLOAT
+)
+
 -- Medical record table
 CREATE TABLE MedicalRecord
 (
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	Owner					INT NOT NULL,
 	Creator					INT NOT NULL,
+	Category				INT NOT NULL,
 	Info					NVARCHAR(MAX),
 	Time					FLOAT NOT NULL,
 	Created					FLOAT NOT NULL,
 	LastModified			FLOAT,
 
 	FOREIGN KEY (Owner) REFERENCES Person(Id) ,
-	FOREIGN KEY (Creator) REFERENCES Person(Id)
+	FOREIGN KEY (Creator) REFERENCES Person(Id),
+	FOREIGN KEY (Category) REFERENCES MedicalCategory(Id)
 )
 
 -- Medical image table
@@ -230,6 +240,7 @@ CREATE TABLE MedicalImage
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	MedicalRecordId			INT NOT NULL,
 	Owner					INT NOT NULL,
+	Creator					INT NOT NULL,
 	Image					NVARCHAR(32) NOT NULL,
 	FullPath				NVARCHAR(MAX) NOT NULL,
 	Created					FLOAT NOT NULL,
@@ -258,6 +269,7 @@ CREATE TABLE MedicalNote
 CREATE TABLE Prescription
 (
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	Creator					INT NOT NULL,
 	Owner					INT NOT NULL,
 	MedicalRecordId			INT NOT NULL,
 	[From]					FLOAT NOT NULL,
@@ -269,9 +281,9 @@ CREATE TABLE Prescription
 	LastModified			FLOAT,
 
 	FOREIGN KEY (MedicalRecordId)	REFERENCES MedicalRecord(Id),
-	FOREIGN KEY (Owner)				REFERENCES Person(Id)
+	FOREIGN KEY (Owner)				REFERENCES Person(Id),
+	FOREIGN KEY (Creator)			REFERENCES Person(Id)
 )
-
 
 -- Prescription image table
 CREATE TABLE PrescriptionImage
@@ -279,6 +291,7 @@ CREATE TABLE PrescriptionImage
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	PrescriptionId			INT NOT NULL,
 	Image					NVARCHAR(32) NOT NULL,
+	FullPath				NVARCHAR(MAX) NOT NULL,
 	Owner					INT NOT NULL,
 	Creator					INT NOT NULL,
 	Created					FLOAT NOT NULL,
@@ -318,19 +331,12 @@ CREATE TABLE Rating
 	PRIMARY KEY (Maker, Target)
 )
 
-CREATE TABLE MedicalCategory
-(
-	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	Name					NVARCHAR(32),
-	Created					FLOAT NOT NULL,
-	LastModified			FLOAT
-)
-
-CREATE TABLE AbandonedFile
+CREATE TABLE JunkFile
 (
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	FullPath				NVARCHAR(MAX)
 )
+
 
 SELECT * FROM Person
 SELECT * FROM Country
