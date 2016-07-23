@@ -114,7 +114,7 @@ namespace Olives.Controllers
             // Address is defined.
             if (!string.IsNullOrWhiteSpace(editor.Address))
                 requester.Address = editor.Address;
-            
+
             // Update person full name.
             requester.FullName = requester.FirstName + " " + requester.LastName;
 
@@ -164,13 +164,13 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        /// Filter a list of another patient.
+        ///     Filter a list of another patient.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
         [Route("api/people/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {  Role.Doctor })]
+        [OlivesAuthorize(new[] {Role.Doctor})]
         public async Task<HttpResponseMessage> FilterAnotherPeople([FromBody] FilterAnotherPatientViewModel filter)
         {
             // Filter hasn't been initialized.
@@ -178,7 +178,7 @@ namespace Olives.Controllers
             {
                 filter = new FilterAnotherPatientViewModel();
                 Validate(filter);
-            }    
+            }
 
             // Request parameters are invalid.
             if (!ModelState.IsValid)
@@ -188,8 +188,8 @@ namespace Olives.Controllers
             }
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
             // Filter initialization.
             var filterPatient = new FilterPatientViewModel();
             filterPatient.Email = filter.Email;
@@ -198,7 +198,7 @@ namespace Olives.Controllers
             filterPatient.MinBirthday = filter.MinBirthday;
             filterPatient.MaxBirthday = filter.MaxBirthday;
             filterPatient.Gender = filter.Gender;
-            
+
             // Call the filter function.
             var result = await _repositoryAccount.FilterPatientAsync(filterPatient, requester);
 
@@ -212,7 +212,8 @@ namespace Olives.Controllers
                     x.Person.Birthday,
                     x.Person.Phone,
                     Photo =
-                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Person.Photo, Values.StandardImageExtension),
+                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Person.Photo,
+                            Values.StandardImageExtension),
                     x.Person.Address
                 }),
                 result.Total
@@ -258,7 +259,9 @@ namespace Olives.Controllers
                     doctor.Person.Address,
                     doctor.Person.Phone,
                     doctor.Person.Role,
-                    Photo = InitializeUrl(_applicationSetting.AvatarStorage.Relative, doctor.Person.Photo, Values.StandardImageExtension),
+                    Photo =
+                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, doctor.Person.Photo,
+                            Values.StandardImageExtension),
                     doctor.Rank,
                     Specialty = new
                     {
@@ -326,7 +329,9 @@ namespace Olives.Controllers
                     x.Person.Address,
                     x.Person.Phone,
                     x.Person.Role,
-                    Photo = InitializeUrl(_applicationSetting.AvatarStorage.Absolute, x.Person.Photo, Values.StandardImageExtension),
+                    Photo =
+                        InitializeUrl(_applicationSetting.AvatarStorage.Absolute, x.Person.Photo,
+                            Values.StandardImageExtension),
                     x.Rank,
                     Specialty = new
                     {
@@ -349,7 +354,7 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        /// Edit doctor profile.
+        ///     Edit doctor profile.
         /// </summary>
         /// <param name="editor"></param>
         /// <returns></returns>
@@ -388,12 +393,28 @@ namespace Olives.Controllers
             if (!string.IsNullOrWhiteSpace(editor.Password))
                 requester.Password = editor.Password;
 
+            // First name is defined.
+            if (!string.IsNullOrWhiteSpace(editor.FirstName))
+                requester.FirstName = editor.FirstName;
+
+            // Last name is defined.
+            if (!string.IsNullOrWhiteSpace(editor.LastName))
+                requester.LastName = editor.LastName;
+
+            // Gender is defined.
+            if (editor.Gender != null)
+                requester.Gender = (byte) editor.Gender;
+
+            // Birthday is defined.
+            if (editor.Birthday != null)
+                requester.Birthday = editor.Birthday;
+
             // Place is defined.
             if (editor.Place != null)
             {
                 // Find the place by using id.
                 var place = _repositoryPlace.FindPlaceAsync(editor.Place, null, null, null, null);
-                
+
                 // Place is not found.
                 if (place == null)
                 {
@@ -410,7 +431,6 @@ namespace Olives.Controllers
 
             try
             {
-
                 // Save account.
                 requester = await _repositoryAccount.InitializePersonAsync(requester);
 
@@ -518,7 +538,9 @@ namespace Olives.Controllers
 
                 // Initialize an activation code.
                 var activationCode =
-                    await _repositoryActivationCode.InitializeAccountCodeAsync(patient.Person.Id, TypeAccountCode.Activation, DateTime.UtcNow);
+                    await
+                        _repositoryActivationCode.InitializeAccountCodeAsync(patient.Person.Id,
+                            TypeAccountCode.Activation, DateTime.UtcNow);
 
                 // Url construction.
                 var url = Url.Link("Default",
@@ -571,7 +593,7 @@ namespace Olives.Controllers
         public async Task<HttpResponseMessage> RegisterDoctor([FromBody] InitializeDoctorViewModel initializer)
         {
             #region Information validation
-            
+
             // Information hasn't been initialize.
             if (initializer == null)
             {
@@ -600,7 +622,7 @@ namespace Olives.Controllers
                     Error = $"{Language.WarnSpecialtyNotFound}"
                 });
             }
-            
+
             // Find the place by using id.
             var place = await _repositoryPlace.FindPlaceAsync(initializer.Place, null, null, null, null);
 
@@ -628,7 +650,7 @@ namespace Olives.Controllers
                         Error = $"{Language.WarnAccountAlreadyExists}"
                     });
             }
-            
+
             #endregion
 
             // Account initialization.
@@ -639,7 +661,7 @@ namespace Olives.Controllers
             person.LastName = initializer.LastName;
             person.FullName = person.FirstName + " " + person.LastName;
             person.Birthday = initializer.Birthday;
-            person.Gender = (byte)initializer.Gender;
+            person.Gender = (byte) initializer.Gender;
             person.Email = initializer.Email;
             person.Password = initializer.Password;
             person.Phone = initializer.Phone;
@@ -647,7 +669,7 @@ namespace Olives.Controllers
             person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
             person.Role = (byte) Role.Doctor;
             person.Status = (byte) StatusAccount.Pending;
-            
+
             // Update specialty information.
             doctor.SpecialtyId = specialty.Id;
             doctor.SpecialtyName = specialty.Name;
@@ -704,7 +726,7 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        /// This function is for posting image as account avatar.
+        ///     This function is for posting image as account avatar.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
@@ -826,7 +848,7 @@ namespace Olives.Controllers
                 }
             }
         }
-        
+
         /// <summary>
         ///     Request an email contains forgot password token asynchronously.
         /// </summary>
@@ -860,16 +882,18 @@ namespace Olives.Controllers
                         Error = $"{Language.WarnAccountInvalid}"
                     });
             }
-            
+
             try
             {
                 // Initialize an activation code.
                 var findPasswordToken =
-                    await _repositoryActivationCode.InitializeAccountCodeAsync(result.Id, TypeAccountCode.ForgotPassword, DateTime.UtcNow);
+                    await
+                        _repositoryActivationCode.InitializeAccountCodeAsync(result.Id, TypeAccountCode.ForgotPassword,
+                            DateTime.UtcNow);
 
                 // Url construction.
                 var url = Url.Link("Default",
-                    new { controller = "Service", action = "FindPassword" });
+                    new {controller = "Service", action = "FindPassword"});
 
                 // Send the activation code email.
                 await
@@ -914,7 +938,7 @@ namespace Olives.Controllers
                 await
                     _repositoryActivationCode.FindAccountCodeAsync(null, (byte) TypeAccountCode.ForgotPassword,
                         initializer.Token);
-            
+
             // Token couldn't be found.
             if (token == null)
             {
@@ -950,7 +974,7 @@ namespace Olives.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
         }
-        
+
         #endregion
 
         #region Login
@@ -1120,7 +1144,10 @@ namespace Olives.Controllers
             #endregion
 
             // Initialize activation code.
-            var activationToken = await _repositoryActivationCode.InitializeAccountCodeAsync(account.Id, TypeAccountCode.Activation, DateTime.UtcNow);
+            var activationToken =
+                await
+                    _repositoryActivationCode.InitializeAccountCodeAsync(account.Id, TypeAccountCode.Activation,
+                        DateTime.UtcNow);
 
             // Url construction.
             var url = Url.Link("Default",

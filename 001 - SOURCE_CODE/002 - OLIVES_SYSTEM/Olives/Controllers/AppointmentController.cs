@@ -266,7 +266,8 @@ namespace Olives.Controllers
         [Route("api/appointment")]
         [HttpPut]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> EditAppointment([FromUri] int id, [FromBody] EditAppointmentViewModel info)
+        public async Task<HttpResponseMessage> EditAppointment([FromUri] int id,
+            [FromBody] EditAppointmentViewModel info)
         {
             #region Model validation
 

@@ -100,7 +100,7 @@ namespace Olives.Controllers
             relation.TargetLastName = person.LastName;
             relation.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
             relation.Status = (byte) StatusRelation.Pending;
-            
+
             await _repositoryAccount.InitializeRelationAsync(relation);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
@@ -279,7 +279,7 @@ namespace Olives.Controllers
                 result.Total
             });
         }
-        
+
         #endregion
 
         #region Properties

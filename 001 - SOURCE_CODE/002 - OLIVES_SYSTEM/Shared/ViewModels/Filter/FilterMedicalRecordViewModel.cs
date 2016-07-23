@@ -10,8 +10,14 @@ namespace Shared.ViewModels.Filter
 {
     public class FilterMedicalRecordViewModel : IPagination
     {
+        /// <summary>
+        /// Owner of medical record.
+        /// </summary>
         public int? Owner { get; set; }
 
+        /// <summary>
+        /// Who created the medical record.
+        /// </summary>
         public int? Creator { get; set; }
 
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
@@ -25,6 +31,11 @@ namespace Shared.ViewModels.Filter
         [NumericPropertyCompare("MinTime", Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public float? MaxTime { get; set; }
+
+        /// <summary>
+        /// Category of medical record.
+        /// </summary>
+        public int? Category { get; set; }
 
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]

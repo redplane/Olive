@@ -20,8 +20,8 @@ namespace Olives.Models
         /// <summary>
         ///     Folder where private files should be stored.
         /// </summary>
-        [JsonProperty("privateStorage")]
-        public Shared.Models.ServerPath PrivateStorage { get; set; }
+        [JsonProperty("medicalImageStorage")]
+        public ServerPath MedicalImageStorage { get; set; }
         
         [JsonProperty("prescriptionImageStorage")]
         public ServerPath PrescriptionStorage { get; set; }

@@ -114,8 +114,9 @@ namespace Shared.Interfaces
         /// Initialize a prescription with input paramters.
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="owner"></param>
         /// <returns></returns>
-        Task<int> DeletePrescriptionImageAsync(int id);
+        Task<int> DeletePrescriptionImageAsync(int id, int? owner);
 
         /// <summary>
         /// Filter prescription image.
@@ -146,8 +147,9 @@ namespace Shared.Interfaces
         ///     Delete experiment record or its infos only.
         /// </summary>
         /// <param name="experimentId"></param>
+        /// <param name="owner"></param>
         /// <returns></returns>
-        Task<int> DeleteExperimentNotesAsync(int experimentId);
+        Task<int> DeleteExperimentNotesAsync(int experimentId, int? owner);
 
         #endregion
 

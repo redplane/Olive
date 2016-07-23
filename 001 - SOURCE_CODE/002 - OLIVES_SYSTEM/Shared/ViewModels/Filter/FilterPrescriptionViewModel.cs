@@ -16,9 +16,19 @@ namespace Shared.ViewModels.Filter
         public int? MedicalRecord { get; set; }
 
         /// <summary>
-        /// Id of prescription owner.
+        /// Who sent the filter request.
         /// </summary>
-        public int? Owner { get; set; }
+        public int Requester { get; set; }
+
+        /// <summary>
+        /// Who is included in medical prescription.
+        /// </summary>
+        public int? Partner { get; set; }
+
+        /// <summary>
+        /// Filter mode.
+        /// </summary>
+        public RecordFilterMode? Mode { get; set; }
 
         [NumericPropertyCompare("MaxFrom", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]

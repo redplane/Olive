@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Management.Instrumentation;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using log4net;
@@ -75,7 +74,7 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        /// This function is for displaying a view to find password.
+        ///     This function is for displaying a view to find password.
         /// </summary>
         /// <returns></returns>
         [HttpGet]

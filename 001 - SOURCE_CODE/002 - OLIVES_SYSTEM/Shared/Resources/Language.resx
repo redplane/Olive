@@ -458,4 +458,11 @@
   <data name="WarnRequesterNotCreator" xml:space="preserve">
     <value>W032</value>
   </data>
+  <data name="WarnMedicalCategoryNotFound" xml:space="preserve">
+    <value>W033</value>
+  </data>
+  <data name="WarnMedicalRecordDoctorToDoctor" xml:space="preserve">
+    <value>W034</value>
+    <comment>Warn front-end the medical record cannot created by doctor for him/herself</comment>
+  </data>
 </root>

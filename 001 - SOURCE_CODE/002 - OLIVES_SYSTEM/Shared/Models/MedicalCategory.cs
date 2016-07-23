@@ -14,9 +14,18 @@ namespace Shared.Models
     
     public partial class MedicalCategory
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public MedicalCategory()
+        {
+            this.MedicalRecords = new HashSet<MedicalRecord>();
+        }
+    
         public int Id { get; set; }
         public string Name { get; set; }
         public double Created { get; set; }
         public Nullable<double> LastModified { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MedicalRecord> MedicalRecords { get; set; }
     }
 }

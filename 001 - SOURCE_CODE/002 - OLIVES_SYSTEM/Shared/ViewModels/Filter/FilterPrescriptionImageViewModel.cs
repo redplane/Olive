@@ -23,7 +23,7 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         /// Mode of prescription image filter.
         /// </summary>
-        public PrescriptionImageFilterMode? Mode { get; set; }
+        public RecordFilterMode? Mode { get; set; }
         
         /// <summary>
         /// Index of result page.

@@ -150,6 +150,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\MedicalImage\1.png" />
+    <Content Include="App_Data\MedicalImage\2.png" />
+    <Content Include="App_Data\MedicalImage\3.png" />
+    <Content Include="App_Data\MedicalImage\4.png" />
+    <Content Include="App_Data\PrescriptionImage\1.png" />
+    <Content Include="App_Data\PrescriptionImage\2.png" />
+    <Content Include="App_Data\PrescriptionImage\3.png" />
+    <Content Include="App_Data\PrescriptionImage\4.png" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -193,16 +201,26 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Attributes\ImageMinSizeValidateAttribute.cs" />
+    <Compile Include="Attributes\ImageMaxSizeValidateAttribute.cs" />
+    <Compile Include="Attributes\PlaceValidateAttribute.cs" />
+    <Compile Include="Attributes\MedicalCategoryValidateAttribute.cs" />
     <Compile Include="Attributes\MedicineListLengthValidateAttribute.cs" />
     <Compile Include="Attributes\MedicineListKeyValidateAttribute.cs" />
     <Compile Include="Attributes\OlivesAuthorizeAtrribute.cs" />
     <Compile Include="Constants\EmailType.cs" />
+    <Compile Include="Controllers\MedicalNoteController.cs" />
+    <Compile Include="Controllers\MedicalExperimentController.cs" />
+    <Compile Include="Controllers\PrescriptionImageController.cs" />
+    <Compile Include="Controllers\PrescriptionController.cs" />
+    <Compile Include="Controllers\MedicalImageController.cs" />
+    <Compile Include="Controllers\MedicalRecordController.cs" />
     <Compile Include="Controllers\PlaceController.cs" />
     <Compile Include="Controllers\RateController.cs" />
     <Compile Include="Controllers\RelationshipController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ServiceController.cs" />
-    <Compile Include="Controllers\MedicalController.cs" />
+    <Compile Include="Controllers\MedicalCategoryController.cs" />
     <Compile Include="Controllers\AddictionController.cs" />
     <Compile Include="Controllers\BloodPressureController.cs" />
     <Compile Include="Controllers\SugarbloodController.cs" />
@@ -243,7 +261,9 @@
     <Compile Include="ViewModels\Initialize\InitializeAvatarViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalExperiment.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalNoteViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializeMedicalRecordViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePrescriptedMedicineViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializePrescriptionImage.cs" />
     <Compile Include="ViewModels\Initialize\InitializePrescriptionViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeRatingViewModel.cs" />
     <Compile Include="ViewModels\Modify\EditMedicalExperiment.cs" />
@@ -276,9 +296,7 @@
       <Name>Shared</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\PrivateStorage\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

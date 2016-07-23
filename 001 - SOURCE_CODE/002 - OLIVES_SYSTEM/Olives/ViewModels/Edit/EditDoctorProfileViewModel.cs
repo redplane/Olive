@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Olives.Attributes;
 using Shared.Attributes;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Resources;
 
 namespace Olives.ViewModels.Edit
@@ -35,6 +37,31 @@ namespace Olives.ViewModels.Edit
         /// <summary>
         /// Id of place where doctor works.
         /// </summary>
+        [PlaceValidate(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
         public int? Place { get; set; }
+
+        /// <summary>
+        /// First name of doctor.
+        /// </summary>
+        [StringLength(FieldLength.FirstNameMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        public string FirstName { get; set; }
+
+        /// <summary>
+        /// Last name of doctor.
+        /// </summary>
+        [StringLength(FieldLength.LastNameMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        public string LastName { get; set; }
+
+        /// <summary>
+        /// Gender of doctor.
+        /// </summary>
+        [InEnumerationsArray(new object[] {Shared.Enumerations.Gender.Male, Shared.Enumerations.Gender.Female}, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
+        public Gender? Gender { get; set; }
+
+        /// <summary>
+        /// Birthday of doctor.
+        /// </summary>
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+        public double? Birthday { get; set; }
     }
 }

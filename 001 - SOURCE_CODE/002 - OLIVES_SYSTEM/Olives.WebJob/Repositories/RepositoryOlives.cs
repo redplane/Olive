@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Olives.WebJob.Interfaces;
 using Shared.Enumerations;
@@ -16,14 +14,14 @@ namespace Olives.WebJob.Repositories
     public class RepositoryOlives : IRepositoryOlives
     {
         /// <summary>
-        /// This function is for finding account which has invalid activation code and delete all of 'em.
+        ///     This function is for finding account which has invalid activation code and delete all of 'em.
         /// </summary>
         /// <returns>The number of deleted record.</returns>
         public async Task<int> RemoveAllExpiredActivationCode()
         {
             // Context initialization.
             var context = new OlivesHealthEntities();
-            
+
             // Begin the transaction, remove all invalid activation code.
             using (var transaction = context.Database.BeginTransaction())
             {
@@ -32,12 +30,12 @@ namespace Olives.WebJob.Repositories
                     // By default, remove all pending account at the check point.
                     IQueryable<Person> expiredAccounts = context.People;
                     expiredAccounts = expiredAccounts.Where(x => x.Status == (byte) StatusAccount.Pending);
-                    
+
                     // By default, find all the expired tokens.
                     IQueryable<AccountCode> expiredTokens = context.AccountCodes;
                     expiredTokens = expiredTokens.Where(x => x.Type == (byte) TypeAccountCode.Activation);
                     expiredTokens = expiredTokens.Where(x => x.Expired <= DateTime.UtcNow);
-                    
+
                     // Join 2 tables : Person and AccountToken to find the invalid account.
                     var expireCollection = from p in expiredAccounts
                         join t in expiredTokens on p.Id equals t.Owner
@@ -50,7 +48,7 @@ namespace Olives.WebJob.Repositories
                     // Remove invalid accounts first.
                     context.People.RemoveRange(expireCollection.Select(x => x.People));
                     context.AccountCodes.RemoveRange(expireCollection.Select(x => x.Tokens));
-                    
+
                     // Save changed.
                     var records = await context.SaveChangesAsync();
 
@@ -69,10 +67,10 @@ namespace Olives.WebJob.Repositories
         }
 
         /// <summary>
-        /// This function is for finding appointment whose date is expired.
+        ///     This function is for finding appointment whose date is expired.
         /// </summary>
         /// <returns></returns>
-        public async Task<int> MakeAppointmentsExpired()
+        public async Task<int> HandleExpiredAppointmentsAsync()
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -82,7 +80,9 @@ namespace Olives.WebJob.Repositories
 
             // Find and update active appointment.
             IQueryable<Appointment> appointments = context.Appointments;
-            appointments = appointments.Where(x => (x.Status == (byte) StatusAppointment.Active || x.Status == (byte)StatusAppointment.Pending));
+            appointments =
+                appointments.Where(
+                    x => x.Status == (byte) StatusAppointment.Active || x.Status == (byte) StatusAppointment.Pending);
             appointments = appointments.Where(x => x.To <= unixTime);
 
             await appointments.ForEachAsync(x =>
@@ -104,10 +104,10 @@ namespace Olives.WebJob.Repositories
         }
 
         /// <summary>
-        /// This function is for searching and cleaning enlisted junk files.
+        ///     This function is for searching and cleaning enlisted junk files.
         /// </summary>
         /// <returns></returns>
-        public async Task<int> CleanJunkFiles(List<Exception> exceptions)
+        public async Task<int> CleanJunkFilesAsync(List<Exception> exceptions)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();

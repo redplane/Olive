@@ -835,6 +835,24 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to W033.
+        /// </summary>
+        public static string WarnMedicalCategoryNotFound {
+            get {
+                return ResourceManager.GetString("WarnMedicalCategoryNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W034.
+        /// </summary>
+        public static string WarnMedicalRecordDoctorToDoctor {
+            get {
+                return ResourceManager.GetString("WarnMedicalRecordDoctorToDoctor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to W003.
         /// </summary>
         public static string WarnMedicalRecordNotFound {

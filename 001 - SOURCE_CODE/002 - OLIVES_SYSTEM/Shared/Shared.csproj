@@ -88,7 +88,7 @@
     <Compile Include="Enumerations\Filter\PlaceFilterSort.cs" />
     <Compile Include="Enumerations\Filter\ExperimentFilterSort.cs" />
     <Compile Include="Enumerations\Filter\NoteResultSort.cs" />
-    <Compile Include="Enumerations\Filter\PrescriptionImageFilterMode.cs" />
+    <Compile Include="Enumerations\Filter\RecordFilterMode.cs" />
     <Compile Include="Enumerations\Filter\RatingResultSort.cs" />
     <Compile Include="Enumerations\RoleRelationship.cs" />
     <Compile Include="Enumerations\TypeAccountCode.cs" />
@@ -260,7 +260,6 @@
     <Compile Include="ViewModels\Initialize\InitializeDoctorViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeHeartbeatViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalImageViewModel.cs" />
-    <Compile Include="ViewModels\Initialize\InitializeMedicalRecordViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePatientViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeSugarbloodViewModel.cs" />
     <Compile Include="ViewModels\RelatedDoctorViewModel.cs" />

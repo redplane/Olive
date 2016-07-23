@@ -30,8 +30,9 @@ namespace Shared.Models
             this.MedicalNotes1 = new HashSet<MedicalNote>();
             this.MedicalRecords = new HashSet<MedicalRecord>();
             this.MedicalRecords1 = new HashSet<MedicalRecord>();
-            this.PrescriptionImages = new HashSet<PrescriptionImage>();
             this.Prescriptions = new HashSet<Prescription>();
+            this.PrescriptionImages = new HashSet<PrescriptionImage>();
+            this.Prescriptions1 = new HashSet<Prescription>();
             this.Relations = new HashSet<Relation>();
             this.Relations1 = new HashSet<Relation>();
             this.SugarBloods = new HashSet<SugarBlood>();
@@ -82,9 +83,11 @@ namespace Shared.Models
         public virtual ICollection<MedicalRecord> MedicalRecords1 { get; set; }
         public virtual Patient Patient { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Prescription> Prescriptions { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PrescriptionImage> PrescriptionImages { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Prescription> Prescriptions { get; set; }
+        public virtual ICollection<Prescription> Prescriptions1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Relation> Relations { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

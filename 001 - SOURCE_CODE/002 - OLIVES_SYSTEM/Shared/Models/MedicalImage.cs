@@ -17,6 +17,7 @@ namespace Shared.Models
         public int Id { get; set; }
         public int MedicalRecordId { get; set; }
         public int Owner { get; set; }
+        public int Creator { get; set; }
         public string Image { get; set; }
         public string FullPath { get; set; }
         public double Created { get; set; }

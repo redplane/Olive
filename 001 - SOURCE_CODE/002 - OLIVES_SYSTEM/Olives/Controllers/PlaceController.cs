@@ -8,7 +8,6 @@ using log4net;
 using Olives.Attributes;
 using Shared.Enumerations;
 using Shared.Interfaces;
-using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels.Filter;
 
@@ -48,9 +47,9 @@ namespace Olives.Controllers
         #endregion
 
         #region Methods
-        
+
         /// <summary>
-        /// Find a place by using id asynchronously.
+        ///     Find a place by using id asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -96,11 +95,10 @@ namespace Olives.Controllers
                     Error = $"{Language.WarnInternalServerError}"
                 });
             }
-
         }
-        
+
         /// <summary>
-        /// Filter place by using specific conditions.
+        ///     Filter place by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>

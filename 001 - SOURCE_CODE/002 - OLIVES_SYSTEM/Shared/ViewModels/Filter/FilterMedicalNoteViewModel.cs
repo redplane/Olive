@@ -17,15 +17,23 @@ namespace Shared.ViewModels.Filter
         public int? MedicalRecord { get; set; }
         
         /// <summary>
-        /// Id of owner.
+        /// Id of request sender.
         /// </summary>
-        public int? Owner { get; set; }
+        public int Requester { get; set; }
 
         /// <summary>
-        /// Id of medical note creator.
+        /// Who is included in medical note.
         /// </summary>
-        public int Creator { get; set; }
+        public int? Partner { get; set; }
 
+        /// <summary>
+        /// Mode of record filter.
+        /// </summary>
+        public RecordFilterMode? Mode { get; set; }
+
+        /// <summary>
+        /// Note of medical record.
+        /// </summary>
         [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Note { get; set; }
 

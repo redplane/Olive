@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Helpers;
+using Shared.Interfaces;
 using Shared.Models;
 using Shared.Repositories;
 using Shared.ViewModels;
@@ -19,79 +20,84 @@ namespace DataInitializer
     internal class Program
     {
         private static readonly RepositoryAccount _repositoryAccount = new RepositoryAccount();
-        private static readonly RepositoryMedical _repositoryMedical = new RepositoryMedical();
+        private static readonly IRepositoryMedical _RepositoryMedical = new RepositoryMedical();
+
+        private static int MaxRecord = 50;
 
         private static void Main(string[] args)
         {
-            var a = new Dictionary<string, string>();
-            if (a is IDictionary)
-                Console.WriteLine("A is dictionary");
+            InitializeCategory(MaxRecord);
+            InitializePlaces(MaxRecord);
+            InitializeSpecialties(MaxRecord);
+            InitializeDoctor(MaxRecord);
+            InitializePatient(MaxRecord);
+            InitializeAdmin(MaxRecord);
+            
+            // Find the patient 26.
+            var patient = _repositoryAccount.FindPerson(null, "patient26@gmail.com", null, (byte)Role.Patient);
 
-            //InitializeCategory(50);
-            //InitializePlaces(50);
-            //InitializeSpecialties(50);
-            //InitializeDoctor(50);
-            //InitializePatient(50);
-            //InitializeAdmin(50);
-            //InitializeHeartbeatNote("patient26@gmail.com", 90);
-            //InitializeSugarbloodNote("patient26@gmail.com", 90);
-            //InitializeBloodPressureNote("patient26@gmail.com", 90);
-            //InitializeAllergyNote("patient26@gmail.com", 90);
+            // Find the doctor 26.
+            var doctor = _repositoryAccount.FindPerson(null, "doctor26@gmail.com", null, (byte)Role.Doctor);
 
-            var sourcePatient = _repositoryAccount.FindPerson(null, "patient26@gmail.com", null, (byte)Role.Patient);
-            var sourceDoctor = _repositoryAccount.FindPerson(null, "doctor26@gmail.com", null, (byte)Role.Doctor);
-            //InitializeMedicalRecord(sourcePatient, sourceDoctor, 2);
+            // Initialize medical records collection.
+            InitializeMedicalRecord(patient, doctor, 2);
+
+            // Initialize personal notes.
+            InitializeHeartbeatNote(patient.Patient, 90);
+            InitializeSugarbloodNote(patient.Patient, 90);
+            InitializeBloodPressureNote(patient.Patient, 90);
+            InitializeAllergyNote(patient.Patient, 90);
 
             #region Relationship create
 
-            //for (var i = 26; i < 50; i++)
-            //{
-            //    var patient = _repositoryAccount.FindPerson(null, $"patient{i}@gmail.com", null, (byte)Role.Patient);
-            //    var doctor = _repositoryAccount.FindPerson(null, $"doctor{i}@gmail.com", null, (byte)Role.Doctor);
+            for (var i = 26; i < 50; i++)
+            {
+                patient = _repositoryAccount.FindPerson(null, $"patient{i}@gmail.com", null, (byte)Role.Patient);
+                doctor = _repositoryAccount.FindPerson(null, $"doctor{i}@gmail.com", null, (byte)Role.Doctor);
 
-            //    if (patient != null)
-            //        Console.WriteLine($"Found {patient.Email} for creating relationship");
-            //    else
-            //    {
-            //        Console.WriteLine($"Cannot find {patient.Email} for creating relationship");
-            //        Console.WriteLine("---");
-            //        continue;
-            //    }
+                if (patient != null)
+                    Console.WriteLine($"Found {patient.Email} for creating relationship");
+                else
+                {
+                    Console.WriteLine($"Cannot find {patient.Email} for creating relationship");
+                    Console.WriteLine("---");
+                    continue;
+                }
 
-            //    if (doctor != null)
-            //        Console.WriteLine($"Found {doctor.Email} for creating relationship");
-            //    else
-            //    {
-            //        Console.WriteLine($"Cannot find {doctor.Email} for creating relationship");
-            //        Console.WriteLine("---");
-            //        continue;
-            //    }
+                if (doctor != null)
+                    Console.WriteLine($"Found {doctor.Email} for creating relationship");
+                else
+                {
+                    Console.WriteLine($"Cannot find {doctor.Email} for creating relationship");
+                    Console.WriteLine("---");
+                    continue;
+                }
 
-            //    var relationship = new Relation();
-            //    relationship.Source = patient.Id;
-            //    relationship.SourceFirstName = patient.FirstName;
-            //    relationship.SourceLastName = patient.LastName;
+                var relationship = new Relation();
+                relationship.Source = patient.Id;
+                relationship.SourceFirstName = patient.FirstName;
+                relationship.SourceLastName = patient.LastName;
 
-            //    relationship.Target = doctor.Id;
-            //    relationship.TargetFirstName = doctor.FirstName;
-            //    relationship.TargetLastName = doctor.LastName;
+                relationship.Target = doctor.Id;
+                relationship.TargetFirstName = doctor.FirstName;
+                relationship.TargetLastName = doctor.LastName;
 
-            //    relationship.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+                relationship.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
 
-            //    if (i > 40)
-            //        relationship.Status = (byte)StatusRelation.Pending;
-            //    else
-            //        relationship.Status = (byte)StatusRelation.Active;
+                if (i > 40)
+                    relationship.Status = (byte)StatusRelation.Pending;
+                else
+                    relationship.Status = (byte)StatusRelation.Active;
 
-            //    relationship = _repositoryAccount.InitializeRelationAsync(relationship).Result;
-            //    Console.WriteLine($"Created relationship. Id : {relationship.Id}");
-            //}
+                relationship = _repositoryAccount.InitializeRelationAsync(relationship).Result;
+                Console.WriteLine($"Created relationship. Id : {relationship.Id}");
+            }
 
             #endregion
 
             #region Appointment create
 
-            InitializeAppointment(sourcePatient, sourceDoctor, 50);
+            InitializeAppointment(patient, doctor, 50);
 
             #endregion
         }
@@ -102,45 +108,24 @@ namespace DataInitializer
         /// <param name="max"></param>
         private static void InitializePlaces(int max)
         {
-            try
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            for (var i = 0; i < max; i++)
             {
-                // Database context initialization.
-                var context = new OlivesHealthEntities();
+                var place = new Place();
 
-                for (var i = 0; i < max; i++)
+                for (var j = 0; j < 10; j++)
                 {
-                    var place = new Place();
-
-                    for (var j = 0; j < 10; j++)
-                    {
-                        place.City = $"City[{j}]";
-                        place.Country = $"Country[{j}]";
-                    }
-
-                    context.Places.Add(place);
+                    place.City = $"City[{j}]";
+                    place.Country = $"Country[{j}]";
                 }
 
-                // Save database changes.
-                context.SaveChanges();
+                context.Places.Add(place);
             }
-            catch (DbEntityValidationException e)
-            {
-                foreach (var eve in e.EntityValidationErrors)
-                {
-                    Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
-                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
-                    foreach (var ve in eve.ValidationErrors)
-                    {
-                        Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
-                            ve.PropertyName, ve.ErrorMessage);
-                    }
-                }
-                throw;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            // Save database changes.
+            context.SaveChanges();
         }
 
         /// <summary>
@@ -313,37 +298,57 @@ namespace DataInitializer
             context.SaveChanges();
         }
 
-        private static void InitializeMedicalRecord(Person patient, Person doctor,int records)
+        /// <summary>
+        /// Initialize medical record.
+        /// </summary>
+        /// <param name="patient"></param>
+        /// <param name="doctor"></param>
+        /// <param name="records"></param>
+        private static async void InitializeMedicalRecord(Person patient, Person doctor,int records)
         {
-            var epochCurrentTime = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+            // Calculate the current date time to current UTC time.
+            var unix = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            
+            // Initialize random number generator.
+            var random = new Random();
+            
             for (var i = 0; i < records; i++)
             {
-                var fromTime = DateTime.Now.Subtract(TimeSpan.FromDays(i));
-                var epochFromTime = EpochTimeHelper.Instance.DateTimeToEpochTime(fromTime);
+                // From time calculate.
+                var fromTime = DateTime.UtcNow.Subtract(TimeSpan.FromDays(i));
+                var unixFromTime = EpochTimeHelper.Instance.DateTimeToEpochTime(fromTime);
+
+                #region Medical record
 
                 var medicalRecord = new MedicalRecord();
+                medicalRecord.Category = random.Next(1, MaxRecord);
                 medicalRecord.Creator = doctor.Id;
                 medicalRecord.Owner = patient.Id;
 
                 var info = new Dictionary<string, string>();
                 for (var key = 0; key < 5; key++)
-                    info[$"Key[{key}]"] = $"Value[{key}]";
+                    info[$"Key[{i}][{key}]"] = $"Value[{i}][{key}]";
 
                 medicalRecord.Info = JsonConvert.SerializeObject(info);
-                medicalRecord.Time = epochCurrentTime;
-                medicalRecord.Created = epochCurrentTime;
-                medicalRecord.LastModified = epochCurrentTime;
-                medicalRecord = _repositoryMedical.InitializeMedicalRecordAsync(medicalRecord).Result;
+                medicalRecord.Time = unix;
+                medicalRecord.Created = unix;
+                medicalRecord.LastModified = null;
 
-                Console.WriteLine($"Medical record [{i}] has been created");
+                // Initialize a new medical record to database.
+                medicalRecord = await _RepositoryMedical.InitializeMedicalRecordAsync(medicalRecord);
 
+                #endregion
+
+                #region Medical prescription
+
+                // Each medical record contains 5 prescriptions.
                 for (var p = 0; p < 5; p++)
                 {
                     var prescription = new Prescription();
                     prescription.Owner = patient.Id;
                     prescription.MedicalRecordId = medicalRecord.Id;
-                    prescription.From = epochFromTime;
-                    prescription.To = epochCurrentTime;
+                    prescription.From = unixFromTime;
+                    prescription.To = unix;
 
                     var prescriptedMedicine = new Dictionary<string, MedicineInfoViewModel>();
                     for (var m = 0; m < 5; m++)
@@ -358,14 +363,23 @@ namespace DataInitializer
 
                     prescription.Medicine = JsonConvert.SerializeObject(prescriptedMedicine);
                     prescription.Note = $"Note[{i}]";
-                    prescription.Created = epochCurrentTime;
-                    prescription = _repositoryMedical.InitializePrescriptionAsync(prescription).Result;
-
-                    Console.WriteLine($"Prescription[{p}] has been created");
+                    prescription.Created = unixFromTime;
+                    
+                    // Initialize a new medical prescription to database.
+                    prescription = await _RepositoryMedical.InitializePrescriptionAsync(prescription);
                 }
+
+                #endregion
+
             }
         }
 
+        /// <summary>
+        /// Initialize a list of appointments.
+        /// </summary>
+        /// <param name="patient"></param>
+        /// <param name="doctor"></param>
+        /// <param name="max"></param>
         private static void InitializeAppointment(Person patient, Person doctor, int max = 60)
         {
             var context = new OlivesHealthEntities();
@@ -374,7 +388,7 @@ namespace DataInitializer
             var secondQuater = quarter * 2;
             var thirdQuater = quarter * 3;
 
-            var toTime = EpochTimeHelper.Instance.DateTimeToEpochTime(new DateTime(2016, 12, 31));
+            var toTime = EpochTimeHelper.Instance.DateTimeToEpochTime(new DateTime(2016, 12, 31).ToUniversalTime());
 
             var month = 1;
             var year = 2016;
@@ -435,48 +449,32 @@ namespace DataInitializer
             context.SaveChanges();
 
         }
-
-        private static void InitializeMedicalImage(string account, int records)
+        
+        /// <summary>
+        /// Initialize a list of categories.
+        /// </summary>
+        /// <param name="records"></param>
+        private static async void InitializeCategory(int records)
         {
+            // Database context initialization.
             var context = new OlivesHealthEntities();
-            var repositoryAccount = new RepositoryAccount();
-            var person = repositoryAccount.FindPerson(null, account, null, (byte)Role.Patient);
-            if (person == null)
-                throw new Exception($"Cannot find {account}");
 
-            Console.WriteLine("Found {0}", person.Email);
-            var random = new Random();
+            // Calcuate the current unix time.
+            var unix = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
 
-            var currentTime = DateTime.Now;
+            // Initialize a list of categories.
             for (var i = 0; i < records; i++)
             {
-                var subtractedTime = currentTime.Subtract(TimeSpan.FromDays(i));
-                var medicalImage = new MedicalImage();
-                medicalImage.Image = $"{random.Next(1, 4)}";
-                medicalImage.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(subtractedTime);
-                medicalImage.Owner = person.Id;
-
-                context.MedicalImages.Add(medicalImage);
+                var category = new MedicalCategory();
+                category.Created = unix;
+                category.Name = $"MedicalCategory[{i}]";
+                context.MedicalCategories.Add(category);
             }
 
-            context.SaveChanges();
+            // Save change asynchronously.
+            await context.SaveChangesAsync();
         }
-
-        private static void InitializeCategory(int records)
-        {
-            var context = new OlivesHealthEntities();
-            var currentTime = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
-            for (var i = 0; i < records; i++)
-            {
-                var medicalCategory = new MedicalCategory();
-                medicalCategory.Created = currentTime;
-                medicalCategory.Name = $"MedicalCategory[{i}]";
-
-                context.MedicalCategories.Add(medicalCategory);
-            }
-
-            context.SaveChanges();
-        }
+        
         #region Personal records
 
         /// <summary>
@@ -484,34 +482,34 @@ namespace DataInitializer
         /// </summary>
         /// <param name="account"></param>
         /// <param name="records"></param>
-        private static void InitializeHeartbeatNote(string account, int records)
+        private static async void InitializeHeartbeatNote(Patient patient, int records)
         {
+            // Database context initialization.
             var context = new OlivesHealthEntities();
-            var repositoryAccount = new RepositoryAccount();
-            var person = repositoryAccount.FindPerson(null, account, null, (byte)Role.Patient);
-            if (person == null)
-                throw new Exception($"Cannot find {account}");
 
-            Console.WriteLine("Found {0}", person.Email);
+            // The current time when loop starts.
+            var unixTime = DateTime.UtcNow;
+            var unixCurrentTime = EpochTimeHelper.Instance.DateTimeToEpochTime(unixTime);
+
             var random = new Random();
             var iMinHeartRate = (int)Values.MinHeartRate;
             var iMaxHeartRate = (int)Values.MaxHeartRate;
-
-            var currentTime = DateTime.Now;
+            
             for (var i = 0; i < records; i++)
             {
-                var subtractedTime = currentTime.Subtract(TimeSpan.FromDays(i));
+                // Note time.
+                var createdTime = unixTime.Subtract(TimeSpan.FromDays(i));
+
                 var heartbeatNote = new Heartbeat();
-                heartbeatNote.Owner = person.Id;
-                heartbeatNote.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(currentTime);
-                heartbeatNote.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(currentTime);
-                heartbeatNote.Time = EpochTimeHelper.Instance.DateTimeToEpochTime(subtractedTime);
+                heartbeatNote.Owner = patient.Id;
+                heartbeatNote.Created = unixCurrentTime;
+                heartbeatNote.Time = EpochTimeHelper.Instance.DateTimeToEpochTime(createdTime);
                 heartbeatNote.Rate = random.Next(iMinHeartRate, iMaxHeartRate);
 
                 context.Heartbeats.Add(heartbeatNote);
             }
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         /// <summary>
@@ -519,34 +517,35 @@ namespace DataInitializer
         /// </summary>
         /// <param name="account"></param>
         /// <param name="records"></param>
-        private static void InitializeSugarbloodNote(string account, int records)
+        private static async void InitializeSugarbloodNote(Patient patient, int records)
         {
+            // Database context initialization.
             var context = new OlivesHealthEntities();
-            var repositoryAccount = new RepositoryAccount();
-            var person = repositoryAccount.FindPerson(null, account, null, (byte)Role.Patient);
-            if (person == null)
-                throw new Exception($"Cannot find {account}");
+           
+            // Calculate the current unix time.
+            var unixTime = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            var time = DateTime.UtcNow;
 
-            Console.WriteLine("Found {0}", person.Email);
+            // Random number generator.
             var random = new Random();
             var iMinSugarMol = (int)Values.MinSugarBloodMmol;
             var iMaxSugarMol = (int)Values.MaxSugarBloodMmol;
-
-            var currentTime = DateTime.Now;
+            
             for (var i = 0; i < records; i++)
             {
-                var subtractedTime = currentTime.Subtract(TimeSpan.FromDays(i));
+                var createdTime = time.Subtract(TimeSpan.FromDays(i));
+
                 var sugarblood = new SugarBlood();
-                sugarblood.Owner = person.Id;
-                sugarblood.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(subtractedTime);
-                sugarblood.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(subtractedTime);
-                sugarblood.Time = EpochTimeHelper.Instance.DateTimeToEpochTime(subtractedTime);
+                sugarblood.Owner = patient.Id;
+                sugarblood.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(createdTime);
+                sugarblood.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(createdTime);
+                sugarblood.Time = EpochTimeHelper.Instance.DateTimeToEpochTime(createdTime);
                 sugarblood.Value = random.Next(iMinSugarMol, iMaxSugarMol);
 
                 context.SugarBloods.Add(sugarblood);
             }
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         /// <summary>
@@ -554,33 +553,32 @@ namespace DataInitializer
         /// </summary>
         /// <param name="account"></param>
         /// <param name="records"></param>
-        private static void InitializeBloodPressureNote(string account, int records)
+        private static async void InitializeBloodPressureNote(Patient patient, int records)
         {
+            // Database context initialization.
             var context = new OlivesHealthEntities();
-            var repositoryAccount = new RepositoryAccount();
-            var person = repositoryAccount.FindPerson(null, account, null, (byte)Role.Patient);
-            if (person == null)
-                throw new Exception($"Cannot find {account}");
-
-            Console.WriteLine("Found {0}", person.Email);
+            
+            // Random number generator initialization.
             var random = new Random();
 
-            var currentTime = DateTime.Now;
+            // Time
+            var time = DateTime.UtcNow;
+
             for (var i = 0; i < records; i++)
             {
-                var subtractedTime = currentTime.Subtract(TimeSpan.FromDays(i));
+                var unixCreated = EpochTimeHelper.Instance.DateTimeToEpochTime(time.Subtract(TimeSpan.FromDays(i)));
+
                 var bloodPressure = new BloodPressure();
-                bloodPressure.Owner = person.Id;
-                bloodPressure.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(subtractedTime);
-                bloodPressure.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(subtractedTime);
-                bloodPressure.Time = EpochTimeHelper.Instance.DateTimeToEpochTime(subtractedTime);
+                bloodPressure.Owner = patient.Id;
+                bloodPressure.Created = unixCreated;
+                bloodPressure.Time = unixCreated;
                 bloodPressure.Diastolic = random.Next(Values.MinDiastolic, Values.MaxDiastolic);
                 bloodPressure.Systolic = random.Next(Values.MinSystolic, Values.MaxSystolic);
 
                 context.BloodPressures.Add(bloodPressure);
             }
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         /// <summary>
@@ -588,25 +586,25 @@ namespace DataInitializer
         /// </summary>
         /// <param name="account"></param>
         /// <param name="records"></param>
-        private static void InitializeAllergyNote(string account, int records)
+        private static async void InitializeAllergyNote(Patient patient, int records)
         {
+            // Database context initialization.
             var context = new OlivesHealthEntities();
-            var repositoryAccount = new RepositoryAccount();
-            var person = repositoryAccount.FindPerson(null, account, null, (byte)Role.Patient);
-            if (person == null)
-                throw new Exception($"Cannot find {account}");
-
-            Console.WriteLine("Found {0}", person.Email);
+           
+            // Random number generator.
             var random = new Random();
 
-            var currentTime = DateTime.Now;
+            // Current UTC time of system.
+            var time = DateTime.UtcNow;
+
             for (var i = 0; i < records; i++)
             {
-                var subtractedTime = currentTime.Subtract(TimeSpan.FromDays(i));
+                // Time when record is created.
+                var unixCreated = EpochTimeHelper.Instance.DateTimeToEpochTime(time.Subtract(TimeSpan.FromDays(i)));
+
                 var allergy = new Allergy();
-                allergy.Owner = person.Id;
-                allergy.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(subtractedTime);
-                allergy.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(subtractedTime);
+                allergy.Owner = patient.Id;
+                allergy.Created = unixCreated;
                 allergy.Cause = $"Cause{i}";
                 allergy.Name = $"Name{i}";
                 allergy.Note = $"Note{i}";
@@ -614,7 +612,7 @@ namespace DataInitializer
                 context.Allergies.Add(allergy);
             }
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         #endregion

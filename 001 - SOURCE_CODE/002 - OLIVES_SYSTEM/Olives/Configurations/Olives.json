@@ -30,8 +30,8 @@
   "avatarStorage": {
     "relative": "~/Resources/Avatar"
   },
-  "privateStorage": {
-    "relative": "~/App_Data/PrivateStorage"
+  "medicalImageStorage": {
+    "relative": "~/App_Data/MedicalImage"
   },
   "prescriptionImageStorage": {
     "relative": "~/App_Data/PrescriptionImage"

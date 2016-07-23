@@ -1,6 +1,6 @@
 ﻿namespace Shared.Enumerations.Filter
 {
-    public enum PrescriptionImageFilterMode
+    public enum RecordFilterMode
     {
         RequesterIsCreator,
         RequesterIsOwner

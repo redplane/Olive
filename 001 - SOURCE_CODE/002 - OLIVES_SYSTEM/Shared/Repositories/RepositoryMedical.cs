@@ -86,6 +86,32 @@ namespace Shared.Repositories
             // Filter by medical record id.
             medicalImages = medicalImages.Where(x => x.MedicalRecordId == filter.MedicalRecord);
 
+            // Base on the mode of image filter to decide the role of requester.
+            if (filter.Mode == RecordFilterMode.RequesterIsOwner)
+            {
+                medicalImages = medicalImages.Where(x => x.Owner == filter.Requester);
+                if (filter.Partner != null)
+                    medicalImages = medicalImages.Where(x => x.Creator == filter.Partner.Value);
+            }
+            else if (filter.Mode == RecordFilterMode.RequesterIsCreator)
+            {
+                medicalImages = medicalImages.Where(x => x.Creator == filter.Requester);
+                if (filter.Partner != null)
+                    medicalImages = medicalImages.Where(x => x.Owner == filter.Partner);
+            }
+            else
+            {
+                if (filter.Partner == null)
+                    medicalImages =
+                        medicalImages.Where(x => x.Creator == filter.Requester || x.Owner == filter.Requester);
+                else
+                    medicalImages =
+                        medicalImages.Where(
+                            x =>
+                                (x.Creator == filter.Requester && x.Owner == filter.Partner.Value) ||
+                                (x.Creator == filter.Partner.Value && x.Owner == filter.Requester));
+            }
+
             switch (filter.Direction)
             {
                 case SortDirection.Ascending:
@@ -105,7 +131,7 @@ namespace Shared.Repositories
             // Record is defined.
             if (filter.Records != null)
             {
-                medicalImages = medicalImages.Skip(filter.Page*filter.Records.Value)
+                medicalImages = medicalImages.Skip(filter.Page * filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
@@ -124,7 +150,7 @@ namespace Shared.Repositories
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-            
+
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
@@ -168,7 +194,7 @@ namespace Shared.Repositories
                     // Let the calling function handle the exception.
                     throw;
                 }
-                
+
             }
         }
 
@@ -196,6 +222,10 @@ namespace Shared.Repositories
             // Time is specified.
             if (filter.MinTime != null) medicalRecords = medicalRecords.Where(x => x.Time >= filter.MinTime);
             if (filter.MaxTime != null) medicalRecords = medicalRecords.Where(x => x.Time <= filter.MaxTime);
+
+            // Medical category is specified.
+            if (filter.Category != null)
+                medicalRecords = medicalRecords.Where(x => x.Category == filter.Category.Value);
 
             // Created is specified.
             if (filter.MinCreated != null) medicalRecords = medicalRecords.Where(x => x.Created >= filter.MinCreated);
@@ -247,10 +277,10 @@ namespace Shared.Repositories
             // Record is defined.
             if (filter.Records != null)
             {
-                medicalRecords = medicalRecords.Skip(filter.Page*filter.Records.Value)
+                medicalRecords = medicalRecords.Skip(filter.Page * filter.Records.Value)
                     .Take(filter.Records.Value);
             }
-            
+
             response.MedicalRecords = await medicalRecords.ToListAsync();
 
             return response;
@@ -314,16 +344,66 @@ namespace Shared.Repositories
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
-            // By default, delete all record.
-            IQueryable<Prescription> prescriptions = context.Prescriptions;
-            prescriptions = prescriptions.Where(x => x.Id == id);
+            // Begin a transaction.
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    #region Find all prescriptions
 
-            // Owner is specified.
-            if (owner != null)
-                prescriptions = prescriptions.Where(x => x.Owner == owner.Value);
+                    // By default, delete all record.
+                    IQueryable<Prescription> prescriptions = context.Prescriptions;
+                    prescriptions = prescriptions.Where(x => x.Id == id);
 
-            context.Prescriptions.RemoveRange(prescriptions);
-            return await context.SaveChangesAsync();
+                    // Owner is specified.
+                    if (owner != null)
+                        prescriptions = prescriptions.Where(x => x.Owner == owner.Value);
+
+                    #endregion
+
+                    #region Find all prescription images
+
+                    // Find all prescription images first.
+                    IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
+
+                    // Find the prescription images which belong to the deleted prescription.
+                    prescriptionImages = prescriptionImages.Where(x => x.PrescriptionId == id);
+
+                    // Initialize a list of junk file.
+                    await prescriptionImages.ForEachAsync(x =>
+                    {
+                        var junkFile = new JunkFile();
+                        junkFile.FullPath = x.FullPath;
+
+                        // Enlist all images which should be deleted.
+                        context.JunkFiles.Add(junkFile);
+                    });
+
+                    #endregion
+
+                    // Delete all prescription images first due to its dependence on prescriptions.
+                    context.PrescriptionImages.RemoveRange(prescriptionImages);
+
+                    // Delete the matched prescriptions.
+                    context.Prescriptions.RemoveRange(prescriptions);
+
+                    // Save the changes and count the number of affected records.
+                    var records = await context.SaveChangesAsync();
+
+                    // Commit the transaction.
+                    transaction.Commit();
+
+                    // Tell the calling function about the affected records.
+                    return records;
+                }
+                catch
+                {
+                    // As the exception happens. Rollback the transaction and keep throwing error.
+                    transaction.Rollback();
+
+                    throw;
+                }
+            }
         }
 
         /// <summary>
@@ -344,9 +424,26 @@ namespace Shared.Repositories
             if (filter.MedicalRecord != null)
                 prescriptions = prescriptions.Where(x => x.MedicalRecordId == filter.MedicalRecord);
 
-            // Owner is defined.
-            if (filter.Owner != null)
-                prescriptions = prescriptions.Where(x => x.Owner == filter.Owner.Value);
+            // Base on the mode to decide who is the creator, who is the owner of prescription.
+
+            // Base on the filter mode to decide requester is data creator or owner.
+            if (filter.Mode == RecordFilterMode.RequesterIsCreator)
+            {
+                prescriptions = prescriptions.Where(x => x.Creator == filter.Requester);
+                if (filter.Partner != null)
+                    prescriptions = prescriptions.Where(x => x.Owner == filter.Partner);
+            }
+            else if (filter.Mode == RecordFilterMode.RequesterIsOwner)
+            {
+                prescriptions = prescriptions.Where(x => x.Owner == filter.Requester);
+                if (filter.Partner != null)
+                    prescriptions = prescriptions.Where(x => x.Creator == filter.Partner);
+            }
+            else
+            {
+                prescriptions =
+                    prescriptions.Where(x => x.Creator == filter.Requester || x.Owner == filter.Requester);
+            }
 
             // From is defined.
             if (filter.MinFrom != null) prescriptions = prescriptions.Where(x => x.From >= filter.MinFrom);
@@ -393,11 +490,11 @@ namespace Shared.Repositories
             // Response initialization.
             var response = new ResponsePrescriptionFilterViewModel();
             response.Total = await prescriptions.CountAsync();
-            
+
             // Record is defined.
             if (filter.Records != null)
             {
-                prescriptions = prescriptions.Skip(filter.Page*filter.Records.Value)
+                prescriptions = prescriptions.Skip(filter.Page * filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
@@ -459,8 +556,9 @@ namespace Shared.Repositories
         /// Delete prescription image by using id.
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="owner"></param>
         /// <returns></returns>
-        public async Task<int> DeletePrescriptionImageAsync(int id)
+        public async Task<int> DeletePrescriptionImageAsync(int id, int? owner)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -474,6 +572,10 @@ namespace Shared.Repositories
 
                     // Find the medical image by using id.
                     prescriptionImages = prescriptionImages.Where(x => x.Id == id);
+
+                    // Owner is defined.
+                    if (owner != null)
+                        prescriptionImages = prescriptionImages.Where(x => x.Owner == owner.Value);
 
                     // Go through every images we found, enlist each one to junk files list.
                     await prescriptionImages.ForEachAsync(x =>
@@ -504,7 +606,7 @@ namespace Shared.Repositories
                     throw;
                 }
             }
-                
+
         }
 
         /// <summary>
@@ -522,13 +624,13 @@ namespace Shared.Repositories
             IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
 
             // Base on the filter mode to decide requester is data creator or owner.
-            if (filter.Mode == PrescriptionImageFilterMode.RequesterIsCreator)
+            if (filter.Mode == RecordFilterMode.RequesterIsCreator)
             {
                 prescriptionImages = prescriptionImages.Where(x => x.Creator == filter.Requester);
                 if (filter.Partner != null)
                     prescriptionImages = prescriptionImages.Where(x => x.Owner == filter.Partner);
             }
-            else if (filter.Mode == PrescriptionImageFilterMode.RequesterIsOwner)
+            else if (filter.Mode == RecordFilterMode.RequesterIsOwner)
             {
                 prescriptionImages = prescriptionImages.Where(x => x.Owner == filter.Requester);
                 if (filter.Partner != null)
@@ -539,27 +641,27 @@ namespace Shared.Repositories
                 prescriptionImages =
                     prescriptionImages.Where(x => x.Creator == filter.Requester || x.Owner == filter.Requester);
             }
-            
+
             // Filter response initialization.
             var response = new ResponsePrescriptionImageFilter();
-            
+
             // Count the condition matched results.
             response.Total = await prescriptionImages.CountAsync();
 
             // By default, sort by created date decendingly.
             prescriptionImages = prescriptionImages.OrderByDescending(x => x.Created);
-            
+
             // Record is defined.
             if (filter.Records != null)
             {
-                prescriptionImages = prescriptionImages.Skip(filter.Page*filter.Records.Value)
+                prescriptionImages = prescriptionImages.Skip(filter.Page * filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
             // Truncate the result.
             response.PrescriptionImages = await prescriptionImages
                 .ToListAsync();
-            
+
             return response;
         }
 
@@ -619,8 +721,9 @@ namespace Shared.Repositories
         ///     Delete experiment or its infos.
         /// </summary>
         /// <param name="experimentId"></param>
+        /// <param name="owner"></param>
         /// <returns></returns>
-        public async Task<int> DeleteExperimentNotesAsync(int experimentId)
+        public async Task<int> DeleteExperimentNotesAsync(int experimentId, int? owner)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -629,15 +732,26 @@ namespace Shared.Repositories
             {
                 try
                 {
+                    // By default, take all experiments.
+                    IQueryable<ExperimentNote> experiments = context.ExperimentNotes;
+                    experiments = experiments.Where(x => x.Id == experimentId);
+
+                    // Owner is specified.
+                    if (owner != null)
+                        experiments = experiments.Where(x => x.Owner == owner.Value);
+
                     // Retrieve all experiment infos.
-                    context.ExperimentNotes.RemoveRange(context.ExperimentNotes.Where(x => x.Id == experimentId));
-                    var deletedRecords = await context.SaveChangesAsync();
+                    context.ExperimentNotes.RemoveRange(experiments);
+
+                    // Save changes and calculate the number of affected record.
+                    var records = await context.SaveChangesAsync();
                     transaction.Commit();
 
-                    return deletedRecords;
+                    return records;
                 }
-                catch (Exception)
+                catch
                 {
+                    // As the exception happens, transaction should rollback.
                     transaction.Rollback();
                     throw;
                 }
@@ -693,15 +807,36 @@ namespace Shared.Repositories
 
             // By default, take all record by searching creator id.
             IQueryable<MedicalNote> medicalNotes = context.MedicalNotes;
-            medicalNotes = medicalNotes.Where(x => x.Creator == filter.Creator);
-
+            
             // Medical record is defined.
             if (filter.MedicalRecord != null)
                 medicalNotes = medicalNotes.Where(x => x.MedicalRecordId == filter.MedicalRecord);
-
-            // Owner is specified.
-            if (filter.Owner != null)
-                medicalNotes = medicalNotes.Where(x => x.Owner == filter.Owner);
+            
+            // Base on the mode of image filter to decide the role of requester.
+            if (filter.Mode == RecordFilterMode.RequesterIsOwner)
+            {
+                medicalNotes = medicalNotes.Where(x => x.Owner == filter.Requester);
+                if (filter.Partner != null)
+                    medicalNotes = medicalNotes.Where(x => x.Creator == filter.Partner.Value);
+            }
+            else if (filter.Mode == RecordFilterMode.RequesterIsCreator)
+            {
+                medicalNotes = medicalNotes.Where(x => x.Creator == filter.Requester);
+                if (filter.Partner != null)
+                    medicalNotes = medicalNotes.Where(x => x.Owner == filter.Partner);
+            }
+            else
+            {
+                if (filter.Partner == null)
+                    medicalNotes =
+                        medicalNotes.Where(x => x.Creator == filter.Requester || x.Owner == filter.Requester);
+                else
+                    medicalNotes =
+                        medicalNotes.Where(
+                            x =>
+                                (x.Creator == filter.Requester && x.Owner == filter.Partner.Value) ||
+                                (x.Creator == filter.Partner.Value && x.Owner == filter.Requester));
+            }
 
             // Note is specified.
             if (filter.Note != null)
@@ -769,7 +904,7 @@ namespace Shared.Repositories
             // Record is defined.
             if (filter.Records != null)
             {
-                medicalNotes = medicalNotes.Skip(filter.Page*filter.Records.Value)
+                medicalNotes = medicalNotes.Skip(filter.Page * filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
@@ -795,7 +930,7 @@ namespace Shared.Repositories
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-            
+
             // By default, take all record.
             IQueryable<MedicalCategory> medicalCategories = context.MedicalCategories;
 
@@ -865,7 +1000,7 @@ namespace Shared.Repositories
                         case MedicalCategoryFilterSort.Created:
                             categories = categories.OrderBy(x => x.Created);
                             break;
-                            case MedicalCategoryFilterSort.LastModified:
+                        case MedicalCategoryFilterSort.LastModified:
                             categories = categories.OrderBy(x => x.LastModified);
                             break;
                         default:
@@ -898,7 +1033,7 @@ namespace Shared.Repositories
             // Record is defined.
             if (filter.Records != null)
             {
-                categories = categories.Skip(filter.Page*filter.Records.Value)
+                categories = categories.Skip(filter.Page * filter.Records.Value)
                     .Take(filter.Records.Value);
             }
             // Do pagination.

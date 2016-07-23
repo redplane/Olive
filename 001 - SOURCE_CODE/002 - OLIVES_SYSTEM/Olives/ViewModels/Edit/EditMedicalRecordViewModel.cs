@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Olives.Attributes;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
@@ -8,6 +9,12 @@ namespace Olives.ViewModels.Edit
 {
     public class EditMedicalRecordViewModel
     {
+        /// <summary>
+        /// Category of medical record.
+        /// </summary>
+        [MedicalCategoryValidate(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
+        public int? Category { get; set; }
+
         /// <summary>
         ///     List of noticed information.
         /// </summary>

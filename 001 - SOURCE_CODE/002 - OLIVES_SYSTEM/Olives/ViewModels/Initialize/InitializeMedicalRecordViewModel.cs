@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using Olives.Attributes;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Resources;
 
-namespace Shared.ViewModels.Initialize
+namespace Olives.ViewModels.Initialize
 {
     public class InitializeMedicalRecordViewModel
     {
@@ -13,6 +14,12 @@ namespace Shared.ViewModels.Initialize
         ///     As no owner is defined, the requester will be the owner of medical record.
         /// </summary>
         public int? Owner { get; set; }
+
+        /// <summary>
+        /// Id of category.
+        /// </summary>
+        [MedicalCategoryValidate(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
+        public int Category { get; set; }
 
         /// <summary>
         ///     List of noticed information.

@@ -136,13 +136,16 @@ namespace Olives
             builder.RegisterType<FileService>()
                 .As<IFileService>()
                 .SingleInstance();
-
+            
             #endregion
 
             #region Attributes
 
             // OlivesAuthorize attribute registration (to access dependency)
             builder.RegisterType<OlivesAuthorize>().PropertiesAutowired();
+            builder.RegisterType<MedicalCategoryValidateAttribute>().PropertiesAutowired();
+            builder.RegisterType<PlaceValidateAttribute>().PropertiesAutowired();
+            builder.RegisterType<ImageMaxSizeValidateAttribute>().PropertiesAutowired();
 
             #endregion
 
@@ -199,15 +202,15 @@ namespace Olives
 
             #endregion
 
-            #region Private storage folder
+            #region Medical image storage folder
 
             // Invalid private storage folder.
-            var fullPrivateStoragePath = Server.MapPath(applicationSetting.PrivateStorage.Relative);
-            if (!Directory.Exists(fullPrivateStoragePath))
-                Directory.CreateDirectory(fullPrivateStoragePath);
+            var fullMedicalImageStoragePath = Server.MapPath(applicationSetting.MedicalImageStorage.Relative);
+            if (!Directory.Exists(fullMedicalImageStoragePath))
+                Directory.CreateDirectory(fullMedicalImageStoragePath);
 
             // Update application private storage folder.
-            applicationSetting.PrivateStorage.Absolute = fullPrivateStoragePath;
+            applicationSetting.MedicalImageStorage.Absolute = fullMedicalImageStoragePath;
 
             #endregion
 
