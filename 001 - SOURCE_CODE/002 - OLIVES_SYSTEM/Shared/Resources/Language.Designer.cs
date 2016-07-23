@@ -916,6 +916,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to W035.
+        /// </summary>
+        public static string WarnRatingHasBeenDone {
+            get {
+                return ResourceManager.GetString("WarnRatingHasBeenDone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to W005.
         /// </summary>
         public static string WarnRecordConflict {

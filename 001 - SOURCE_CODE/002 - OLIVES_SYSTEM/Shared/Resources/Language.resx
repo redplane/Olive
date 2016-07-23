@@ -465,4 +465,7 @@
     <value>W034</value>
     <comment>Warn front-end the medical record cannot created by doctor for him/herself</comment>
   </data>
+  <data name="WarnRatingHasBeenDone" xml:space="preserve">
+    <value>W035</value>
+  </data>
 </root>

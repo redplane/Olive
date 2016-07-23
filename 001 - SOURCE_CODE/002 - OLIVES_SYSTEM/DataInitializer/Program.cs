@@ -26,11 +26,22 @@ namespace DataInitializer
 
         private static void Main(string[] args)
         {
+            Console.WriteLine("Intialize category");
             InitializeCategory(MaxRecord);
+
+            Console.WriteLine("Initialize places");
             InitializePlaces(MaxRecord);
+
+            Console.WriteLine("Initialize specialty");
             InitializeSpecialties(MaxRecord);
+
+            Console.WriteLine("Initialize doctors");
             InitializeDoctor(MaxRecord);
+
+            Console.WriteLine("Initialize patients");
             InitializePatient(MaxRecord);
+
+            Console.WriteLine("Initialize admins");
             InitializeAdmin(MaxRecord);
             
             // Find the patient 26.
@@ -43,9 +54,17 @@ namespace DataInitializer
             InitializeMedicalRecord(patient, doctor, 2);
 
             // Initialize personal notes.
+            
+            Console.WriteLine("Initialize heartbeat notes");
             InitializeHeartbeatNote(patient.Patient, 90);
+
+            Console.WriteLine("Initialize sugar bloods");
             InitializeSugarbloodNote(patient.Patient, 90);
+
+            Console.WriteLine("Initialize blood pressures");
             InitializeBloodPressureNote(patient.Patient, 90);
+
+            Console.WriteLine("Initialize allergy notes");
             InitializeAllergyNote(patient.Patient, 90);
 
             #region Relationship create
@@ -346,6 +365,7 @@ namespace DataInitializer
                 {
                     var prescription = new Prescription();
                     prescription.Owner = patient.Id;
+                    prescription.Creator = doctor.Id;
                     prescription.MedicalRecordId = medicalRecord.Id;
                     prescription.From = unixFromTime;
                     prescription.To = unix;

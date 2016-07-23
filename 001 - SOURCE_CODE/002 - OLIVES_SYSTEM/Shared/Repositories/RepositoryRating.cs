@@ -1,6 +1,7 @@
 ﻿using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
@@ -19,7 +20,7 @@ namespace Shared.Repositories
         /// <param name="rating"></param>
         /// <param name="rated"></param>
         /// <returns></returns>
-        public async Task<Rating> InitializeRatingAsync(Rating rating, Person rated)
+        public async Task<Rating> InitializeRatingAsync(Rating rating, int rated)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -36,9 +37,10 @@ namespace Shared.Repositories
                         totalMark += ownedRating.Value;
 
                     // Update the rank of doctor.
-                    rated.Doctor.Rank = totalMark/totalRating;
-                    rated.Doctor.Voters = totalRating;
-                    context.People.AddOrUpdate(rated);
+                    var doctor = context.Doctors.FirstOrDefault(x => x.Id == rated);
+                    doctor.Rank = totalMark/totalRating;
+                    doctor.Voters = totalRating;
+                    context.Doctors.AddOrUpdate(doctor);
 
                     // Initialize or update to database context.
                     context.Ratings.AddOrUpdate(rating);
@@ -72,14 +74,33 @@ namespace Shared.Repositories
 
             // By default, take all records.
             IQueryable<Rating> ratings = context.Ratings;
+            
+            // Base on the mode of image filter to decide the role of requester.
+            if (filter.Mode == RecordFilterMode.RequesterIsOwner)
+            {
+                ratings = ratings.Where(x => x.Target == filter.Requester);
+                if (filter.Partner != null)
+                    ratings = ratings.Where(x => x.Maker == filter.Partner.Value);
+            }
+            else if (filter.Mode == RecordFilterMode.RequesterIsCreator)
+            {
+                ratings = ratings.Where(x => x.Maker == filter.Requester);
+                if (filter.Partner != null)
+                    ratings = ratings.Where(x => x.Target == filter.Partner);
+            }
+            else
+            {
+                if (filter.Partner == null)
+                    ratings =
+                        ratings.Where(x => x.Maker == filter.Requester || x.Target == filter.Requester);
+                else
+                    ratings =
+                        ratings.Where(
+                            x =>
+                                (x.Maker == filter.Requester && x.Target == filter.Partner.Value) ||
+                                (x.Maker == filter.Partner.Value && x.Target == filter.Requester));
+            }
 
-            // Maker is defined.
-            if (filter.Maker != null)
-                ratings = ratings.Where(x => x.Maker == filter.Maker.Value);
-
-            // Target is defined.
-            if (filter.Target != null)
-                ratings = ratings.Where(x => x.Target == filter.Target.Value);
 
             // Created is defined.
             if (filter.MinCreated != null) ratings = ratings.Where(x => x.Created >= filter.MinCreated.Value);

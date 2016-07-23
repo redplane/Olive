@@ -237,10 +237,9 @@
     <Compile Include="ViewModels\Filter\FilterAppointmentViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterBloodPressureViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMedicalCategoryViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterMedicalExperimentViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterExperimentNoteViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMedicalNoteViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPlaceViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterExperimentViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterHeatbeatViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMedicalImageViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMedicalRecordViewModel.cs" />
@@ -251,6 +250,7 @@
     <Compile Include="ViewModels\Initialize\InitializePrescriptionImageViewModel.cs" />
     <Compile Include="ViewModels\MedicineInfoViewModel.cs" />
     <Compile Include="ViewModels\RelativeViewModel.cs" />
+    <Compile Include="ViewModels\Response\ResponseExperimentNoteFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseMedicalCategoryFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseMedicalNoteFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseNoteDelete.cs" />

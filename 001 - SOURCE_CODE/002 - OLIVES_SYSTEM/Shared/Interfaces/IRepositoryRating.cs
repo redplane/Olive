@@ -13,7 +13,7 @@ namespace Shared.Interfaces
         /// <param name="rating"></param>
         /// <param name="rated">Person who is rated.</param>
         /// <returns></returns>
-        Task<Rating> InitializeRatingAsync(Rating rating, Person rated);
+        Task<Rating> InitializeRatingAsync(Rating rating, int rated);
 
         /// <summary>
         ///     Filter rates by using specific conditions.

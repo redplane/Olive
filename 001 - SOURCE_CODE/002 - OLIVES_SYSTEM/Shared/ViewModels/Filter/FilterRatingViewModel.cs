@@ -11,14 +11,20 @@ namespace Shared.ViewModels.Filter
     public class FilterRatingViewModel : IPagination
     {
         /// <summary>
-        ///     Id of target.
+        ///     Requester who sent the filter request.
         /// </summary>
-        public int? Target { get; set; }
+        public int Requester { get; set; }
 
         /// <summary>
-        ///     Id of maker.
+        ///     Who is included in rating.
         /// </summary>
-        public int? Maker { get; set; }
+        public int? Partner { get; set; }
+
+        /// <summary>
+        /// Filtering mode
+        /// </summary>
+        [InEnumerationsArray(new object[] {RecordFilterMode.RequesterIsCreator, RecordFilterMode.RequesterIsOwner}, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
+        public RecordFilterMode? Mode { get; set; }
 
         [NumericPropertyCompare("MaxCreated", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
