@@ -15,7 +15,7 @@
         /// <summary>
         ///     Minimum 8, Maximum 16 characters at least 1 Alphabet and 1 Number
         /// </summary>
-        public const string Password = @"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$";
+        public const string Password = @"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]*";
 
         /// <summary>
         ///     Invalid phone number.
