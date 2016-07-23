@@ -7,7 +7,7 @@ namespace Olives.Services
     public class FileService : IFileService
     {
         /// <summary>
-        /// Encode a file to base64 format string.
+        ///     Encode a file to base64 format string.
         /// </summary>
         /// <param name="fullPath"></param>
         /// <returns></returns>
@@ -20,12 +20,11 @@ namespace Olives.Services
             // File doesn't exist.
             if (!File.Exists(fullPath))
                 return null;
-            
+
             // Encode the file.
             var fileStream = File.ReadAllBytes(fullPath);
             var encodedData = Convert.ToBase64String(fileStream);
             return encodedData;
         }
-        
     }
 }

@@ -44,7 +44,7 @@ namespace Olives.Attributes
         #endregion
 
         #region Property
-        
+
         /// <summary>
         ///     Name of city.
         /// </summary>

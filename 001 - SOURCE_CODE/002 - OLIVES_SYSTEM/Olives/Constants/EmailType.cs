@@ -8,7 +8,7 @@
         public const string Activation = "Activation";
 
         /// <summary>
-        /// Find password email template.
+        ///     Find password email template.
         /// </summary>
         public const string FindPassword = "FindPassword";
 

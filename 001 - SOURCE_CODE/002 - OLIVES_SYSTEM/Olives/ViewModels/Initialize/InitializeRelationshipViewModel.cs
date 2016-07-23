@@ -2,6 +2,6 @@
 {
     public class InitializeRelationshipViewModel
     {
-        public int Target { get; set; } 
+        public int Target { get; set; }
     }
 }

@@ -48,7 +48,7 @@ namespace Olives.Controllers
         [Route("api/rating")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Patient})]
-        public async Task<HttpResponseMessage> InitializeRatingAsync([FromBody]InitializeRatingViewModel initializer)
+        public async Task<HttpResponseMessage> InitializeRatingAsync([FromBody] InitializeRatingViewModel initializer)
         {
             #region Request parameters validation
 
@@ -73,7 +73,6 @@ namespace Olives.Controllers
 
             try
             {
-
                 // Find the rated person.
                 var rated = await _repositoryAccount.FindPersonAsync(initializer.Target, null, null, (byte) Role.Doctor,
                     StatusAccount.Active);
@@ -117,7 +116,7 @@ namespace Olives.Controllers
                 filter.Requester = requester.Id;
                 filter.Partner = rated.Id;
                 filter.Mode = RecordFilterMode.RequesterIsCreator;
-                
+
                 // Do the filter.
                 var result = await _repositoryRating.FilterRatingAsync(filter);
                 if (result.Rates != null && result.Rates.Count > 0)
@@ -131,7 +130,7 @@ namespace Olives.Controllers
                         Error = $"{Language.WarnRatingHasBeenDone}"
                     });
                 }
-                
+
                 var rating = new Rating();
                 rating.Maker = requester.Id;
                 rating.MakerFirstName = requester.FirstName;
@@ -187,7 +186,7 @@ namespace Olives.Controllers
         [Route("api/rating/filter")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
-        public async Task<HttpResponseMessage> FilterRatingAsync([FromBody]FilterRatingViewModel filter)
+        public async Task<HttpResponseMessage> FilterRatingAsync([FromBody] FilterRatingViewModel filter)
         {
             #region Paramters validation
 

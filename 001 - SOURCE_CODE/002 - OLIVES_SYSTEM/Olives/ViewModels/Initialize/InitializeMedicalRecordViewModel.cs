@@ -16,9 +16,10 @@ namespace Olives.ViewModels.Initialize
         public int? Owner { get; set; }
 
         /// <summary>
-        /// Id of category.
+        ///     Id of category.
         /// </summary>
-        [MedicalCategoryValidate(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
+        [MedicalCategoryValidate(ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueIsInvalid")]
         public int Category { get; set; }
 
         /// <summary>

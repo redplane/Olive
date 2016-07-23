@@ -97,7 +97,6 @@ namespace Olives.Controllers
                         Error = $"{Language.WarnRecordNotFound}"
                     });
                 }
-                
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, new

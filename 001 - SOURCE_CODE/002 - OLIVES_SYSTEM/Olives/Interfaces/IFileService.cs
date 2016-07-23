@@ -1,11 +1,9 @@
-﻿using System.Threading.Tasks;
-
-namespace Olives.Interfaces
+﻿namespace Olives.Interfaces
 {
     public interface IFileService
     {
         /// <summary>
-        /// Encode a file to base64 format string.
+        ///     Encode a file to base64 format string.
         /// </summary>
         /// <param name="fullPath"></param>
         /// <returns></returns>

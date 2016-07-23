@@ -15,7 +15,8 @@ namespace Olives.ViewModels.Initialize
         /// <summary>
         ///     Email of rated person.
         /// </summary>
-        [RequiredIf("Target", null, ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "RequireEmail")]
+        [RequiredIf("Target", null, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "RequireEmail")]
         [MaxLength(FieldLength.EmailMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidEmailMaximumLength")]
         [RegularExpression(Regexes.Email, ErrorMessageResourceType = typeof (Language),

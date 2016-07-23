@@ -75,7 +75,7 @@ namespace Olives.Controllers
             {
                 // Log the error.
                 _log.Error("Request parameters are invalid. Errors sent to client");
-                
+
                 // Tell the client about this error.
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }

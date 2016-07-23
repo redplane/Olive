@@ -41,11 +41,11 @@ namespace Olives.ViewModels.Edit
         /// <summary>
         ///     Password of this account.
         /// </summary>
-        [MinLength(Values.MinPasswordLength, ErrorMessageResourceType = typeof(Language),
+        [MinLength(Values.MinPasswordLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "MinLengthPassword")]
-        [MaxLength(Values.MaxPasswordLength, ErrorMessageResourceType = typeof(Language),
+        [MaxLength(Values.MaxPasswordLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "MaxLengthPassword")]
-        [RegexMatch(Regexes.Password, ErrorMessageResourceType = typeof(Language),
+        [RegexMatch(Regexes.Password, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "RegexPassword")]
         public string Password { get; set; }
 

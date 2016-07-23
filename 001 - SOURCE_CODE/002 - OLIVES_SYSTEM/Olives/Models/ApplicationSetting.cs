@@ -22,7 +22,7 @@ namespace Olives.Models
         /// </summary>
         [JsonProperty("medicalImageStorage")]
         public ServerPath MedicalImageStorage { get; set; }
-        
+
         [JsonProperty("prescriptionImageStorage")]
         public ServerPath PrescriptionStorage { get; set; }
     }

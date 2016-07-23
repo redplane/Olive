@@ -9,11 +9,11 @@ namespace Olives.ViewModels.Edit
         /// <summary>
         ///     Email of rated person.
         /// </summary>
-        [Required(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "RequireEmail")]
-        [MaxLength(FieldLength.EmailMaxLength, ErrorMessageResourceType = typeof(Language),
+        [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "RequireEmail")]
+        [MaxLength(FieldLength.EmailMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidEmailMaximumLength")]
-        [RegularExpression(Regexes.Email, ErrorMessageResourceType = typeof(Language),
+        [RegularExpression(Regexes.Email, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidEmailFormat")]
-        public string Email { get; set; } 
+        public string Email { get; set; }
     }
 }

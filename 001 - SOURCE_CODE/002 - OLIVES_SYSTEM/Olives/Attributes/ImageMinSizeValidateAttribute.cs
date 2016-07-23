@@ -20,11 +20,11 @@ namespace Olives.Attributes
             // Invalid value.
             if (value == null)
                 return ValidationResult.Success;
-         
+
             // Value is not an instance of Image.
             if (!(value is Image))
                 throw new Exception("Value must be an instance of Image class.");
-            
+
             // Cast value to image.
             var image = (Image) value;
 
@@ -62,15 +62,15 @@ namespace Olives.Attributes
         #region Property
 
         /// <summary>
-        /// Maximum width of image.
+        ///     Maximum width of image.
         /// </summary>
         public int? MinWidth { get; set; }
 
         /// <summary>
-        /// Maximum height of image.
+        ///     Maximum height of image.
         /// </summary>
         public int? MinHeight { get; set; }
-        
+
         #endregion
     }
 }

@@ -2,11 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
-using System.Web.Mvc;
-using log4net;
-using MultipartDataMediaFormatter.Infrastructure;
-using Shared.Interfaces;
 
 namespace Olives.Attributes
 {
@@ -25,11 +20,11 @@ namespace Olives.Attributes
             // Invalid value.
             if (value == null)
                 return ValidationResult.Success;
-         
+
             // Value is not an instance of Image.
             if (!(value is Image))
                 throw new Exception("Value must be an instance of Image class.");
-            
+
             // Cast value to image.
             var image = (Image) value;
 
@@ -67,15 +62,15 @@ namespace Olives.Attributes
         #region Property
 
         /// <summary>
-        /// Maximum width of image.
+        ///     Maximum width of image.
         /// </summary>
         public int? MaxWidth { get; set; }
 
         /// <summary>
-        /// Maximum height of image.
+        ///     Maximum height of image.
         /// </summary>
         public int? MaxHeight { get; set; }
-        
+
         #endregion
     }
 }
