@@ -210,14 +210,33 @@ namespace Shared.Repositories
 
             // By default, take all records.
             IQueryable<MedicalRecord> medicalRecords = context.MedicalRecords;
+            
+            // Base on the mode of image filter to decide the role of requester.
+            if (filter.Mode == RecordFilterMode.RequesterIsOwner)
+            {
+                medicalRecords = medicalRecords.Where(x => x.Owner == filter.Requester);
+                if (filter.Partner != null)
+                    medicalRecords = medicalRecords.Where(x => x.Creator == filter.Partner.Value);
+            }
+            else if (filter.Mode == RecordFilterMode.RequesterIsCreator)
+            {
+                medicalRecords = medicalRecords.Where(x => x.Creator == filter.Requester);
+                if (filter.Partner != null)
+                    medicalRecords = medicalRecords.Where(x => x.Owner == filter.Partner);
+            }
+            else
+            {
+                if (filter.Partner == null)
+                    medicalRecords =
+                        medicalRecords.Where(x => x.Creator == filter.Requester || x.Owner == filter.Requester);
+                else
+                    medicalRecords =
+                        medicalRecords.Where(
+                            x =>
+                                (x.Creator == filter.Requester && x.Owner == filter.Partner.Value) ||
+                                (x.Creator == filter.Partner.Value && x.Owner == filter.Requester));
+            }
 
-            // Creator is specified.
-            if (filter.Creator != null)
-                medicalRecords = medicalRecords.Where(x => x.Creator == filter.Creator);
-
-            // Owner is specified.
-            if (filter.Owner != null)
-                medicalRecords = medicalRecords.Where(x => x.Owner == filter.Owner);
 
             // Time is specified.
             if (filter.MinTime != null) medicalRecords = medicalRecords.Where(x => x.Time >= filter.MinTime);

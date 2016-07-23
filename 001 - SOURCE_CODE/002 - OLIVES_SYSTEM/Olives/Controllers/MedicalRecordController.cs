@@ -77,17 +77,27 @@ namespace Olives.Controllers
             }
 
             // Requester doesn't take part in medical record.
-            if (requester.Id != medicalRecord.Creator && requester.Id != medicalRecord.Owner)
+            if (requester.Id != medicalRecord.Owner)
             {
-                // Log the error.
-                _log.Error(
-                    $"Requester [Id: {requester.Id}] is not the owner or creator of Medical Record [Id: {medicalRecord.Id}]");
+                // Find the relationship between the requester and owner.
+                var relationships =
+                    await
+                        _repositoryAccount.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
+                            (byte) StatusRelation.Active);
 
-                // Tell client no record has been found.
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                if (relationships == null || relationships.Count < 1)
                 {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
+                    // Log the error.
+                    _log.Error(
+                        $"There is no relationship between Requester[Id: {requester.Id}] and Medical Record Owner [Id: {medicalRecord.Owner}]");
+
+                    // Tell client no record has been found.
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
+                }
+                
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, new
@@ -407,11 +417,8 @@ namespace Olives.Controllers
                 // Retrieve information of person who sent request.
                 var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
-                // Requester is a patient. He/she can only see his/her medical record.
-                if (requester.Role == (byte) Role.Patient)
-                    filter.Owner = requester.Id;
-                else
-                    filter.Creator = requester.Id;
+                // Update the requester.
+                filter.Requester = requester.Id;
 
                 // Filter medical records.
                 var results = await _repositoryMedical.FilterMedicalRecordAsync(filter);
@@ -423,6 +430,11 @@ namespace Olives.Controllers
                         x.Id,
                         x.Owner,
                         x.Creator,
+                        Category = new
+                        {
+                            x.MedicalCategory.Id,
+                            x.MedicalCategory.Name
+                        },
                         x.Info,
                         x.Time,
                         x.Created,

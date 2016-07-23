@@ -11,14 +11,19 @@ namespace Shared.ViewModels.Filter
     public class FilterMedicalRecordViewModel : IPagination
     {
         /// <summary>
-        /// Owner of medical record.
+        /// Who sent the filter request.
         /// </summary>
-        public int? Owner { get; set; }
+        public int Requester { get; set; }
 
         /// <summary>
-        /// Who created the medical record.
+        /// Who is included in medical record.
         /// </summary>
-        public int? Creator { get; set; }
+        public int? Partner { get; set; }
+        
+        /// <summary>
+        /// Filtering mode.
+        /// </summary>
+        public RecordFilterMode? Mode { get; set; }
 
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
