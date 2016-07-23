@@ -17,12 +17,14 @@ namespace Shared.Models
         public int Id { get; set; }
         public int MedicalRecordId { get; set; }
         public int Owner { get; set; }
+        public int Creator { get; set; }
         public string Name { get; set; }
         public string Info { get; set; }
         public double Created { get; set; }
         public Nullable<double> LastModified { get; set; }
     
-        public virtual MedicalRecord MedicalRecord { get; set; }
         public virtual Person Person { get; set; }
+        public virtual MedicalRecord MedicalRecord { get; set; }
+        public virtual Person Person1 { get; set; }
     }
 }

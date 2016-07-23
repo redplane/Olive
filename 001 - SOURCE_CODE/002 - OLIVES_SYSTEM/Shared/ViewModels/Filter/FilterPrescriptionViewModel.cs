@@ -90,12 +90,17 @@ namespace Shared.ViewModels.Filter
         /// </summary>
         public SortDirection Direction { get; set; } = SortDirection.Decending;
 
-
+        /// <summary>
+        /// Index of result page.
+        /// </summary>
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public int Page { get; set; } = 0;
 
+        /// <summary>
+        /// Number of records per page.
+        /// </summary>
         [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]
         public int? Records { get; set; }

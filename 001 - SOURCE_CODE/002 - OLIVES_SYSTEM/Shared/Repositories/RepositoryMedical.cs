@@ -2,6 +2,7 @@
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
@@ -210,7 +211,7 @@ namespace Shared.Repositories
 
             // By default, take all records.
             IQueryable<MedicalRecord> medicalRecords = context.MedicalRecords;
-            
+
             // Base on the mode of image filter to decide the role of requester.
             if (filter.Mode == RecordFilterMode.RequesterIsOwner)
             {
@@ -777,6 +778,111 @@ namespace Shared.Repositories
             }
         }
 
+        /// <summary>
+        /// Filter experiment note asynchronously by using specific conditions
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public async Task<ResponseExperimentNoteFilter> FilterExperimentNotesAsync(FilterExperimentNoteViewModel filter)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // By default, take all experiment notes.
+            IQueryable<ExperimentNote> experiments = context.ExperimentNotes;
+
+            // Filter by medical record id.
+            experiments = experiments.Where(x => x.Id == filter.MedicalRecord);
+
+            // Base on the mode of image filter to decide the role of requester.
+            if (filter.Mode == RecordFilterMode.RequesterIsOwner)
+            {
+                experiments = experiments.Where(x => x.Owner == filter.Requester);
+                if (filter.Partner != null)
+                    experiments = experiments.Where(x => x.Creator == filter.Partner.Value);
+            }
+            else if (filter.Mode == RecordFilterMode.RequesterIsCreator)
+            {
+                experiments = experiments.Where(x => x.Creator == filter.Requester);
+                if (filter.Partner != null)
+                    experiments = experiments.Where(x => x.Owner == filter.Partner);
+            }
+            else
+            {
+                if (filter.Partner == null)
+                    experiments =
+                        experiments.Where(x => x.Creator == filter.Requester || x.Owner == filter.Requester);
+                else
+                    experiments =
+                        experiments.Where(
+                            x =>
+                                (x.Creator == filter.Requester && x.Owner == filter.Partner.Value) ||
+                                (x.Creator == filter.Partner.Value && x.Owner == filter.Requester));
+            }
+
+            // Filter by medical record name.
+            if (!string.IsNullOrWhiteSpace(filter.Name))
+                experiments = experiments.Where(x => x.Name.Contains(filter.Name));
+
+            // Created is defined.
+            if (filter.MinCreated != null) experiments = experiments.Where(x => x.Created >= filter.MinCreated.Value);
+            if (filter.MaxCreated != null) experiments = experiments.Where(x => x.Created <= filter.MaxCreated.Value);
+
+            // Last modified is defined.
+            if (filter.MinLastModified != null)
+                experiments = experiments.Where(x => x.LastModified >= filter.MinLastModified);
+            if (filter.MaxLastModified != null)
+                experiments = experiments.Where(x => x.LastModified <= filter.MaxLastModified);
+
+            switch (filter.Direction)
+            {
+                case SortDirection.Ascending:
+                    switch (filter.Sort)
+                    {
+                        case ExperimentFilterSort.Created:
+                            experiments = experiments.OrderBy(x => x.Created);
+                            break;
+                        case ExperimentFilterSort.LastModified:
+                            experiments = experiments.OrderBy(x => x.LastModified);
+                            break;
+                        default:
+                            experiments = experiments.OrderBy(x => x.Name);
+                            break;
+                    }
+                    break;
+                default:
+                    switch (filter.Sort)
+                    {
+                        case ExperimentFilterSort.Created:
+                            experiments = experiments.OrderByDescending(x => x.Created);
+                            break;
+                        case ExperimentFilterSort.LastModified:
+                            experiments = experiments.OrderByDescending(x => x.LastModified);
+                            break;
+                        default:
+                            experiments = experiments.OrderByDescending(x => x.Name);
+                            break;
+                    }
+                    break;
+            }
+
+            // Response initialization.
+            var response = new ResponseExperimentNoteFilter();
+            response.Total = await experiments.CountAsync();
+
+            // Record is defined, pagination must be done.
+            if (filter.Records != null)
+            {
+                experiments = experiments.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
+            
+            // Take the records.
+            response.ExperimentNotes = await experiments.ToListAsync();
+
+            return response;
+        }
+
         #endregion
 
         #region Medical note
@@ -826,11 +932,11 @@ namespace Shared.Repositories
 
             // By default, take all record by searching creator id.
             IQueryable<MedicalNote> medicalNotes = context.MedicalNotes;
-            
+
             // Medical record is defined.
             if (filter.MedicalRecord != null)
                 medicalNotes = medicalNotes.Where(x => x.MedicalRecordId == filter.MedicalRecord);
-            
+
             // Base on the mode of image filter to decide the role of requester.
             if (filter.Mode == RecordFilterMode.RequesterIsOwner)
             {

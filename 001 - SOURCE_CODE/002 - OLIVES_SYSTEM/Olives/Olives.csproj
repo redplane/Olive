@@ -266,6 +266,7 @@
     <Compile Include="ViewModels\Initialize\InitializePrescriptionImage.cs" />
     <Compile Include="ViewModels\Initialize\InitializePrescriptionViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeRatingViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializeRelationshipViewModel.cs" />
     <Compile Include="ViewModels\Modify\EditMedicalExperiment.cs" />
     <Compile Include="ViewModels\OliveInitializePersonViewModel.cs" />
     <Compile Include="ViewModels\RetrieveDoctorViewModel.cs" />

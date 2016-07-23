@@ -9,6 +9,7 @@ using Olives.Attributes;
 using Olives.Interfaces;
 using Olives.Models;
 using Olives.ViewModels.Filter;
+using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Helpers;
@@ -53,77 +54,111 @@ namespace Olives.Controllers
         /// <summary>
         ///     Request to create a relationship to a target person.
         /// </summary>
-        /// <param name="target"></param>
+        /// <param name="initializer"></param>
         /// <returns></returns>
         [Route("api/relationship")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Patient})]
-        public async Task<HttpResponseMessage> InitializeRelation([FromBody] int target)
+        public async Task<HttpResponseMessage> InitializeRelation([FromBody] InitializeRelationshipViewModel initializer)
         {
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            #region Request parameters validation
 
-            // Find the target.
-            var person = await _repositoryAccount.FindPersonAsync(target, null, null, null, StatusAccount.Active);
-
-            // Cannot find the target.
-            if (person == null)
+            // Initializer hasn't been initializer
+            if (initializer == null)
             {
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnTargetAccountNotFound}"
-                });
+                initializer = new InitializeRelationshipViewModel();
+                Validate(initializer);
             }
 
-            // Check whether these two people have relation or not.
-            var relationship = await _repositoryAccount.FindRelationshipAsync(requester.Id, target, null);
-
-            // 2 people already make a relationship to each other.
-            if (relationship != null)
+            // Request parameters are invalid.
+            if (!ModelState.IsValid)
             {
-                return Request.CreateResponse(HttpStatusCode.Conflict, new
-                {
-                    Error = $"{Language.WarnRelationshipAlreadyExist}"
-                });
+                // Log the error.
+                _log.Error("Request parameters are invalid. Errors sent to client");
+                
+                // Tell the client about this error.
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
 
-            // Base on role of 2 people to decide the relation.
-            var targetRole = (Role) person.Role;
+            #endregion
 
-            // Create an instance of relation.
-            var relation = new Relation();
-            relation.Source = requester.Id;
-            relation.SourceFirstName = requester.FirstName;
-            relation.SourceLastName = requester.LastName;
-            relation.Target = target;
-            relation.TargetFirstName = person.FirstName;
-            relation.TargetLastName = person.LastName;
-            relation.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
-            relation.Status = (byte) StatusRelation.Pending;
-
-            await _repositoryAccount.InitializeRelationAsync(relation);
-
-            return Request.CreateResponse(HttpStatusCode.OK, new
+            try
             {
-                Relationship = new
+                // Retrieve information of person who sent request.
+                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+                // Find the target.
+                var person =
+                    await _repositoryAccount.FindPersonAsync(initializer.Target, null, null, null, StatusAccount.Active);
+
+                // Cannot find the target.
+                if (person == null)
                 {
-                    relation.Id,
-                    Source = new
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {
-                        Id = relation.Source,
-                        FirstName = relation.SourceFirstName,
-                        LastName = relation.SourceLastName
-                    },
-                    Target = new
-                    {
-                        Id = relation.Target,
-                        FirstName = relation.TargetFirstName,
-                        LastName = relation.TargetLastName
-                    },
-                    relation.Created,
-                    relation.Status
+                        Error = $"{Language.WarnTargetAccountNotFound}"
+                    });
                 }
-            });
+
+                // Check whether these two people have relation or not.
+                var relationship =
+                    await _repositoryAccount.FindRelationshipAsync(requester.Id, initializer.Target, null);
+
+                // 2 people already make a relationship to each other.
+                if (relationship != null && relationship.Count > 0)
+                {
+                    // Relationship has already been registered.
+                    _log.Error($"Relationship from Requester[Id: {requester.Id}] to Owner[Id: {person.Id}] exists.");
+
+                    // Tell client about the conflict.
+                    return Request.CreateResponse(HttpStatusCode.Conflict, new
+                    {
+                        Error = $"{Language.WarnRelationshipAlreadyExist}"
+                    });
+                }
+
+                // Create an instance of relation.
+                var relation = new Relation();
+                relation.Source = requester.Id;
+                relation.SourceFirstName = requester.FirstName;
+                relation.SourceLastName = requester.LastName;
+                relation.Target = initializer.Target;
+                relation.TargetFirstName = person.FirstName;
+                relation.TargetLastName = person.LastName;
+                relation.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+                relation.Status = (byte) StatusRelation.Pending;
+
+                await _repositoryAccount.InitializeRelationAsync(relation);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    Relationship = new
+                    {
+                        relation.Id,
+                        Source = new
+                        {
+                            Id = relation.Source,
+                            FirstName = relation.SourceFirstName,
+                            LastName = relation.SourceLastName
+                        },
+                        Target = new
+                        {
+                            Id = relation.Target,
+                            FirstName = relation.TargetFirstName,
+                            LastName = relation.TargetLastName
+                        },
+                        relation.Created,
+                        relation.Status
+                    }
+                });
+            }
+            catch (Exception exception)
+            {
+                // Exception happens, log the error and tell client about the error.
+                _log.Error(exception.Message, exception);
+
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
         }
 
         /// <summary>

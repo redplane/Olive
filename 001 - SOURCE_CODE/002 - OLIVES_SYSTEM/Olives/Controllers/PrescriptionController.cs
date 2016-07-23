@@ -97,6 +97,19 @@ namespace Olives.Controllers
             // Requester is different from the medical record owner.
             if (requester.Id != owner.Id)
             {
+                // Only prescription created by patient can be viewed by doctor who has relationship with owner..
+                if (requester.Id != prescription.Creator && prescription.Creator != prescription.Owner)
+                {
+                    // Log the error.
+                    _log.Error($"Requester [Id: [{requester.Id}] is not the creator of Prescription [{prescription.Id}]");
+
+                    // Tell the client that the record is not found.
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
+                }
+
                 // Find the relationship between requester and owner.
                 var relationships = await _repositoryAccount.FindRelationshipAsync(requester.Id, owner.Id,
                     (byte) StatusRelation.Active);
@@ -212,37 +225,45 @@ namespace Olives.Controllers
 
             #endregion
 
-            #region Information construction
+            #region Information update
 
-            var prescription = new Prescription();
-            prescription.Owner = medicalRecord.Owner;
-            prescription.MedicalRecordId = medicalRecord.Id;
-            prescription.From = info.From;
-            prescription.To = info.To;
-            if (info.Medicines != null)
-                prescription.Medicine = JsonConvert.SerializeObject(info.Medicines);
-
-            prescription.Note = info.Note;
-            prescription.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
-
-            // Initialize prescription to database.
-            prescription = await _repositoryMedical.InitializePrescriptionAsync(prescription);
-
-            #endregion
-
-            #region Response initialization
-
-            return Request.CreateResponse(HttpStatusCode.OK, new
+            try
             {
-                prescription.Id,
-                MedicalRecord = prescription.MedicalRecordId,
-                prescription.From,
-                prescription.To,
-                prescription.Name,
-                prescription.Medicine,
-                prescription.Note,
-                prescription.Created
-            });
+                var prescription = new Prescription();
+                prescription.Owner = medicalRecord.Owner;
+                prescription.MedicalRecordId = medicalRecord.Id;
+                prescription.From = info.From;
+                prescription.To = info.To;
+                if (info.Medicines != null)
+                    prescription.Medicine = JsonConvert.SerializeObject(info.Medicines);
+
+                prescription.Note = info.Note;
+                prescription.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+
+                // Initialize prescription to database.
+                prescription = await _repositoryMedical.InitializePrescriptionAsync(prescription);
+
+
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    prescription.Id,
+                    MedicalRecord = prescription.MedicalRecordId,
+                    prescription.From,
+                    prescription.To,
+                    prescription.Name,
+                    prescription.Medicine,
+                    prescription.Note,
+                    prescription.Created
+                });
+            }
+            catch (Exception exception)
+            {
+                // Log the exception.
+                _log.Error(exception.Message, exception);
+
+                // Tell the client about the internal error of server.
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
 
             #endregion
         }
@@ -336,40 +357,51 @@ namespace Olives.Controllers
 
             #region Information construction
 
-            if (info.From != null)
-                prescription.From = info.From.Value;
-
-            if (info.To != null)
-                prescription.To = info.To.Value;
-
-            if (info.Medicines != null)
-                prescription.Medicine = JsonConvert.SerializeObject(info.Medicines);
-
-            if (!string.IsNullOrEmpty(info.Note))
-                prescription.Note = info.Note;
-
-            // Update last modified time.
-            prescription.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
-
-            // Initialize prescription to database.
-            prescription = await _repositoryMedical.InitializePrescriptionAsync(prescription);
-
-            #endregion
-
-            #region Response initialization
-
-            return Request.CreateResponse(HttpStatusCode.OK, new
+            try
             {
-                prescription.Id,
-                MedicalRecord = prescription.MedicalRecordId,
-                prescription.From,
-                prescription.To,
-                prescription.Name,
-                prescription.Medicine,
-                prescription.Note,
-                prescription.Created,
-                prescription.LastModified
-            });
+                if (info.From != null)
+                    prescription.From = info.From.Value;
+
+                if (info.To != null)
+                    prescription.To = info.To.Value;
+
+                if (info.Medicines != null)
+                    prescription.Medicine = JsonConvert.SerializeObject(info.Medicines);
+
+                if (!string.IsNullOrEmpty(info.Note))
+                    prescription.Note = info.Note;
+
+                // Update last modified time.
+                prescription.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+
+                // Initialize prescription to database.
+                prescription = await _repositoryMedical.InitializePrescriptionAsync(prescription);
+
+                #endregion
+
+                #region Response initialization
+
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    prescription.Id,
+                    MedicalRecord = prescription.MedicalRecordId,
+                    prescription.From,
+                    prescription.To,
+                    prescription.Name,
+                    prescription.Medicine,
+                    prescription.Note,
+                    prescription.Created,
+                    prescription.LastModified
+                });
+            }
+            catch (Exception exception)
+            {
+                // Log the excepion.
+                _log.Error(exception.Message, exception);
+                
+                // Tell the client server is facing with an error.
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
 
             #endregion
         }
@@ -389,10 +421,10 @@ namespace Olives.Controllers
                 var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Patient can only delete his/her record.
-                var deletedRecords = await _repositoryMedical.DeletePrescriptionAsync(id, requester.Id);
+                var records = await _repositoryMedical.DeletePrescriptionAsync(id, requester.Id);
 
                 // No record has been deleted.
-                if (deletedRecords < 1)
+                if (records < 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {

@@ -151,6 +151,13 @@ namespace Shared.Interfaces
         /// <returns></returns>
         Task<int> DeleteExperimentNotesAsync(int experimentId, int? owner);
 
+        /// <summary>
+        /// Filter experiment note asynchronously by using specific conditions
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        Task<ResponseExperimentNoteFilter> FilterExperimentNotesAsync(FilterExperimentNoteViewModel filter);
+
         #endregion
 
         #region Medical note

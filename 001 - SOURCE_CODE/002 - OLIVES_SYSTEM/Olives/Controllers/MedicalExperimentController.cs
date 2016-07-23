@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
+using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
@@ -133,6 +135,8 @@ namespace Olives.Controllers
                 note.MedicalRecordId = initializer.MedicalRecord;
                 note.Name = initializer.Name;
                 note.Owner = medicalRecord.Owner;
+                note.Creator = requester.Id;
+                
                 note = await _repositoryMedical.InitializeExperimentNote(note);
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -294,6 +298,78 @@ namespace Olives.Controllers
                 // Tell the client something is wrong with the server.
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
+        }
+
+        /// <summary>
+        /// Filter medical by using specific conditions.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public async Task<HttpResponseMessage> FilterMedicalExperimentNoteAsync(
+            [FromBody] FilterExperimentNoteViewModel filter)
+        {
+            #region Request parameters validation
+
+            // Filter hasn't been initialized.
+            if (filter == null)
+            {
+                filter = new FilterExperimentNoteViewModel();
+                Validate(filter);
+            }
+
+            // Request paramters are invalid.
+            if (!ModelState.IsValid)
+            {
+                // Log the error.
+                _log.Error("Request parameters are invalid. Errors sent to client.");
+                
+                // Tell the client about error.
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            #endregion
+
+            #region Medical experiment filter
+
+            try
+            {
+
+                // Retrieve information of person who sent request.
+                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+                // Update the filter.
+                filter.Requester = requester.Id;
+
+                // Do the filter.
+                var result = await _repositoryMedical.FilterExperimentNotesAsync(filter);
+
+                // Tell the client about the filter result.
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    ExperimentNotes = result.ExperimentNotes.Select(x => new
+                    {
+                        x.Id,
+                        MedicalRecord = x.MedicalRecordId,
+                        x.Owner,
+                        x.Creator,
+                        x.Name,
+                        x.Info,
+                        x.Created,
+                        x.LastModified
+                    }),
+                    result.Total
+                });
+            }
+            catch (Exception exception)
+            {
+                // As the exception happens, log the error.
+                _log.Error(exception.Message, exception);
+
+                // Tell the client about the internal server error.
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+
+            #endregion
         }
 
         #endregion
