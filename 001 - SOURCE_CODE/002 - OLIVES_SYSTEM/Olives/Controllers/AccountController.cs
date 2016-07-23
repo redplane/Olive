@@ -330,7 +330,7 @@ namespace Olives.Controllers
                     x.Person.Phone,
                     x.Person.Role,
                     Photo =
-                        InitializeUrl(_applicationSetting.AvatarStorage.Absolute, x.Person.Photo,
+                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Person.Photo,
                             Values.StandardImageExtension),
                     x.Rank,
                     Specialty = new
