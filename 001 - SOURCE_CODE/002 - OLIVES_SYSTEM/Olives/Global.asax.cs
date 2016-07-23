@@ -10,13 +10,11 @@ using Autofac.Integration.Mvc;
 using Autofac.Integration.WebApi;
 using Newtonsoft.Json;
 using Olives.Attributes;
-using Olives.Controllers;
 using Olives.Interfaces;
 using Olives.Models;
 using Olives.Module;
 using Olives.Services;
 using Shared.Interfaces;
-using Shared.Models;
 using Shared.Repositories;
 
 namespace Olives
@@ -26,7 +24,7 @@ namespace Olives
         #region Methods
 
         /// <summary>
-        /// This function is called when web api application is start for the first time.
+        ///     This function is called when web api application is start for the first time.
         /// </summary>
         protected void Application_Start()
         {
@@ -48,7 +46,7 @@ namespace Olives
             //builder.RegisterType<AdminController>().InstancePerRequest();
             builder.RegisterApiControllers(typeof (WebApiApplication).Assembly);
             builder.RegisterControllers(typeof (WebApiApplication).Assembly);
-            
+
             #endregion
 
             #region General application configuration
@@ -105,7 +103,7 @@ namespace Olives
             builder.RegisterType<RepositoryAppointment>()
                 .As<IRepositoryAppointment>()
                 .SingleInstance();
-            
+
             builder.RegisterType<RepositoryRating>()
                 .As<IRepositoryRating>()
                 .SingleInstance();
@@ -149,7 +147,7 @@ namespace Olives
             builder.RegisterType<FileService>()
                 .As<IFileService>()
                 .SingleInstance();
-            
+
             #endregion
 
             #region Attributes
@@ -183,7 +181,7 @@ namespace Olives
         }
 
         /// <summary>
-        /// This function is for loading application setting.
+        ///     This function is for loading application setting.
         /// </summary>
         /// <returns></returns>
         private ApplicationSetting LoadApplicationSetting()

@@ -254,7 +254,6 @@
     <Compile Include="ViewModels\Edit\InitializeNewPasswordViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterAnotherPatientViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterRelatedPeopleViewModel.cs" />
-    <Compile Include="ViewModels\FindPatientViewModel.cs" />
     <Compile Include="ViewModels\EditPatientStatusViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAllergyViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAppointmentViewModel.cs" />

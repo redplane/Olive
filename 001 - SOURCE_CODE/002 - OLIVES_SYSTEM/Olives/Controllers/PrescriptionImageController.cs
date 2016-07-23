@@ -35,7 +35,8 @@ namespace Olives.Controllers
         /// <param name="log"></param>
         /// <param name="fileService"></param>
         /// <param name="applicationSetting"></param>
-        public PrescriptionImageController(IRepositoryAccount repositoryAccount, IRepositoryPrescription repositoryPrescription, IRepositoryPrescriptionImage repositoryPrescriptionImage,
+        public PrescriptionImageController(IRepositoryAccount repositoryAccount,
+            IRepositoryPrescription repositoryPrescription, IRepositoryPrescriptionImage repositoryPrescriptionImage,
             ILog log, IFileService fileService, ApplicationSetting applicationSetting)
         {
             _repositoryAccount = repositoryAccount;
@@ -320,14 +321,14 @@ namespace Olives.Controllers
         ///     Repository of accounts
         /// </summary>
         private readonly IRepositoryAccount _repositoryAccount;
-        
+
         /// <summary>
-        /// Repository of prescription images.
+        ///     Repository of prescription images.
         /// </summary>
         private readonly IRepositoryPrescriptionImage _repositoryPrescriptionImage;
 
         /// <summary>
-        /// Repository of prescriptions.
+        ///     Repository of prescriptions.
         /// </summary>
         private readonly IRepositoryPrescription _repositoryPrescription;
 

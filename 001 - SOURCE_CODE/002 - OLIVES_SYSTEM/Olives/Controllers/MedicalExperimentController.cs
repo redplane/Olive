@@ -7,8 +7,6 @@ using System.Web.Http;
 using log4net;
 using Newtonsoft.Json;
 using Olives.Attributes;
-using Olives.Interfaces;
-using Olives.Models;
 using Olives.ViewModels.Initialize;
 using Olives.ViewModels.Modify;
 using Shared.Constants;
@@ -33,7 +31,8 @@ namespace Olives.Controllers
         /// <param name="repositoryMedicalRecord"></param>
         /// <param name="repositoryExperimentNote"></param>
         /// <param name="log"></param>
-        public MedicalExperimentController(IRepositoryAccount repositoryAccount, IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryExperimentNote repositoryExperimentNote,
+        public MedicalExperimentController(IRepositoryAccount repositoryAccount,
+            IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryExperimentNote repositoryExperimentNote,
             ILog log)
         {
             _repositoryAccount = repositoryAccount;
@@ -134,7 +133,7 @@ namespace Olives.Controllers
                 note.Name = initializer.Name;
                 note.Owner = medicalRecord.Owner;
                 note.Creator = requester.Id;
-                
+
                 note = await _repositoryExperimentNote.InitializeExperimentNote(note);
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -299,7 +298,7 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        /// Filter medical by using specific conditions.
+        ///     Filter medical by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -320,7 +319,7 @@ namespace Olives.Controllers
             {
                 // Log the error.
                 _log.Error("Request parameters are invalid. Errors sent to client.");
-                
+
                 // Tell the client about error.
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
@@ -331,7 +330,6 @@ namespace Olives.Controllers
 
             try
             {
-
                 // Retrieve information of person who sent request.
                 var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
@@ -385,7 +383,7 @@ namespace Olives.Controllers
         private readonly IRepositoryMedicalRecord _repositoryMedicalRecord;
 
         /// <summary>
-        /// Repository experiment note
+        ///     Repository experiment note
         /// </summary>
         private readonly IRepositoryExperimentNote _repositoryExperimentNote;
 
@@ -393,7 +391,7 @@ namespace Olives.Controllers
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-        
+
         #endregion
     }
 }

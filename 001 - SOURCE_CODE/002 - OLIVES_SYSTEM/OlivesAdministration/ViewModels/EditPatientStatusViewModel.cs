@@ -4,11 +4,10 @@ using Shared.Resources;
 
 namespace OlivesAdministration.ViewModels
 {
-    public class EditPatientStatusViewModel : FindPatientViewModel
+    public class EditPatientStatusViewModel
     {
-        [InAccountStatus(new[] {StatusAccount.Inactive, StatusAccount.Active},
-            ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "InvalidAccountStatus")]
+        [InEnumerationsArray(new object[] { StatusAccount.Active, StatusAccount.Inactive, StatusAccount.Pending },
+            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
         public byte Status { get; set; }
     }
 }

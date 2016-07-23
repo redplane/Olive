@@ -7,8 +7,6 @@ using System.Web.Http;
 using log4net;
 using Newtonsoft.Json;
 using Olives.Attributes;
-using Olives.Interfaces;
-using Olives.Models;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
@@ -33,7 +31,8 @@ namespace Olives.Controllers
         /// <param name="repositoryMedicalRecord"></param>
         /// <param name="repositoryPrescription"></param>
         /// <param name="log"></param>
-        public PrescriptionController(IRepositoryAccount repositoryAccount, IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryPrescription repositoryPrescription,
+        public PrescriptionController(IRepositoryAccount repositoryAccount,
+            IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryPrescription repositoryPrescription,
             ILog log)
         {
             _repositoryAccount = repositoryAccount;
@@ -152,7 +151,8 @@ namespace Olives.Controllers
         /// <returns></returns>
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> InitializePrescriptionAsync([FromBody] InitializePrescriptionViewModel info)
+        public async Task<HttpResponseMessage> InitializePrescriptionAsync(
+            [FromBody] InitializePrescriptionViewModel info)
         {
             #region Parameters validation
 
@@ -396,7 +396,7 @@ namespace Olives.Controllers
             {
                 // Log the excepion.
                 _log.Error(exception.Message, exception);
-                
+
                 // Tell the client server is facing with an error.
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
@@ -526,7 +526,7 @@ namespace Olives.Controllers
         private readonly IRepositoryMedicalRecord _repositoryMedicalRecord;
 
         /// <summary>
-        ///  Repository of prescription
+        ///     Repository of prescription
         /// </summary>
         private readonly IRepositoryPrescription _repositoryPrescription;
 
@@ -534,6 +534,7 @@ namespace Olives.Controllers
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
+
         #endregion
     }
 }

@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
-using Olives.Interfaces;
-using Olives.Models;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
@@ -32,7 +30,8 @@ namespace Olives.Controllers
         /// <param name="repositoryMedicalNote"></param>
         /// <param name="repositoryMedicalRecord"></param>
         /// <param name="log"></param>
-        public MedicalNoteController(IRepositoryAccount repositoryAccount, IRepositoryMedicalNote repositoryMedicalNote, IRepositoryMedicalRecord repositoryMedicalRecord,
+        public MedicalNoteController(IRepositoryAccount repositoryAccount, IRepositoryMedicalNote repositoryMedicalNote,
+            IRepositoryMedicalRecord repositoryMedicalRecord,
             ILog log)
         {
             _repositoryAccount = repositoryAccount;
@@ -49,7 +48,7 @@ namespace Olives.Controllers
         ///     Find a medical note by using id.
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns> 
+        /// <returns></returns>
         [HttpGet]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> FindMedicalNoteAsync([FromUri] int id)
@@ -184,7 +183,7 @@ namespace Olives.Controllers
             #endregion
 
             #region Owner & relationship validation
-            
+
             // Find the active patient.
             var owner =
                 await _repositoryAccount.FindPersonAsync(medicalRecord.Owner, null, null, (byte) Role.Patient,
@@ -210,7 +209,7 @@ namespace Olives.Controllers
                 {
                     Error = $"{Language.WarnHasNoRelationship}"
                 });
-            
+
             #endregion
 
             try
@@ -301,7 +300,7 @@ namespace Olives.Controllers
             }
 
             #endregion
-            
+
             // Find the relationship between the requester and owner.
             var relationships =
                 await
@@ -320,7 +319,7 @@ namespace Olives.Controllers
                     Error = $"{Language.WarnHasNoRelationship}"
                 });
             }
-            
+
             #region Information update
 
             try
@@ -448,7 +447,7 @@ namespace Olives.Controllers
         private readonly IRepositoryMedicalNote _repositoryMedicalNote;
 
         /// <summary>
-        ///  Repository of medical records.
+        ///     Repository of medical records.
         /// </summary>
         private readonly IRepositoryMedicalRecord _repositoryMedicalRecord;
 
@@ -456,7 +455,7 @@ namespace Olives.Controllers
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-        
+
         #endregion
     }
 }

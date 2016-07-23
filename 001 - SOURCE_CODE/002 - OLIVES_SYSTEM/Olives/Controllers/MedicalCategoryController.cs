@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
-using Olives.Interfaces;
-using Olives.Models;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Resources;
@@ -136,17 +134,17 @@ namespace Olives.Controllers
         #endregion
 
         #region Properties
-        
+
         /// <summary>
-        ///  Repository of medical category.
+        ///     Repository of medical category.
         /// </summary>
         private readonly IRepositoryMedicalCategory _repositoryMedicalCategory;
-        
+
         /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-        
+
         #endregion
     }
 }

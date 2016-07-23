@@ -89,8 +89,8 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         ///     Status of account [0 - Disabled | 1 - Pending | 2 - Active].
         /// </summary>
-        [InAccountStatus(new[] {StatusAccount.Active, StatusAccount.Inactive, StatusAccount.Pending},
-            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "InvalidAccountStatus")]
+        [InEnumerationsArray(new object[] {StatusAccount.Active, StatusAccount.Inactive, StatusAccount.Pending},
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
         public int? Status { get; set; }
 
         [InEnumerationsArray(new object[] {Enumerations.Role.Admin, Enumerations.Role.Doctor, Enumerations.Role.Patient},

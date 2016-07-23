@@ -35,7 +35,8 @@ namespace Olives.Controllers
         /// <param name="log"></param>
         /// <param name="fileService"></param>
         /// <param name="applicationSetting"></param>
-        public MedicalImageController(IRepositoryAccount repositoryAccount, IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryMedicalImage repositoryMedicalImage,
+        public MedicalImageController(IRepositoryAccount repositoryAccount,
+            IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryMedicalImage repositoryMedicalImage,
             ILog log, IFileService fileService, ApplicationSetting applicationSetting)
         {
             _repositoryAccount = repositoryAccount;
@@ -303,7 +304,7 @@ namespace Olives.Controllers
         private readonly IRepositoryMedicalRecord _repositoryMedicalRecord;
 
         /// <summary>
-        ///  Repository of medical image.
+        ///     Repository of medical image.
         /// </summary>
         private readonly IRepositoryMedicalImage _repositoryMedicalImage;
 

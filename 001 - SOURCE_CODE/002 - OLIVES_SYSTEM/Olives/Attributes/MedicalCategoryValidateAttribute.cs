@@ -7,20 +7,6 @@ namespace Olives.Attributes
 {
     public class MedicalCategoryValidateAttribute : ValidationAttribute
     {
-        #region Property
-        
-        /// <summary>
-        /// Name of medical record.
-        /// </summary>
-        public string Name { get; set; } = null;
-
-        /// <summary>
-        /// Comparision mode of medical record.
-        /// </summary>
-        public StringComparison? Comparision;
-
-        #endregion
-        
         #region Methods
 
         /// <summary>
@@ -34,7 +20,7 @@ namespace Olives.Attributes
             // Invalid value.
             if (value == null)
                 return ValidationResult.Success;
-            
+
             // Value is not an integer.
             if (!(value is int))
                 throw new Exception("Value must be an instance of integer.");
@@ -55,6 +41,19 @@ namespace Olives.Attributes
         }
 
         #endregion
-        
+
+        #region Property
+
+        /// <summary>
+        ///     Name of medical record.
+        /// </summary>
+        public string Name { get; set; } = null;
+
+        /// <summary>
+        ///     Comparision mode of medical record.
+        /// </summary>
+        public StringComparison? Comparision;
+
+        #endregion
     }
 }

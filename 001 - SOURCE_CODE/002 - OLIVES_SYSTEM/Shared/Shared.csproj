@@ -73,7 +73,6 @@
     <Compile Include="Attributes\DictionaryLengthAttribute.cs" />
     <Compile Include="Attributes\DictionaryKeyValueLengthAttribute.cs" />
     <Compile Include="Attributes\EpochTimeCompareAttribute.cs" />
-    <Compile Include="Attributes\InAccountStatusAttribute.cs" />
     <Compile Include="Attributes\InEnumerationsArray.cs" />
     <Compile Include="Attributes\InNumericArrayAttribute.cs" />
     <Compile Include="Attributes\NumericPropertyCompareAttribute.cs" />
