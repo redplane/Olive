@@ -206,6 +206,7 @@ namespace Olives.Controllers
                 Users = result.Patients.Select(x => new
                 {
                     x.Id,
+                    x.Person.Email,
                     x.Person.FirstName,
                     x.Person.LastName,
                     x.Person.Birthday,
