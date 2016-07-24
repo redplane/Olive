@@ -304,13 +304,15 @@ CREATE TABLE ExperimentNote
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	MedicalRecordId			INT NOT NULL,
 	Owner					INT NOT NULL,
+	Creator					INT NOT NULL,
 	Name					NVARCHAR(32) NOT NULL,
 	Info					NVARCHAR(MAX),
 	Created					FLOAT NOT NULL,
 	LastModified			FLOAT,
 	
 	FOREIGN KEY (MedicalRecordId) REFERENCES MedicalRecord(Id),
-	FOREIGN KEY (Owner) REFERENCES Person(Id)
+	FOREIGN KEY (Owner) REFERENCES Person(Id),
+	FOREIGN KEY (Creator) REFERENCES Person(Id)
 )
 
 CREATE TABLE Rating 
@@ -346,9 +348,12 @@ SELECT * FROM City
 -- DELETE ALL RECORDS
 ---------------------------------------------------------------------------------------------------
 DELETE FROM Person;
-DELETE FROM Doctor;
+SELECT * FROM Person WHERE Person.Id = 27;
+UPDATE Doctor
+SET Rank = 0
+WHERE Doctor.Id = 27
 DELETE FROM Patient;
-
+SELECT * FROM Rating
 SELECT * FROM MedicalRecord
 ---------------------------------------------------------------------------------------------------
 -- PROCEDURES
