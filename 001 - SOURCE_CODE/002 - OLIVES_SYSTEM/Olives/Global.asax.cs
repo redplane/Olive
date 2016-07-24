@@ -65,6 +65,8 @@ namespace Olives
                 .As<IRepositoryAccount>()
                 .SingleInstance();
 
+            builder.RegisterType<RepositoryRelation>().As<IRepositoryRelation>().SingleInstance();
+
             // Repository specialty registration.
             builder.RegisterType<RepositorySpecialty>()
                 .As<IRepositorySpecialty>()
@@ -107,7 +109,7 @@ namespace Olives
             builder.RegisterType<RepositoryRating>()
                 .As<IRepositoryRating>()
                 .SingleInstance();
-
+            
             #region Medical repositories
 
             builder.RegisterType<RepositoryExperimentNote>().As<IRepositoryExperimentNote>().SingleInstance();

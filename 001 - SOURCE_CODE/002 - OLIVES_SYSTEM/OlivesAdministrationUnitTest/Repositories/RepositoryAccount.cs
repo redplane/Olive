@@ -13,24 +13,10 @@ namespace OlivesAdministration.Test.Repositories
 {
     public class RepositoryAccount : IRepositoryAccount
     {
-        #region Properties
-
-        /// <summary>
-        /// List of account in system.
-        /// </summary>
-        public List<Person> People { get; set; }
-
-        /// <summary>
-        /// List of doctors in system.
-        /// </summary>
-        public List<Doctor> Doctors { get; set; } 
-
-        #endregion
-
         #region Constructor
 
         /// <summary>
-        /// Initialize an instance of account with default settings.
+        ///     Initialize an instance of account with default settings.
         /// </summary>
         public RepositoryAccount()
         {
@@ -42,7 +28,7 @@ namespace OlivesAdministration.Test.Repositories
         }
 
         #endregion
-        
+
         public Task<Person> EditPersonProfileAsync(int id, Person info)
         {
             throw new NotImplementedException();
@@ -58,11 +44,6 @@ namespace OlivesAdministration.Test.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<ResponsePatientFilter> FilterPatientAsync(FilterPatientViewModel filter)
-        {
-            throw new NotImplementedException();
-        }
-        
         public async Task<Doctor> FindDoctorAsync(int id, StatusAccount? status)
         {
             IEnumerable<Doctor> doctors = new List<Doctor>(Doctors);
@@ -72,7 +53,7 @@ namespace OlivesAdministration.Test.Repositories
 
             // Status is defined.
             if (status != null)
-                doctors = doctors.Where(x => x.Person.Status == (byte)status);
+                doctors = doctors.Where(x => x.Person.Status == (byte) status);
 
             return doctors.FirstOrDefault();
         }
@@ -88,7 +69,7 @@ namespace OlivesAdministration.Test.Repositories
         }
 
         /// <summary>
-        /// Find a person with specific conditions asynchronously.
+        ///     Find a person with specific conditions asynchronously.
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
@@ -98,7 +79,7 @@ namespace OlivesAdministration.Test.Repositories
         }
 
         /// <summary>
-        /// Find a person with specific conditions asynchronously.
+        ///     Find a person with specific conditions asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="email"></param>
@@ -106,7 +87,8 @@ namespace OlivesAdministration.Test.Repositories
         /// <param name="role"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public async Task<Person> FindPersonAsync(int? id, string email, string password, byte? role, StatusAccount? status)
+        public async Task<Person> FindPersonAsync(int? id, string email, string password, byte? role,
+            StatusAccount? status)
         {
             // By default, take all people in database.
             IEnumerable<Person> result = new List<Person>(People);
@@ -133,7 +115,7 @@ namespace OlivesAdministration.Test.Repositories
 
             return result.FirstOrDefault();
         }
-        
+
         public Task<bool> InitializePatientActivation(string code)
         {
             throw new NotImplementedException();
@@ -143,7 +125,7 @@ namespace OlivesAdministration.Test.Repositories
         {
             throw new NotImplementedException();
         }
-        
+
         public Task<IList<Person>> LoginAsync(LoginViewModel info)
         {
             throw new NotImplementedException();
@@ -158,5 +140,24 @@ namespace OlivesAdministration.Test.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public Task<ResponsePatientFilter> FilterPatientAsync(FilterPatientViewModel filter)
+        {
+            throw new NotImplementedException();
+        }
+
+        #region Properties
+
+        /// <summary>
+        ///     List of account in system.
+        /// </summary>
+        public List<Person> People { get; set; }
+
+        /// <summary>
+        ///     List of doctors in system.
+        /// </summary>
+        public List<Doctor> Doctors { get; set; }
+
+        #endregion
     }
 }

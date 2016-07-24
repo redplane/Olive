@@ -72,7 +72,7 @@
     <Compile Include="Controllers\MedicalController\InitializeMedicalCategory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\RepositoryAccount.cs" />
-    <Compile Include="Repositories\RepositoryMedical.cs" />
+    <Compile Include="Repositories\RepositoryMedicalCategory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OlivesAdministration\OlivesAdministration.csproj">

@@ -17,24 +17,10 @@ namespace OlivesAdministration.Test.Controllers.AdminController
     [TestClass]
     public class Login
     {
-        #region Properties
-
-        /// <summary>
-        /// Admin controller.
-        /// </summary>
-        private readonly OlivesAdministration.Controllers.AdminController _adminController;
-
-        /// <summary>
-        /// Repository account which simulates function of RepositoryAccount to test controller.
-        /// </summary>
-        private readonly RepositoryAccount _repositoryAccount;
-
-        #endregion
-
         #region Constructor
 
         /// <summary>
-        /// Initialize an instance of Login with default settings.
+        ///     Initialize an instance of Login with default settings.
         /// </summary>
         public Login()
         {
@@ -42,13 +28,14 @@ namespace OlivesAdministration.Test.Controllers.AdminController
             _repositoryAccount = new RepositoryAccount();
 
             // Initialize fake log instance.
-            var log = LogManager.GetLogger(typeof(Login));
+            var log = LogManager.GetLogger(typeof (Login));
 
             // Initialize fake application setting instance.
             var applicationSetting = new ApplicationSetting();
 
             // Initialize a fake controller.
-            _adminController = new OlivesAdministration.Controllers.AdminController(_repositoryAccount, applicationSetting, log);
+            _adminController = new OlivesAdministration.Controllers.AdminController(_repositoryAccount,
+                applicationSetting, log);
 
             // Override HttpRequest to do testing.
             var configuration = new HttpConfiguration();
@@ -59,11 +46,24 @@ namespace OlivesAdministration.Test.Controllers.AdminController
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        ///     Admin controller.
+        /// </summary>
+        private readonly OlivesAdministration.Controllers.AdminController _adminController;
+
+        /// <summary>
+        ///     Repository account which simulates function of RepositoryAccount to test controller.
+        /// </summary>
+        private readonly RepositoryAccount _repositoryAccount;
+
+        #endregion
+
         #region Methods
 
-        
         /// <summary>
-        /// Login throws bad request because submited information isn't initialized.
+        ///     Login throws bad request because submited information isn't initialized.
         /// </summary>
         [TestMethod]
         public async Task BadRequest()
@@ -77,8 +77,8 @@ namespace OlivesAdministration.Test.Controllers.AdminController
         }
 
         /// <summary>
-        /// Login is failed due to invalid information.
-        /// Status: Deactive
+        ///     Login is failed due to invalid information.
+        ///     Status: Deactive
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -89,8 +89,8 @@ namespace OlivesAdministration.Test.Controllers.AdminController
             account.Id = 1;
             account.Email = "deactivated@gmail.com";
             account.Password = "password199x";
-            account.Role = (byte)Role.Admin;
-            account.Status = (byte)StatusAccount.Inactive;
+            account.Role = (byte) Role.Admin;
+            account.Status = (byte) StatusAccount.Inactive;
 
             // Add the fake person to list.
             _repositoryAccount.People = new List<Person>();
@@ -113,7 +113,7 @@ namespace OlivesAdministration.Test.Controllers.AdminController
 
 
         /// <summary>
-        /// Login is failed due to invalid information.
+        ///     Login is failed due to invalid information.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -124,8 +124,8 @@ namespace OlivesAdministration.Test.Controllers.AdminController
             account.Id = 1;
             account.Email = "";
             account.Password = "password199x";
-            account.Role = (byte)Role.Admin;
-            account.Status = (byte)StatusAccount.Inactive;
+            account.Role = (byte) Role.Admin;
+            account.Status = (byte) StatusAccount.Inactive;
 
             // Add the fake person to list.
             _repositoryAccount.People = new List<Person>();
@@ -149,7 +149,7 @@ namespace OlivesAdministration.Test.Controllers.AdminController
         }
 
         /// <summary>
-        /// Login is failed due to invalid information.
+        ///     Login is failed due to invalid information.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -160,8 +160,8 @@ namespace OlivesAdministration.Test.Controllers.AdminController
             account.Id = 1;
             account.Email = "admin@admin.admin";
             account.Password = "password199x";
-            account.Role = (byte)Role.Admin;
-            account.Status = (byte)StatusAccount.Inactive;
+            account.Role = (byte) Role.Admin;
+            account.Status = (byte) StatusAccount.Inactive;
 
             // Add the fake person to list.
             _repositoryAccount.People = new List<Person>();
@@ -182,7 +182,7 @@ namespace OlivesAdministration.Test.Controllers.AdminController
             // Compare the result thrown back.
             Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
         }
+
         #endregion
     }
 }
-
