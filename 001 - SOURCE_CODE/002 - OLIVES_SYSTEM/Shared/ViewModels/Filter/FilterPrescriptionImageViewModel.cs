@@ -26,6 +26,12 @@ namespace Shared.ViewModels.Filter
         public RecordFilterMode? Mode { get; set; }
         
         /// <summary>
+        /// Index of prescription.
+        /// </summary>
+        [NumericCompare(1, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
+        public int Prescription { get; set; }
+
+        /// <summary>
         /// Index of result page.
         /// </summary>
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,

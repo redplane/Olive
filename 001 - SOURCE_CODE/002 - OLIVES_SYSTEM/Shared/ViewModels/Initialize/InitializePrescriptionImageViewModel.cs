@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Drawing;
-using MultipartFormDataMediaFormatter.Models;
+using Shared.Attributes;
+using Shared.Enumerations;
 using Shared.Resources;
 
 namespace Shared.ViewModels.Initialize
@@ -10,7 +11,7 @@ namespace Shared.ViewModels.Initialize
         /// <summary>
         /// Id of prescription which images should belong to.
         /// </summary>
-        [MinLength(1, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+        [NumericCompare(1, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public int Prescription { get; set; }
 
         /// <summary>

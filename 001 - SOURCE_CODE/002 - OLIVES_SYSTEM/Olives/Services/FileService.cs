@@ -14,7 +14,7 @@ namespace Olives.Services
         public string EncodeFileBase64(string fullPath)
         {
             // Invalid path.
-            if (!string.IsNullOrWhiteSpace(fullPath))
+            if (string.IsNullOrWhiteSpace(fullPath))
                 return null;
 
             // File doesn't exist.

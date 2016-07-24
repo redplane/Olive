@@ -126,6 +126,9 @@ namespace Shared.Repositories
             // By default, take all result.
             IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
 
+            // Prescription is defined.
+            prescriptionImages = prescriptionImages.Where(x => x.PrescriptionId == filter.Prescription);
+
             // Base on the filter mode to decide requester is data creator or owner.
             if (filter.Mode == RecordFilterMode.RequesterIsCreator)
             {
