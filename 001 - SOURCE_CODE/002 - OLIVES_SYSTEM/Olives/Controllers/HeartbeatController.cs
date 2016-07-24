@@ -33,12 +33,13 @@ namespace Olives.Controllers
         /// <param name="log"></param>
         /// <param name="emailService"></param>
         public HeartbeatController(IRepositoryAccount repositoryAccount, IRepositoryHeartbeat repositoryHeartbeat,
+            IRepositoryRelation repositoryRelation,
             ILog log, IEmailService emailService)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryHeartbeat = repositoryHeartbeat;
+            _repositoryRelation = repositoryRelation;
             _log = log;
-            _emailService = emailService;
         }
 
         #endregion
@@ -300,7 +301,7 @@ namespace Olives.Controllers
                 else
                 {
                     // Find the relation between the owner and the requester.
-                    var relationships = await _repositoryAccount.FindRelationshipAsync(requester.Id, info.Owner.Value,
+                    var relationships = await _repositoryRelation.FindRelationshipAsync(requester.Id, info.Owner.Value,
                         (byte) StatusAccount.Active);
 
                     // No relationship has been found.
@@ -337,14 +338,14 @@ namespace Olives.Controllers
         private readonly IRepositoryHeartbeat _repositoryHeartbeat;
 
         /// <summary>
+        ///     Repository of relationships.
+        /// </summary>
+        private readonly IRepositoryRelation _repositoryRelation;
+
+        /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-
-        /// <summary>
-        ///     Service which is used for sending emails.
-        /// </summary>
-        private readonly IEmailService _emailService;
 
         #endregion
     }

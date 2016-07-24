@@ -1,6 +1,4 @@
-﻿using MultipartDataMediaFormatter.Infrastructure;
-
-namespace MultipartDataMediaFormatter.Models
+﻿namespace MultipartFormDataMediaFormatter.Models
 {
     public class FileModel
     {
@@ -12,6 +10,6 @@ namespace MultipartDataMediaFormatter.Models
         /// <summary>
         ///     Value of parameter.
         /// </summary>
-        public HttpFile Value { get; set; }
+        public HttpFileModel Value { get; set; }
     }
 }

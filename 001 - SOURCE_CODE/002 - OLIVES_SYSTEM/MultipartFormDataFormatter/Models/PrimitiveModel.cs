@@ -1,4 +1,4 @@
-﻿namespace MultipartDataMediaFormatter.Models
+﻿namespace MultipartFormDataMediaFormatter.Models
 {
     public class PrimitiveModel
     {

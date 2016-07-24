@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
-using Olives.Interfaces;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
@@ -29,14 +28,13 @@ namespace Olives.Controllers
         /// <param name="repositoryAccount"></param>
         /// <param name="repositoryAllergy"></param>
         /// <param name="log"></param>
-        /// <param name="emailService"></param>
-        public AllergyController(IRepositoryAccount repositoryAccount, IRepositoryAllergy repositoryAllergy, ILog log,
-            IEmailService emailService)
+        public AllergyController(IRepositoryAccount repositoryAccount, IRepositoryAllergy repositoryAllergy,
+            IRepositoryRelation repositoryRelation, ILog log)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryAllergy = repositoryAllergy;
+            _repositoryRelation = repositoryRelation;
             _log = log;
-            _emailService = emailService;
         }
 
         #endregion
@@ -73,7 +71,7 @@ namespace Olives.Controllers
             if (requester.Id != allergy.Owner)
             {
                 // Find the relationship.
-                var relationships = await _repositoryAccount.FindRelationshipAsync(requester.Id, allergy.Owner,
+                var relationships = await _repositoryRelation.FindRelationshipAsync(requester.Id, allergy.Owner,
                     (byte) StatusRelation.Active);
 
                 // There is no relationship between them.
@@ -309,7 +307,7 @@ namespace Olives.Controllers
                 if (info.Owner != requester.Id)
                 {
                     // Find the relation between the owner and the requester.
-                    var relationships = await _repositoryAccount.FindRelationshipAsync(requester.Id, info.Owner.Value,
+                    var relationships = await _repositoryRelation.FindRelationshipAsync(requester.Id, info.Owner.Value,
                         (byte) StatusAccount.Active);
 
                     // No relationship has been found.
@@ -358,14 +356,14 @@ namespace Olives.Controllers
         private readonly IRepositoryAllergy _repositoryAllergy;
 
         /// <summary>
+        ///     Repository of relationships.
+        /// </summary>
+        private readonly IRepositoryRelation _repositoryRelation;
+
+        /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-
-        /// <summary>
-        ///     Service which is used for sending emails.
-        /// </summary>
-        private readonly IEmailService _emailService;
 
         #endregion
     }

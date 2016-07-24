@@ -1,5 +1,5 @@
 ﻿using System.Web.Http;
-using MultipartDataMediaFormatter;
+using MultipartFormDataMediaFormatter;
 
 namespace Olives
 {
@@ -9,7 +9,7 @@ namespace Olives
         {
             // Web API configuration and services
             // Make web API support multipart/form-data request.
-            config.Formatters.Add(new FormMultipartEncodedMediaTypeFormatter());
+            config.Formatters.Add(new MultipartFormDataFormatter());
 
             // Web API routes
             config.MapHttpAttributeRoutes();

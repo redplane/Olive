@@ -30,14 +30,17 @@ namespace Olives.Controllers
         /// <param name="repositoryAccount"></param>
         /// <param name="repositoryMedicalRecord"></param>
         /// <param name="repositoryExperimentNote"></param>
+        /// <param name="repositoryRelation"></param>
         /// <param name="log"></param>
         public MedicalExperimentController(IRepositoryAccount repositoryAccount,
             IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryExperimentNote repositoryExperimentNote,
+            IRepositoryRelation repositoryRelation,
             ILog log)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryMedicalRecord = repositoryMedicalRecord;
             _repositoryExperimentNote = repositoryExperimentNote;
+            _repositoryRelation = repositoryRelation;
             _log = log;
         }
 
@@ -101,7 +104,7 @@ namespace Olives.Controllers
                 // Find the relationship between the requester and prescription owner.
                 var relationship =
                     await
-                        _repositoryAccount.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
+                        _repositoryRelation.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
                             (byte) StatusRelation.Active);
 
                 // No relationship is found
@@ -205,7 +208,7 @@ namespace Olives.Controllers
                 // Find the relationship between the requester and prescription owner.
                 var relationship =
                     await
-                        _repositoryAccount.FindRelationshipAsync(requester.Id, experimentNote.Owner,
+                        _repositoryRelation.FindRelationshipAsync(requester.Id, experimentNote.Owner,
                             (byte) StatusRelation.Active);
 
                 // No relationship is found
@@ -386,6 +389,11 @@ namespace Olives.Controllers
         ///     Repository experiment note
         /// </summary>
         private readonly IRepositoryExperimentNote _repositoryExperimentNote;
+
+        /// <summary>
+        ///     Repository of relationships.
+        /// </summary>
+        private readonly IRepositoryRelation _repositoryRelation;
 
         /// <summary>
         ///     Instance of module which is used for logging.

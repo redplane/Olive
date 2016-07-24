@@ -1,14 +1,21 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using MultipartDataMediaFormatter.Infrastructure;
+using System.Drawing;
 using Shared.Resources;
+using MultipartFormDataMediaFormatter.Models;
 
 namespace Shared.ViewModels.Initialize
 {
     public class InitializeMedicalImageViewModel
     {
+        /// <summary>
+        /// Id of medical record.
+        /// </summary>
         public int MedicalRecord { get; set; }
 
+        /// <summary>
+        /// Image file.
+        /// </summary>
         [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueIsRequired")]
-        public HttpFile File { get; set; }
+        public Image File { get; set; }
     }
 }

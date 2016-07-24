@@ -1,11 +1,13 @@
-﻿namespace MultipartDataMediaFormatter.Infrastructure
+﻿namespace MultipartFormDataMediaFormatter.Models
 {
-    public class HttpFile
+    public class HttpFileModel
     {
+        #region Properties
+
         /// <summary>
         ///     Name of file.
         /// </summary>
-        public string FileName { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         ///     Type of file.
@@ -17,12 +19,14 @@
         /// </summary>
         public byte[] Buffer { get; set; }
 
+        #endregion
+
         #region Constructors
 
         /// <summary>
         ///     Initialize an instance of HttpFile without any setting.
         /// </summary>
-        public HttpFile()
+        public HttpFileModel()
         {
         }
 
@@ -32,9 +36,9 @@
         /// <param name="fileName"></param>
         /// <param name="mediaType"></param>
         /// <param name="buffer"></param>
-        public HttpFile(string fileName, string mediaType, byte[] buffer)
+        public HttpFileModel(string fileName, string mediaType, byte[] buffer)
         {
-            FileName = fileName;
+            Name = fileName;
             MediaType = mediaType;
             Buffer = buffer;
         }

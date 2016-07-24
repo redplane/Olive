@@ -22,7 +22,8 @@ namespace DataInitializer
         private static readonly IRepositoryAccount RepositoryAccount = new RepositoryAccount();
         private static readonly IRepositoryMedicalRecord RepositoryMedical = new RepositoryMedicalRecord();
         private static readonly IRepositoryPrescription RepositoryPrescription = new RepositoryPrescription();
-        
+        private static readonly IRepositoryRelation RepositoryRelation = new RepositoryRelation();
+
         private static int MaxRecord = 50;
 
         private static void Main(string[] args)
@@ -109,7 +110,7 @@ namespace DataInitializer
                 else
                     relationship.Status = (byte)StatusRelation.Active;
 
-                relationship = RepositoryAccount.InitializeRelationAsync(relationship).Result;
+                relationship = RepositoryRelation.InitializeRelationAsync(relationship).Result;
                 Console.WriteLine($"Created relationship. Id : {relationship.Id}");
             }
 

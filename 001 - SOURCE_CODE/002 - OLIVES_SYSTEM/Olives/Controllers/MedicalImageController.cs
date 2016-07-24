@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -37,11 +36,13 @@ namespace Olives.Controllers
         /// <param name="applicationSetting"></param>
         public MedicalImageController(IRepositoryAccount repositoryAccount,
             IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryMedicalImage repositoryMedicalImage,
+            IRepositoryRelation repositoryRelation,
             ILog log, IFileService fileService, ApplicationSetting applicationSetting)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryMedicalRecord = repositoryMedicalRecord;
             _repositoryMedicalImage = repositoryMedicalImage;
+            _repositoryRelation = repositoryRelation;
             _log = log;
             _fileService = fileService;
             _applicationSetting = applicationSetting;
@@ -60,7 +61,7 @@ namespace Olives.Controllers
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> InitializeMedicalImage([FromBody] InitializeMedicalImageViewModel info)
         {
-            #region Paramters validation
+            #region Parameters validation
 
             // Model hasn't been initialized.
             if (info == null)
@@ -79,28 +80,6 @@ namespace Olives.Controllers
 
             #endregion
 
-            #region Image validation
-
-            Image medicalImageFile = null;
-
-            // Medical image validation.
-            try
-            {
-                var memoryStream = new MemoryStream(info.File.Buffer);
-                memoryStream.Seek(0, SeekOrigin.Begin);
-                medicalImageFile = Image.FromStream(memoryStream);
-            }
-            catch (Exception exception)
-            {
-                _log.Error(exception.Message, exception);
-                return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                {
-                    Error = $"{Language.WarnImageIncorrectFormat}"
-                });
-            }
-
-            #endregion
-
             #region Medical record validation
 
             // Retrieve information of person who sent request.
@@ -112,7 +91,7 @@ namespace Olives.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Error = $"{Language.WarnRecordNotFound}"
+                    Error = $"{Language.WarnMedicalRecordNotFound}"
                 });
             }
 
@@ -123,15 +102,33 @@ namespace Olives.Controllers
             // Requester is requesting to create medical record for another person
             if (requester.Id != medicalRecord.Owner)
             {
+                // Find the owner of medical record.
+                var owner =
+                    await
+                        _repositoryAccount.FindPersonAsync(medicalRecord.Owner, null, null, null, StatusAccount.Active);
+
+                // No active owner is found.
+                if (owner == null)
+                {
+                    // Log the error.
+                    _log.Error($"Owner [Id: {medicalRecord.Owner}] is not found.");
+
+                    // Tell the client about this error.
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                    {
+                        Error = $"{Language.WarnOwnerNotActive}"
+                    });
+                }
+
                 // Find the relationship between requester and the record owner.
-                var relationship = await _repositoryAccount.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
+                var relationship = await _repositoryRelation.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
                     (byte) StatusRelation.Active);
 
                 // No relationship is found between 2 people.
                 if (relationship == null || relationship.Count < 1)
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
-                        Error = $"{Language.WarnRelationNotExist}"
+                        Error = $"{Language.WarnHasNoRelationship}"
                     });
             }
 
@@ -155,7 +152,7 @@ namespace Olives.Controllers
                     $"{imageName}.{Values.StandardImageExtension}");
 
                 // Save the image first.
-                medicalImageFile.Save(medicalImage.FullPath);
+                info.File.Save(medicalImage.FullPath);
 
                 // Update image full path.
                 // Save the medical record to database.
@@ -164,11 +161,14 @@ namespace Olives.Controllers
                 // Tell the client about the result of upload.
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
-                    medicalImage.Id,
-                    MedicalRecord = medicalImage.MedicalRecordId,
-                    medicalImage.Creator,
-                    medicalImage.Owner,
-                    medicalImage.Created
+                    MedicalImage = new
+                    {
+                        medicalImage.Id,
+                        MedicalRecord = medicalImage.MedicalRecordId,
+                        medicalImage.Creator,
+                        medicalImage.Owner,
+                        medicalImage.Created
+                    }
                 });
             }
             catch (Exception exception)
@@ -199,11 +199,15 @@ namespace Olives.Controllers
             try
             {
                 // Remove the addiction of the requester.
-                var affectedRecords = await _repositoryMedicalImage.DeleteMedicalImageAsync(id, requester.Id);
+                var records = await _repositoryMedicalImage.DeleteMedicalImageAsync(id, requester.Id);
 
                 // No record has been affected.
-                if (affectedRecords < 1)
+                if (records < 1)
                 {
+                    // Log the error for future tracking.
+                    _log.Error($"No record [Id: {id}] is found.");
+
+                    // Tell the client no record has been found.
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {
                         Error = $"{Language.WarnRecordNotFound}"
@@ -307,6 +311,11 @@ namespace Olives.Controllers
         ///     Repository of medical image.
         /// </summary>
         private readonly IRepositoryMedicalImage _repositoryMedicalImage;
+
+        /// <summary>
+        ///     Repository of relationships.
+        /// </summary>
+        private readonly IRepositoryRelation _repositoryRelation;
 
         /// <summary>
         ///     Instance of module which is used for logging.

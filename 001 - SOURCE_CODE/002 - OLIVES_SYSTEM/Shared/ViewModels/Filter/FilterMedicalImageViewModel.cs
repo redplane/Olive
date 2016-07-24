@@ -30,9 +30,14 @@ namespace Shared.ViewModels.Filter
         /// </summary>
         public SortDirection Direction { get; set; } = SortDirection.Ascending;
 
-        // Medical image filter mode.
+        /// <summary>
+        /// Mode of filtering.
+        /// </summary>
         public RecordFilterMode? Mode { get; set; }
 
+        /// <summary>
+        /// Index of page result.
+        /// </summary>
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof(Language),
             ErrorMessageResourceName = "ValueIsInvalid")]

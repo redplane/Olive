@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 
-namespace MultipartDataMediaFormatter.Infrastructure
+namespace MultipartFormDataMediaFormatter.Infrastructure
 {
     /// <summary>
     ///     convert datetime to ISO 8601 format string

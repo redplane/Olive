@@ -29,14 +29,16 @@ namespace Olives.Controllers
         /// <param name="repositoryAccount"></param>
         /// <param name="repositoryMedicalNote"></param>
         /// <param name="repositoryMedicalRecord"></param>
+        /// <param name="repositoryRelation"></param>
         /// <param name="log"></param>
         public MedicalNoteController(IRepositoryAccount repositoryAccount, IRepositoryMedicalNote repositoryMedicalNote,
-            IRepositoryMedicalRecord repositoryMedicalRecord,
+            IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryRelation repositoryRelation,
             ILog log)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryMedicalNote = repositoryMedicalNote;
             _repositoryMedicalRecord = repositoryMedicalRecord;
+            _repositoryRelation = repositoryRelation;
             _log = log;
         }
 
@@ -93,7 +95,7 @@ namespace Olives.Controllers
                     // Find the relationship between the requester and medical record owner.
                     var relationships =
                         await
-                            _repositoryAccount.FindRelationshipAsync(requester.Id, result.Owner,
+                            _repositoryRelation.FindRelationshipAsync(requester.Id, result.Owner,
                                 (byte) StatusRelation.Active);
 
                     // There is no active relationship between the requester and owner.
@@ -200,7 +202,7 @@ namespace Olives.Controllers
 
             // Find the relationship between requester and the record owner.
             var relationship =
-                await _repositoryAccount.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
+                await _repositoryRelation.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
                     (byte) StatusRelation.Active);
 
             // No relationship is found between 2 people.
@@ -304,7 +306,7 @@ namespace Olives.Controllers
             // Find the relationship between the requester and owner.
             var relationships =
                 await
-                    _repositoryAccount.FindRelationshipAsync(requester.Id, medicalNote.Owner,
+                    _repositoryRelation.FindRelationshipAsync(requester.Id, medicalNote.Owner,
                         (byte) StatusRelation.Active);
 
             // No relationship is found.
@@ -450,6 +452,11 @@ namespace Olives.Controllers
         ///     Repository of medical records.
         /// </summary>
         private readonly IRepositoryMedicalRecord _repositoryMedicalRecord;
+
+        /// <summary>
+        ///     Repository of relationships.
+        /// </summary>
+        private readonly IRepositoryRelation _repositoryRelation;
 
         /// <summary>
         ///     Instance of module which is used for logging.

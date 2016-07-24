@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
-using Olives.Interfaces;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Helpers;
@@ -31,15 +30,15 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="repositoryAccount"></param>
         /// <param name="repositoryBloodPressure"></param>
+        /// <param name="repositoryRelation"></param>
         /// <param name="log"></param>
-        /// <param name="emailService"></param>
         public BloodPressureController(IRepositoryAccount repositoryAccount,
-            IRepositoryBloodPressure repositoryBloodPressure, ILog log, IEmailService emailService)
+            IRepositoryBloodPressure repositoryBloodPressure, IRepositoryRelation repositoryRelation, ILog log)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryBloodPressure = repositoryBloodPressure;
+            _repositoryRelation = repositoryRelation;
             _log = log;
-            _emailService = emailService;
         }
 
         #endregion
@@ -316,7 +315,7 @@ namespace Olives.Controllers
                 else
                 {
                     // Find the relation between the owner and the requester.
-                    var relationships = await _repositoryAccount.FindRelationshipAsync(requester.Id, info.Owner.Value,
+                    var relationships = await _repositoryRelation.FindRelationshipAsync(requester.Id, info.Owner.Value,
                         (byte) StatusAccount.Active);
 
                     // No relationship has been found.
@@ -363,14 +362,14 @@ namespace Olives.Controllers
         private readonly IRepositoryBloodPressure _repositoryBloodPressure;
 
         /// <summary>
+        ///     Repository of relationships.
+        /// </summary>
+        private readonly IRepositoryRelation _repositoryRelation;
+
+        /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-
-        /// <summary>
-        ///     Service which is used for sending emails.
-        /// </summary>
-        private readonly IEmailService _emailService;
 
         #endregion
     }

@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-using MultipartDataMediaFormatter.Models;
 
-namespace MultipartDataMediaFormatter.Infrastructure
+namespace MultipartFormDataMediaFormatter.Models
 {
-    public class FormData
+    public class MultipartFormData
     {
         #region Constructor
 
         /// <summary>
         ///     Initialize an instance of FormData
         /// </summary>
-        public FormData()
+        public MultipartFormData()
         {
             Files = new List<FileModel>();
             Fields = new List<PrimitiveModel>();
+            Images = new List<HttpImageModel>();
         }
 
         #endregion
@@ -31,6 +32,11 @@ namespace MultipartDataMediaFormatter.Infrastructure
         ///     List of primitive fields.
         /// </summary>
         public List<PrimitiveModel> Fields;
+
+        /// <summary>
+        ///     List of images.
+        /// </summary>
+        public List<HttpImageModel> Images { get; set; }
 
         #endregion
 
@@ -60,9 +66,19 @@ namespace MultipartDataMediaFormatter.Infrastructure
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        public void Add(string name, HttpFile value)
+        public void Add(string name, HttpFileModel value)
         {
             Files.Add(new FileModel {Name = name, Value = value});
+        }
+
+        /// <summary>
+        ///     Add image to list.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        public void Add(HttpImageModel value)
+        {
+            Images.Add(value);
         }
 
         /// <summary>
@@ -90,9 +106,28 @@ namespace MultipartDataMediaFormatter.Infrastructure
         /// <param name="name"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public bool TryGetValue(string name, out HttpFile value)
+        public bool TryGetValue(string name, out HttpFileModel value)
         {
             var field = Files.FirstOrDefault(m => string.Equals(m.Name, name, StringComparison.CurrentCultureIgnoreCase));
+            if (field != null)
+            {
+                value = field.Value;
+                return true;
+            }
+            value = null;
+            return false;
+        }
+
+        /// <summary>
+        ///     Parse data and return HttpFile data.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public bool TryGetValue(string name, out Image value)
+        {
+            var field =
+                Images.FirstOrDefault(m => string.Equals(m.Name, name, StringComparison.CurrentCultureIgnoreCase));
             if (field != null)
             {
                 value = field.Value;

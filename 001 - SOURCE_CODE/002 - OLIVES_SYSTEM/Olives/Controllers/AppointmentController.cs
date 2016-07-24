@@ -27,12 +27,15 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="repositoryAccount"></param>
         /// <param name="repositoryAppointment"></param>
+        /// <param name="repositoryRelation"></param>
         /// <param name="log"></param>
         public AppointmentController(IRepositoryAccount repositoryAccount, IRepositoryAppointment repositoryAppointment,
+            IRepositoryRelation repositoryRelation,
             ILog log)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryAppointment = repositoryAppointment;
+            _repositoryRelation = repositoryRelation;
             _log = log;
         }
 
@@ -201,7 +204,7 @@ namespace Olives.Controllers
             // Check whether 2 people have relation with each other or not.
             var relationships =
                 await
-                    _repositoryAccount.FindRelationshipAsync(requester.Id, info.Dater, (byte) StatusRelation.Active);
+                    _repositoryRelation.FindRelationshipAsync(requester.Id, info.Dater, (byte) StatusRelation.Active);
             if (relationships == null || relationships.Count < 1)
             {
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
@@ -480,6 +483,11 @@ namespace Olives.Controllers
         ///     Repository of accounts
         /// </summary>
         private readonly IRepositoryAppointment _repositoryAppointment;
+
+        /// <summary>
+        ///     Repository of relationships.
+        /// </summary>
+        private readonly IRepositoryRelation _repositoryRelation;
 
         /// <summary>
         ///     Instance of module which is used for logging.

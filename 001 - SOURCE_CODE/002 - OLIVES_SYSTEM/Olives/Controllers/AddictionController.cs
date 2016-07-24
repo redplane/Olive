@@ -28,10 +28,12 @@ namespace Olives.Controllers
         /// <param name="repositoryAddiction"></param>
         /// <param name="log"></param>
         public AddictionController(IRepositoryAccount repositoryAccount, IRepositoryAddiction repositoryAddiction,
+            IRepositoryRelation repositoryRelation,
             ILog log)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryAddiction = repositoryAddiction;
+            _repositoryRelation = repositoryRelation;
             _log = log;
         }
 
@@ -71,7 +73,7 @@ namespace Olives.Controllers
                 // Retrieve the relation between these 2 people.
                 var relationships =
                     await
-                        _repositoryAccount.FindRelationshipAsync(requester.Id, addiction.Owner,
+                        _repositoryRelation.FindRelationshipAsync(requester.Id, addiction.Owner,
                             (byte) StatusRelation.Active);
 
                 // There is no relationship between these 2 people
@@ -289,7 +291,7 @@ namespace Olives.Controllers
                 // Retrieve the relation between these 2 people.
                 var relationships =
                     await
-                        _repositoryAccount.FindRelationshipAsync(requester.Id, filter.Owner.Value,
+                        _repositoryRelation.FindRelationshipAsync(requester.Id, filter.Owner.Value,
                             (byte) StatusRelation.Active);
 
                 // There is no relationship between these 2 people
@@ -340,6 +342,11 @@ namespace Olives.Controllers
         ///     Repository of allergies
         /// </summary>
         private readonly IRepositoryAddiction _repositoryAddiction;
+
+        /// <summary>
+        ///     Repository of relationships.
+        /// </summary>
+        private readonly IRepositoryRelation _repositoryRelation;
 
         /// <summary>
         ///     Instance of module which is used for logging.

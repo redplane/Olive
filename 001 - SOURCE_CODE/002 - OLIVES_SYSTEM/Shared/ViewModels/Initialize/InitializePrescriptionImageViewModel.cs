@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using MultipartDataMediaFormatter.Infrastructure;
+using System.Drawing;
+using MultipartFormDataMediaFormatter.Models;
 using Shared.Resources;
 
 namespace Shared.ViewModels.Initialize
@@ -16,6 +17,6 @@ namespace Shared.ViewModels.Initialize
         /// List of image which should be uploaded to server.
         /// </summary>
         [Required(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsRequired")]
-        public HttpFile Image { get; set; }
+        public Image Image { get; set; }
     }
 }

@@ -28,10 +28,12 @@ namespace Olives.Controllers
         /// <param name="repositoryAccount"></param>
         /// <param name="repositoryRating"></param>
         /// <param name="log"></param>
-        public RateController(IRepositoryAccount repositoryAccount, IRepositoryRating repositoryRating, ILog log)
+        public RateController(IRepositoryAccount repositoryAccount, IRepositoryRating repositoryRating,
+            IRepositoryRelation repositoryRelation, ILog log)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryRating = repositoryRating;
+            _repositoryRelation = repositoryRelation;
             _log = log;
         }
 
@@ -94,7 +96,7 @@ namespace Olives.Controllers
                 var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Check the relationship between requester and the rated.
-                var relationships = await _repositoryAccount.FindRelationshipAsync(requester.Id, rated.Id,
+                var relationships = await _repositoryRelation.FindRelationshipAsync(requester.Id, rated.Id,
                     (byte) StatusRelation.Active);
 
                 // No relationship has been found.
@@ -270,6 +272,11 @@ namespace Olives.Controllers
         ///     Repository of rating.
         /// </summary>
         private readonly IRepositoryRating _repositoryRating;
+
+        /// <summary>
+        ///     Repository of relationships.
+        /// </summary>
+        private readonly IRepositoryRelation _repositoryRelation;
 
         /// <summary>
         ///     Instance of module which is used for logging.

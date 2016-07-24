@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
-using Olives.Interfaces;
 using Olives.Models;
 using Olives.ViewModels.Filter;
 using Olives.ViewModels.Initialize;
@@ -27,24 +26,16 @@ namespace Olives.Controllers
         ///     Initialize an instance of AccountController with Dependency injections.
         /// </summary>
         /// <param name="repositoryAccount"></param>
-        /// <param name="repositoryActivationCode"></param>
-        /// <param name="repositorySpecialty"></param>
-        /// <param name="repositoryPlace"></param>
-        /// <param name="log"></param>
-        /// <param name="emailService"></param>
+        /// <param name="repositoryRelation"></param>
         /// <param name="applicationSetting"></param>
-        public RelationshipController(IRepositoryAccount repositoryAccount,
-            IRepositoryActivationCode repositoryActivationCode, IRepositorySpecialty repositorySpecialty,
-            IRepositoryPlace repositoryPlace, ILog log, IEmailService emailService,
-            ApplicationSetting applicationSetting)
+        /// <param name="log"></param>
+        public RelationshipController(IRepositoryAccount repositoryAccount, IRepositoryRelation repositoryRelation,
+            ApplicationSetting applicationSetting, ILog log)
         {
             _repositoryAccount = repositoryAccount;
-            _repositoryActivationCode = repositoryActivationCode;
-            _repositorySpecialty = repositorySpecialty;
-            _repositoryPlace = repositoryPlace;
-            _log = log;
-            _emailService = emailService;
+            _repositoryRelation = repositoryRelation;
             _applicationSetting = applicationSetting;
+            _log = log;
         }
 
         #endregion
@@ -102,7 +93,7 @@ namespace Olives.Controllers
 
                 // Check whether these two people have relation or not.
                 var relationship =
-                    await _repositoryAccount.FindRelationshipAsync(requester.Id, initializer.Target, null);
+                    await _repositoryRelation.FindRelationshipAsync(requester.Id, initializer.Target, null);
 
                 // 2 people already make a relationship to each other.
                 if (relationship != null && relationship.Count > 0)
@@ -128,7 +119,7 @@ namespace Olives.Controllers
                 relation.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
                 relation.Status = (byte) StatusRelation.Pending;
 
-                await _repositoryAccount.InitializeRelationAsync(relation);
+                await _repositoryRelation.InitializeRelationAsync(relation);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -177,7 +168,7 @@ namespace Olives.Controllers
             // Find the relationship by using id.
             var relationship =
                 await
-                    _repositoryAccount.FindRelationshipAsync(id, requester.Id, RoleRelationship.Target,
+                    _repositoryRelation.FindRelationshipAsync(id, requester.Id, RoleRelationship.Target,
                         (byte) StatusRelation.Pending);
 
             // No relationship has been returned.
@@ -221,7 +212,7 @@ namespace Olives.Controllers
         [Route("api/relationship")]
         [HttpDelete]
         [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
-        public async Task<HttpResponseMessage> RemoveRelationship([FromBody] int id)
+        public async Task<HttpResponseMessage> RemoveRelationship([FromUri] int id)
         {
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
@@ -229,13 +220,18 @@ namespace Olives.Controllers
             try
             {
                 // Delete relationship and retrieve the number of affected records.
-                var records = await _repositoryAccount.DeleteRelationAsync(id, requester.Id, null, null);
+                var records = await _repositoryRelation.DeleteRelationAsync(id, requester.Id, null, null);
                 if (records < 1)
+                {
+                    // No record has been found. Log the error for future trace.
+                    _log.Error($"There is no relationship [Id: {id}].");
+
+                    // Tell the client about the rror.
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {
                         Error = $"{Language.WarnRecordNotFound}"
                     });
-
+                }
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
             catch (Exception exception)
@@ -285,7 +281,8 @@ namespace Olives.Controllers
             // Filter the relationship.
             var result =
                 await
-                    _repositoryAccount.FilterRelatedDoctorAsync(requester.Id, filter.Status, filter.Page, filter.Records);
+                    _repositoryRelation.FilterRelatedDoctorAsync(requester.Id, filter.Status, filter.Page,
+                        filter.Records);
 
             // Throw the list back to client.
             return Request.CreateResponse(HttpStatusCode.OK, new
@@ -325,34 +322,19 @@ namespace Olives.Controllers
         private readonly IRepositoryAccount _repositoryAccount;
 
         /// <summary>
-        ///     Repository of activation codes.
+        ///     Repository of relationships.
         /// </summary>
-        private readonly IRepositoryActivationCode _repositoryActivationCode;
+        private readonly IRepositoryRelation _repositoryRelation;
 
         /// <summary>
-        ///     Repository of specialty.
+        ///     Instance stores application settings.
         /// </summary>
-        private readonly IRepositorySpecialty _repositorySpecialty;
-
-        /// <summary>
-        ///     Repository of places.
-        /// </summary>
-        private readonly IRepositoryPlace _repositoryPlace;
+        private readonly ApplicationSetting _applicationSetting;
 
         /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-
-        /// <summary>
-        ///     Service which is used for sending emails.
-        /// </summary>
-        private readonly IEmailService _emailService;
-
-        /// <summary>
-        ///     Property which contains settings of application which had been deserialized from json file.
-        /// </summary>
-        private readonly ApplicationSetting _applicationSetting;
 
         #endregion
     }

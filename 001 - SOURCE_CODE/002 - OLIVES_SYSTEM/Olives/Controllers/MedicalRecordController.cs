@@ -7,8 +7,6 @@ using System.Web.Http;
 using log4net;
 using Newtonsoft.Json;
 using Olives.Attributes;
-using Olives.Interfaces;
-using Olives.Models;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
@@ -35,13 +33,13 @@ namespace Olives.Controllers
         /// <param name="fileService"></param>
         /// <param name="applicationSetting"></param>
         public MedicalRecordController(IRepositoryAccount repositoryAccount, IRepositoryMedicalRecord repositoryMedical,
-            ILog log, IFileService fileService, ApplicationSetting applicationSetting)
+            IRepositoryRelation repositoryRelation,
+            ILog log)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryMedical = repositoryMedical;
+            _repositoryRelation = repositoryRelation;
             _log = log;
-            _fileService = fileService;
-            _applicationSetting = applicationSetting;
         }
 
         #endregion
@@ -82,7 +80,7 @@ namespace Olives.Controllers
                 // Find the relationship between the requester and owner.
                 var relationships =
                     await
-                        _repositoryAccount.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
+                        _repositoryRelation.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
                             (byte) StatusRelation.Active);
 
                 if (relationships == null || relationships.Count < 1)
@@ -210,7 +208,7 @@ namespace Olives.Controllers
             {
                 // Find the relationship between requester and the record owner.
                 var relationship =
-                    await _repositoryAccount.FindRelationshipAsync(requester.Id, info.Owner.Value,
+                    await _repositoryRelation.FindRelationshipAsync(requester.Id, info.Owner.Value,
                         (byte) StatusRelation.Active);
 
                 // No relationship is found between 2 people.
@@ -323,7 +321,7 @@ namespace Olives.Controllers
             #region Relationship validation
 
             // Check the relationship between them.
-            var relationship = await _repositoryAccount.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
+            var relationship = await _repositoryRelation.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
                 (byte) StatusAccount.Active);
             if (relationship == null || relationship.Count < 1)
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
@@ -469,19 +467,14 @@ namespace Olives.Controllers
         private readonly IRepositoryMedicalRecord _repositoryMedical;
 
         /// <summary>
+        ///     Repository of relationships.
+        /// </summary>
+        private readonly IRepositoryRelation _repositoryRelation;
+
+        /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-
-        /// <summary>
-        ///     Application setting.
-        /// </summary>
-        private readonly ApplicationSetting _applicationSetting;
-
-        /// <summary>
-        ///     Service which provides functions to handle file operations.
-        /// </summary>
-        private readonly IFileService _fileService;
 
         #endregion
     }

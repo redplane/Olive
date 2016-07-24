@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
+using MultipartFormDataMediaFormatter.Models;
 
-namespace MultipartDataMediaFormatter.Infrastructure.Extensions
+namespace MultipartFormDataMediaFormatter.Infrastructure.Extensions
 {
     internal static class TypeExtensions
     {
@@ -57,7 +58,8 @@ namespace MultipartDataMediaFormatter.Infrastructure.Extensions
             }
             return type != typeof (object)
                    && Type.GetTypeCode(type) == TypeCode.Object
-                   && type != typeof (HttpFile)
+                   && type != typeof (HttpFileModel)
+                   && type != typeof (HttpImageModel)
                    && type != typeof (Guid)
                    && type.GetInterface(typeof (IEnumerable).Name) == null;
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -32,16 +31,19 @@ namespace Olives.Controllers
         /// <param name="repositoryAccount"></param>
         /// <param name="repositoryPrescription"></param>
         /// <param name="repositoryPrescriptionImage"></param>
+        /// <param name="repositoryRelation"></param>
         /// <param name="log"></param>
         /// <param name="fileService"></param>
         /// <param name="applicationSetting"></param>
         public PrescriptionImageController(IRepositoryAccount repositoryAccount,
             IRepositoryPrescription repositoryPrescription, IRepositoryPrescriptionImage repositoryPrescriptionImage,
+            IRepositoryRelation repositoryRelation,
             ILog log, IFileService fileService, ApplicationSetting applicationSetting)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryPrescription = repositoryPrescription;
             _repositoryPrescriptionImage = repositoryPrescriptionImage;
+            _repositoryRelation = repositoryRelation;
             _log = log;
             _fileService = fileService;
             _applicationSetting = applicationSetting;
@@ -84,28 +86,6 @@ namespace Olives.Controllers
 
             #endregion
 
-            #region Image validation
-
-            Image prescriptionImageFile = null;
-
-            // Medical image validation.
-            try
-            {
-                var memoryStream = new MemoryStream(initializer.Image.Buffer);
-                memoryStream.Seek(0, SeekOrigin.Begin);
-                prescriptionImageFile = Image.FromStream(memoryStream);
-            }
-            catch (Exception exception)
-            {
-                _log.Error(exception.Message, exception);
-                return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                {
-                    Error = $"{Language.WarnImageIncorrectFormat}"
-                });
-            }
-
-            #endregion
-
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
@@ -134,15 +114,32 @@ namespace Olives.Controllers
             // Requester is not the creator of prescription.
             if (requester.Id != prescription.Owner)
             {
+                // Find the owner.
+                var owner = _repositoryAccount.FindPersonAsync(prescription.Owner, null, null, null,
+                    StatusAccount.Active);
+
+                // No active owner is found.
+                if (owner == null)
+                {
+                    // Log the error for future tracking.
+                    _log.Error($"Owner [Id: {prescription.Owner}] is not found");
+
+                    // Tell the client to try again.
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                    {
+                        Error = $"{Language.WarnOwnerNotActive}"
+                    });
+                }
+
                 // Find the relationship between requester and the record owner.
-                var relationship = await _repositoryAccount.FindRelationshipAsync(requester.Id, prescription.Owner,
+                var relationship = await _repositoryRelation.FindRelationshipAsync(requester.Id, prescription.Owner,
                     (byte) StatusRelation.Active);
 
                 // No relationship is found between 2 people.
                 if (relationship == null || relationship.Count < 1)
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
-                        Error = $"{Language.WarnRelationNotExist}"
+                        Error = $"{Language.WarnHasNoRelationship}"
                     });
             }
 
@@ -160,7 +157,7 @@ namespace Olives.Controllers
                     $"{fileName}.{Values.StandardImageExtension}");
 
                 // Save the image first.
-                prescriptionImageFile.Save(fullPath);
+                initializer.Image.Save(fullPath);
 
                 // Initialize a prescription image.
                 var prescriptionImage = new PrescriptionImage();
@@ -176,9 +173,9 @@ namespace Olives.Controllers
                 {
                     PrescriptionImage = new
                     {
-                        Image = fileName,
                         prescriptionImage.Created,
-                        prescriptionImage.Creator
+                        prescriptionImage.Creator,
+                        prescriptionImage.Owner
                     }
                 });
             }
@@ -198,7 +195,7 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        ///     Initialize a prescription image
+        ///     Delete a prescription image
         /// </summary>
         /// <returns></returns>
         [HttpDelete]
@@ -215,6 +212,10 @@ namespace Olives.Controllers
 
                 if (records < 0)
                 {
+                    // Log the error.
+                    _log.Error($"No record [Id: {id}] has been found.");
+
+                    // Tell the client about the result.
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {
                         Error = $"{Language.WarnRecordNotFound}"
@@ -281,6 +282,8 @@ namespace Olives.Controllers
 
             #endregion
 
+            #region Result handling
+
             try
             {
                 // Do the filter.
@@ -295,9 +298,7 @@ namespace Olives.Controllers
                         Prescription = x.PrescriptionId,
                         x.Owner,
                         x.Creator,
-                        Image = Convert.ToBase64String(
-                            File.ReadAllBytes(Path.Combine(_applicationSetting.PrescriptionStorage.Absolute,
-                                $"{x.Image}.{Values.StandardImageExtension}"))),
+                        Image = _fileService.EncodeFileBase64(x.FullPath),
                         x.Created
                     }),
                     result.Total
@@ -311,6 +312,8 @@ namespace Olives.Controllers
                 // Tell client about the terminated process.
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
+
+            #endregion
         }
 
         #endregion
@@ -331,6 +334,11 @@ namespace Olives.Controllers
         ///     Repository of prescriptions.
         /// </summary>
         private readonly IRepositoryPrescription _repositoryPrescription;
+
+        /// <summary>
+        ///     Repository of relationships.
+        /// </summary>
+        private readonly IRepositoryRelation _repositoryRelation;
 
         /// <summary>
         ///     Instance of module which is used for logging.

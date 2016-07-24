@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -751,101 +750,80 @@ namespace Olives.Controllers
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
-            // File validation.
-            using (var memoryStream = new MemoryStream(info.Avatar.Buffer))
+            try
             {
-                try
+                // As the requester has existed image before, use that name, otherwise generate a new one.
+                if (!string.IsNullOrEmpty(requester.Photo))
                 {
-                    // Move the seeker pointer to the beginning of stream.
-                    memoryStream.Seek(0, SeekOrigin.Begin);
+                    // Update the image full path.
+                    var fullPath = Path.Combine(_applicationSetting.AvatarStorage.Absolute,
+                        $"{requester.Photo}.{Values.StandardImageExtension}");
 
-                    // Read image from stream.
-                    var image = Image.FromStream(memoryStream);
+                    // Save the image to physical disk.
+                    info.Avatar.Save(fullPath, ImageFormat.Png);
 
-                    // Invalid image size.
-                    if (image.Height != Values.MaxImageSize && image.Width != Values.MaxImageSize)
-                    {
-                        // Tell client that he/she is forbidden to change his/her due to the uploaded image.
-                        return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                        {
-                            Error = $"{Language.WarnImageIncorrectFormat}"
-                        });
-                    }
-
-                    // As the requester has existed image before, use that name, otherwise generate a new one.
-                    if (!string.IsNullOrEmpty(requester.Photo))
-                    {
-                        // Update the image full path.
-                        var fullPath = Path.Combine(_applicationSetting.AvatarStorage.Absolute,
-                            $"{requester.Photo}.{Values.StandardImageExtension}");
-                        image.Save(fullPath, ImageFormat.Png);
-
-                        _log.Info($"{requester.Email} has updated avatar successfuly.");
-                    }
-                    else
-                    {
-                        // Generate name for image and save image first.
-                        var imageName = Guid.NewGuid().ToString("N");
-                        var fullPath = Path.Combine(_applicationSetting.AvatarStorage.Absolute,
-                            $"{imageName}.{Values.StandardImageExtension}");
-                        image.Save(fullPath);
-                        _log.Info($"{requester.Email} has uploaded avatar successfuly.");
-
-                        // Update to database.
-                        requester.Photo = imageName;
-
-                        // Update information to database.
-                        await _repositoryAccount.InitializePersonAsync(requester);
-                        _log.Info($"{requester.Email} has saved avatar successfully");
-                    }
-
-
-                    // Everything is successful. Tell client the result.
-                    return Request.CreateResponse(HttpStatusCode.OK, new
-                    {
-                        User = new
-                        {
-                            requester.Id,
-                            requester.Email,
-                            requester.Password,
-                            requester.FirstName,
-                            requester.LastName,
-                            requester.Birthday,
-                            requester.Phone,
-                            requester.Gender,
-                            requester.Role,
-                            requester.Created,
-                            requester.LastModified,
-                            requester.Status,
-                            requester.Address,
-                            Photo =
-                                InitializeUrl(_applicationSetting.AvatarStorage.Relative, requester.Photo,
-                                    Values.StandardImageExtension)
-                        }
-                    });
+                    _log.Info($"{requester.Email} has updated avatar successfuly.");
                 }
-                catch (BadImageFormatException badImageFormatException)
+                else
                 {
-                    // Log error to file.
-                    _log.Error(badImageFormatException.Message, badImageFormatException);
+                    // Generate name for image and save image first.
+                    var imageName = Guid.NewGuid().ToString("N");
 
-                    // Tell the client the image is incorrect format.
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                    {
-                        Error = $"{Language.WarnImageIncorrectFormat}"
-                    });
+                    // Take the full path.
+                    var fullPath = Path.Combine(_applicationSetting.AvatarStorage.Absolute,
+                        $"{imageName}.{Values.StandardImageExtension}");
+
+                    // Save the avatar file to disk.
+                    info.Avatar.Save(fullPath);
+
+                    // Log the information.
+                    _log.Info($"{requester.Email} has uploaded avatar successfuly.");
+
+                    // Update to database.
+                    requester.Photo = imageName;
+
+                    // Update information to database.
+                    await _repositoryAccount.InitializePersonAsync(requester);
+
+                    // Log the information.
+                    _log.Info($"{requester.Email} has saved avatar successfully");
                 }
-                catch (Exception exception)
+
+
+                // Everything is successful. Tell client the result.
+                return Request.CreateResponse(HttpStatusCode.OK, new
                 {
-                    // Log error to file.
-                    _log.Error(exception.Message, exception);
-
-                    // Tell the client the server has some error occured, please try again.
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                    User = new
                     {
-                        Error = $"{Language.WarnInternalServerError}"
-                    });
-                }
+                        requester.Id,
+                        requester.Email,
+                        requester.Password,
+                        requester.FirstName,
+                        requester.LastName,
+                        requester.Birthday,
+                        requester.Phone,
+                        requester.Gender,
+                        requester.Role,
+                        requester.Created,
+                        requester.LastModified,
+                        requester.Status,
+                        requester.Address,
+                        Photo =
+                            InitializeUrl(_applicationSetting.AvatarStorage.Relative, requester.Photo,
+                                Values.StandardImageExtension)
+                    }
+                });
+            }
+            catch (Exception exception)
+            {
+                // Log error to file.
+                _log.Error(exception.Message, exception);
+
+                // Tell the client the server has some error occured, please try again.
+                return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                {
+                    Error = $"{Language.WarnInternalServerError}"
+                });
             }
         }
 
