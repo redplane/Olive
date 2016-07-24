@@ -42,12 +42,7 @@ namespace OlivesAdministration.Test.Repositories
         }
 
         #endregion
-
-        public Task<int> DeleteRelationAsync(int id, int? requester, RoleRelationship? role, StatusRelation? status)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public Task<Person> EditPersonProfileAsync(int id, Person info)
         {
             throw new NotImplementedException();
@@ -67,17 +62,7 @@ namespace OlivesAdministration.Test.Repositories
         {
             throw new NotImplementedException();
         }
-
-        public Task<ResponseRelatedDoctorFilter> FilterRelatedDoctorAsync(int requester, StatusRelation? status, int page, int records)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ResponseRelationshipFilter> FilterRelationshipAsync(int requester, int? partner, RoleRelationship? role, StatusRelation? status, int page, int records)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public async Task<Doctor> FindDoctorAsync(int id, StatusAccount? status)
         {
             IEnumerable<Doctor> doctors = new List<Doctor>(Doctors);
@@ -148,22 +133,7 @@ namespace OlivesAdministration.Test.Repositories
 
             return result.FirstOrDefault();
         }
-
-        public Task<IList<Relation>> FindRelationParticipation(int id, int person, byte? status)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IList<Relation>> FindRelationshipAsync(int firstPerson, int secondPerson, byte? status)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Relation> FindRelationshipAsync(int id, int? person, RoleRelationship? role, StatusRelation? status)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public Task<bool> InitializePatientActivation(string code)
         {
             throw new NotImplementedException();
@@ -173,18 +143,18 @@ namespace OlivesAdministration.Test.Repositories
         {
             throw new NotImplementedException();
         }
-
-        public Task<Relation> InitializeRelationAsync(Relation relation)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public Task<IList<Person>> LoginAsync(LoginViewModel info)
         {
             throw new NotImplementedException();
         }
 
         public Task<IList<StatusSummaryViewModel>> SummarizePersonRoleAsync(byte? role)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ResponsePatientFilter> FilterPatientAsync(FilterPatientViewModel filter, Person requester = null)
         {
             throw new NotImplementedException();
         }
