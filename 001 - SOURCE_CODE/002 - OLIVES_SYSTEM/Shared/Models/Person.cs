@@ -22,6 +22,8 @@ namespace Shared.Models
             this.Allergies = new HashSet<Allergy>();
             this.Appointments = new HashSet<Appointment>();
             this.Appointments1 = new HashSet<Appointment>();
+            this.AppointmentNotifications = new HashSet<AppointmentNotification>();
+            this.AppointmentNotifications1 = new HashSet<AppointmentNotification>();
             this.BloodPressures = new HashSet<BloodPressure>();
             this.ExperimentNotes = new HashSet<ExperimentNote>();
             this.ExperimentNotes1 = new HashSet<ExperimentNote>();
@@ -65,6 +67,10 @@ namespace Shared.Models
         public virtual ICollection<Appointment> Appointments { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Appointment> Appointments1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AppointmentNotification> AppointmentNotifications { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AppointmentNotification> AppointmentNotifications1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BloodPressure> BloodPressures { get; set; }
         public virtual Doctor Doctor { get; set; }

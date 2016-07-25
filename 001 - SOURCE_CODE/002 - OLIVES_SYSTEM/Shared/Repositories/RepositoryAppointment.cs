@@ -1,11 +1,11 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
@@ -23,9 +23,30 @@ namespace Shared.Repositories
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
-            context.Appointments.AddOrUpdate(info);
-            await context.SaveChangesAsync();
+            // Begin a transaction.
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Add the appointment to database.
+                    context.Appointments.AddOrUpdate(info);
 
+                    // Save changes asynchronously.
+                    await context.SaveChangesAsync();
+
+                    // Commit the transaction.
+                    transaction.Commit();
+                }
+                catch
+                {
+                    // As exception is thrown, rollback the transaction first.
+                    transaction.Rollback();
+
+                    // Continue throwing exception.
+                    throw;
+                }
+            }
+            
             return info;
         }
 
