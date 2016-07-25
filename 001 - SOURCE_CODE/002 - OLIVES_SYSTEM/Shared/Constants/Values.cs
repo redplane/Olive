@@ -110,5 +110,19 @@
         public const string StandardImageExtension = "png";
 
         #endregion
+
+        #region SignalR keys
+
+        /// <summary>
+        /// SignalR email in query string.
+        /// </summary>
+        public const string KeySignalrEmail = "Email";
+
+        /// <summary>
+        /// SignalR password in query string.
+        /// </summary>
+        public const string KeySignalrPassword = "Password";
+
+        #endregion
     }
 }

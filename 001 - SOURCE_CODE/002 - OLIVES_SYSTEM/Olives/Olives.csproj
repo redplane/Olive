@@ -241,6 +241,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Attributes\HubAuthorizeAttribute .cs" />
     <Compile Include="Attributes\ImageMinSizeValidateAttribute.cs" />
     <Compile Include="Attributes\ImageMaxSizeValidateAttribute.cs" />
     <Compile Include="Attributes\PlaceValidateAttribute.cs" />
@@ -275,6 +276,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Hubs\NotificationHub.cs" />
     <Compile Include="Interfaces\IEmailService.cs" />
     <Compile Include="Interfaces\IFileService.cs" />
     <Compile Include="Models\ApplicationSetting.cs" />

@@ -4,10 +4,11 @@ using System.IO;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
-using System.Web.Routing;
+using Autofac.Integration.SignalR;
 using Autofac;
 using Autofac.Integration.Mvc;
 using Autofac.Integration.WebApi;
+using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Newtonsoft.Json;
 using Olives.Attributes;
@@ -41,6 +42,9 @@ namespace Olives
             //builder.RegisterType<AdminController>().InstancePerRequest();
             builder.RegisterApiControllers(typeof(Startup).Assembly);
             builder.RegisterControllers(typeof(Startup).Assembly);
+
+            // Register your SignalR hubs.
+            builder.RegisterHubs(typeof(Startup).Assembly);
 
             #endregion
 
@@ -155,6 +159,8 @@ namespace Olives
 
             // OlivesAuthorize attribute registration (to access dependency)
             builder.RegisterType<OlivesAuthorize>().PropertiesAutowired();
+            builder.RegisterType<HubAuthorizeAttribute>().PropertiesAutowired();
+
             builder.RegisterType<MedicalCategoryValidateAttribute>().PropertiesAutowired();
             builder.RegisterType<PlaceValidateAttribute>().PropertiesAutowired();
             builder.RegisterType<ImageMaxSizeValidateAttribute>().PropertiesAutowired();
@@ -174,9 +180,14 @@ namespace Olives
             // Web api dependency registration.
             builder.RegisterWebApiFilterProvider(GlobalConfiguration.Configuration);
 
+            // Container build.
             var container = builder.Build();
             GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
-            DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
+            DependencyResolver.SetResolver(new Autofac.Integration.Mvc.AutofacDependencyResolver(container));
+            GlobalHost.DependencyResolver = new Autofac.Integration.SignalR.AutofacDependencyResolver(container);
+
+            // Map all signalr hubs.
+            app.MapSignalR();
 
             #endregion
         }

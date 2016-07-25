@@ -255,6 +255,16 @@
           <Property Name="Created" Type="float" Nullable="false" />
           <Property Name="LastModified" Type="float" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'OlivesHealth.dbo.RealTimeConnection' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="RealTimeConnection">
+          <Key>
+            <PropertyRef Name="Created" />
+          </Key>
+          <Property Name="Email" Type="nvarchar" MaxLength="32" />
+          <Property Name="ConnectionId" Type="nvarchar(max)" />
+          <Property Name="Created" Type="float" Nullable="false" />
+        </EntityType>
         <EntityType Name="Relation">
           <Key>
             <PropertyRef Name="Id" />
@@ -732,6 +742,13 @@
           <EntitySet Name="Relation" EntityType="Self.Relation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Specialty" EntityType="Self.Specialty" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SugarBlood" EntityType="Self.SugarBlood" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RealTimeConnection" EntityType="Self.RealTimeConnection" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [RealTimeConnection].[Email] AS [Email], 
+    [RealTimeConnection].[ConnectionId] AS [ConnectionId], 
+    [RealTimeConnection].[Created] AS [Created]
+    FROM [dbo].[RealTimeConnection] AS [RealTimeConnection]</DefiningQuery>
+          </EntitySet>
           <AssociationSet Name="FK__AccountCo__Owner__707E9C7C" Association="Self.FK__AccountCo__Owner__707E9C7C">
             <End Role="Person" EntitySet="Person" />
             <End Role="AccountCode" EntitySet="AccountCode" />
@@ -901,6 +918,7 @@
           <EntitySet Name="Relations" EntityType="OlivesHealthModel.Relation" />
           <EntitySet Name="Specialties" EntityType="OlivesHealthModel.Specialty" />
           <EntitySet Name="SugarBloods" EntityType="OlivesHealthModel.SugarBlood" />
+          <EntitySet Name="RealTimeConnections" EntityType="OlivesHealthModel.RealTimeConnection" />
           <AssociationSet Name="FK__AccountCo__Owner__707E9C7C" Association="OlivesHealthModel.FK__AccountCo__Owner__707E9C7C">
             <End Role="Person" EntitySet="People" />
             <End Role="AccountCode" EntitySet="AccountCodes" />
@@ -1394,6 +1412,14 @@
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
           <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__SugarBloo__LastM__6AC5C326" FromRole="SugarBlood" ToRole="Person" />
+        </EntityType>
+        <EntityType Name="RealTimeConnection">
+          <Key>
+            <PropertyRef Name="Created" />
+          </Key>
+          <Property Name="Email" Type="String" MaxLength="32" FixedLength="false" Unicode="true" />
+          <Property Name="ConnectionId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Created" Type="Double" Nullable="false" />
         </EntityType>
         <Association Name="FK__AccountCo__Owner__707E9C7C">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
@@ -2122,6 +2148,15 @@
                 <ScalarProperty Name="Value" ColumnName="Value" />
                 <ScalarProperty Name="Owner" ColumnName="Owner" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RealTimeConnections">
+            <EntityTypeMapping TypeName="OlivesHealthModel.RealTimeConnection">
+              <MappingFragment StoreEntitySet="RealTimeConnection">
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="ConnectionId" ColumnName="ConnectionId" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

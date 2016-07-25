@@ -124,6 +124,7 @@
     <Compile Include="Interfaces\IRepositoryPlace.cs" />
     <Compile Include="Interfaces\IRepositoryPrescriptionImage.cs" />
     <Compile Include="Interfaces\IRepositoryRating.cs" />
+    <Compile Include="Interfaces\IRepositoryRealTimeConnection.cs" />
     <Compile Include="Interfaces\IRepositoryRelation.cs" />
     <Compile Include="Interfaces\IRepositorySugarblood.cs" />
     <Compile Include="Interfaces\IRepositoryHeartbeat.cs" />
@@ -201,6 +202,9 @@
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Rating.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RealTimeConnection.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Relation.cs">
