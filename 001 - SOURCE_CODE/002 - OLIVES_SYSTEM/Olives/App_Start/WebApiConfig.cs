@@ -1,12 +1,16 @@
 ﻿using System.Web.Http;
 using MultipartFormDataMediaFormatter;
-
+using System.Web.Http.Cors;
 namespace Olives
 {
     public static class WebApiConfig
     {
         public static void Register(HttpConfiguration config)
         {
+            // Enable CORS
+            var cors = new EnableCorsAttribute("*", "*", "*");
+            config.EnableCors(cors);
+
             // Web API configuration and services
             // Make web API support multipart/form-data request.
             config.Formatters.Add(new MultipartFormDataFormatter());
