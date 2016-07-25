@@ -109,7 +109,11 @@ namespace Olives
             builder.RegisterType<RepositoryRating>()
                 .As<IRepositoryRating>()
                 .SingleInstance();
-            
+
+            builder.RegisterType<RepositoryAppointmentNotification>()
+                .As<IRepositoryAppointmentNotification>()
+                .SingleInstance();
+
             #region Medical repositories
 
             builder.RegisterType<RepositoryExperimentNote>().As<IRepositoryExperimentNote>().SingleInstance();

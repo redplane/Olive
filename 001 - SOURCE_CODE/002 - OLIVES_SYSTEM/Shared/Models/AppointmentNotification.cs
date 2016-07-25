@@ -12,12 +12,18 @@ namespace Shared.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class sysdiagram
+    public partial class AppointmentNotification
     {
-        public string name { get; set; }
-        public int principal_id { get; set; }
-        public int diagram_id { get; set; }
-        public Nullable<int> version { get; set; }
-        public byte[] definition { get; set; }
+        public int Id { get; set; }
+        public byte Type { get; set; }
+        public int Invoker { get; set; }
+        public int Recipient { get; set; }
+        public double Created { get; set; }
+        public int AppointmentId { get; set; }
+        public bool IsSeen { get; set; }
+    
+        public virtual Appointment Appointment { get; set; }
+        public virtual Person Person { get; set; }
+        public virtual Person Person1 { get; set; }
     }
 }

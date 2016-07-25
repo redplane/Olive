@@ -212,6 +212,7 @@
     <Compile Include="Attributes\OlivesAuthorizeAtrribute.cs" />
     <Compile Include="Constants\EmailType.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\AppointmentNotificationController.cs" />
     <Compile Include="Controllers\MedicalNoteController.cs" />
     <Compile Include="Controllers\MedicalExperimentController.cs" />
     <Compile Include="Controllers\PrescriptionImageController.cs" />

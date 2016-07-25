@@ -29,12 +29,13 @@ namespace Olives.Controllers
         /// <param name="repositoryAppointment"></param>
         /// <param name="repositoryRelation"></param>
         /// <param name="log"></param>
-        public AppointmentController(IRepositoryAccount repositoryAccount, IRepositoryAppointment repositoryAppointment,
+        public AppointmentController(IRepositoryAccount repositoryAccount, IRepositoryAppointment repositoryAppointment, IRepositoryAppointmentNotification repositoryAppointmentNotification,
             IRepositoryRelation repositoryRelation,
             ILog log)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryAppointment = repositoryAppointment;
+            _repositoryAppointmentNotification = repositoryAppointmentNotification;
             _repositoryRelation = repositoryRelation;
             _log = log;
         }
@@ -50,11 +51,11 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/appointment")]
         [HttpGet]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> FindAppointment([FromUri] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find the appointment by searching id.
             var appointment = await _repositoryAppointment.FindAppointmentAsync(id);
@@ -144,7 +145,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/appointment")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> InitializeAppointment([FromBody] InitializeAppointmentViewModel info)
         {
             #region Model validation
@@ -165,99 +166,138 @@ namespace Olives.Controllers
 
             #endregion
 
-            #region Relation validation
-
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
-            // Find the dater by using id.
-            var dater = await _repositoryAccount.FindPersonAsync(info.Dater, null, null, null, StatusAccount.Active);
-
-            // No information has been found.
-            if (dater == null)
+            try
             {
-                return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                #region Relation validation
+
+                // Retrieve information of person who sent request.
+                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+                // Find the dater by using id.
+                var dater = await _repositoryAccount.FindPersonAsync(info.Dater, null, null, null, StatusAccount.Active);
+
+                // No information has been found.
+                if (dater == null)
                 {
-                    Error = $"{Language.WarnDaterNotFound}"
-                });
-            }
-
-            // Only patients and doctor can date each other.
-            if (dater.Role != (byte) Role.Doctor && dater.Role != (byte) Role.Patient)
-            {
-                return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                {
-                    Error = $"{Language.WarnDaterInvalidRole}"
-                });
-            }
-
-            // 2 people with same role cannot date each other.
-            if (dater.Role == requester.Role)
-            {
-                return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                {
-                    Error = $"{Language.WarnDaterSameRole}"
-                });
-            }
-
-
-            // Check whether 2 people have relation with each other or not.
-            var relationships =
-                await
-                    _repositoryRelation.FindRelationshipAsync(requester.Id, info.Dater, (byte) StatusRelation.Active);
-            if (relationships == null || relationships.Count < 1)
-            {
-                return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                {
-                    Error = $"{Language.WarnHasNoRelationship}"
-                });
-            }
-
-            #endregion
-
-            #region Appointment initialization
-
-            // Initialize an appointment information.
-            var appointment = new Appointment();
-            appointment.Maker = requester.Id;
-            appointment.MakerFirstName = requester.FirstName;
-            appointment.MakerLastName = requester.LastName;
-            appointment.Dater = info.Dater;
-            appointment.DaterFirstName = dater.FirstName;
-            appointment.DaterLastName = dater.LastName;
-            appointment.From = info.From ?? 0;
-            appointment.To = info.To ?? 0;
-            appointment.Note = info.Note;
-            appointment.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
-            appointment.Status = (byte) StatusAppointment.Pending;
-
-            #endregion
-
-            var result = await _repositoryAppointment.InitializeAppointment(appointment);
-            return Request.CreateResponse(HttpStatusCode.OK, new
-            {
-                Appointment = new
-                {
-                    result.Id,
-                    Maker = new
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
-                        requester.Id,
-                        requester.FirstName,
-                        requester.LastName
-                    },
-                    Dater = new
-                    {
-                        dater.Id,
-                        dater.FirstName,
-                        dater.LastName
-                    },
-                    info.From,
-                    info.To,
-                    info.Note,
-                    appointment.Created,
-                    appointment.Status
+                        Error = $"{Language.WarnDaterNotFound}"
+                    });
                 }
-            });
+
+                // Only patients and doctor can date each other.
+                if (dater.Role != (byte)Role.Doctor && dater.Role != (byte)Role.Patient)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                    {
+                        Error = $"{Language.WarnDaterInvalidRole}"
+                    });
+                }
+
+                // 2 people with same role cannot date each other.
+                if (dater.Role == requester.Role)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                    {
+                        Error = $"{Language.WarnDaterSameRole}"
+                    });
+                }
+
+
+                // Check whether 2 people have relation with each other or not.
+                var relationships =
+                    await
+                        _repositoryRelation.FindRelationshipAsync(requester.Id, info.Dater, (byte)StatusRelation.Active);
+                if (relationships == null || relationships.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                    {
+                        Error = $"{Language.WarnHasNoRelationship}"
+                    });
+                }
+
+                #endregion
+
+                #region Appointment initialization
+
+                // Initialize an appointment information.
+                var appointment = new Appointment();
+                appointment.Maker = requester.Id;
+                appointment.MakerFirstName = requester.FirstName;
+                appointment.MakerLastName = requester.LastName;
+                appointment.Dater = info.Dater;
+                appointment.DaterFirstName = dater.FirstName;
+                appointment.DaterLastName = dater.LastName;
+                appointment.From = info.From ?? 0;
+                appointment.To = info.To ?? 0;
+                appointment.Note = info.Note;
+                appointment.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+                appointment.Status = (byte)StatusAppointment.Pending;
+
+                #endregion
+
+                #region Appointment notification initialization
+
+                try
+                {
+                    // Appointment notification create.
+                    // As the notification is created successfully. Notification will be pushed to recipient real time.
+                    var appointmentNotification = new AppointmentNotification();
+                    appointmentNotification.Type = (byte)AppointmentNotificationType.Created;
+                    appointmentNotification.Invoker = requester.Id;
+                    appointmentNotification.Recipient = info.Dater;
+                    appointmentNotification.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+                    appointmentNotification.AppointmentId = appointment.Id;
+                    appointmentNotification.IsSeen = false;
+
+                    // Initialize appointment notification.
+                    await _repositoryAppointmentNotification.InitializeAppointmentNotificationAsync(appointmentNotification);
+
+                    // TODO: Push the notification to the client.
+                }
+                catch (Exception exception)
+                {
+                    // As the notification creation is failed. Continue the function.
+                    // Notification can be displayed later by long polling request.
+                    _log.Error(exception.Message, exception);
+                }
+
+                #endregion
+
+                var result = await _repositoryAppointment.InitializeAppointment(appointment);
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    Appointment = new
+                    {
+                        result.Id,
+                        Maker = new
+                        {
+                            requester.Id,
+                            requester.FirstName,
+                            requester.LastName
+                        },
+                        Dater = new
+                        {
+                            dater.Id,
+                            dater.FirstName,
+                            dater.LastName
+                        },
+                        info.From,
+                        info.To,
+                        info.Note,
+                        appointment.Created,
+                        appointment.Status
+                    }
+                });
+            }
+            catch (Exception exception)
+            {
+                // Exception is thrown, log it for future trace.
+                _log.Error(exception.Message, exception);
+
+                // Tell the client server is error.
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
         }
 
         /// <summary>
@@ -268,7 +308,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/appointment")]
         [HttpPut]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> EditAppointment([FromUri] int id,
             [FromBody] EditAppointmentViewModel info)
         {
@@ -293,7 +333,7 @@ namespace Olives.Controllers
             #region Appointment validation
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find appointment by using id asynchronously.
             var appointment = await _repositoryAppointment.FindAppointmentAsync(id);
@@ -308,8 +348,8 @@ namespace Olives.Controllers
             }
 
             // Appointment is cancelled or done.
-            if (appointment.Status == (byte) StatusAppointment.Cancelled ||
-                appointment.Status == (byte) StatusAppointment.Done)
+            if (appointment.Status == (byte)StatusAppointment.Cancelled ||
+                appointment.Status == (byte)StatusAppointment.Done)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
@@ -348,7 +388,7 @@ namespace Olives.Controllers
             if (info.From != null) appointment.From = info.From.Value;
             if (info.To != null) appointment.To = info.To.Value;
             if (info.Note != null) appointment.Note = info.Note;
-            if (info.Status != null) appointment.Status = (byte) info.Status;
+            if (info.Status != null) appointment.Status = (byte)info.Status;
 
             #endregion
 
@@ -416,7 +456,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/appointment/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> FilterAppointment([FromBody] FilterAppointmentViewModel filter)
         {
             #region ModelState result
@@ -438,7 +478,7 @@ namespace Olives.Controllers
             #endregion
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Filter appointment by using specific conditions.
             var response = await _repositoryAppointment.FilterAppointmentAsync(filter, requester.Id);
@@ -480,9 +520,14 @@ namespace Olives.Controllers
         private readonly IRepositoryAccount _repositoryAccount;
 
         /// <summary>
-        ///     Repository of accounts
+        ///     Repository of appointments
         /// </summary>
         private readonly IRepositoryAppointment _repositoryAppointment;
+
+        /// <summary>
+        /// Repository of appointment notification.
+        /// </summary>
+        private readonly IRepositoryAppointmentNotification _repositoryAppointmentNotification;
 
         /// <summary>
         ///     Repository of relationships.

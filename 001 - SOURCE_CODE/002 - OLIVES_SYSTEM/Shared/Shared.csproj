@@ -81,6 +81,8 @@
     <Compile Include="Attributes\RegexMatchAttribute.cs" />
     <Compile Include="Attributes\RequiredIfAttribute.cs" />
     <Compile Include="Attributes\ValueStringLengthAttribute.cs" />
+    <Compile Include="Enumerations\AppointmentNotificationType.cs" />
+    <Compile Include="Enumerations\Filter\AppointmentNotificationFilterSort.cs" />
     <Compile Include="Enumerations\Filter\MedicalCategoryFilterSort.cs" />
     <Compile Include="Enumerations\Filter\MedicalNoteFilterSort.cs" />
     <Compile Include="Enumerations\Filter\MedicalRecordFilterSort.cs" />
@@ -111,6 +113,7 @@
     <Compile Include="Interfaces\IRepositoryAddiction.cs" />
     <Compile Include="Interfaces\IRepositoryAllergy.cs" />
     <Compile Include="Interfaces\IRepositoryAppointment.cs" />
+    <Compile Include="Interfaces\IRepositoryAppointmentNotification.cs" />
     <Compile Include="Interfaces\IRepositoryBloodPressure.cs" />
     <Compile Include="Interfaces\IRepositoryExperimentNote.cs" />
     <Compile Include="Interfaces\IRepositoryMedicalNote.cs" />
@@ -135,6 +138,9 @@
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Appointment.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AppointmentNotification.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\BloodPressure.cs">
@@ -208,10 +214,8 @@
     <Compile Include="Models\SugarBlood.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\sysdiagram.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\RepositoryAppointmentNotification.cs" />
     <Compile Include="Repositories\RepositoryRelation.cs" />
     <Compile Include="Repositories\RepositoryAccount.cs" />
     <Compile Include="Repositories\RepositoryCode.cs" />
@@ -252,6 +256,7 @@
     <Compile Include="ViewModels\Filter\FilterMedicalCategoryViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterExperimentNoteViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMedicalNoteViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterAppointmentNotificationViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPlaceViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterHeatbeatViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMedicalImageViewModel.cs" />
@@ -263,6 +268,7 @@
     <Compile Include="ViewModels\Initialize\InitializePrescriptionImageViewModel.cs" />
     <Compile Include="ViewModels\MedicineInfoViewModel.cs" />
     <Compile Include="ViewModels\RelativeViewModel.cs" />
+    <Compile Include="ViewModels\Response\ResponseAppointmentNotificationFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseExperimentNoteFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseMedicalCategoryFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseMedicalNoteFilter.cs" />
