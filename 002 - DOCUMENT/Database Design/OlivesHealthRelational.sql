@@ -339,6 +339,28 @@ CREATE TABLE JunkFile
 	FullPath				NVARCHAR(MAX)
 )
 
+----------------------------------------------------------
+-- Notifications
+----------------------------------------------------------
+CREATE TABLE AppointmentNotification
+(
+	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	-- Type :
+	-- 1 : Created
+	-- 2 : Edited
+	-- 3 : Cancelled
+	[Type]					TINYINT NOT NULL,
+	Invoker					INT NOT NULL,
+	Recipient				INT NOT NULL,
+	Created					FLOAT NOT NULL,
+	AppointmentId			INT NOT NULL,
+	IsSeen					BIT NOT NULL,
+
+	FOREIGN KEY (Invoker) REFERENCES Person(Id),
+	FOREIGN KEY (Recipient) REFERENCES Person(Id),
+	FOREIGN KEY (AppointmentId) REFERENCES Appointment(Id)
+)
+
 
 SELECT * FROM Person
 SELECT * FROM Country
