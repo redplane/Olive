@@ -419,20 +419,10 @@ namespace Olives.Controllers
             if (editor.Place != null)
             {
                 // Find the place by using id.
-                var place = _repositoryPlace.FindPlaceAsync(editor.Place, null, null, null, null);
-
-                // Place is not found.
-                if (place == null)
-                {
-                    // Log the error.
-                    _log.Error($"Place [Id: {editor.Place}] couldn't be found");
-
-                    // Tell the client about the result.
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new
-                    {
-                        Error = $"{Language.WarnPlaceNotFound}"
-                    });
-                }
+                var place = await _repositoryPlace.FindPlaceAsync(editor.Place, null, null, null, null);
+                requester.Doctor.PlaceId = place.Id;
+                requester.Doctor.City = place.City;
+                requester.Doctor.Country = place.Country;
             }
 
             try
