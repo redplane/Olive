@@ -185,23 +185,17 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Properties\PublishProfiles\Olive - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\Olive - Web Deploy.pubxml" />
-    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Resources\Avatar\1.png" />
     <Content Include="Resources\Avatar\2.png" />
     <Content Include="Resources\Avatar\3.png" />
     <Content Include="Resources\Avatar\4.png" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\jquery-1.10.2.js" />
-    <Content Include="Scripts\jquery-1.10.2.min.js" />
-    <None Include="Scripts\jquery.validate-vsdoc.js" />
-    <Content Include="Scripts\jquery.validate.js" />
-    <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\modernizr-2.8.3.js" />
-    <Content Include="Views\Account\Index.html" />
-    <Content Include="Views\Index.html" />
+    <Content Include="Scripts\app.ff33a945a752690309bd.js.map" />
+    <Content Include="Scripts\polyfills.ff33a945a752690309bd.js.map" />
+    <Content Include="Scripts\vendor.ff33a945a752690309bd.js.map" />
+    <None Include="Views\Home\Index.cshtml" />
+    <Content Include="Scripts\app.ff33a945a752690309bd.js" />
+    <Content Include="Scripts\polyfills.ff33a945a752690309bd.js" />
+    <Content Include="Scripts\vendor.ff33a945a752690309bd.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -217,6 +211,7 @@
     <Compile Include="Attributes\MedicineListKeyValidateAttribute.cs" />
     <Compile Include="Attributes\OlivesAuthorizeAtrribute.cs" />
     <Compile Include="Constants\EmailType.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MedicalNoteController.cs" />
     <Compile Include="Controllers\MedicalExperimentController.cs" />
     <Compile Include="Controllers\PrescriptionImageController.cs" />
@@ -285,7 +280,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\web.config" />
-    <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\AccountVerify\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -304,10 +298,7 @@
       <Name>Shared</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ngapp\" />
-    <Folder Include="ngdist\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
