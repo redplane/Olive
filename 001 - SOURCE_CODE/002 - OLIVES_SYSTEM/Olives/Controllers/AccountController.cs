@@ -409,6 +409,12 @@ namespace Olives.Controllers
             if (editor.Birthday != null)
                 requester.Birthday = editor.Birthday;
 
+            // Update person full name.
+            requester.FullName = $"{requester.FirstName} {requester.LastName}";
+
+            // Update the last modified.
+            requester.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+
             // Place is defined.
             if (editor.Place != null)
             {
@@ -432,7 +438,7 @@ namespace Olives.Controllers
             try
             {
                 // Save account.
-                requester = await _repositoryAccount.InitializePersonAsync(requester);
+                requester = await _repositoryAccount.EditPersonProfileAsync(requester.Id, requester);
 
                 // Respond information to client.
                 return Request.CreateResponse(HttpStatusCode.OK, new

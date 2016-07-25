@@ -636,7 +636,7 @@ namespace Shared.Repositories
                         appointment.DaterFirstName = info.FirstName;
                         appointment.DaterLastName = info.LastName;
                     }
-
+                    
                     #endregion
 
                     #region Rating update
@@ -654,7 +654,7 @@ namespace Shared.Repositories
                         rating.TargetFirstName = info.FirstName;
                         rating.TargetLastName = info.LastName;
                     }
-
+                    
                     #endregion
 
                     // Save change to database.
