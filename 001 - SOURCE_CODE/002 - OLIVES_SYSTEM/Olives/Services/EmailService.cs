@@ -134,7 +134,7 @@ namespace Olives.Services
                     firstName,
                     lastName,
                     url,
-                    expired = code.Expired
+                    expired = code.Expired.ToLocalTime()
                 };
 
                 //// Render email body from template with given information.

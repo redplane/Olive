@@ -824,6 +824,10 @@ namespace Olives.Controllers
             }
         }
 
+        #endregion
+
+        #region Forgot password
+        
         /// <summary>
         ///     Request an email contains forgot password token asynchronously.
         /// </summary>
@@ -981,7 +985,7 @@ namespace Olives.Controllers
 
             #endregion
         }
-
+        
         #endregion
 
         #region Login
