@@ -23,6 +23,17 @@ namespace Shared.Interfaces
         Task<IEnumerable<RealTimeConnection>> FindRealTimeConnectionInfoAsync(string email, string connectionId);
 
         /// <summary>
+        /// Find the real time connection indexes by using specific conditions.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="emailComparison"></param>
+        /// <param name="connectionIndex"></param>
+        /// <param name="connectionIndexComparison"></param>
+        /// <returns></returns>
+        Task<IList<string>> FindRealTimeConnectionIndexesAsync(string email, StringComparison? emailComparison,
+            string connectionIndex, StringComparison? connectionIndexComparison);
+
+        /// <summary>
         /// Find and delete real time connection informations by using specific conditions.
         /// </summary>
         /// <param name="email"></param>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,6 +20,38 @@ namespace Shared.Repositories
         public Task<IEnumerable<RealTimeConnection>> FindRealTimeConnectionInfoAsync(string email, string connectionId)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Find the real time connection indexes by using specific conditions.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="emailComparison"></param>
+        /// <param name="connectionIndex"></param>
+        /// <param name="connectionIndexComparison"></param>
+        /// <returns></returns>
+        public async Task<IList<string>> FindRealTimeConnectionIndexesAsync(string email, StringComparison? emailComparison, string connectionIndex, StringComparison? connectionIndexComparison)
+        {
+            // Database connection initialize.
+            var context = new OlivesHealthEntities();
+
+            // By default, take all records.
+            IQueryable<RealTimeConnection> realTimeConnections = context.RealTimeConnections;
+
+            // Email is defined.
+            if (!string.IsNullOrWhiteSpace(email))
+                realTimeConnections =
+                    realTimeConnections.Where(x => x.Email.Equals(email, emailComparison ?? StringComparison.Ordinal));
+
+            // Connection index is defined.
+            if (!string.IsNullOrWhiteSpace(connectionIndex))
+                realTimeConnections =
+                    realTimeConnections.Where(
+                        x =>
+                            x.ConnectionId.Equals(connectionIndex, connectionIndexComparison ?? StringComparison.Ordinal));
+
+            var connectionIndexes = await realTimeConnections.Select(x => x.ConnectionId).ToListAsync();
+            return connectionIndexes;
         }
 
         /// <summary>
@@ -76,5 +109,7 @@ namespace Shared.Repositories
 
             return records;
         }
+
+        
     }
 }

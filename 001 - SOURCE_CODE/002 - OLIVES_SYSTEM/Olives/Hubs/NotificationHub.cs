@@ -64,31 +64,5 @@ namespace Olives.Hubs
         }
 
         #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// This function is for notifying appointment changes to specific connections.
-        /// </summary>
-        /// <param name="email"></param>
-        /// <param name="type"></param>
-        /// <param name="created"></param>
-        /// <param name="appointment"></param>
-        /// <returns></returns>
-        public async Task NotifyAppointment(string email, AppointmentNotificationType type, double created, int appointment)
-        {
-            // Find all connections by using email.
-            var realTimeConnections = await RepositoryRealTimeConnection.FindRealTimeConnectionInfoAsync(email, null);
-            
-            // Find all connection indexes.
-            var connections = realTimeConnections.Select(x => x.ConnectionId).ToList();
-            if (connections.Count < 1)
-                return;
-
-            // Notify the specific client about an appointment.
-            await Clients.Clients(connections).notifyAppointment((byte) type, created, appointment);
-        }
-
-        #endregion
     }
 }

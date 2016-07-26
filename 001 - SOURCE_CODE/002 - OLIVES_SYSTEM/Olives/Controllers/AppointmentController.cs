@@ -5,7 +5,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
+using Microsoft.AspNet.SignalR;
 using Olives.Attributes;
+using Olives.Hubs;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
@@ -18,7 +20,7 @@ using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
-    public class AppointmentController : ApiParentController
+    public class AppointmentController : ApiParentControllerHub<NotificationHub>
     {
         #region Constructors
 
@@ -27,15 +29,18 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="repositoryAccount"></param>
         /// <param name="repositoryAppointment"></param>
+        /// <param name="repositoryAppointmentNotification"></param>
+        /// <param name="repositoryRealTimeConnection"></param>
         /// <param name="repositoryRelation"></param>
         /// <param name="log"></param>
         public AppointmentController(IRepositoryAccount repositoryAccount, IRepositoryAppointment repositoryAppointment, IRepositoryAppointmentNotification repositoryAppointmentNotification,
-            IRepositoryRelation repositoryRelation,
+            IRepositoryRealTimeConnection repositoryRealTimeConnection, IRepositoryRelation repositoryRelation,
             ILog log)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryAppointment = repositoryAppointment;
             _repositoryAppointmentNotification = repositoryAppointmentNotification;
+            _repositoryRealTimeConnection = repositoryRealTimeConnection;
             _repositoryRelation = repositoryRelation;
             _log = log;
         }
@@ -254,6 +259,17 @@ namespace Olives.Controllers
                     await _repositoryAppointmentNotification.InitializeAppointmentNotificationAsync(appointmentNotification);
 
                     // TODO: Push the notification to the client.
+                    
+                    // As the notification is created successfully. Notification should be sent.
+                    var connectionIndexes =
+                        await
+                            _repositoryRealTimeConnection.FindRealTimeConnectionIndexesAsync(dater.Email,
+                                StringComparison.InvariantCultureIgnoreCase, null, null);
+
+                    // Send notification to all connection indexes which have been found.
+                    Hub.Clients.Clients(connectionIndexes)
+                        .notifyAppointment(requester.Id, appointmentNotification.Created,
+                            appointmentNotification.AppointmentId, appointmentNotification.Type);
                 }
                 catch (Exception exception)
                 {
@@ -447,8 +463,7 @@ namespace Olives.Controllers
                 }
             });
         }
-
-
+        
         /// <summary>
         ///     Filter appointment by using specific conditions.
         /// </summary>
@@ -528,11 +543,16 @@ namespace Olives.Controllers
         /// Repository of appointment notification.
         /// </summary>
         private readonly IRepositoryAppointmentNotification _repositoryAppointmentNotification;
-
+        
         /// <summary>
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
+
+        /// <summary>
+        /// Repository which provides function to access real time connection database.
+        /// </summary>
+        private readonly IRepositoryRealTimeConnection _repositoryRealTimeConnection;
 
         /// <summary>
         ///     Instance of module which is used for logging.
