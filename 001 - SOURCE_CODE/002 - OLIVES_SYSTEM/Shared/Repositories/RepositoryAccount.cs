@@ -396,8 +396,9 @@ namespace Shared.Repositories
         /// <param name="email">Email which is used for filtering.</param>
         /// <param name="password">Password of account.</param>
         /// <param name="role">As role is specified. Find account by role.</param>
+        /// <param name="status"></param>
         /// <returns></returns>
-        public Person FindPerson(int? id, string email, string password, byte? role)
+        public Person FindPerson(int? id, string email, string password, byte? role, StatusAccount? status)
         {
             // Database context intialize.
             var context = new OlivesHealthEntities();
@@ -420,6 +421,9 @@ namespace Shared.Repositories
             // Role is specified.
             if (role != null)
                 result = result.Where(x => x.Role == role);
+
+            if (status != null)
+                result = result.Where(x => x.Status == (byte) status.Value);
 
             return result.FirstOrDefault();
         }

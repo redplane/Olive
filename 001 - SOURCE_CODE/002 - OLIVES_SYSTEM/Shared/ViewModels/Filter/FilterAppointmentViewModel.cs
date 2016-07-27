@@ -9,11 +9,27 @@ namespace Shared.ViewModels.Filter
 {
     public class FilterAppointmentViewModel : IPagination
     {
-        [InEnumerationsArray(new object[] {PartnerFilterMode.ParterIsDater, PartnerFilterMode.PartnerIsRequester},
+        /// <summary>
+        /// The mode of partner filter should be done.
+        /// </summary>
+        [InEnumerationsArray(new object[] {PartnerFilterMode.ParterIsDater, PartnerFilterMode.PartnerIsMaker},
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
         public PartnerFilterMode? Mode { get; set; }
 
-        public int Partner { get; set; }
+        /// <summary>
+        /// Partner who takes part in the appointment.
+        /// </summary>
+        public int? Partner { get; set; }
+
+        /// <summary>
+        /// Person who sends the filter request.
+        /// </summary>
+        public int Requester { get; set; }
+
+        /// <summary>
+        /// Id of appointment
+        /// </summary>
+        public int? Id { get; set; }
 
         [NumericPropertyCompare("MaxCreated", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]

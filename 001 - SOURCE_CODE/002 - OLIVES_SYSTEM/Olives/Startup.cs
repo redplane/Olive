@@ -113,6 +113,8 @@ namespace Olives
                 .As<IRepositoryAppointmentNotification>()
                 .SingleInstance();
 
+            builder.RegisterType<RepositoryRealTimeConnection>().As<IRepositoryRealTimeConnection>().SingleInstance();
+
             #region Medical repositories
 
             builder.RegisterType<RepositoryExperimentNote>().As<IRepositoryExperimentNote>().SingleInstance();
@@ -186,12 +188,15 @@ namespace Olives
             DependencyResolver.SetResolver(new Autofac.Integration.Mvc.AutofacDependencyResolver(container));
             GlobalHost.DependencyResolver = new Autofac.Integration.SignalR.AutofacDependencyResolver(container);
 
+            // When application starts up. Remove all real time connection created before.
+            var repositoryRealTimeConnection = DependencyResolver.Current.GetService<IRepositoryRealTimeConnection>();
+            repositoryRealTimeConnection.DeleteRealTimeConnectionInfoAsync(null, null, null);
             // Map all signalr hubs.
             app.MapSignalR();
 
             #endregion
         }
-        
+
         /// <summary>
         ///     This function is for loading application setting.
         /// </summary>

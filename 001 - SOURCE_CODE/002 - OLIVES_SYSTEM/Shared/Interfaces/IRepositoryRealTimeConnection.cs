@@ -17,31 +17,29 @@ namespace Shared.Interfaces
         /// <summary>
         /// Find real time connection information asynchronously.
         /// </summary>
-        /// <param name="email"></param>
+        /// <param name="owner"></param>
         /// <param name="connectionId"></param>
         /// <returns></returns>
-        Task<IEnumerable<RealTimeConnection>> FindRealTimeConnectionInfoAsync(string email, string connectionId);
+        Task<IEnumerable<RealTimeConnection>> FindRealTimeConnectionInfoAsync(int? owner, string connectionId);
 
         /// <summary>
         /// Find the real time connection indexes by using specific conditions.
         /// </summary>
-        /// <param name="email"></param>
-        /// <param name="emailComparison"></param>
+        /// <param name="owner"></param>
         /// <param name="connectionIndex"></param>
         /// <param name="connectionIndexComparison"></param>
         /// <returns></returns>
-        Task<IList<string>> FindRealTimeConnectionIndexesAsync(string email, StringComparison? emailComparison,
+        Task<IList<string>> FindRealTimeConnectionIndexesAsync(int? owner,
             string connectionIndex, StringComparison? connectionIndexComparison);
 
         /// <summary>
         /// Find and delete real time connection informations by using specific conditions.
         /// </summary>
-        /// <param name="email"></param>
-        /// <param name="emailComparison"></param>
+        /// <param name="owner"></param>
         /// <param name="connectionIndex"></param>
         /// <param name="connectionIndexComparison"></param>
         /// <returns></returns>
-        Task<int> DeleteRealTimeConnectionInfoAsync(string email, StringComparison? emailComparison,
+        Task<int> DeleteRealTimeConnectionInfoAsync(int? owner,
             string connectionIndex, StringComparison? connectionIndexComparison);
     }
 }

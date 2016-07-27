@@ -123,6 +123,8 @@
         /// </summary>
         public const string KeySignalrPassword = "Password";
 
+        public const string KeySignalrClient = "Client";
+
         #endregion
     }
 }

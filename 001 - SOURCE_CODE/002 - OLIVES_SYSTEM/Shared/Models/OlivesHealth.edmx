@@ -55,6 +55,7 @@
           <Property Name="Created" Type="float" Nullable="false" />
           <Property Name="LastModified" Type="float" />
           <Property Name="Status" Type="tinyint" Nullable="false" />
+          <Property Name="LastModifiedNote" Type="nvarchar" MaxLength="128" />
         </EntityType>
         <EntityType Name="AppointmentNotification">
           <Key>
@@ -255,13 +256,12 @@
           <Property Name="Created" Type="float" Nullable="false" />
           <Property Name="LastModified" Type="float" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'OlivesHealth.dbo.RealTimeConnection' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="RealTimeConnection">
           <Key>
-            <PropertyRef Name="Created" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Email" Type="nvarchar" MaxLength="32" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Owner" Type="int" Nullable="false" />
           <Property Name="ConnectionId" Type="nvarchar(max)" />
           <Property Name="Created" Type="float" Nullable="false" />
         </EntityType>
@@ -739,16 +739,10 @@ warning 6002: The table/view 'OlivesHealth.dbo.RealTimeConnection' does not have
           <EntitySet Name="Prescription" EntityType="Self.Prescription" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PrescriptionImage" EntityType="Self.PrescriptionImage" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Rating" EntityType="Self.Rating" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RealTimeConnection" EntityType="Self.RealTimeConnection" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Relation" EntityType="Self.Relation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Specialty" EntityType="Self.Specialty" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SugarBlood" EntityType="Self.SugarBlood" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="RealTimeConnection" EntityType="Self.RealTimeConnection" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [RealTimeConnection].[Email] AS [Email], 
-    [RealTimeConnection].[ConnectionId] AS [ConnectionId], 
-    [RealTimeConnection].[Created] AS [Created]
-    FROM [dbo].[RealTimeConnection] AS [RealTimeConnection]</DefiningQuery>
-          </EntitySet>
           <AssociationSet Name="FK__AccountCo__Owner__707E9C7C" Association="Self.FK__AccountCo__Owner__707E9C7C">
             <End Role="Person" EntitySet="Person" />
             <End Role="AccountCode" EntitySet="AccountCode" />
@@ -915,10 +909,10 @@ warning 6002: The table/view 'OlivesHealth.dbo.RealTimeConnection' does not have
           <EntitySet Name="Prescriptions" EntityType="OlivesHealthModel.Prescription" />
           <EntitySet Name="PrescriptionImages" EntityType="OlivesHealthModel.PrescriptionImage" />
           <EntitySet Name="Ratings" EntityType="OlivesHealthModel.Rating" />
+          <EntitySet Name="RealTimeConnections" EntityType="OlivesHealthModel.RealTimeConnection" />
           <EntitySet Name="Relations" EntityType="OlivesHealthModel.Relation" />
           <EntitySet Name="Specialties" EntityType="OlivesHealthModel.Specialty" />
           <EntitySet Name="SugarBloods" EntityType="OlivesHealthModel.SugarBlood" />
-          <EntitySet Name="RealTimeConnections" EntityType="OlivesHealthModel.RealTimeConnection" />
           <AssociationSet Name="FK__AccountCo__Owner__707E9C7C" Association="OlivesHealthModel.FK__AccountCo__Owner__707E9C7C">
             <End Role="Person" EntitySet="People" />
             <End Role="AccountCode" EntitySet="AccountCodes" />
@@ -1113,6 +1107,7 @@ warning 6002: The table/view 'OlivesHealth.dbo.RealTimeConnection' does not have
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
           <Property Name="Status" Type="Byte" Nullable="false" />
+          <Property Name="LastModifiedNote" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="AppointmentNotifications" Relationship="OlivesHealthModel.FK__Appointme__Appoi__2C938683" FromRole="Appointment" ToRole="AppointmentNotification" />
           <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Appointme__Dater__744F2D60" FromRole="Appointment" ToRole="Person" />
           <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__Appointme__Statu__735B0927" FromRole="Appointment" ToRole="Person" />
@@ -1376,6 +1371,15 @@ warning 6002: The table/view 'OlivesHealth.dbo.RealTimeConnection' does not have
           <NavigationProperty Name="Doctor" Relationship="OlivesHealthModel.FK__Rating__Target__25E688F4" FromRole="Rating" ToRole="Doctor" />
           <NavigationProperty Name="Patient" Relationship="OlivesHealthModel.FK__Rating__Maker__24F264BB" FromRole="Rating" ToRole="Patient" />
         </EntityType>
+        <EntityType Name="RealTimeConnection">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Owner" Type="Int32" Nullable="false" />
+          <Property Name="ConnectionId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Created" Type="Double" Nullable="false" />
+        </EntityType>
         <EntityType Name="Relation">
           <Key>
             <PropertyRef Name="Id" />
@@ -1412,14 +1416,6 @@ warning 6002: The table/view 'OlivesHealth.dbo.RealTimeConnection' does not have
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
           <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__SugarBloo__LastM__6AC5C326" FromRole="SugarBlood" ToRole="Person" />
-        </EntityType>
-        <EntityType Name="RealTimeConnection">
-          <Key>
-            <PropertyRef Name="Created" />
-          </Key>
-          <Property Name="Email" Type="String" MaxLength="32" FixedLength="false" Unicode="true" />
-          <Property Name="ConnectionId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Created" Type="Double" Nullable="false" />
         </EntityType>
         <Association Name="FK__AccountCo__Owner__707E9C7C">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
@@ -1885,6 +1881,7 @@ warning 6002: The table/view 'OlivesHealth.dbo.RealTimeConnection' does not have
           <EntitySetMapping Name="Appointments">
             <EntityTypeMapping TypeName="OlivesHealthModel.Appointment">
               <MappingFragment StoreEntitySet="Appointment">
+                <ScalarProperty Name="LastModifiedNote" ColumnName="LastModifiedNote" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="LastModified" ColumnName="LastModified" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
@@ -2115,6 +2112,16 @@ warning 6002: The table/view 'OlivesHealth.dbo.RealTimeConnection' does not have
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="RealTimeConnections">
+            <EntityTypeMapping TypeName="OlivesHealthModel.RealTimeConnection">
+              <MappingFragment StoreEntitySet="RealTimeConnection">
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="ConnectionId" ColumnName="ConnectionId" />
+                <ScalarProperty Name="Owner" ColumnName="Owner" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Relations">
             <EntityTypeMapping TypeName="OlivesHealthModel.Relation">
               <MappingFragment StoreEntitySet="Relation">
@@ -2148,15 +2155,6 @@ warning 6002: The table/view 'OlivesHealth.dbo.RealTimeConnection' does not have
                 <ScalarProperty Name="Value" ColumnName="Value" />
                 <ScalarProperty Name="Owner" ColumnName="Owner" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="RealTimeConnections">
-            <EntityTypeMapping TypeName="OlivesHealthModel.RealTimeConnection">
-              <MappingFragment StoreEntitySet="RealTimeConnection">
-                <ScalarProperty Name="Created" ColumnName="Created" />
-                <ScalarProperty Name="ConnectionId" ColumnName="ConnectionId" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

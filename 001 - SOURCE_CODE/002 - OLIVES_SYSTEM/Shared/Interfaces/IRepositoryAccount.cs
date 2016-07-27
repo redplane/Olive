@@ -26,8 +26,9 @@ namespace Shared.Interfaces
         /// <param name="email">Email of person</param>
         /// <param name="password">Password of person</param>
         /// <param name="role"></param>
+        /// <param name="status"></param>
         /// <returns></returns>
-        Person FindPerson(int? id, string email, string password, byte? role);
+        Person FindPerson(int? id, string email, string password, byte? role, StatusAccount? status);
 
         /// <summary>
         ///     Find person by using specific information asynchronously.

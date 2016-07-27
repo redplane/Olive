@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
-using Microsoft.AspNet.SignalR;
 using Olives.Attributes;
 using Olives.Hubs;
 using Olives.ViewModels.Edit;
@@ -33,7 +32,8 @@ namespace Olives.Controllers
         /// <param name="repositoryRealTimeConnection"></param>
         /// <param name="repositoryRelation"></param>
         /// <param name="log"></param>
-        public AppointmentController(IRepositoryAccount repositoryAccount, IRepositoryAppointment repositoryAppointment, IRepositoryAppointmentNotification repositoryAppointmentNotification,
+        public AppointmentController(IRepositoryAccount repositoryAccount, IRepositoryAppointment repositoryAppointment,
+            IRepositoryAppointmentNotification repositoryAppointmentNotification,
             IRepositoryRealTimeConnection repositoryRealTimeConnection, IRepositoryRelation repositoryRelation,
             ILog log)
         {
@@ -56,35 +56,56 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/appointment")]
         [HttpGet]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> FindAppointment([FromUri] int id)
         {
-            // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
-            // Find the appointment by searching id.
-            var appointment = await _repositoryAppointment.FindAppointmentAsync(id);
-
-            // Requester is not the person who takes part in the appointment.
-            if (!(requester.Id == appointment.Dater || requester.Id == appointment.Maker))
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-
-            // Requester is the dater.
-            if (requester.Id == appointment.Dater)
+            try
             {
-                // Find the activate appointment maker.
-                var maker =
-                    await _repositoryAccount.FindPersonAsync(appointment.Maker, null, null, null, null);
+                #region Appointment validation
 
-                // Cannot find the maker.
-                if (maker == null)
+                // Retrieve information of person who sent request.
+                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+                // Filter construction.
+                var filter = new FilterAppointmentViewModel();
+                filter.Id = id;
+                filter.Requester = requester.Id;
+
+                // Find the appointment with specific information.
+                var result = await _repositoryAppointment.FilterAppointmentAsync(filter);
+
+                // Result is not unique.
+                if (result.Total != 1 || result.Appointments == null)
+                {
+                    // Log the error.
+                    _log.Error($"Appointment [Id: {id}] is not unique. Found {result.Total} result(s)");
+
+                    // Tell the client there is no result returned.
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {
                         Error = $"{Language.WarnRecordNotFound}"
                     });
+                }
+
+                // Find the appointment by searching id.
+                var appointment = result.Appointments.FirstOrDefault();
+
+                // First element is invalid.
+                if (appointment == null)
+                {
+                    // Log the error.
+                    _log.Error($"Appointment [Id: {id}] is not unique. Found {result.Total} result(s)");
+
+                    // Tell the client there is no result returned.
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
+                }
+
+                #endregion
+
+                #region Result handling
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -93,54 +114,36 @@ namespace Olives.Controllers
                         appointment.Id,
                         Maker = new
                         {
-                            maker.Id,
-                            maker.FirstName,
-                            maker.LastName
+                            Id = appointment.Maker,
+                            FirstName = appointment.MakerFirstName,
+                            LastName = appointment.MakerLastName
                         },
                         Dater = new
                         {
-                            requester.Id,
-                            requester.FirstName,
-                            requester.LastName
+                            Id = appointment.Dater,
+                            FirstName = appointment.DaterFirstName,
+                            LastName = appointment.DaterLastName
                         },
                         appointment.From,
                         appointment.To,
                         appointment.Note,
+                        appointment.LastModifiedNote,
                         appointment.Created,
                         appointment.LastModified,
                         appointment.Status
                     }
                 });
+
+                #endregion
             }
-
-            // Find the dater.
-            var dater = await _repositoryAccount.FindPersonAsync(appointment.Dater, null, null, null, null);
-
-            // Return the information of appointment.
-            return Request.CreateResponse(HttpStatusCode.OK, new
+            catch (Exception exception)
             {
-                Appointment = new
-                {
-                    appointment.Id,
-                    Maker = new
-                    {
-                        requester.Id,
-                        requester.FirstName,
-                        requester.LastName
-                    },
-                    Dater = new
-                    {
-                        dater.Id,
-                        dater.FirstName,
-                        dater.LastName
-                    },
-                    appointment.From,
-                    appointment.To,
-                    appointment.Note,
-                    appointment.Created,
-                    appointment.Status
-                }
-            });
+                // Log the error.
+                _log.Error(exception.Message, exception);
+
+                // Tell the client something is wrong with the server.
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
         }
 
         /// <summary>
@@ -150,33 +153,33 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/appointment")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> InitializeAppointment([FromBody] InitializeAppointmentViewModel info)
         {
-            #region Model validation
-
-            // Model hasn't been initialized.
-            if (info == null)
-            {
-                info = new InitializeAppointmentViewModel();
-                Validate(info);
-            }
-
-            // Invalid model state.
-            if (!ModelState.IsValid)
-            {
-                _log.Error("Request parameters are invalid. Error sent to client.");
-                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-            }
-
-            #endregion
-
             try
             {
+                #region Model validation
+
+                // Model hasn't been initialized.
+                if (info == null)
+                {
+                    info = new InitializeAppointmentViewModel();
+                    Validate(info);
+                }
+
+                // Invalid model state.
+                if (!ModelState.IsValid)
+                {
+                    _log.Error("Request parameters are invalid. Error sent to client.");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+                }
+
+                #endregion
+
                 #region Relation validation
 
                 // Retrieve information of person who sent request.
-                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Find the dater by using id.
                 var dater = await _repositoryAccount.FindPersonAsync(info.Dater, null, null, null, StatusAccount.Active);
@@ -191,7 +194,7 @@ namespace Olives.Controllers
                 }
 
                 // Only patients and doctor can date each other.
-                if (dater.Role != (byte)Role.Doctor && dater.Role != (byte)Role.Patient)
+                if (dater.Role != (byte) Role.Doctor && dater.Role != (byte) Role.Patient)
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
@@ -212,7 +215,7 @@ namespace Olives.Controllers
                 // Check whether 2 people have relation with each other or not.
                 var relationships =
                     await
-                        _repositoryRelation.FindRelationshipAsync(requester.Id, info.Dater, (byte)StatusRelation.Active);
+                        _repositoryRelation.FindRelationshipAsync(requester.Id, info.Dater, (byte) StatusRelation.Active);
                 if (relationships == null || relationships.Count < 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
@@ -237,7 +240,10 @@ namespace Olives.Controllers
                 appointment.To = info.To ?? 0;
                 appointment.Note = info.Note;
                 appointment.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
-                appointment.Status = (byte)StatusAppointment.Pending;
+                appointment.Status = (byte) StatusAppointment.Pending;
+
+                // Initialize an appointment into database.
+                appointment = await _repositoryAppointment.InitializeAppointment(appointment);
 
                 #endregion
 
@@ -248,7 +254,7 @@ namespace Olives.Controllers
                     // Appointment notification create.
                     // As the notification is created successfully. Notification will be pushed to recipient real time.
                     var appointmentNotification = new AppointmentNotification();
-                    appointmentNotification.Type = (byte)AppointmentNotificationType.Created;
+                    appointmentNotification.Type = (byte) AppointmentNotificationType.Created;
                     appointmentNotification.Invoker = requester.Id;
                     appointmentNotification.Recipient = info.Dater;
                     appointmentNotification.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
@@ -256,15 +262,14 @@ namespace Olives.Controllers
                     appointmentNotification.IsSeen = false;
 
                     // Initialize appointment notification.
-                    await _repositoryAppointmentNotification.InitializeAppointmentNotificationAsync(appointmentNotification);
+                    await
+                        _repositoryAppointmentNotification.InitializeAppointmentNotificationAsync(
+                            appointmentNotification);
 
-                    // TODO: Push the notification to the client.
-                    
                     // As the notification is created successfully. Notification should be sent.
                     var connectionIndexes =
                         await
-                            _repositoryRealTimeConnection.FindRealTimeConnectionIndexesAsync(dater.Email,
-                                StringComparison.InvariantCultureIgnoreCase, null, null);
+                            _repositoryRealTimeConnection.FindRealTimeConnectionIndexesAsync(dater.Id, null, null);
 
                     // Send notification to all connection indexes which have been found.
                     Hub.Clients.Clients(connectionIndexes)
@@ -280,12 +285,13 @@ namespace Olives.Controllers
 
                 #endregion
 
-                var result = await _repositoryAppointment.InitializeAppointment(appointment);
+                #region Result handling
+
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     Appointment = new
                     {
-                        result.Id,
+                        appointment.Id,
                         Maker = new
                         {
                             requester.Id,
@@ -305,6 +311,8 @@ namespace Olives.Controllers
                         appointment.Status
                     }
                 });
+
+                #endregion
             }
             catch (Exception exception)
             {
@@ -324,11 +332,11 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/appointment")]
         [HttpPut]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> EditAppointment([FromUri] int id,
             [FromBody] EditAppointmentViewModel info)
         {
-            #region Model validation
+            #region Request parameters validation
 
             // Model hasn't been initialized.
             if (info == null)
@@ -349,7 +357,7 @@ namespace Olives.Controllers
             #region Appointment validation
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find appointment by using id asynchronously.
             var appointment = await _repositoryAppointment.FindAppointmentAsync(id);
@@ -364,8 +372,8 @@ namespace Olives.Controllers
             }
 
             // Appointment is cancelled or done.
-            if (appointment.Status == (byte)StatusAppointment.Cancelled ||
-                appointment.Status == (byte)StatusAppointment.Done)
+            if (appointment.Status == (byte) StatusAppointment.Cancelled ||
+                appointment.Status == (byte) StatusAppointment.Done)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
@@ -375,95 +383,96 @@ namespace Olives.Controllers
 
             #endregion
 
-            #region Partner
-
-            // By default, no partner is specified.
-            Person partner;
-
-            // Requester is the person who makes appointment.
-            if (requester.Id == appointment.Maker)
-                partner =
-                    await _repositoryAccount.FindPersonAsync(appointment.Maker, null, null, null, StatusAccount.Active);
-            else
-                partner = await _repositoryAccount.FindPersonAsync(appointment.Maker, null, null, null, null);
-
-            // No partner is found.
-            if (partner == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                {
-                    Error = $"{Language.WarnTargetAccountNotFound}"
-                });
-            }
-
-            #endregion
-
-            #region Appointment initialization
+            #region Appointment modification
 
             // Initialize an appointment information.
             if (info.From != null) appointment.From = info.From.Value;
             if (info.To != null) appointment.To = info.To.Value;
-            if (info.Note != null) appointment.Note = info.Note;
-            if (info.Status != null) appointment.Status = (byte)info.Status;
+            if (!string.IsNullOrWhiteSpace(info.Note)) appointment.LastModifiedNote = info.Note;
+            if (info.Status != null) appointment.Status = (byte) info.Status;
+
+            // Update the appointment.
+            await _repositoryAppointment.InitializeAppointment(appointment);
 
             #endregion
 
-            // Update the appointment result.
-            var result = await _repositoryAppointment.InitializeAppointment(appointment);
+            #region Notification initialization
 
-            if (requester.Id == appointment.Maker)
+            try
+            {
+                // Who should receive the notification.
+                var recipient = requester.Id == appointment.Maker ? appointment.Dater : appointment.Maker;
+
+                var appointmentNotification = new AppointmentNotification();
+                appointmentNotification.AppointmentId = appointment.Id;
+                appointmentNotification.Type = (byte) AppointmentNotificationType.Edited;
+                appointmentNotification.Recipient = recipient;
+                appointmentNotification.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+
+                // Initialize the notification.
+                await _repositoryAppointmentNotification.InitializeAppointmentNotificationAsync(appointmentNotification);
+
+                // As the appointment is modified successfully. Notification should be sent.
+                var connectionIndexes =
+                    await
+                        _repositoryRealTimeConnection.FindRealTimeConnectionIndexesAsync(
+                            appointmentNotification.Recipient, null, null);
+
+                // Send notification to all connection indexes which have been found.
+                Hub.Clients.Clients(connectionIndexes)
+                    .notifyAppointment(requester.Id, appointmentNotification.Created,
+                        appointmentNotification.AppointmentId, appointmentNotification.Type);
+            }
+            catch (Exception exception)
+            {
+                // Notification creation is failed. Log the error and continue the function because it is not important.
+                _log.Error(exception.Message, exception);
+            }
+
+            #endregion
+
+            #region Result handling
+
+            try
+            {
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     Appointment = new
                     {
-                        result.Id,
+                        appointment.Id,
                         Maker = new
                         {
-                            requester.Id,
-                            requester.FirstName,
-                            requester.LastName
+                            Id = appointment.Maker,
+                            FirstName = appointment.MakerFirstName,
+                            LastName = appointment.MakerLastName
                         },
                         Dater = new
                         {
-                            partner.Id,
-                            partner.FirstName,
-                            partner.LastName
+                            Id = appointment.Dater,
+                            FirstName = appointment.DaterFirstName,
+                            LastName = appointment.DaterLastName
                         },
                         info.From,
                         info.To,
-                        info.Note,
+                        appointment.Note,
+                        appointment.LastModifiedNote,
                         appointment.Created,
-                        appointment.Status,
-                        appointment.LastModified
+                        appointment.Status
                     }
                 });
-
-            return Request.CreateResponse(HttpStatusCode.OK, new
+            }
+            catch (Exception exception)
             {
-                Appointment = new
-                {
-                    result.Id,
-                    Maker = new
-                    {
-                        partner.Id,
-                        partner.FirstName,
-                        partner.LastName
-                    },
-                    Dater = new
-                    {
-                        requester.Id,
-                        requester.FirstName,
-                        requester.LastName
-                    },
-                    info.From,
-                    info.To,
-                    info.Note,
-                    appointment.Created,
-                    appointment.Status
-                }
-            });
+                // As exception happens, it should be logged for future error trace.
+                _log.Error(exception.Message, exception);
+
+                // Tell the client there is something wrong with the server.
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+
+            #endregion
         }
-        
+
         /// <summary>
         ///     Filter appointment by using specific conditions.
         /// </summary>
@@ -471,7 +480,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/appointment/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> FilterAppointment([FromBody] FilterAppointmentViewModel filter)
         {
             #region ModelState result
@@ -493,10 +502,12 @@ namespace Olives.Controllers
             #endregion
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Filter appointment by using specific conditions.
-            var response = await _repositoryAppointment.FilterAppointmentAsync(filter, requester.Id);
+            filter.Requester = requester.Id;
+            var response = await _repositoryAppointment.FilterAppointmentAsync(filter);
+
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 Appointments = response.Appointments.Select(x => new
@@ -540,17 +551,17 @@ namespace Olives.Controllers
         private readonly IRepositoryAppointment _repositoryAppointment;
 
         /// <summary>
-        /// Repository of appointment notification.
+        ///     Repository of appointment notification.
         /// </summary>
         private readonly IRepositoryAppointmentNotification _repositoryAppointmentNotification;
-        
+
         /// <summary>
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
 
         /// <summary>
-        /// Repository which provides function to access real time connection database.
+        ///     Repository which provides function to access real time connection database.
         /// </summary>
         private readonly IRepositoryRealTimeConnection _repositoryRealTimeConnection;
 

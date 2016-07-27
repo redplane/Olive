@@ -33,6 +33,7 @@ namespace Shared.Models
         public double Created { get; set; }
         public Nullable<double> LastModified { get; set; }
         public byte Status { get; set; }
+        public string LastModifiedNote { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AppointmentNotification> AppointmentNotifications { get; set; }

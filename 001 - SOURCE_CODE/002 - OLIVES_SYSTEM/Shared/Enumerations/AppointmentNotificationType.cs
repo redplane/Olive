@@ -4,6 +4,7 @@
     {
         Created,
         Edited,
-        Deleted
+        Cancelled,
+        Expired
     }
 }

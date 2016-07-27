@@ -8,14 +8,14 @@ namespace Olives.Controllers
         #region Properties
 
         /// <summary>
-        /// Retrieve the hub context.
+        ///     Retrieve the hub context.
         /// </summary>
-        readonly Lazy<IHubContext> _hub = new Lazy<IHubContext>(
+        private readonly Lazy<IHubContext> _hub = new Lazy<IHubContext>(
             () => GlobalHost.ConnectionManager.GetHubContext<TTHub>()
-        );
+            );
 
         /// <summary>
-        /// Return the hub context.
+        ///     Return the hub context.
         /// </summary>
         public IHubContext Hub
         {

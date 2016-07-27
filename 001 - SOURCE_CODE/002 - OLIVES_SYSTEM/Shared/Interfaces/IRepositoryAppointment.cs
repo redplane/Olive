@@ -18,9 +18,8 @@ namespace Shared.Interfaces
         ///     Filter appointment with requester account & password.
         /// </summary>
         /// <param name="filter"></param>
-        /// <param name="requester"></param>
         /// <returns></returns>
-        Task<ResponseAppointmentFilter> FilterAppointmentAsync(FilterAppointmentViewModel filter, int requester);
+        Task<ResponseAppointmentFilter> FilterAppointmentAsync(FilterAppointmentViewModel filter);
 
         /// <summary>
         ///     Find appointment by searching id.

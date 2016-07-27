@@ -14,7 +14,8 @@ namespace Shared.Models
     
     public partial class RealTimeConnection
     {
-        public string Email { get; set; }
+        public int Id { get; set; }
+        public int Owner { get; set; }
         public string ConnectionId { get; set; }
         public double Created { get; set; }
     }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 using Shared.Interfaces;
@@ -14,10 +13,10 @@ namespace Shared.Repositories
         /// <summary>
         /// Find the real time connection by using account index and connection index.
         /// </summary>
-        /// <param name="email"></param>
+        /// <param name="owner"></param>
         /// <param name="connectionId"></param>
         /// <returns></returns>
-        public Task<IEnumerable<RealTimeConnection>> FindRealTimeConnectionInfoAsync(string email, string connectionId)
+        public Task<IEnumerable<RealTimeConnection>> FindRealTimeConnectionInfoAsync(int? owner, string connectionId)
         {
             throw new NotImplementedException();
         }
@@ -25,12 +24,11 @@ namespace Shared.Repositories
         /// <summary>
         /// Find the real time connection indexes by using specific conditions.
         /// </summary>
-        /// <param name="email"></param>
-        /// <param name="emailComparison"></param>
+        /// <param name="owner"></param>
         /// <param name="connectionIndex"></param>
         /// <param name="connectionIndexComparison"></param>
         /// <returns></returns>
-        public async Task<IList<string>> FindRealTimeConnectionIndexesAsync(string email, StringComparison? emailComparison, string connectionIndex, StringComparison? connectionIndexComparison)
+        public async Task<IList<string>> FindRealTimeConnectionIndexesAsync(int? owner, string connectionIndex, StringComparison? connectionIndexComparison)
         {
             // Database connection initialize.
             var context = new OlivesHealthEntities();
@@ -39,9 +37,9 @@ namespace Shared.Repositories
             IQueryable<RealTimeConnection> realTimeConnections = context.RealTimeConnections;
 
             // Email is defined.
-            if (!string.IsNullOrWhiteSpace(email))
+            if (owner != null)
                 realTimeConnections =
-                    realTimeConnections.Where(x => x.Email.Equals(email, emailComparison ?? StringComparison.Ordinal));
+                    realTimeConnections.Where(x => x.Owner == owner.Value);
 
             // Connection index is defined.
             if (!string.IsNullOrWhiteSpace(connectionIndex))
@@ -61,27 +59,27 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<RealTimeConnection> InitializeRealTimeConnectionInfoAsync(RealTimeConnection initializer)
         {
+
             // Database connection initialization.
             var context = new OlivesHealthEntities();
 
             // Add or update real time connection information.
-            context.RealTimeConnections.AddOrUpdate(initializer);
-            
+            context.RealTimeConnections.Add(initializer);
+
             // Save changes asynchrnously.
             await context.SaveChangesAsync();
-
+            
             return initializer;
         }
 
         /// <summary>
         /// Delete a real time connection information.
         /// </summary>
-        /// <param name="email"></param>
-        /// <param name="emailComparison"></param>
+        /// <param name="owner"></param>
         /// <param name="connectionIndex"></param>
         /// <param name="connectionIndexComparison"></param>
         /// <returns></returns>
-        public async Task<int> DeleteRealTimeConnectionInfoAsync(string email, StringComparison? emailComparison, string connectionIndex, StringComparison? connectionIndexComparison)
+        public async Task<int> DeleteRealTimeConnectionInfoAsync(int? owner, string connectionIndex, StringComparison? connectionIndexComparison)
         {
             // Database connection initialize.
             var context = new OlivesHealthEntities();
@@ -90,9 +88,9 @@ namespace Shared.Repositories
             IQueryable<RealTimeConnection> realTimeConnections = context.RealTimeConnections;
 
             // Email is defined.
-            if (!string.IsNullOrWhiteSpace(email))
+            if (owner != null)
                 realTimeConnections =
-                    realTimeConnections.Where(x => x.Email.Equals(email, emailComparison ?? StringComparison.Ordinal));
+                    realTimeConnections.Where(x => x.Owner == owner.Value);
 
             // Connection index is defined.
             if (!string.IsNullOrWhiteSpace(connectionIndex))

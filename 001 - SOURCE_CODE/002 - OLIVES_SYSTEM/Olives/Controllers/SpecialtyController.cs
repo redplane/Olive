@@ -4,9 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
-using Olives.Attributes;
 using Olives.Interfaces;
-using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Resources;
 using Shared.ViewModels;
@@ -41,7 +39,6 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/specialty")]
         [HttpGet]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
             // Find the specialty by using specific id.
@@ -73,7 +70,6 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/specialty/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterSpecialtyViewModel info)
         {
             // Model hasn't been initialized.

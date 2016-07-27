@@ -45,9 +45,9 @@ namespace Shared.Models
         public virtual DbSet<Prescription> Prescriptions { get; set; }
         public virtual DbSet<PrescriptionImage> PrescriptionImages { get; set; }
         public virtual DbSet<Rating> Ratings { get; set; }
+        public virtual DbSet<RealTimeConnection> RealTimeConnections { get; set; }
         public virtual DbSet<Relation> Relations { get; set; }
         public virtual DbSet<Specialty> Specialties { get; set; }
         public virtual DbSet<SugarBlood> SugarBloods { get; set; }
-        public virtual DbSet<RealTimeConnection> RealTimeConnections { get; set; }
     }
 }

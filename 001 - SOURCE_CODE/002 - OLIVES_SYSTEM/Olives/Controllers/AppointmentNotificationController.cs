@@ -21,11 +21,12 @@ namespace Olives.Controllers
         #region Constructor
 
         /// <summary>
-        /// Initialize an instance with dependency injections.
+        ///     Initialize an instance with dependency injections.
         /// </summary>
         /// <param name="repositoryAppointmentNotification"></param>
         /// <param name="log"></param>
-        public AppointmentNotificationController(IRepositoryAppointmentNotification repositoryAppointmentNotification, ILog log)
+        public AppointmentNotificationController(IRepositoryAppointmentNotification repositoryAppointmentNotification,
+            ILog log)
         {
             _repositoryAppointmentNotification = repositoryAppointmentNotification;
             _log = log;
@@ -36,14 +37,15 @@ namespace Olives.Controllers
         #region Methods
 
         /// <summary>
-        /// Filter appointment by using specific conditions.
+        ///     Filter appointment by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("api/appointment/notification/filter")]
-        [OlivesAuthorize(new [] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> FilterAppointmentNotificationAsync([FromBody] FilterAppointmentNotificationViewModel filter)
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        public async Task<HttpResponseMessage> FilterAppointmentNotificationAsync(
+            [FromBody] FilterAppointmentNotificationViewModel filter)
         {
             #region Parameters validation
 
@@ -101,7 +103,7 @@ namespace Olives.Controllers
             {
                 // Log the exception for future trace.
                 _log.Error(exception.Message, exception);
-                
+
                 // Tell the client server has errors.
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
@@ -110,19 +112,19 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        /// Make the appointment to be seen.
+        ///     Make the appointment to be seen.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpPut]
         [Route("api/appointment/notification/seen")]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> MakeAppointmentNotificationSeen([FromUri] int id)
         {
             try
             {
                 // Retrieve the request sender.
-                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Find the appointment notification first.
                 var filter = new FilterAppointmentNotificationViewModel();
@@ -130,7 +132,7 @@ namespace Olives.Controllers
                 filter.Id = id;
                 filter.Mode = RecordFilterMode.RequesterIsOwner;
                 filter.IsSeen = false;
-                
+
                 // Do the filter.
                 var result = await _repositoryAppointmentNotification.FilterAppointmentNotificationAsync(filter);
 
@@ -184,12 +186,12 @@ namespace Olives.Controllers
         #region Properties
 
         /// <summary>
-        /// Instance which provide functions to access Appointment Notification database.
+        ///     Instance which provide functions to access Appointment Notification database.
         /// </summary>
         private readonly IRepositoryAppointmentNotification _repositoryAppointmentNotification;
 
         /// <summary>
-        /// Instance provides functions to access logger.
+        ///     Instance provides functions to access logger.
         /// </summary>
         private readonly ILog _log;
 

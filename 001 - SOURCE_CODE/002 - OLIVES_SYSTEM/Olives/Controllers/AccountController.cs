@@ -64,7 +64,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/patient/profile")]
         [HttpPut]
-        [OlivesAuthorize(new[] { Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> EditPatientProfile([FromBody] EditPatientProfileViewModel editor)
         {
             // Model hasn't been initialized.
@@ -82,7 +82,7 @@ namespace Olives.Controllers
             }
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             #region Information construction
 
@@ -104,7 +104,7 @@ namespace Olives.Controllers
 
             // Gender is defined.
             if (editor.Gender != null)
-                requester.Gender = (byte)editor.Gender;
+                requester.Gender = (byte) editor.Gender;
 
             // Phone is defined.
             if (!string.IsNullOrWhiteSpace(editor.Phone))
@@ -169,7 +169,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/people/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Doctor })]
+        [OlivesAuthorize(new[] {Role.Doctor})]
         public async Task<HttpResponseMessage> FilterAnotherPeople([FromBody] FilterAnotherPatientViewModel filter)
         {
             // Filter hasn't been initialized.
@@ -187,7 +187,7 @@ namespace Olives.Controllers
             }
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Filter initialization.
             var filterPatient = new FilterPatientViewModel();
@@ -231,7 +231,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/doctor")]
         [HttpGet]
-        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
+        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
         public async Task<HttpResponseMessage> FindDoctor([FromUri] int id)
         {
             // Find the doctor by using id.
@@ -289,7 +289,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/doctor/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> FilterDoctor([FromBody] FilterDoctorViewModel filter)
         {
             // Filter hasn't been initialized. Initialize it and do validation.
@@ -304,7 +304,7 @@ namespace Olives.Controllers
             filter.MaxMoney = null;
             filter.MinCreated = null;
             filter.MaxCreated = null;
-            filter.Status = (int)StatusAccount.Active;
+            filter.Status = (int) StatusAccount.Active;
             filter.MinLastModified = null;
             filter.MaxLastModified = null;
             filter.MinMoney = null;
@@ -360,7 +360,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/doctor/profile")]
         [HttpPut]
-        [OlivesAuthorize(new[] { Role.Doctor })]
+        [OlivesAuthorize(new[] {Role.Doctor})]
         public async Task<HttpResponseMessage> EditDoctorProfile([FromBody] EditDoctorProfileViewModel editor)
         {
             // Filter hasn't been initialized. Initialize it and do validation.
@@ -379,7 +379,7 @@ namespace Olives.Controllers
             }
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Address is defined.
             if (!string.IsNullOrWhiteSpace(editor.Address))
@@ -403,7 +403,7 @@ namespace Olives.Controllers
 
             // Gender is defined.
             if (editor.Gender != null)
-                requester.Gender = (byte)editor.Gender;
+                requester.Gender = (byte) editor.Gender;
 
             // Birthday is defined.
             if (editor.Birthday != null)
@@ -511,13 +511,13 @@ namespace Olives.Controllers
             person.LastName = info.LastName;
             person.FullName = info.FirstName + " " + info.LastName;
             person.Birthday = info.Birthday;
-            person.Gender = (byte)info.Gender;
+            person.Gender = (byte) info.Gender;
             person.Email = info.Email;
             person.Password = info.Password;
             person.Phone = info.Phone;
             person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
-            person.Role = (byte)Role.Patient;
-            person.Status = (byte)StatusAccount.Pending;
+            person.Role = (byte) Role.Patient;
+            person.Status = (byte) StatusAccount.Pending;
 
             var patient = new Patient();
             patient.Height = info.Height;
@@ -540,7 +540,7 @@ namespace Olives.Controllers
 
                 // Url construction.
                 var url = Url.Link("Default",
-                    new { controller = "Service", action = "Verify", code = activationCode.Code });
+                    new {controller = "Service", action = "Verify", code = activationCode.Code});
 
                 // Send the activation code email.
                 await
@@ -657,14 +657,14 @@ namespace Olives.Controllers
             person.LastName = initializer.LastName;
             person.FullName = person.FirstName + " " + person.LastName;
             person.Birthday = initializer.Birthday;
-            person.Gender = (byte)initializer.Gender;
+            person.Gender = (byte) initializer.Gender;
             person.Email = initializer.Email;
             person.Password = initializer.Password;
             person.Phone = initializer.Phone;
             person.Address = initializer.Address;
             person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
-            person.Role = (byte)Role.Doctor;
-            person.Status = (byte)StatusAccount.Pending;
+            person.Role = (byte) Role.Doctor;
+            person.Status = (byte) StatusAccount.Pending;
 
             // Update specialty information.
             doctor.SpecialtyId = specialty.Id;
@@ -728,7 +728,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/account/avatar")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
+        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
         public async Task<HttpResponseMessage> PostAvatar([FromBody] InitializeAvatarViewModel info)
         {
             // Model validation.
@@ -745,7 +745,7 @@ namespace Olives.Controllers
             }
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             try
             {
@@ -827,7 +827,7 @@ namespace Olives.Controllers
         #endregion
 
         #region Forgot password
-        
+
         /// <summary>
         ///     Request an email contains forgot password token asynchronously.
         /// </summary>
@@ -856,6 +856,7 @@ namespace Olives.Controllers
             }
 
             #endregion
+
             // Check whether email has been used or not.
             var result = await _repositoryAccount.FindPersonAsync(null, info.Email, null, null, StatusAccount.Active);
 
@@ -883,7 +884,7 @@ namespace Olives.Controllers
 
                 // Url construction.
                 var url = Url.Link("Default",
-                    new { controller = "Service", action = "FindPassword" });
+                    new {controller = "Service", action = "FindPassword"});
 
                 // Send the activation code email.
                 await
@@ -936,7 +937,7 @@ namespace Olives.Controllers
             // Check whether email has been used or not.
             var token =
                 await
-                    _repositoryActivationCode.FindAccountCodeAsync(null, (byte)TypeAccountCode.ForgotPassword,
+                    _repositoryActivationCode.FindAccountCodeAsync(null, (byte) TypeAccountCode.ForgotPassword,
                         initializer.Token);
 
             // Token couldn't be found.
@@ -954,7 +955,8 @@ namespace Olives.Controllers
             if (DateTime.UtcNow > token.Expired)
             {
                 // Log the error.
-                _log.Error($"Token [Code: {token.Code}] is expired. It should be activated before {token.Expired.ToString("F")}");
+                _log.Error(
+                    $"Token [Code: {token.Code}] is expired. It should be activated before {token.Expired.ToString("F")}");
 
                 // Tell the client about the error.
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
@@ -985,7 +987,7 @@ namespace Olives.Controllers
 
             #endregion
         }
-        
+
         #endregion
 
         #region Login
@@ -1039,7 +1041,7 @@ namespace Olives.Controllers
             }
 
             // Requested user is not a patient or a doctor.
-            if (result.Role != (byte)Role.Patient && result.Role != (byte)Role.Doctor)
+            if (result.Role != (byte) Role.Patient && result.Role != (byte) Role.Doctor)
             {
                 _log.Error($"{loginViewModel.Email} is a admin, therefore, it cannot be used here.");
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -1049,10 +1051,10 @@ namespace Olives.Controllers
             }
 
             // Login is failed because of account is pending.
-            if ((StatusAccount)result.Status == StatusAccount.Pending)
+            if ((StatusAccount) result.Status == StatusAccount.Pending)
             {
                 // Tell doctor to contact admin for account verification.
-                if (result.Role == (byte)Role.Doctor)
+                if (result.Role == (byte) Role.Doctor)
                 {
                     _log.Error($"Access is forbidden because {loginViewModel.Email} is waiting for admin confirmation");
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
@@ -1070,7 +1072,7 @@ namespace Olives.Controllers
             }
 
             // Login is failed because of account has been disabled.
-            if ((StatusAccount)result.Status == StatusAccount.Inactive)
+            if ((StatusAccount) result.Status == StatusAccount.Inactive)
             {
                 _log.Error($"Access is forbidden because {loginViewModel.Email} has been disabled");
                 // Tell patient to access his/her email to verify the account.
@@ -1121,7 +1123,7 @@ namespace Olives.Controllers
                 _log.Error("Invalid account information");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new
                 {
-                    Errors = new[] { Language.InvalidRequestParameters }
+                    Errors = new[] {Language.InvalidRequestParameters}
                 });
             }
 
@@ -1138,7 +1140,7 @@ namespace Olives.Controllers
 
             // Find the account whose email and password match with given conditions.
             var account =
-                await _repositoryAccount.FindPersonAsync(null, info.Email, info.Password, (byte)Role.Patient, null);
+                await _repositoryAccount.FindPersonAsync(null, info.Email, info.Password, (byte) Role.Patient, null);
             if (account == null)
             {
                 _log.Error($"Couldn't find account: '{info.Email}' : '{info.Password}'");
@@ -1146,7 +1148,7 @@ namespace Olives.Controllers
             }
 
             // Account is not waiting for being activated. Treat this as not found.
-            if (account.Status != (byte)StatusAccount.Pending)
+            if (account.Status != (byte) StatusAccount.Pending)
             {
                 _log.Error($"Couldn't create activation code for '{info.Email}' due to its status {account.Status}");
                 return Request.CreateResponse(HttpStatusCode.NotFound);
@@ -1162,7 +1164,7 @@ namespace Olives.Controllers
 
             // Url construction.
             var url = Url.Link("Default",
-                new { controller = "Service", action = "Verify", code = activationToken.Code });
+                new {controller = "Service", action = "Verify", code = activationToken.Code});
 
             // Write an email to user to notify him/her to activate account.
             await

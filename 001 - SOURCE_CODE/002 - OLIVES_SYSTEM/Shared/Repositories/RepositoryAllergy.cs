@@ -2,6 +2,8 @@
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
+using Shared.Enumerations;
+using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels.Filter;
@@ -23,9 +25,7 @@ namespace Shared.Repositories
 
             // By default, take all records.
             IQueryable<Allergy> results = context.Allergies;
-
-            #region Result filtering
-
+            
             // Owner has been specified.
             if (filter.Owner != null)
                 results = results.Where(x => x.Owner == filter.Owner);
@@ -54,7 +54,31 @@ namespace Shared.Repositories
             if (filter.MaxLastModified != null)
                 results = results.Where(x => x.LastModified != null && x.LastModified >= filter.MaxLastModified);
 
-            #endregion
+            switch (filter.Direction)
+            {
+                case SortDirection.Ascending:
+                    switch (filter.Sort)
+                    {
+                        case NoteResultSort.Created:
+                            results = results.OrderBy(x => x.Created);
+                            break;
+                        default:
+                            results = results.OrderBy(x => x.LastModified);
+                            break;
+                    }
+                    break;
+                default:
+                    switch (filter.Sort)
+                    {
+                        case NoteResultSort.Created:
+                            results = results.OrderByDescending(x => x.Created);
+                            break;
+                        default:
+                            results = results.OrderByDescending(x => x.LastModified);
+                            break;
+                    }
+                    break;
+            }
 
             // Initialize response.
             var response = new ResponseAllergyFilter();
@@ -62,9 +86,6 @@ namespace Shared.Repositories
             // Count the matched records before result truncation.
             response.Total = await results.CountAsync();
             
-            // By default, order by last modified.
-            results = results.OrderByDescending(x => x.LastModified);
-
             // Record is defined.
             if (filter.Records != null)
             {

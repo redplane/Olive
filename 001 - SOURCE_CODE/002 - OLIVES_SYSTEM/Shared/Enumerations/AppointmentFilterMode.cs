@@ -2,7 +2,7 @@
 {
     public enum PartnerFilterMode
     {
-        PartnerIsRequester,
+        PartnerIsMaker,
         ParterIsDater
     }
 }

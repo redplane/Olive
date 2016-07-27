@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Principal;
 using System.Web.Profile;
 using log4net;
 using Microsoft.AspNet.SignalR;
@@ -50,12 +51,15 @@ namespace Olives.Attributes
             try
             {
                 // Find the account.
-                var account = _repositoryAccount.FindPersonAsync(null, email, password, null, StatusAccount.Active).Result;
+                var account = _repositoryAccount.FindPerson(null, email, password, null, StatusAccount.Active);
 
                 // Invalid account. The request is unauthorized.
                 if (account == null)
                     return false;
-                
+
+                // Save the account information.
+                request.Environment[Values.KeySignalrClient] = account;
+                   
                 return true;
             }
             catch (Exception exception)
@@ -76,7 +80,7 @@ namespace Olives.Attributes
         public override bool AuthorizeHubMethodInvocation(IHubIncomingInvokerContext hubIncomingInvokerContext, bool appliesToMethod)
         {
             var hubRequest = hubIncomingInvokerContext.Hub.Context.Request;
-
+            
             // Retrieve information from request.
             var email = hubRequest.QueryString[Values.KeySignalrEmail];
             var password = hubRequest.QueryString[Values.KeySignalrPassword];
@@ -84,11 +88,14 @@ namespace Olives.Attributes
             try
             {
                 // Find the account.
-                var account = _repositoryAccount.FindPersonAsync(null, email, password, null, StatusAccount.Active).Result;
+                var account = _repositoryAccount.FindPerson(null, email, password, null, StatusAccount.Active);
 
                 if (account == null)
                     return false;
 
+                // Save the account information.
+                hubRequest.Environment[Values.KeySignalrClient] = account;
+                
                 return true;
             }
             catch (Exception exception)

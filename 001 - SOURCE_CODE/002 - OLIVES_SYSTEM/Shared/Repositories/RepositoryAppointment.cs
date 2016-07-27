@@ -46,7 +46,7 @@ namespace Shared.Repositories
                     throw;
                 }
             }
-            
+
             return info;
         }
 
@@ -54,24 +54,48 @@ namespace Shared.Repositories
         ///     Filter appointment asynchronously.
         /// </summary>
         /// <param name="filter"></param>
-        /// <param name="requester">The person who made or be dated</param>
         /// <returns></returns>
-        public async Task<ResponseAppointmentFilter> FilterAppointmentAsync(FilterAppointmentViewModel filter,
-            int requester)
+        public async Task<ResponseAppointmentFilter> FilterAppointmentAsync(FilterAppointmentViewModel filter)
         {
             // Data context initialization.
             var context = new OlivesHealthEntities();
 
             // By default, take all records.
             IQueryable<Appointment> results = context.Appointments;
-            results = results.Where(x => x.Dater == requester || x.Maker == requester);
+
+            // Id of appointment is defined.
+            if (filter.Id != null)
+                results = results.Where(x => x.Id == filter.Id.Value);
 
             // Filter by partner.
-            if (filter.Mode == PartnerFilterMode.PartnerIsRequester)
-                results = results.Where(x => x.Maker == filter.Partner);
+            // Base on the mode of image filter to decide the role of requester.
+            if (filter.Mode == PartnerFilterMode.PartnerIsMaker)
+            {
+                results = results.Where(x => x.Dater == filter.Requester);
+                if (filter.Partner != null)
+                    results = results.Where(x => x.Maker == filter.Partner);
+            }
             else if (filter.Mode == PartnerFilterMode.ParterIsDater)
-                results = results.Where(x => x.Dater == filter.Partner);
-            
+            {
+                results = results.Where(x => x.Maker == filter.Requester);
+                if (filter.Partner != null)
+                    results = results.Where(x => x.Dater == filter.Partner);
+            }
+            else
+            {
+                if (filter.Partner == null)
+                    results =
+                        results.Where(x => x.Maker == filter.Requester || x.Dater == filter.Requester);
+                else
+                {
+                    results =
+                        results.Where(
+                            x =>
+                                (x.Maker == filter.Requester && x.Dater == filter.Partner) ||
+                                (x.Maker == filter.Partner && x.Dater == filter.Requester));
+                }
+            }
+
             // Created is specified.
             if (filter.MinCreated != null)
                 results = results.Where(x => x.Created >= filter.MinCreated);
@@ -93,7 +117,7 @@ namespace Shared.Repositories
             // Appointment status is specified.
             if (filter.Status != null)
             {
-                var status = (byte) filter.Status;
+                var status = (byte)filter.Status;
                 results = results.Where(x => x.Status == status);
             }
 
@@ -118,7 +142,7 @@ namespace Shared.Repositories
                 results = results.Skip(filter.Page * filter.Records.Value)
                     .Take(filter.Records.Value);
             }
-            
+
             response.Appointments = await results.OrderBy(x => x.Status)
                 .ToListAsync();
 
