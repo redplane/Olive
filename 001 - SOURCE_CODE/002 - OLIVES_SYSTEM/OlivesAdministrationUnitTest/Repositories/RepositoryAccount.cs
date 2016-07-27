@@ -63,7 +63,7 @@ namespace OlivesAdministration.Test.Repositories
             throw new NotImplementedException();
         }
 
-        public Person FindPerson(int? id, string email, string password, byte? role)
+        public Person FindPerson(int? id, string email, string password, byte? role, StatusAccount? status)
         {
             throw new NotImplementedException();
         }

@@ -110,6 +110,8 @@ namespace OlivesAdministration.Controllers
         [HttpPost]
         public async Task<HttpResponseMessage> InitializePlace([FromBody] InitializePlaceViewModel initializer)
         {
+            #region Parameters validation
+
             // Initializer hasn't been initialized.
             if (initializer == null)
             {
@@ -125,6 +127,10 @@ namespace OlivesAdministration.Controllers
                 _log.Error("Request parameters are invalid. Errors sent to client");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
+
+            #endregion
+
+            #region Place validation
 
             // Find the place with the city and country to prevent duplicates.
             var place =
@@ -144,6 +150,10 @@ namespace OlivesAdministration.Controllers
                     Error = $"{Language.WarnRecordConflict}"
                 });
             }
+
+            #endregion
+
+            #region Data initialization
 
             // Initialize a new place.
             place = new Place();
@@ -177,6 +187,8 @@ namespace OlivesAdministration.Controllers
                 // Tell the client about the error.
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
+
+            #endregion
         }
 
         /// <summary>

@@ -47,10 +47,10 @@ namespace DataInitializer
             InitializeAdmin(MaxRecord);
             
             // Find the patient 26.
-            var patient = RepositoryAccount.FindPerson(null, "patient26@gmail.com", null, (byte)Role.Patient);
+            var patient = RepositoryAccount.FindPerson(null, "patient26@gmail.com", null, (byte)Role.Patient, null);
 
             // Find the doctor 26.
-            var doctor = RepositoryAccount.FindPerson(null, "doctor26@gmail.com", null, (byte)Role.Doctor);
+            var doctor = RepositoryAccount.FindPerson(null, "doctor26@gmail.com", null, (byte)Role.Doctor, null);
 
             // Initialize medical records collection.
             InitializeMedicalRecord(patient, doctor, 2);
@@ -73,8 +73,8 @@ namespace DataInitializer
 
             for (var i = 26; i < 50; i++)
             {
-                patient = RepositoryAccount.FindPerson(null, $"patient{i}@gmail.com", null, (byte)Role.Patient);
-                doctor = RepositoryAccount.FindPerson(null, $"doctor{i}@gmail.com", null, (byte)Role.Doctor);
+                patient = RepositoryAccount.FindPerson(null, $"patient{i}@gmail.com", null, (byte)Role.Patient, null);
+                doctor = RepositoryAccount.FindPerson(null, $"doctor{i}@gmail.com", null, (byte)Role.Doctor, null);
 
                 if (patient != null)
                     Console.WriteLine($"Found {patient.Email} for creating relationship");

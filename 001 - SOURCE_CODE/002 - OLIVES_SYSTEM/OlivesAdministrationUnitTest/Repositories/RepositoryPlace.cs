@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 using Shared.Enumerations;
@@ -11,10 +9,19 @@ using Shared.Models;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
-namespace Shared.Repositories
+namespace OlivesAdministration.Test.Repositories
 {
     public class RepositoryPlace : IRepositoryPlace
     {
+        #region Properties
+
+        /// <summary>
+        /// List of places.
+        /// </summary>
+        public IList<Place> Places { get; set; } 
+
+        #endregion
+
         public Task<int> DeletePlaceAsync(int id)
         {
             throw new NotImplementedException();
@@ -27,11 +34,8 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<ResponsePlaceFilter> FilterPlacesAsync(FilterPlaceViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all records.
-            IQueryable<Place> places = context.Places;
+            IEnumerable<Place> places = new List<Place>(Places);
 
             // City is defined.
             if (!string.IsNullOrWhiteSpace(filter.City))
@@ -78,7 +82,7 @@ namespace Shared.Repositories
             }
 
             // Count the total matched results.
-            response.Total = await places.CountAsync();
+            response.Total = places.Count();
             
             // Record is defined.
             if (filter.Records != null)
@@ -88,8 +92,7 @@ namespace Shared.Repositories
             }
 
             // Result taking.
-            response.Places = await places
-                .ToListAsync();
+            response.Places = places.ToList();
 
             return response;
         }
@@ -106,11 +109,8 @@ namespace Shared.Repositories
         public async Task<Place> FindPlaceAsync(int? id, string city, StringComparison? cityComparision, string country, StringComparison? countryComparison)
         {
             // Database context initialization.
-            var context = new OlivesHealthEntities();
-
-            // By default, take all places.
-            IQueryable<Place> places = context.Places;
-
+            IEnumerable<Place> places = new List<Place>(Places);
+            
             // Id is specified.
             if (id != null)
                 places = places.Where(x => x.Id == id);
@@ -124,25 +124,29 @@ namespace Shared.Repositories
                 places = places.Where(x => x.Country.Equals(country, countryComparison ?? StringComparison.Ordinal));
 
             // Take the first result.
-            return await places.FirstOrDefaultAsync();
+            return places.FirstOrDefault();
         }
 
         /// <summary>
-        /// Initialize / update a place to database.
+        /// Initialize/update place to database.
         /// </summary>
         /// <param name="place"></param>
         /// <returns></returns>
         public async Task<Place> InitializePlaceAsync(Place place)
         {
             // Database context initialiazation.
-            var context = new OlivesHealthEntities();
-            
-            // Initialize/update place to database.
-            context.Places.AddOrUpdate(place);
-            
-            // Save changes asychronously.
-            await context.SaveChangesAsync();
+            IList<Place> places = new List<Place>(Places);
 
+            // Initialize/update place to database.
+            var result = places.FirstOrDefault(x => x.Id == place.Id);
+            if (result == null)
+                places.Add(place);
+            else
+            {
+                var index = places.IndexOf(result);
+                places[index] = place;
+            }
+            
             return place;
         }
 
