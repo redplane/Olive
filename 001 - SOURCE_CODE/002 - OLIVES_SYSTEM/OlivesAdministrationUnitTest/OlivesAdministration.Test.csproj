@@ -68,9 +68,9 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Controllers\AdminController\Login.cs" />
+    <Compile Include="Controllers\DoctorController\Filter.cs" />
     <Compile Include="Controllers\DoctorController\Get.cs" />
     <Compile Include="Controllers\MedicalController\InitializeMedicalCategory.cs" />
-    <Compile Include="Controllers\PersonController\EditPlace.cs" />
     <Compile Include="Controllers\PlaceController\EditPlace.cs" />
     <Compile Include="Controllers\PlaceController\FilterPlace.cs" />
     <Compile Include="Controllers\PlaceController\InitializePlace.cs" />
@@ -96,6 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\HomeController\" />
+    <Folder Include="Controllers\PersonController\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

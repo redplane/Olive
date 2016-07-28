@@ -84,6 +84,9 @@ namespace OlivesAdministration.Test.Controllers.PlaceController
             for (var i = 0; i < 128; i++)
                 modifier.City += i;
 
+            // Do validation.
+            _placeController.Validate(modifier);
+
             // Find a place doesn't exist in database.
             var response = await _placeController.ModifyPlace(1, modifier);
 

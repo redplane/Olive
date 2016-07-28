@@ -258,7 +258,60 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
+        /// <summary>
+        /// Page index is smaller than 0.
+        /// </summary>
+        /// <returns></returns>
+        public async Task PageIndexSmallerThanZero()
+        {
+            // Filter initialization.
+            var filter = new FilterDoctorViewModel();
+            filter.Page = -1;
 
+            // Do validation.
+            _doctorController.Validate(filter);
+
+            // Retrieve the response.
+            var response = await _doctorController.Filter(filter);
+
+            // Compare the result and actual result.
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        /// <summary>
+        /// Page record is smaller than 1.
+        /// </summary>
+        /// <returns></returns>
+        public async Task PageRecordSmallerThanOne()
+        {
+            // Filter initialization.
+            var filter = new FilterDoctorViewModel();
+            filter.Records = FieldLength.RecordMin - 1;
+
+            // Retrieve the response.
+            var response = await _doctorController.Filter(filter);
+
+            // Compare the result and actual result.
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        /// <summary>
+        /// Page record exceeded maximum record.
+        /// </summary>
+        /// <returns></returns>
+        public async Task PageRecordExceededMax()
+        {
+            // Filter initialization.
+            var filter = new FilterDoctorViewModel();
+            filter.Records = FieldLength.RecordMax + 1;
+
+            // Retrieve the response.
+            var response = await _doctorController.Filter(filter);
+
+            // Compare tha result and actual result.
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+        
         #endregion
     }
 }
