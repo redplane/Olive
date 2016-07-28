@@ -183,6 +183,40 @@ namespace OlivesAdministration.Test.Controllers.AdminController
             Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
         }
 
+        /// <summary>
+        ///     Login is failed due to account is a patient.
+        ///     Status: Deactive
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task AccountIsNotAdmin()
+        {
+            // Forging a deactivated account.
+            var account = new Person();
+            account.Id = 1;
+            account.Email = "deactivated@gmail.com";
+            account.Password = "password199x";
+            account.Role = (byte)Role.Patient;
+            account.Status = (byte)StatusAccount.Inactive;
+
+            // Add the fake person to list.
+            _repositoryAccount.People = new List<Person>();
+            _repositoryAccount.People.Add(account);
+
+            // Initialize login request parameters.
+            var loginViewModel = new LoginViewModel();
+            loginViewModel.Email = account.Email;
+            loginViewModel.Password = account.Password;
+
+            // Call the login function.
+            // Response will be 404 because no valid account is found.
+            var response = await _adminController.Login(loginViewModel);
+            Debug.WriteLine(response);
+
+            // Compare the result thrown back.
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
+        }
+
         #endregion
     }
 }
