@@ -21,11 +21,10 @@ namespace Olives.Controllers
         /// <param name="repositorySpecialty"></param>
         /// <param name="log"></param>
         /// <param name="emailService"></param>
-        public SpecialtyController(IRepositorySpecialty repositorySpecialty, ILog log, IEmailService emailService)
+        public SpecialtyController(IRepositorySpecialty repositorySpecialty, ILog log)
         {
             _repositorySpecialty = repositorySpecialty;
             _log = log;
-            _emailService = emailService;
         }
 
         #endregion
@@ -114,12 +113,7 @@ namespace Olives.Controllers
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-
-        /// <summary>
-        ///     Service which is used for sending emails.
-        /// </summary>
-        private readonly IEmailService _emailService;
-
+        
         #endregion
     }
 }
