@@ -126,5 +126,24 @@
         public const string KeySignalrClient = "Client";
 
         #endregion
+
+        #region Doctor rank
+
+        /// <summary>
+        /// Minimum rank of doctor.
+        /// </summary>
+        public const int MinDoctorRank = 0;
+
+        /// <summary>
+        /// Maximum rank of doctor.
+        /// </summary>
+        public const int MaxDoctorRank = 5;
+
+        /// <summary>
+        /// Minimum point which patient can vote for a doctor.
+        /// </summary>
+        public const int MinDoctorRankVote = 1;
+
+        #endregion
     }
 }
