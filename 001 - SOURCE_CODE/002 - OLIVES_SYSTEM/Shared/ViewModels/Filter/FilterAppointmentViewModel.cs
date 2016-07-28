@@ -65,7 +65,7 @@ namespace Shared.ViewModels.Filter
 
         [InEnumerationsArray(
             new object[]
-            {StatusAppointment.Pending, StatusAppointment.Active, StatusAppointment.Cancelled, StatusAppointment.Done},
+            {StatusAppointment.Pending, StatusAppointment.Active, StatusAppointment.Cancelled, StatusAppointment.Done, StatusAppointment.Expired},
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
         public StatusAppointment? Status { get; set; }
 
