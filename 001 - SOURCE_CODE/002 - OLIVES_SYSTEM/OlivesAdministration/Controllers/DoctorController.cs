@@ -127,7 +127,6 @@ namespace OlivesAdministration.Controllers
             if (!ModelState.IsValid)
             {
                 // Log the error.
-                
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
             // Retrieve result from server.
