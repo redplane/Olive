@@ -70,6 +70,10 @@
     <Compile Include="Controllers\AdminController\Login.cs" />
     <Compile Include="Controllers\DoctorController\Get.cs" />
     <Compile Include="Controllers\MedicalController\InitializeMedicalCategory.cs" />
+    <Compile Include="Controllers\PersonController\EditPlace.cs" />
+    <Compile Include="Controllers\PlaceController\EditPlace.cs" />
+    <Compile Include="Controllers\PlaceController\FilterPlace.cs" />
+    <Compile Include="Controllers\PlaceController\InitializePlace.cs" />
     <Compile Include="Controllers\PlaceController\FindPlace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\RepositoryAccount.cs" />

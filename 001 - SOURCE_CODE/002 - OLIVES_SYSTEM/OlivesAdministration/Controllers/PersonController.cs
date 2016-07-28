@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using log4net;
 using OlivesAdministration.Attributes;
 using OlivesAdministration.ViewModels;
 using OlivesAdministration.ViewModels.Statistic;
@@ -23,6 +24,11 @@ namespace OlivesAdministration.Controllers
         /// </summary>
         private readonly IRepositoryAccount _repositoryAccount;
 
+        /// <summary>
+        /// Instance of log.
+        /// </summary>
+        private readonly ILog _log;
+
         #endregion
 
         #region Constructors
@@ -31,9 +37,11 @@ namespace OlivesAdministration.Controllers
         ///     Initialize an instance of AdminController.
         /// </summary>
         /// <param name="repositoryAccount"></param>
-        public PersonController(IRepositoryAccount repositoryAccount)
+        /// <param name="log"></param>
+        public PersonController(IRepositoryAccount repositoryAccount, ILog log)
         {
             _repositoryAccount = repositoryAccount;
+            _log = log;
         }
 
         #endregion
@@ -51,6 +59,8 @@ namespace OlivesAdministration.Controllers
         [OlivesAuthorize(new[] {Role.Admin})]
         public async Task<HttpResponseMessage> Status([FromUri] int id, [FromBody] EditStatusViewModel modifier)
         {
+            #region Request parameters are invalid
+
             // Modifier hasn't been initialized.
             if (modifier == null)
             {
@@ -62,37 +72,49 @@ namespace OlivesAdministration.Controllers
             // Request parameters are invalid.
             if (!ModelState.IsValid)
             {
-                // TODO: Log error to file.
+                _log.Error("Request parameters are invalid. Errors sent to client");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
 
-            // Find the person from database using unique identity.
-            var person = await _repositoryAccount.FindPersonAsync(id, null, null, null, null);
+            #endregion
 
-            // No person has been found.
-            if (person == null)
-            {
-                // TODO: Log the error to file.
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
-
-            // Change account status and retrieve the process result.
-            person.Status = (byte) modifier.Status;
+            #region Result handling
 
             try
             {
+                // Find the person from database using unique identity.
+                var person = await _repositoryAccount.FindPersonAsync(id, null, null, null, null);
+
+                // No person has been found.
+                if (person == null)
+                {
+                    // Log the error for future trace.
+                    _log.Error($"Person [Id: {id}] doesn't exit in database.");
+
+                    // Tell the client about this error.
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
+                }
+
+                // Change account status and retrieve the process result.
+                person.Status = (byte)modifier.Status;
+                
                 // Save changes to database.
                 await _repositoryAccount.InitializePersonAsync(person);
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                // TODO: Log the exception to file.
+                // Log the error for the future trace.
+                _log.Error(exception.Message, exception);
+
+                // Tell the client server has error.
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
+
+            #endregion
         }
 
         /// <summary>

@@ -6,26 +6,27 @@ using System.Web.Http;
 using log4net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OlivesAdministration.Test.Repositories;
+using OlivesAdministration.ViewModels.Edit;
 using OlivesAdministration.ViewModels.Initialize;
 using Shared.Models;
 
 namespace OlivesAdministration.Test.Controllers.PlaceController
 {
     [TestClass]
-    public class InitializePlace
+    public class EditPlace
     {
         #region Constructor
 
         /// <summary>
         ///     Initialize an instance of Login with default settings.
         /// </summary>
-        public InitializePlace()
+        public EditPlace()
         {
             // Initialize RepositoryAccount.
             _repositoryPlace = new RepositoryPlace();
 
             // Initialize fake log instance.
-            var log = LogManager.GetLogger(typeof (FindPlace));
+            var log = LogManager.GetLogger(typeof(EditPlace));
 
             // Initialize a fake controller.
             _placeController = new OlivesAdministration.Controllers.PlaceController(_repositoryPlace, log);
@@ -50,28 +51,10 @@ namespace OlivesAdministration.Test.Controllers.PlaceController
         ///     Repository medical which simulates function of RepositoryMedical to test controller.
         /// </summary>
         private readonly RepositoryPlace _repositoryPlace;
-        
-        #endregion
-        
-        #region Methods
 
-        /// <summary>
-        /// Description: Find a place which doesn't exist in database.
-        /// Expected : 404 will be thrown back.
-        /// Action : Find the not existed place.
-        /// </summary>
-        /// <returns></returns>
-        [TestMethod]
-        public async Task PlaceIsNotFound()
-        {
-            // Initialize a forgery place database.
-            _repositoryPlace.Places = new List<Place>();
-            
-            // Find a place doesn't exist in database.
-            var response = await _placeController.FindPlace(1);
-            
-            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
-        }
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Description: Request parameters are invalid.
@@ -83,24 +66,7 @@ namespace OlivesAdministration.Test.Controllers.PlaceController
         public async Task RequestParametersAreInvalid()
         {
             // Find a place doesn't exist in database.
-            var response = await _placeController.InitializePlace(null);
-
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
-        }
-
-        /// <summary>
-        /// Description: Request parameters are invalid.
-        /// Expected : 400 will be thrown back.
-        /// Action : No request parameter is sent.
-        /// </summary>
-        /// <returns></returns>
-        [TestMethod]
-        public async Task CityIsntFilled()
-        {
-            var initializer = new InitializePlaceViewModel();
-            
-            // Find a place doesn't exist in database.
-            var response = await _placeController.InitializePlace(initializer);
+            var response = await _placeController.ModifyPlace(0, null);
 
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
@@ -114,31 +80,12 @@ namespace OlivesAdministration.Test.Controllers.PlaceController
         [TestMethod]
         public async Task CityMaxLengthReached()
         {
-            var initializer = new InitializePlaceViewModel();
+            var modifier = new EditPlaceViewModel();
             for (var i = 0; i < 128; i++)
-                initializer.City += i;
+                modifier.City += i;
 
             // Find a place doesn't exist in database.
-            var response = await _placeController.InitializePlace(initializer);
-
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
-        }
-
-        /// <summary>
-        /// Description: Request parameters are invalid.
-        /// Expected : 400 will be thrown back.
-        /// Action : No request parameter is sent.
-        /// </summary>
-        /// <returns></returns>
-        [TestMethod]
-        public async Task CountryIsntFilled()
-        {
-            var initializer = new InitializePlaceViewModel();
-            initializer.City = "City";
-            initializer.Country = "";
-
-            // Find a place doesn't exist in database.
-            var response = await _placeController.InitializePlace(initializer);
+            var response = await _placeController.ModifyPlace(1, modifier);
 
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
@@ -152,16 +99,31 @@ namespace OlivesAdministration.Test.Controllers.PlaceController
         [TestMethod]
         public async Task CountryMaxLengthReached()
         {
-            var initializer = new InitializePlaceViewModel();
-            initializer.City = "City";
+            var modifier = new EditPlaceViewModel();
+            modifier.City = "City";
 
             for (var i = 0; i < 100; i++)
-                initializer.Country += i.ToString();
+                modifier.Country += i.ToString();
 
             // Find a place doesn't exist in database.
-            var response = await _placeController.InitializePlace(initializer);
+            var response = await _placeController.ModifyPlace(1, modifier);
 
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        public async Task PlaceIsNotFound()
+        {
+            // Forgery database.
+            _repositoryPlace.Places = new List<Place>();
+            _repositoryPlace.Places.Add(new Place() { Id = 1, City = "1", Country = "1" });
+
+            var modifier = new EditPlaceViewModel();
+            modifier.City = "2";
+            modifier.Country = "1";
+
+            var response = await _placeController.ModifyPlace(0, modifier);
+
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         /// <summary>
@@ -174,14 +136,14 @@ namespace OlivesAdministration.Test.Controllers.PlaceController
         {
             // Forgery database.
             _repositoryPlace.Places = new List<Place>();
-            _repositoryPlace.Places.Add(new Place() {Id = 1, City = "1", Country = "1"});
+            _repositoryPlace.Places.Add(new Place() { Id = 1, City = "1", Country = "1" });
 
-            var initializer = new InitializePlaceViewModel();
-            initializer.City = "1";
-            initializer.Country = "1";
+            var modifier = new EditPlaceViewModel();
+            modifier.City = "1";
+            modifier.Country = "1";
 
             // Call the initialization function.
-            var response = await _placeController.InitializePlace(initializer);
+            var response = await _placeController.ModifyPlace(1, modifier);
 
             Assert.AreEqual(HttpStatusCode.Conflict, response.StatusCode);
         }
@@ -192,18 +154,18 @@ namespace OlivesAdministration.Test.Controllers.PlaceController
         /// Action : Duplicate the initialization.
         /// </summary>
         /// <returns></returns>
-        public async Task PlaceAddedSuccessfully()
+        public async Task PlaceModifiedSuccessfully()
         {
             // Forgery database.
             _repositoryPlace.Places = new List<Place>();
             _repositoryPlace.Places.Add(new Place() { Id = 1, City = "1", Country = "1" });
 
-            var initializer = new InitializePlaceViewModel();
-            initializer.City = "2";
-            initializer.Country = "2";
+            var modifier = new EditPlaceViewModel();
+            modifier.City = "2";
+            modifier.Country = "2";
 
             // Call the initialization function.
-            var response = await _placeController.InitializePlace(initializer);
+            var response = await _placeController.ModifyPlace(1, modifier);
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
@@ -213,18 +175,18 @@ namespace OlivesAdministration.Test.Controllers.PlaceController
         /// Expected : 200 will be thrown back.
         /// </summary>
         /// <returns></returns>
-        public async Task PlaceAddedSameCitySuccessfully()
+        public async Task PlaceModidiedSameCitySuccessfully()
         {
             // Forgery database.
             _repositoryPlace.Places = new List<Place>();
             _repositoryPlace.Places.Add(new Place() { Id = 1, City = "1", Country = "1" });
 
-            var initializer = new InitializePlaceViewModel();
-            initializer.City = "1";
-            initializer.Country = "2";
+            var modifier = new EditPlaceViewModel();
+            modifier.City = "1";
+            modifier.Country = "2";
 
             // Call the initialization function.
-            var response = await _placeController.InitializePlace(initializer);
+            var response = await _placeController.ModifyPlace(1, modifier);
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
@@ -234,18 +196,18 @@ namespace OlivesAdministration.Test.Controllers.PlaceController
         /// Expected : 200 will be thrown back.
         /// </summary>
         /// <returns></returns>
-        public async Task PlaceAddedSameCountrySuccessfully()
+        public async Task PlaceModidiedSameCountrySuccessfully()
         {
             // Forgery database.
             _repositoryPlace.Places = new List<Place>();
             _repositoryPlace.Places.Add(new Place() { Id = 1, City = "1", Country = "1" });
 
-            var initializer = new InitializePlaceViewModel();
-            initializer.City = "2";
-            initializer.Country = "1";
+            var modifier = new EditPlaceViewModel();
+            modifier.City = "2";
+            modifier.Country = "1";
 
             // Call the initialization function.
-            var response = await _placeController.InitializePlace(initializer);
+            var response = await _placeController.ModifyPlace(1, modifier);
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }

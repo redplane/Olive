@@ -530,6 +530,7 @@ namespace Olives.Controllers
                     x.To,
                     x.LastModified,
                     x.Note,
+                    x.LastModifiedNote,
                     x.Status
                 }),
                 response.Total

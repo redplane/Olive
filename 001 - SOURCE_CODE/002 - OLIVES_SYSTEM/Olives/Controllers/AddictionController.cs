@@ -224,7 +224,7 @@ namespace Olives.Controllers
         [Route("api/addiction")]
         [HttpDelete]
         [OlivesAuthorize(new[] {Role.Patient})]
-        public async Task<HttpResponseMessage> Delete([FromBody] int id)
+        public async Task<HttpResponseMessage> Delete([FromUri] int id)
         {
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
