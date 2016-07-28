@@ -27,7 +27,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
             _repositoryAccount = new RepositoryAccount();
 
             // Initialize fake log instance.
-            var log = LogManager.GetLogger(typeof (Get));
+            var log = LogManager.GetLogger(typeof(Get));
 
             // Initialize fake application setting instance.
             var applicationSetting = new ApplicationSetting();
@@ -311,7 +311,46 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
             // Compare tha result and actual result.
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
-        
+
+        public async Task FilterDoctorSuccessfullyWithPagination()
+        {
+            // Forging database.
+            _repositoryAccount.Doctors = new List<Doctor>();
+            _repositoryAccount.Specialties = new List<Specialty>();
+            _repositoryAccount.People = new List<Person>();
+
+            var maxRecord = 10;
+            for (var i = 0; i < maxRecord; i++)
+            {
+                _repositoryAccount.Doctors.Add(new Doctor()
+                {
+                    City = $"{i}",
+                    Country = $"{i}",
+                    Id = i,
+                    Money = 0,
+                    Rank = 1,
+                    SpecialtyId = i
+                });
+
+                _repositoryAccount.People.Add(new Person()
+                {
+                    Id = i,
+                    Email = $"email{i}@gmail.com",
+                    Password = $"password{i}",
+                    FirstName = $"FirstName[{i}]",
+                    LastName = $"LastName[{i}]"
+                });
+            }
+
+            // Filter initialization.
+            var filter = new FilterDoctorViewModel();
+            filter.Records = 1;
+            filter.Page = 0;
+
+            // Retrieve response from filter.
+            var response = await _doctorController.Filter(filter);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        }
         #endregion
     }
 }
