@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -43,53 +44,65 @@ namespace OlivesAdministration.Controllers
         [OlivesAuthorize(new[] {Role.Admin})]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
-            // Retrieve filtered result asynchronously.
-            var doctor = await _repositoryAccount.FindDoctorAsync(id, null);
-
-            // No result has been found.
-            if (doctor == null)
+            try
             {
-                // Log error.
-                _log.Error($"Cannot find the doctor [Id : {id}]");
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                // Retrieve filtered result asynchronously.
+                var doctor = await _repositoryAccount.FindDoctorAsync(id, null);
+
+                // No result has been found.
+                if (doctor == null)
                 {
-                    Error = $"{Language.WarnRecordNotFound}"
+                    // Log error.
+                    _log.Error($"Cannot find the doctor [Id : {id}]");
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    Doctor = new
+                    {
+                        doctor.Id,
+                        doctor.Person.FirstName,
+                        doctor.Person.LastName,
+                        doctor.Person.Email,
+                        doctor.Person.Password,
+                        doctor.Person.Birthday,
+                        doctor.Person.Gender,
+                        doctor.Person.Address,
+                        doctor.Person.Phone,
+                        doctor.Person.Role,
+                        Photo =
+                            InitializeUrl(_applicationSetting.AvatarStorage.Absolute, doctor.Person.Photo,
+                                Values.StandardImageExtension),
+                        doctor.Rank,
+                        Specialty = new
+                        {
+                            Id = doctor.SpecialtyId,
+                            Name = doctor.SpecialtyName
+                        },
+                        Place = new
+                        {
+                            Id = doctor.PlaceId,
+                            doctor.City,
+                            doctor.Country
+                        },
+                        doctor.Voters,
+                        doctor.Money,
+                        doctor.Person.Created,
+                        doctor.Person.LastModified
+                    }
                 });
             }
-
-            return Request.CreateResponse(HttpStatusCode.OK, new
+            catch (Exception exception)
             {
-                Doctor = new
-                {
-                    doctor.Id,
-                    doctor.Person.FirstName,
-                    doctor.Person.LastName,
-                    doctor.Person.Email,
-                    doctor.Person.Password,
-                    doctor.Person.Birthday,
-                    doctor.Person.Gender,
-                    doctor.Person.Address,
-                    doctor.Person.Phone,
-                    doctor.Person.Role,
-                    Photo = InitializeUrl(_applicationSetting.AvatarStorage.Absolute, doctor.Person.Photo, Values.StandardImageExtension),
-                    doctor.Rank,
-                    Specialty = new
-                    {
-                        Id = doctor.SpecialtyId,
-                        Name = doctor.SpecialtyName
-                    },
-                    Place = new
-                    {
-                        Id = doctor.PlaceId,
-                        doctor.City,
-                        doctor.Country
-                    },
-                    doctor.Voters,
-                    doctor.Money,
-                    doctor.Person.Created,
-                    doctor.Person.LastModified
-                }
-            });
+                // Log the exception before telling client.
+                _log.Error(exception.Message, exception);
+
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
         }
 
         /// <summary>
