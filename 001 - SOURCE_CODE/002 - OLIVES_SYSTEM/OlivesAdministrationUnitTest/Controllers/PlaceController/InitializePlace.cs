@@ -97,8 +97,12 @@ namespace OlivesAdministration.Test.Controllers.PlaceController
         [TestMethod]
         public async Task CityIsntFilled()
         {
+            // Initializer initialization.
             var initializer = new InitializePlaceViewModel();
             
+            // Do validation.
+            _placeController.Validate(initializer);
+
             // Find a place doesn't exist in database.
             var response = await _placeController.InitializePlace(initializer);
 
@@ -118,6 +122,9 @@ namespace OlivesAdministration.Test.Controllers.PlaceController
             for (var i = 0; i < 128; i++)
                 initializer.City += i;
 
+            // Do validation.
+            _placeController.Validate(initializer);
+
             // Find a place doesn't exist in database.
             var response = await _placeController.InitializePlace(initializer);
 
@@ -136,6 +143,9 @@ namespace OlivesAdministration.Test.Controllers.PlaceController
             var initializer = new InitializePlaceViewModel();
             initializer.City = "City";
             initializer.Country = "";
+
+            // Do validation.
+            _placeController.Validate(initializer);
 
             // Find a place doesn't exist in database.
             var response = await _placeController.InitializePlace(initializer);
