@@ -1,6 +1,7 @@
 ---------------------------------------------------------------------------------------------------
 -- DROP TABLES
 ---------------------------------------------------------------------------------------------------
+DROP TABLE RealTimeConnection;
 DROP TABLE MedicalImage;
 DROP TABLE ExperimentNote;
 DROP TABLE MedicalNote;
@@ -130,6 +131,7 @@ CREATE TABLE Appointment
 	Note				NVARCHAR(128) NOT NULL,
 	Created				FLOAT NOT NULL,
 	LastModified		FLOAT,
+	LastModifiedNote	NVARCHAR(128),
 	[Status]			TINYINT NOT NULL
 
 	FOREIGN KEY (Maker) REFERENCES Person(Id),
@@ -361,7 +363,27 @@ CREATE TABLE AppointmentNotification
 	FOREIGN KEY (AppointmentId) REFERENCES Appointment(Id)
 )
 
+----------------------------------------------------------
+-- Real time connection
+----------------------------------------------------------
+DROP TABLE RealTimeConnection
+CREATE TABLE RealTimeConnection
+(
+	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	Owner					INT NOT NULL,
+	ConnectionId			NVARCHAR(MAX),
+	Created					FLOAT NOT NULL,
+)
 
+CREATE TABLE AppointmentCheckTask
+(
+	AppointmentId			INT PRIMARY KEY,
+	Time					FLOAT,
+
+	FOREIGN KEY (AppointmentId) REFERENCES Appointment(Id)
+)
+
+SELECT * FROM RealTimeConnection
 SELECT * FROM Person
 SELECT * FROM Country
 WHERE Country.Name = 'Bac giang'
