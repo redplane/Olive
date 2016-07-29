@@ -16,7 +16,6 @@ using Olives.ViewModels.Filter;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -42,7 +41,7 @@ namespace Olives.Controllers
         /// <param name="applicationSetting"></param>
         public AccountController(IRepositoryAccount repositoryAccount,
             IRepositoryActivationCode repositoryActivationCode, IRepositorySpecialty repositorySpecialty,
-            IRepositoryPlace repositoryPlace, ILog log, IEmailService emailService,
+            IRepositoryPlace repositoryPlace, ILog log, IEmailService emailService, ITimeService timeService,
             ApplicationSetting applicationSetting)
         {
             _repositoryAccount = repositoryAccount;
@@ -51,6 +50,7 @@ namespace Olives.Controllers
             _repositoryPlace = repositoryPlace;
             _log = log;
             _emailService = emailService;
+            _timeService = timeService;
             _applicationSetting = applicationSetting;
         }
 
@@ -133,7 +133,7 @@ namespace Olives.Controllers
             #endregion
 
             // Update the last modified.
-            requester.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            requester.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Update the patient.
             requester = await _repositoryAccount.EditPersonProfileAsync(requester.Id, requester);
@@ -413,7 +413,7 @@ namespace Olives.Controllers
             requester.FullName = $"{requester.FirstName} {requester.LastName}";
 
             // Update the last modified.
-            requester.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            requester.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Place is defined.
             if (editor.Place != null)
@@ -515,7 +515,7 @@ namespace Olives.Controllers
             person.Email = info.Email;
             person.Password = info.Password;
             person.Phone = info.Phone;
-            person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            person.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
             person.Role = (byte) Role.Patient;
             person.Status = (byte) StatusAccount.Pending;
 
@@ -662,7 +662,7 @@ namespace Olives.Controllers
             person.Password = initializer.Password;
             person.Phone = initializer.Phone;
             person.Address = initializer.Address;
-            person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            person.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
             person.Role = (byte) Role.Doctor;
             person.Status = (byte) StatusAccount.Pending;
 
@@ -1213,6 +1213,11 @@ namespace Olives.Controllers
         ///     Property which contains settings of application which had been deserialized from json file.
         /// </summary>
         private readonly ApplicationSetting _applicationSetting;
+
+        /// <summary>
+        ///     Service which provides function to access time calculation.
+        /// </summary>
+        private readonly ITimeService _timeService;
 
         #endregion
     }

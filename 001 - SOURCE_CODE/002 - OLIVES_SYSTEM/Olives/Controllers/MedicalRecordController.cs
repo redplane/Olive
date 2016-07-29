@@ -11,7 +11,6 @@ using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -29,16 +28,17 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="repositoryAccount"></param>
         /// <param name="repositoryMedical"></param>
+        /// <param name="repositoryRelation"></param>
+        /// <param name="timeService"></param>
         /// <param name="log"></param>
-        /// <param name="fileService"></param>
-        /// <param name="applicationSetting"></param>
         public MedicalRecordController(IRepositoryAccount repositoryAccount, IRepositoryMedicalRecord repositoryMedical,
-            IRepositoryRelation repositoryRelation,
+            IRepositoryRelation repositoryRelation, ITimeService timeService,
             ILog log)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryMedical = repositoryMedical;
             _repositoryRelation = repositoryRelation;
+            _timeService = timeService;
             _log = log;
         }
 
@@ -231,7 +231,7 @@ namespace Olives.Controllers
                 medicalRecord.Category = info.Category;
                 medicalRecord.Info = JsonConvert.SerializeObject(info.Infos);
                 medicalRecord.Time = info.Time;
-                medicalRecord.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+                medicalRecord.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                 // Insert a new allergy to database.
                 var result = await _repositoryMedical.InitializeMedicalRecordAsync(medicalRecord);
@@ -344,7 +344,7 @@ namespace Olives.Controllers
                     medicalRecord.Time = info.Time.Value;
 
                 // Update the last time
-                medicalRecord.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+                medicalRecord.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                 // Insert a new allergy to database.
                 var result = await _repositoryMedical.InitializeMedicalRecordAsync(medicalRecord);
@@ -470,6 +470,11 @@ namespace Olives.Controllers
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
+
+        /// <summary>
+        ///     Service which provides functions to access time calculation.
+        /// </summary>
+        private readonly ITimeService _timeService;
 
         /// <summary>
         ///     Instance of module which is used for logging.

@@ -7,12 +7,10 @@ using System.Web.Http;
 using log4net;
 using Olives.Attributes;
 using Olives.Hubs;
-using Olives.Interfaces;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -231,7 +229,7 @@ namespace Olives.Controllers
                 #endregion
 
                 #region Appointment initialization
-                
+
                 var unixTime = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                 // Initialize an appointment information.
@@ -245,7 +243,7 @@ namespace Olives.Controllers
                 appointment.From = info.From ?? unixTime;
                 appointment.To = info.To ?? unixTime;
                 appointment.Note = info.Note;
-                appointment.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+                appointment.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
                 appointment.Status = (byte) StatusAppointment.Pending;
 
                 // Initialize an appointment into database.
@@ -263,7 +261,7 @@ namespace Olives.Controllers
                     appointmentNotification.Type = (byte) AppointmentNotificationType.Created;
                     appointmentNotification.Invoker = requester.Id;
                     appointmentNotification.Recipient = info.Dater;
-                    appointmentNotification.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+                    appointmentNotification.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
                     appointmentNotification.AppointmentId = appointment.Id;
                     appointmentNotification.IsSeen = false;
 
@@ -290,7 +288,7 @@ namespace Olives.Controllers
                 }
 
                 #endregion
-                
+
                 #region Result handling
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
@@ -396,7 +394,7 @@ namespace Olives.Controllers
             if (info.To != null) appointment.To = info.To.Value;
             if (!string.IsNullOrWhiteSpace(info.Note)) appointment.LastModifiedNote = info.Note;
             if (info.Status != null) appointment.Status = (byte) info.Status;
-            
+
             // Update the appointment.
             await _repositoryAppointment.InitializeAppointment(appointment);
 
@@ -413,7 +411,7 @@ namespace Olives.Controllers
                 appointmentNotification.AppointmentId = appointment.Id;
                 appointmentNotification.Type = (byte) AppointmentNotificationType.Edited;
                 appointmentNotification.Recipient = recipient;
-                appointmentNotification.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+                appointmentNotification.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                 // Initialize the notification.
                 await _repositoryAppointmentNotification.InitializeAppointmentNotificationAsync(appointmentNotification);
@@ -436,7 +434,7 @@ namespace Olives.Controllers
             }
 
             #endregion
-            
+
             #region Result handling
 
             try
@@ -561,7 +559,7 @@ namespace Olives.Controllers
         ///     Repository of appointment notification.
         /// </summary>
         private readonly IRepositoryAppointmentNotification _repositoryAppointmentNotification;
-        
+
         /// <summary>
         ///     Repository of relationships.
         /// </summary>

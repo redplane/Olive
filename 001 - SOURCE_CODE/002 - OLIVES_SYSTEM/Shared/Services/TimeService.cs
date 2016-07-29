@@ -1,7 +1,7 @@
 ﻿using System;
-using Olives.Interfaces;
+using Shared.Interfaces;
 
-namespace Olives.Services
+namespace Shared.Services
 {
     public class TimeService : ITimeService
     {

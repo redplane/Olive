@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
-using Olives.Interfaces;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -28,17 +26,17 @@ namespace Olives.Controllers
         /// <summary>
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryAccount"></param>
         /// <param name="repositoryHeartbeat"></param>
+        /// <param name="repositoryRelation"></param>
+        /// <param name="timeService"></param>
         /// <param name="log"></param>
-        /// <param name="emailService"></param>
-        public HeartbeatController(IRepositoryAccount repositoryAccount, IRepositoryHeartbeat repositoryHeartbeat,
-            IRepositoryRelation repositoryRelation,
-            ILog log, IEmailService emailService)
+        public HeartbeatController(IRepositoryHeartbeat repositoryHeartbeat,
+            IRepositoryRelation repositoryRelation, ITimeService timeService,
+            ILog log)
         {
-            _repositoryAccount = repositoryAccount;
             _repositoryHeartbeat = repositoryHeartbeat;
             _repositoryRelation = repositoryRelation;
+            _timeService = timeService;
             _log = log;
         }
 
@@ -123,7 +121,7 @@ namespace Olives.Controllers
             heartbeat.Rate = info.Rate;
             heartbeat.Note = info.Note;
             heartbeat.Time = info.Time;
-            heartbeat.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            heartbeat.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Insert a new allergy to database.
             var result = await _repositoryHeartbeat.InitializeHeartbeatNoteAsync(heartbeat);
@@ -209,6 +207,7 @@ namespace Olives.Controllers
             result.Rate = info.Rate;
             result.Time = info.Time;
             result.Note = info.Note;
+            result.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Update allergy.
             result = await _repositoryHeartbeat.InitializeHeartbeatNoteAsync(result);
@@ -328,11 +327,6 @@ namespace Olives.Controllers
         #region Properties
 
         /// <summary>
-        ///     Repository of accounts
-        /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
-
-        /// <summary>
         ///     Repository of heartbeats
         /// </summary>
         private readonly IRepositoryHeartbeat _repositoryHeartbeat;
@@ -341,6 +335,11 @@ namespace Olives.Controllers
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
+
+        /// <summary>
+        ///     Service which provides functions to access time calculation.
+        /// </summary>
+        private readonly ITimeService _timeService;
 
         /// <summary>
         ///     Instance of module which is used for logging.

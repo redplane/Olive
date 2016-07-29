@@ -11,7 +11,6 @@ using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -31,16 +30,18 @@ namespace Olives.Controllers
         /// <param name="repositoryMedicalRecord"></param>
         /// <param name="repositoryPrescription"></param>
         /// <param name="repositoryRelation"></param>
+        /// <param name="timeService"></param>
         /// <param name="log"></param>
         public PrescriptionController(IRepositoryAccount repositoryAccount,
             IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryPrescription repositoryPrescription,
-            IRepositoryRelation repositoryRelation,
+            IRepositoryRelation repositoryRelation, ITimeService timeService,
             ILog log)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryMedicalRecord = repositoryMedicalRecord;
             _repositoryPrescription = repositoryPrescription;
             _repositoryRelation = repositoryRelation;
+            _timeService = timeService;
             _log = log;
         }
 
@@ -239,7 +240,7 @@ namespace Olives.Controllers
                     prescription.Medicine = JsonConvert.SerializeObject(info.Medicines);
 
                 prescription.Note = info.Note;
-                prescription.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+                prescription.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                 // Initialize prescription to database.
                 prescription = await _repositoryPrescription.InitializePrescriptionAsync(prescription);
@@ -373,7 +374,7 @@ namespace Olives.Controllers
                     prescription.Note = info.Note;
 
                 // Update last modified time.
-                prescription.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+                prescription.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                 // Initialize prescription to database.
                 prescription = await _repositoryPrescription.InitializePrescriptionAsync(prescription);
@@ -537,6 +538,11 @@ namespace Olives.Controllers
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
+
+        /// <summary>
+        ///     Service which provides functions to access time calculation.
+        /// </summary>
+        private readonly ITimeService _timeService;
 
         /// <summary>
         ///     Instance of module which is used for logging.

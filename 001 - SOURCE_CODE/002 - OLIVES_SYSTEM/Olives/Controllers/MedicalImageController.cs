@@ -11,7 +11,6 @@ using Olives.Interfaces;
 using Olives.Models;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -31,12 +30,14 @@ namespace Olives.Controllers
         /// <param name="repositoryAccount"></param>
         /// <param name="repositoryMedicalRecord"></param>
         /// <param name="repositoryMedicalImage"></param>
+        /// <param name="repositoryRelation"></param>
+        /// <param name="timeService"></param>
         /// <param name="log"></param>
         /// <param name="fileService"></param>
         /// <param name="applicationSetting"></param>
         public MedicalImageController(IRepositoryAccount repositoryAccount,
             IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryMedicalImage repositoryMedicalImage,
-            IRepositoryRelation repositoryRelation,
+            IRepositoryRelation repositoryRelation, ITimeService timeService,
             ILog log, IFileService fileService, ApplicationSetting applicationSetting)
         {
             _repositoryAccount = repositoryAccount;
@@ -44,6 +45,7 @@ namespace Olives.Controllers
             _repositoryMedicalImage = repositoryMedicalImage;
             _repositoryRelation = repositoryRelation;
             _log = log;
+            _timeService = timeService;
             _fileService = fileService;
             _applicationSetting = applicationSetting;
         }
@@ -147,7 +149,7 @@ namespace Olives.Controllers
                 medicalImage.Owner = medicalRecord.Owner;
                 medicalImage.MedicalRecordId = medicalRecord.Id;
                 medicalImage.Image = imageName;
-                medicalImage.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+                medicalImage.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
                 medicalImage.FullPath = Path.Combine(_applicationSetting.MedicalImageStorage.Absolute,
                     $"{imageName}.{Values.StandardImageExtension}");
 
@@ -316,6 +318,11 @@ namespace Olives.Controllers
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
+
+        /// <summary>
+        ///     Service which provides functions to access time calculation.
+        /// </summary>
+        private readonly ITimeService _timeService;
 
         /// <summary>
         ///     Instance of module which is used for logging.

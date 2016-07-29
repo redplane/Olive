@@ -15,8 +15,14 @@ namespace Olives.Hubs
         /// <summary>
         /// Repository which provides function to access real time connection.
         /// </summary>
-        public IRepositoryRealTimeConnection RepositoryRealTimeConnection => GlobalHost.DependencyResolver.Resolve<IRepositoryRealTimeConnection>();
+        private IRepositoryRealTimeConnection RepositoryRealTimeConnection => GlobalHost.DependencyResolver.Resolve<IRepositoryRealTimeConnection>();
 
+        /// <summary>
+        /// Service which provides functions to access time calculation.
+        /// </summary>
+        private ITimeService TimeService => GlobalHost.DependencyResolver.Resolve<ITimeService>();
+
+        
         #region Overriden methods
 
         /// <summary>
@@ -35,7 +41,7 @@ namespace Olives.Hubs
             var realTimeConnection = new RealTimeConnection();
             realTimeConnection.Owner = account.Id;
             realTimeConnection.ConnectionId = connectionIndex;
-            realTimeConnection.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            realTimeConnection.Created = TimeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Initialize a connection information.
             RepositoryRealTimeConnection.InitializeRealTimeConnectionInfoAsync(realTimeConnection);

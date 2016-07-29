@@ -10,7 +10,6 @@ using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
-using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -27,13 +26,17 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="repositoryAccount"></param>
         /// <param name="repositoryRating"></param>
+        /// <param name="repositoryRelation"></param>
+        /// <param name="timeService"></param>
         /// <param name="log"></param>
         public RateController(IRepositoryAccount repositoryAccount, IRepositoryRating repositoryRating,
-            IRepositoryRelation repositoryRelation, ILog log)
+            IRepositoryRelation repositoryRelation,
+            ITimeService timeService, ILog log)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryRating = repositoryRating;
             _repositoryRelation = repositoryRelation;
+            _timeService = timeService;
             _log = log;
         }
 
@@ -140,7 +143,7 @@ namespace Olives.Controllers
                 rating.Target = rated.Id;
                 rating.TargetFirstName = rated.FirstName;
                 rating.TargetLastName = rated.LastName;
-                rating.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+                rating.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
                 rating.Value = (byte) initializer.Rate;
                 rating.Comment = initializer.Comment;
 
@@ -277,6 +280,11 @@ namespace Olives.Controllers
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
+
+        /// <summary>
+        ///     Service which provides functions to access time calculation.
+        /// </summary>
+        private readonly ITimeService _timeService;
 
         /// <summary>
         ///     Instance of module which is used for logging.

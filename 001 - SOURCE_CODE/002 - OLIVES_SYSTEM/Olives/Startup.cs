@@ -19,6 +19,7 @@ using Olives.Services;
 using Shared.Interfaces;
 using Shared.Repositories;
 using Owin;
+using Shared.Services;
 
 [assembly: OwinStartup(typeof(Olives.Startup))]
 namespace Olives

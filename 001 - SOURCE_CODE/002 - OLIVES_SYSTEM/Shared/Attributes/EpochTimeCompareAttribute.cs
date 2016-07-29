@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using Shared.Enumerations;
+using Shared.Interfaces;
 
 namespace Shared.Attributes
 {
@@ -23,7 +24,7 @@ namespace Shared.Attributes
         ///     Comparision mode.
         /// </summary>
         public Comparision Comparision { get; set; } = Comparision.Equal;
-
+        
         #endregion
 
         #region Constructors
@@ -48,6 +49,7 @@ namespace Shared.Attributes
                 _date.ToUniversalTime()
                     .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
                     .TotalMilliseconds;
+            
         }
 
         /// <summary>

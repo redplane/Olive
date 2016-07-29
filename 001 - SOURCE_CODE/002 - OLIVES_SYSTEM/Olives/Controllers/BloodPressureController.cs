@@ -9,7 +9,6 @@ using log4net;
 using Olives.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -28,16 +27,16 @@ namespace Olives.Controllers
         /// <summary>
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryAccount"></param>
         /// <param name="repositoryBloodPressure"></param>
         /// <param name="repositoryRelation"></param>
+        /// <param name="timeService"></param>
         /// <param name="log"></param>
-        public BloodPressureController(IRepositoryAccount repositoryAccount,
-            IRepositoryBloodPressure repositoryBloodPressure, IRepositoryRelation repositoryRelation, ILog log)
+        public BloodPressureController(IRepositoryBloodPressure repositoryBloodPressure,
+            IRepositoryRelation repositoryRelation, ITimeService timeService, ILog log)
         {
-            _repositoryAccount = repositoryAccount;
             _repositoryBloodPressure = repositoryBloodPressure;
             _repositoryRelation = repositoryRelation;
+            _timeService = timeService;
             _log = log;
         }
 
@@ -126,11 +125,12 @@ namespace Olives.Controllers
 
             // Only filter and receive the first result.
             var bloodPressure = new BloodPressure();
+            bloodPressure.Owner = requester.Id;
             bloodPressure.Diastolic = info.Diastolic;
             bloodPressure.Systolic = info.Systolic;
             bloodPressure.Time = info.Time;
             bloodPressure.Note = info.Note;
-            bloodPressure.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            bloodPressure.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Insert a new allergy to database.
             var result = await _repositoryBloodPressure.InitializeBloodPressureNoteAsync(bloodPressure);
@@ -222,7 +222,7 @@ namespace Olives.Controllers
             result.Systolic = info.Systolic;
             result.Time = info.Time;
             result.Note = info.Note;
-            result.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            result.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Update allergy.
             result = await _repositoryBloodPressure.InitializeBloodPressureNoteAsync(result);
@@ -352,11 +352,6 @@ namespace Olives.Controllers
         #region Properties
 
         /// <summary>
-        ///     Repository of accounts
-        /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
-
-        /// <summary>
         ///     Repository of heartbeats
         /// </summary>
         private readonly IRepositoryBloodPressure _repositoryBloodPressure;
@@ -365,6 +360,11 @@ namespace Olives.Controllers
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
+
+        /// <summary>
+        ///     Time service which provides functions to access time calculation functions.
+        /// </summary>
+        private readonly ITimeService _timeService;
 
         /// <summary>
         ///     Instance of module which is used for logging.

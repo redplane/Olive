@@ -10,7 +10,6 @@ using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -30,15 +29,18 @@ namespace Olives.Controllers
         /// <param name="repositoryMedicalNote"></param>
         /// <param name="repositoryMedicalRecord"></param>
         /// <param name="repositoryRelation"></param>
+        /// <param name="timeService"></param>
         /// <param name="log"></param>
         public MedicalNoteController(IRepositoryAccount repositoryAccount, IRepositoryMedicalNote repositoryMedicalNote,
             IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryRelation repositoryRelation,
+            ITimeService timeService,
             ILog log)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryMedicalNote = repositoryMedicalNote;
             _repositoryMedicalRecord = repositoryMedicalRecord;
             _repositoryRelation = repositoryRelation;
+            _timeService = timeService;
             _log = log;
         }
 
@@ -223,7 +225,7 @@ namespace Olives.Controllers
                 medicalNote.Owner = medicalRecord.Owner;
                 medicalNote.Note = initializer.Note;
                 medicalNote.Time = initializer.Time;
-                medicalNote.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+                medicalNote.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                 // Insert a new allergy to database.
                 medicalNote = await _repositoryMedicalNote.InitializeMedicalNoteAsync(medicalNote);
@@ -334,7 +336,7 @@ namespace Olives.Controllers
                 if (modifier.Time != null)
                     medicalNote.Time = modifier.Time.Value;
 
-                medicalNote.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+                medicalNote.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                 // Insert a new allergy to database.
                 var result = await _repositoryMedicalNote.InitializeMedicalNoteAsync(medicalNote);
@@ -457,6 +459,11 @@ namespace Olives.Controllers
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
+
+        /// <summary>
+        ///     Service which provides function to access time calculation.
+        /// </summary>
+        private readonly ITimeService _timeService;
 
         /// <summary>
         ///     Instance of module which is used for logging.

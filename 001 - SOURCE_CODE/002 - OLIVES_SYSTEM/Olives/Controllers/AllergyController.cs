@@ -10,7 +10,6 @@ using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -25,15 +24,16 @@ namespace Olives.Controllers
         /// <summary>
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryAccount"></param>
         /// <param name="repositoryAllergy"></param>
+        /// <param name="repositoryRelation"></param>
+        /// <param name="timeService"></param>
         /// <param name="log"></param>
-        public AllergyController(IRepositoryAccount repositoryAccount, IRepositoryAllergy repositoryAllergy,
-            IRepositoryRelation repositoryRelation, ILog log)
+        public AllergyController(IRepositoryAllergy repositoryAllergy,
+            IRepositoryRelation repositoryRelation, ITimeService timeService, ILog log)
         {
-            _repositoryAccount = repositoryAccount;
             _repositoryAllergy = repositoryAllergy;
             _repositoryRelation = repositoryRelation;
+            _timeService = timeService;
             _log = log;
         }
 
@@ -134,7 +134,7 @@ namespace Olives.Controllers
             allergy.Name = info.Name;
             allergy.Cause = info.Cause;
             allergy.Note = info.Note;
-            allergy.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            allergy.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Insert a new allergy to database.
             var result = await _repositoryAllergy.InitializeAllergyAsync(allergy);
@@ -211,7 +211,7 @@ namespace Olives.Controllers
                 allergy.Note = info.Note;
 
             // Update time when the record was lastly modified.
-            allergy.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            allergy.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Update allergy.
             allergy = await _repositoryAllergy.InitializeAllergyAsync(allergy);
@@ -346,11 +346,6 @@ namespace Olives.Controllers
         #region Properties
 
         /// <summary>
-        ///     Repository of accounts
-        /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
-
-        /// <summary>
         ///     Repository of allergies
         /// </summary>
         private readonly IRepositoryAllergy _repositoryAllergy;
@@ -359,6 +354,11 @@ namespace Olives.Controllers
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
+
+        /// <summary>
+        ///     Service which provides functions for time calculation.
+        /// </summary>
+        private readonly ITimeService _timeService;
 
         /// <summary>
         ///     Instance of module which is used for logging.

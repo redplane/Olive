@@ -11,7 +11,6 @@ using Olives.ViewModels.Initialize;
 using Olives.ViewModels.Modify;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -27,20 +26,19 @@ namespace Olives.Controllers
         /// <summary>
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryAccount"></param>
         /// <param name="repositoryMedicalRecord"></param>
         /// <param name="repositoryExperimentNote"></param>
         /// <param name="repositoryRelation"></param>
         /// <param name="log"></param>
-        public MedicalExperimentController(IRepositoryAccount repositoryAccount,
-            IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryExperimentNote repositoryExperimentNote,
-            IRepositoryRelation repositoryRelation,
+        public MedicalExperimentController(IRepositoryMedicalRecord repositoryMedicalRecord,
+            IRepositoryExperimentNote repositoryExperimentNote,
+            IRepositoryRelation repositoryRelation, ITimeService timeService,
             ILog log)
         {
-            _repositoryAccount = repositoryAccount;
             _repositoryMedicalRecord = repositoryMedicalRecord;
             _repositoryExperimentNote = repositoryExperimentNote;
             _repositoryRelation = repositoryRelation;
+            _timeService = timeService;
             _log = log;
         }
 
@@ -131,7 +129,7 @@ namespace Olives.Controllers
                 // Initialize note.
                 var note = new ExperimentNote();
                 note.Info = JsonConvert.SerializeObject(initializer.Infos);
-                note.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+                note.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
                 note.MedicalRecordId = initializer.MedicalRecord;
                 note.Name = initializer.Name;
                 note.Owner = medicalRecord.Owner;
@@ -232,7 +230,7 @@ namespace Olives.Controllers
                     experimentNote.Info = JsonConvert.SerializeObject(modifier.Infos);
 
                 // Update the last modified time.
-                experimentNote.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+                experimentNote.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                 // Update the experiment note.
                 experimentNote = await _repositoryExperimentNote.InitializeExperimentNote(experimentNote);
@@ -305,6 +303,7 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
+        [Route("api/medical/experiment/filter")]
         public async Task<HttpResponseMessage> FilterMedicalExperimentNoteAsync(
             [FromBody] FilterExperimentNoteViewModel filter)
         {
@@ -376,11 +375,6 @@ namespace Olives.Controllers
         #region Properties
 
         /// <summary>
-        ///     Repository of accounts
-        /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
-
-        /// <summary>
         ///     Repository of medical record
         /// </summary>
         private readonly IRepositoryMedicalRecord _repositoryMedicalRecord;
@@ -394,6 +388,11 @@ namespace Olives.Controllers
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
+
+        /// <summary>
+        ///     Service which provides functions to access calculation.
+        /// </summary>
+        private readonly ITimeService _timeService;
 
         /// <summary>
         ///     Instance of module which is used for logging.

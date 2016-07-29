@@ -11,7 +11,6 @@ using Olives.Interfaces;
 using Olives.Models;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -34,11 +33,12 @@ namespace Olives.Controllers
         /// <param name="repositoryRelation"></param>
         /// <param name="log"></param>
         /// <param name="fileService"></param>
+        /// <param name="timeService"></param>
         /// <param name="applicationSetting"></param>
         public PrescriptionImageController(IRepositoryAccount repositoryAccount,
             IRepositoryPrescription repositoryPrescription, IRepositoryPrescriptionImage repositoryPrescriptionImage,
             IRepositoryRelation repositoryRelation,
-            ILog log, IFileService fileService, ApplicationSetting applicationSetting)
+            ILog log, IFileService fileService, ITimeService timeService, ApplicationSetting applicationSetting)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryPrescription = repositoryPrescription;
@@ -46,6 +46,7 @@ namespace Olives.Controllers
             _repositoryRelation = repositoryRelation;
             _log = log;
             _fileService = fileService;
+            _timeService = timeService;
             _applicationSetting = applicationSetting;
         }
 
@@ -164,7 +165,7 @@ namespace Olives.Controllers
                 prescriptionImage.PrescriptionId = prescription.Id;
                 prescriptionImage.Image = fileName;
                 prescriptionImage.FullPath = fullPath;
-                prescriptionImage.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+                prescriptionImage.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
                 prescriptionImage.Creator = requester.Id;
                 prescriptionImage.Owner = prescription.Owner;
 
@@ -341,6 +342,11 @@ namespace Olives.Controllers
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
+
+        /// <summary>
+        ///     Service which provides functions to access time calculation.
+        /// </summary>
+        private readonly ITimeService _timeService;
 
         /// <summary>
         ///     Instance of module which is used for logging.

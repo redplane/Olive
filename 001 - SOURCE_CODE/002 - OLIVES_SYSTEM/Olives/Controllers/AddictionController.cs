@@ -8,7 +8,6 @@ using log4net;
 using Olives.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -24,16 +23,17 @@ namespace Olives.Controllers
         /// <summary>
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryAccount"></param>
         /// <param name="repositoryAddiction"></param>
+        /// <param name="repositoryRelation"></param>
+        /// <param name="timeService"></param>
         /// <param name="log"></param>
-        public AddictionController(IRepositoryAccount repositoryAccount, IRepositoryAddiction repositoryAddiction,
-            IRepositoryRelation repositoryRelation,
+        public AddictionController(IRepositoryAddiction repositoryAddiction,
+            IRepositoryRelation repositoryRelation, ITimeService timeService,
             ILog log)
         {
-            _repositoryAccount = repositoryAccount;
             _repositoryAddiction = repositoryAddiction;
             _repositoryRelation = repositoryRelation;
+            _timeService = timeService;
             _log = log;
         }
 
@@ -134,7 +134,7 @@ namespace Olives.Controllers
             addiction.Owner = requester.Id;
             addiction.Cause = info.Cause;
             addiction.Note = info.Note;
-            addiction.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            addiction.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Insert a new allergy to database.
             var result = await _repositoryAddiction.InitializeAddictionAsync(addiction);
@@ -197,7 +197,7 @@ namespace Olives.Controllers
                 result.Note = info.Note;
 
             // Update the last time record was lastly modified.
-            result.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            result.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Update record to database.
             result = await _repositoryAddiction.InitializeAddictionAsync(result);
@@ -334,11 +334,6 @@ namespace Olives.Controllers
         #region Properties
 
         /// <summary>
-        ///     Repository of accounts
-        /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
-
-        /// <summary>
         ///     Repository of allergies
         /// </summary>
         private readonly IRepositoryAddiction _repositoryAddiction;
@@ -347,6 +342,11 @@ namespace Olives.Controllers
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
+
+        /// <summary>
+        ///     Service which provides functions for time calculation.
+        /// </summary>
+        private readonly ITimeService _timeService;
 
         /// <summary>
         ///     Instance of module which is used for logging.

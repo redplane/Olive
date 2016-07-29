@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
-using Olives.Interfaces;
 using Shared.Interfaces;
 using Shared.Resources;
 using Shared.ViewModels;
@@ -113,7 +112,7 @@ namespace Olives.Controllers
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-        
+
         #endregion
     }
 }

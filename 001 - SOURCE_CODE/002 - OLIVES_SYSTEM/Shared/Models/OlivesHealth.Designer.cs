@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'E:\Programming\Olives\001 - SOURCE_CODE\002 - OLIVES_SYSTEM\Shared\Models\OlivesHealth.edmx'. 
+﻿// T4 code generation is enabled for model 'E:\Programming\DotNet\Web\Thesis\001 - SOURCE_CODE\002 - OLIVES_SYSTEM\Shared\Models\OlivesHealth.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.

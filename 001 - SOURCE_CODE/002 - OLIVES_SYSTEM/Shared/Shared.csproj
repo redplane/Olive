@@ -107,8 +107,6 @@
     <Compile Include="Enumerations\StatusAppointment.cs" />
     <Compile Include="Enumerations\Comparision.cs" />
     <Compile Include="Helpers\CodeGeneratorHelper.cs" />
-    <Compile Include="Helpers\ContinuationTaskHelper.cs" />
-    <Compile Include="Helpers\EpochTimeHelper.cs" />
     <Compile Include="Interfaces\IPagination.cs" />
     <Compile Include="Interfaces\IRepositoryAccount.cs" />
     <Compile Include="Interfaces\IRepositoryActivationCode.cs" />
@@ -131,6 +129,7 @@
     <Compile Include="Interfaces\IRepositorySugarblood.cs" />
     <Compile Include="Interfaces\IRepositoryHeartbeat.cs" />
     <Compile Include="Interfaces\IRepositorySpecialty.cs" />
+    <Compile Include="Interfaces\ITimeService.cs" />
     <Compile Include="Models\AccountCode.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
@@ -220,7 +219,7 @@
     <Compile Include="Models\SugarBlood.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\TaskCheckAppointment.cs">
+    <Compile Include="Models\sysdiagram.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\TaskDetail.cs" />
@@ -256,6 +255,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Language.vi.resx</DependentUpon>
     </Compile>
+    <Compile Include="Services\TimeService.cs" />
     <Compile Include="ViewModels\AccountViewModel.cs" />
     <Compile Include="ViewModels\CountryViewModel.cs" />
     <Compile Include="ViewModels\ExperimentInfoViewModel.cs" />

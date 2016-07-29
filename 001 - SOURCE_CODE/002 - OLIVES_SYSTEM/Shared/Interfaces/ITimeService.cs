@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Olives.Interfaces
+namespace Shared.Interfaces
 {
     public interface ITimeService
     {

@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
-using Olives.Interfaces;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -30,14 +28,14 @@ namespace Olives.Controllers
         /// <param name="repositoryAccount"></param>
         /// <param name="repositorySugarblood"></param>
         /// <param name="log"></param>
-        /// <param name="emailService"></param>
+        /// <param name="timeService"></param>
         public SugarbloodController(IRepositoryAccount repositoryAccount, IRepositorySugarblood repositorySugarblood,
-            ILog log, IEmailService emailService)
+            ILog log,
+            ITimeService timeService)
         {
-            _repositoryAccount = repositoryAccount;
             _repositorySugarblood = repositorySugarblood;
             _log = log;
-            _emailService = emailService;
+            _timeService = timeService;
         }
 
         #endregion
@@ -123,7 +121,7 @@ namespace Olives.Controllers
             sugarblood.Owner = requester.Id;
             sugarblood.Value = info.Value;
             sugarblood.Note = info.Note;
-            sugarblood.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            sugarblood.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
             sugarblood.Time = info.Time;
 
             // Insert a new allergy to database.
@@ -204,7 +202,7 @@ namespace Olives.Controllers
             result.Time = info.Time;
             result.Note = info.Note;
             result.Value = info.Value;
-            result.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            result.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Update allergy.
             result = await _repositorySugarblood.InitializeSugarbloodNoteAsync(result);
@@ -317,24 +315,19 @@ namespace Olives.Controllers
         #region Properties
 
         /// <summary>
-        ///     Repository of accounts
-        /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
-
-        /// <summary>
         ///     Repository of sugarblood notes.
         /// </summary>
         private readonly IRepositorySugarblood _repositorySugarblood;
 
         /// <summary>
+        ///     Service which provides function to access
+        /// </summary>
+        private readonly ITimeService _timeService;
+
+        /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-
-        /// <summary>
-        ///     Service which is used for sending emails.
-        /// </summary>
-        private readonly IEmailService _emailService;
 
         #endregion
     }

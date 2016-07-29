@@ -11,7 +11,6 @@ using Olives.ViewModels.Filter;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -27,13 +26,17 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="repositoryAccount"></param>
         /// <param name="repositoryRelation"></param>
+        /// <param name="timeService"></param>
         /// <param name="applicationSetting"></param>
         /// <param name="log"></param>
         public RelationshipController(IRepositoryAccount repositoryAccount, IRepositoryRelation repositoryRelation,
-            ApplicationSetting applicationSetting, ILog log)
+            ITimeService timeService,
+            ApplicationSetting applicationSetting,
+            ILog log)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryRelation = repositoryRelation;
+            _timeService = timeService;
             _applicationSetting = applicationSetting;
             _log = log;
         }
@@ -116,7 +119,7 @@ namespace Olives.Controllers
                 relation.Target = initializer.Target;
                 relation.TargetFirstName = person.FirstName;
                 relation.TargetLastName = person.LastName;
-                relation.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+                relation.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
                 relation.Status = (byte) StatusRelation.Pending;
 
                 await _repositoryRelation.InitializeRelationAsync(relation);
@@ -330,6 +333,11 @@ namespace Olives.Controllers
         ///     Instance stores application settings.
         /// </summary>
         private readonly ApplicationSetting _applicationSetting;
+
+        /// <summary>
+        ///     Service which provides functions to access time calculation.
+        /// </summary>
+        private readonly ITimeService _timeService;
 
         /// <summary>
         ///     Instance of module which is used for logging.
