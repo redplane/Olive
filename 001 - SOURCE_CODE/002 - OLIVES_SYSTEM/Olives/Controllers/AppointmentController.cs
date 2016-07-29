@@ -36,14 +36,13 @@ namespace Olives.Controllers
         /// <param name="log"></param>
         /// <param name="timeService"></param>
         public AppointmentController(IRepositoryAccount repositoryAccount, IRepositoryAppointment repositoryAppointment,
-            IRepositoryAppointmentNotification repositoryAppointmentNotification, IRepositoryTaskCheckAppointment repositoryTaskCheckAppointment,
+            IRepositoryAppointmentNotification repositoryAppointmentNotification,
             IRepositoryRealTimeConnection repositoryRealTimeConnection, IRepositoryRelation repositoryRelation,
             ILog log, ITimeService timeService)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryAppointment = repositoryAppointment;
             _repositoryAppointmentNotification = repositoryAppointmentNotification;
-            _repositoryTaskCheckAppointment = repositoryTaskCheckAppointment;
             _repositoryRealTimeConnection = repositoryRealTimeConnection;
             _repositoryRelation = repositoryRelation;
             _log = log;
@@ -291,24 +290,7 @@ namespace Olives.Controllers
                 }
 
                 #endregion
-
-                #region Appointment monitoring task
-
-                try
-                {
-                    var appointmentMonitoringTask = new TaskCheckAppointment();
-                    appointmentMonitoringTask.AppointmentId = appointment.Id;
-                    appointmentMonitoringTask.StartTime = _timeService.UnixToDateTimeUtc(appointment.To);
-                    await _repositoryTaskCheckAppointment.InitializeTaskCheckAppointment(appointmentMonitoringTask);
-                }
-                catch (Exception exception)
-                {
-                    // Log the exception for future trace.
-                    _log.Error(exception.Message, exception);
-                }
-
-                #endregion
-
+                
                 #region Result handling
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
@@ -455,23 +437,6 @@ namespace Olives.Controllers
 
             #endregion
             
-            #region Appointment monitoring task
-
-            try
-            {
-                var appointmentMonitoringTask = new TaskCheckAppointment();
-                appointmentMonitoringTask.AppointmentId = appointment.Id;
-                appointmentMonitoringTask.StartTime = _timeService.UnixToDateTimeUtc(appointment.To);
-                await _repositoryTaskCheckAppointment.InitializeTaskCheckAppointment(appointmentMonitoringTask);
-            }
-            catch (Exception exception)
-            {
-                // Log the exception for future trace.
-                _log.Error(exception.Message, exception);
-            }
-            
-            #endregion
-
             #region Result handling
 
             try
@@ -596,13 +561,7 @@ namespace Olives.Controllers
         ///     Repository of appointment notification.
         /// </summary>
         private readonly IRepositoryAppointmentNotification _repositoryAppointmentNotification;
-
-        /// <summary>
-        ///     Repository of appointment notification.
-        /// </summary>
-        private readonly IRepositoryTaskCheckAppointment _repositoryTaskCheckAppointment;
-
-
+        
         /// <summary>
         ///     Repository of relationships.
         /// </summary>

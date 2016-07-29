@@ -114,7 +114,6 @@ namespace Olives
                 .SingleInstance();
 
             builder.RegisterType<RepositoryRealTimeConnection>().As<IRepositoryRealTimeConnection>().SingleInstance();
-            builder.RegisterType<RepositoryTaskCheckAppointment>().As<IRepositoryTaskCheckAppointment>().SingleInstance();
 
             #region Medical repositories
 

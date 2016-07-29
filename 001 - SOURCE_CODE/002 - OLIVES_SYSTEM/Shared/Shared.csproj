@@ -131,7 +131,6 @@
     <Compile Include="Interfaces\IRepositorySugarblood.cs" />
     <Compile Include="Interfaces\IRepositoryHeartbeat.cs" />
     <Compile Include="Interfaces\IRepositorySpecialty.cs" />
-    <Compile Include="Interfaces\IRepositoryTaskCheckAppointment.cs" />
     <Compile Include="Models\AccountCode.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
@@ -247,7 +246,6 @@
     <Compile Include="Repositories\RepositoryAllergy.cs" />
     <Compile Include="Repositories\RepositoryAppointment.cs" />
     <Compile Include="Repositories\RepositorySpecialty.cs" />
-    <Compile Include="Repositories\RepositoryTaskCheckAppointment.cs" />
     <Compile Include="Resources\Language.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
