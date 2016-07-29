@@ -298,6 +298,14 @@
           <Property Name="Created" Type="float" Nullable="false" />
           <Property Name="LastModified" Type="float" />
         </EntityType>
+        <EntityType Name="TaskCheckAppointment">
+          <Key>
+            <PropertyRef Name="AppointmentId" />
+          </Key>
+          <Property Name="AppointmentId" Type="int" Nullable="false" />
+          <Property Name="TaskId" Type="int" Nullable="false" />
+          <Property Name="StartTime" Type="datetime" Nullable="false" />
+        </EntityType>
         <Association Name="FK__AccountCo__Owner__707E9C7C">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="AccountCode" Type="Self.AccountCode" Multiplicity="*" />
@@ -718,6 +726,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__TaskCheck__Appoi__65CC03DF">
+          <End Role="Appointment" Type="Self.Appointment" Multiplicity="1" />
+          <End Role="TaskCheckAppointment" Type="Self.TaskCheckAppointment" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Appointment">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TaskCheckAppointment">
+              <PropertyRef Name="AppointmentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="OlivesHealthModelStoreContainer">
           <EntitySet Name="AccountCode" EntityType="Self.AccountCode" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Addiction" EntityType="Self.Addiction" Schema="dbo" store:Type="Tables" />
@@ -743,6 +763,7 @@
           <EntitySet Name="Relation" EntityType="Self.Relation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Specialty" EntityType="Self.Specialty" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SugarBlood" EntityType="Self.SugarBlood" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TaskCheckAppointment" EntityType="Self.TaskCheckAppointment" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK__AccountCo__Owner__707E9C7C" Association="Self.FK__AccountCo__Owner__707E9C7C">
             <End Role="Person" EntitySet="Person" />
             <End Role="AccountCode" EntitySet="AccountCode" />
@@ -883,6 +904,10 @@
             <End Role="Person" EntitySet="Person" />
             <End Role="SugarBlood" EntitySet="SugarBlood" />
           </AssociationSet>
+          <AssociationSet Name="FK__TaskCheck__Appoi__65CC03DF" Association="Self.FK__TaskCheck__Appoi__65CC03DF">
+            <End Role="Appointment" EntitySet="Appointment" />
+            <End Role="TaskCheckAppointment" EntitySet="TaskCheckAppointment" />
+          </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -913,6 +938,7 @@
           <EntitySet Name="Relations" EntityType="OlivesHealthModel.Relation" />
           <EntitySet Name="Specialties" EntityType="OlivesHealthModel.Specialty" />
           <EntitySet Name="SugarBloods" EntityType="OlivesHealthModel.SugarBlood" />
+          <EntitySet Name="TaskCheckAppointments" EntityType="OlivesHealthModel.TaskCheckAppointment" />
           <AssociationSet Name="FK__AccountCo__Owner__707E9C7C" Association="OlivesHealthModel.FK__AccountCo__Owner__707E9C7C">
             <End Role="Person" EntitySet="People" />
             <End Role="AccountCode" EntitySet="AccountCodes" />
@@ -936,6 +962,10 @@
           <AssociationSet Name="FK__Appointme__Statu__735B0927" Association="OlivesHealthModel.FK__Appointme__Statu__735B0927">
             <End Role="Person" EntitySet="People" />
             <End Role="Appointment" EntitySet="Appointments" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TaskCheck__Appoi__65CC03DF" Association="OlivesHealthModel.FK__TaskCheck__Appoi__65CC03DF">
+            <End Role="Appointment" EntitySet="Appointments" />
+            <End Role="TaskCheckAppointment" EntitySet="TaskCheckAppointments" />
           </AssociationSet>
           <AssociationSet Name="FK__Appointme__Invok__2AAB3E11" Association="OlivesHealthModel.FK__Appointme__Invok__2AAB3E11">
             <End Role="Person" EntitySet="People" />
@@ -1111,6 +1141,7 @@
           <NavigationProperty Name="AppointmentNotifications" Relationship="OlivesHealthModel.FK__Appointme__Appoi__2C938683" FromRole="Appointment" ToRole="AppointmentNotification" />
           <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Appointme__Dater__744F2D60" FromRole="Appointment" ToRole="Person" />
           <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__Appointme__Statu__735B0927" FromRole="Appointment" ToRole="Person" />
+          <NavigationProperty Name="TaskCheckAppointment" Relationship="OlivesHealthModel.FK__TaskCheck__Appoi__65CC03DF" FromRole="Appointment" ToRole="TaskCheckAppointment" />
         </EntityType>
         <EntityType Name="AppointmentNotification">
           <Key>
@@ -1417,6 +1448,15 @@
           <Property Name="LastModified" Type="Double" />
           <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__SugarBloo__LastM__6AC5C326" FromRole="SugarBlood" ToRole="Person" />
         </EntityType>
+        <EntityType Name="TaskCheckAppointment">
+          <Key>
+            <PropertyRef Name="AppointmentId" />
+          </Key>
+          <Property Name="AppointmentId" Type="Int32" Nullable="false" />
+          <Property Name="TaskId" Type="Int32" Nullable="false" />
+          <Property Name="StartTime" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Appointment" Relationship="OlivesHealthModel.FK__TaskCheck__Appoi__65CC03DF" FromRole="TaskCheckAppointment" ToRole="Appointment" />
+        </EntityType>
         <Association Name="FK__AccountCo__Owner__707E9C7C">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.AccountCode" Role="AccountCode" Multiplicity="*" />
@@ -1486,6 +1526,18 @@
             </Principal>
             <Dependent Role="Appointment">
               <PropertyRef Name="Maker" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TaskCheck__Appoi__65CC03DF">
+          <End Type="OlivesHealthModel.Appointment" Role="Appointment" Multiplicity="1" />
+          <End Type="OlivesHealthModel.TaskCheckAppointment" Role="TaskCheckAppointment" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Appointment">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TaskCheckAppointment">
+              <PropertyRef Name="AppointmentId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2155,6 +2207,15 @@
                 <ScalarProperty Name="Value" ColumnName="Value" />
                 <ScalarProperty Name="Owner" ColumnName="Owner" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TaskCheckAppointments">
+            <EntityTypeMapping TypeName="OlivesHealthModel.TaskCheckAppointment">
+              <MappingFragment StoreEntitySet="TaskCheckAppointment">
+                <ScalarProperty Name="StartTime" ColumnName="StartTime" />
+                <ScalarProperty Name="TaskId" ColumnName="TaskId" />
+                <ScalarProperty Name="AppointmentId" ColumnName="AppointmentId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

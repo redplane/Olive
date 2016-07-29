@@ -7,6 +7,7 @@ using System.Web.Http;
 using log4net;
 using Olives.Attributes;
 using Olives.Hubs;
+using Olives.Interfaces;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
@@ -29,20 +30,24 @@ namespace Olives.Controllers
         /// <param name="repositoryAccount"></param>
         /// <param name="repositoryAppointment"></param>
         /// <param name="repositoryAppointmentNotification"></param>
+        /// <param name="repositoryTaskCheckAppointment"></param>
         /// <param name="repositoryRealTimeConnection"></param>
         /// <param name="repositoryRelation"></param>
         /// <param name="log"></param>
+        /// <param name="timeService"></param>
         public AppointmentController(IRepositoryAccount repositoryAccount, IRepositoryAppointment repositoryAppointment,
-            IRepositoryAppointmentNotification repositoryAppointmentNotification,
+            IRepositoryAppointmentNotification repositoryAppointmentNotification, IRepositoryTaskCheckAppointment repositoryTaskCheckAppointment,
             IRepositoryRealTimeConnection repositoryRealTimeConnection, IRepositoryRelation repositoryRelation,
-            ILog log)
+            ILog log, ITimeService timeService)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryAppointment = repositoryAppointment;
             _repositoryAppointmentNotification = repositoryAppointmentNotification;
+            _repositoryTaskCheckAppointment = repositoryTaskCheckAppointment;
             _repositoryRealTimeConnection = repositoryRealTimeConnection;
             _repositoryRelation = repositoryRelation;
             _log = log;
+            _timeService = timeService;
         }
 
         #endregion
@@ -227,6 +232,8 @@ namespace Olives.Controllers
                 #endregion
 
                 #region Appointment initialization
+                
+                var unixTime = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                 // Initialize an appointment information.
                 var appointment = new Appointment();
@@ -236,8 +243,8 @@ namespace Olives.Controllers
                 appointment.Dater = info.Dater;
                 appointment.DaterFirstName = dater.FirstName;
                 appointment.DaterLastName = dater.LastName;
-                appointment.From = info.From ?? 0;
-                appointment.To = info.To ?? 0;
+                appointment.From = info.From ?? unixTime;
+                appointment.To = info.To ?? unixTime;
                 appointment.Note = info.Note;
                 appointment.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
                 appointment.Status = (byte) StatusAppointment.Pending;
@@ -280,6 +287,23 @@ namespace Olives.Controllers
                 {
                     // As the notification creation is failed. Continue the function.
                     // Notification can be displayed later by long polling request.
+                    _log.Error(exception.Message, exception);
+                }
+
+                #endregion
+
+                #region Appointment monitoring task
+
+                try
+                {
+                    var appointmentMonitoringTask = new TaskCheckAppointment();
+                    appointmentMonitoringTask.AppointmentId = appointment.Id;
+                    appointmentMonitoringTask.StartTime = _timeService.UnixToDateTimeUtc(appointment.To);
+                    await _repositoryTaskCheckAppointment.InitializeTaskCheckAppointment(appointmentMonitoringTask);
+                }
+                catch (Exception exception)
+                {
+                    // Log the exception for future trace.
                     _log.Error(exception.Message, exception);
                 }
 
@@ -557,6 +581,12 @@ namespace Olives.Controllers
         private readonly IRepositoryAppointmentNotification _repositoryAppointmentNotification;
 
         /// <summary>
+        ///     Repository of appointment notification.
+        /// </summary>
+        private readonly IRepositoryTaskCheckAppointment _repositoryTaskCheckAppointment;
+
+
+        /// <summary>
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
@@ -565,6 +595,8 @@ namespace Olives.Controllers
         ///     Repository which provides function to access real time connection database.
         /// </summary>
         private readonly IRepositoryRealTimeConnection _repositoryRealTimeConnection;
+
+        private readonly ITimeService _timeService;
 
         /// <summary>
         ///     Instance of module which is used for logging.

@@ -49,5 +49,6 @@ namespace Shared.Models
         public virtual DbSet<Relation> Relations { get; set; }
         public virtual DbSet<Specialty> Specialties { get; set; }
         public virtual DbSet<SugarBlood> SugarBloods { get; set; }
+        public virtual DbSet<TaskCheckAppointment> TaskCheckAppointments { get; set; }
     }
 }

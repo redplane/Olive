@@ -39,5 +39,6 @@ namespace Shared.Models
         public virtual ICollection<AppointmentNotification> AppointmentNotifications { get; set; }
         public virtual Person Person { get; set; }
         public virtual Person Person1 { get; set; }
+        public virtual TaskCheckAppointment TaskCheckAppointment { get; set; }
     }
 }
