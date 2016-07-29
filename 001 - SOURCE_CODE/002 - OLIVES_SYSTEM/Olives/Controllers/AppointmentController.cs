@@ -414,7 +414,7 @@ namespace Olives.Controllers
             if (info.To != null) appointment.To = info.To.Value;
             if (!string.IsNullOrWhiteSpace(info.Note)) appointment.LastModifiedNote = info.Note;
             if (info.Status != null) appointment.Status = (byte) info.Status;
-
+            
             // Update the appointment.
             await _repositoryAppointment.InitializeAppointment(appointment);
 
@@ -453,6 +453,23 @@ namespace Olives.Controllers
                 _log.Error(exception.Message, exception);
             }
 
+            #endregion
+            
+            #region Appointment monitoring task
+
+            try
+            {
+                var appointmentMonitoringTask = new TaskCheckAppointment();
+                appointmentMonitoringTask.AppointmentId = appointment.Id;
+                appointmentMonitoringTask.StartTime = _timeService.UnixToDateTimeUtc(appointment.To);
+                await _repositoryTaskCheckAppointment.InitializeTaskCheckAppointment(appointmentMonitoringTask);
+            }
+            catch (Exception exception)
+            {
+                // Log the exception for future trace.
+                _log.Error(exception.Message, exception);
+            }
+            
             #endregion
 
             #region Result handling

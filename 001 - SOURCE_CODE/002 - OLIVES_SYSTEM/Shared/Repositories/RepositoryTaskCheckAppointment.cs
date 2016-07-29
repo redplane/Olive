@@ -8,6 +8,7 @@ using Shared.Interfaces;
 using Shared.Models;
 using System.Linq;
 using System.Data.Entity;
+using System.Diagnostics;
 
 namespace Shared.Repositories
 {
@@ -50,13 +51,14 @@ namespace Shared.Repositories
 
                         // Add task to monitor list.
                         ContinuationTaskHelper.Instance.InitializeAppointmentMonitoringTask(initializer.AppointmentId, new TaskDetail(monitoringTask.Id, TaskType.AppointmentMonitor, cancellationTokenSource));
-
-                        // Start the task.
-                        monitoringTask.Start();
-
+                        
                         // Commit the transaction.
                         transaction.Commit();
 
+                        // Start the task.
+                        monitoringTask.Start();
+                        
+                        Debug.WriteLine($"Appointment [Id: {initializer.AppointmentId}] should be run on Task [Id: {monitoringTask.Id}] at {initializer.StartTime.ToString("F")}");
                         return initializer;
                     }
 
@@ -69,16 +71,21 @@ namespace Shared.Repositories
                     // Store the task id first.
                     initializer.TaskId = monitoringTask.Id;
 
+                    // Initialize into sql task.
+                    context.TaskCheckAppointments.AddOrUpdate(initializer);
+
                     // Save the task first.
                     await context.SaveChangesAsync();
 
                     // Add task to monitor list.
                     ContinuationTaskHelper.Instance.InitializeAppointmentMonitoringTask(initializer.AppointmentId, new TaskDetail(monitoringTask.Id, TaskType.AppointmentMonitor, cancellationTokenSource));
 
+                    Debug.WriteLine($"Appointment [Id: {initializer.AppointmentId}] should be run on Task [Id: {monitoringTask.Id}] at {initializer.StartTime.ToString("F")}");
+
                     // Commit the transaction.
                     return initializer;
                 }
-                catch
+                catch (Exception exception)
                 {
                     // As exception happens, rollback the transaction first.
                     transaction.Rollback();
@@ -89,7 +96,63 @@ namespace Shared.Repositories
             }
         }
 
+        /// <summary>
+        /// Check the database for waiting task and resume 'em all.
+        /// This function should be used when web application starts up.
+        /// </summary>
+        /// <returns></returns>
+        public async Task ResumeCheckAppointment()
+        {
+            // First, clean all pending tasks.
+            CleanInCompleteTasks();
 
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // Make a list of task.
+            await context.TaskCheckAppointments.ForEachAsync(x =>
+            {
+                var cancellationTokenSource = new CancellationTokenSource();
+                var cancellationToken = cancellationTokenSource.Token;
+
+                Task monitoringTask = null;
+
+                // As the time passed. Start the task.
+                if (DateTime.UtcNow > x.StartTime)
+                {
+                    // Initialize the task.
+                    monitoringTask = new Task(() => AppointmentCheckingBackgroundTask(x.AppointmentId),
+                        cancellationToken);
+
+                    // Initialize the task into sql database.
+                    x.TaskId = monitoringTask.Id;
+
+                    // Add task to monitor list.
+                    ContinuationTaskHelper.Instance.InitializeAppointmentMonitoringTask(x.AppointmentId,
+                        new TaskDetail(monitoringTask.Id, TaskType.AppointmentMonitor, cancellationTokenSource));
+
+                    // Start the task.
+                    monitoringTask.Start();
+                }
+
+                // Task is started in the future. Calculate the timespan when task should be started.
+                var taskTimeSpan = x.StartTime - DateTime.UtcNow;
+
+                // Start the task.
+                monitoringTask =
+                    Task.Delay(taskTimeSpan, cancellationToken)
+                        .ContinueWith((t) => AppointmentCheckingBackgroundTask(x.AppointmentId),
+                            cancellationToken);
+
+                // Store the task id first.
+                x.TaskId = monitoringTask.Id;
+
+                // Add task to monitor list.
+                ContinuationTaskHelper.Instance.InitializeAppointmentMonitoringTask(x.AppointmentId,
+                    new TaskDetail(monitoringTask.Id, TaskType.AppointmentMonitor, cancellationTokenSource));
+
+            });
+        }
 
         /// <summary>
         /// 
@@ -109,6 +172,8 @@ namespace Shared.Repositories
 
             // Cancel the task first.
             monitoringTask.CancellationTokenSource.Cancel(false);
+
+            Debug.WriteLine($"Appointment [Id: {appointmentId}] ran on Task [Id: {monitoringTask.Id}] at {DateTime.UtcNow.ToString("F")}");
 
             // Remove the monitoring task.
             ContinuationTaskHelper.Instance.DeleteMonitoringTask(appointmentId);
@@ -135,20 +200,20 @@ namespace Shared.Repositories
                     appointments = appointments.Where(x => x.Id == appointmentId);
 
                     // Find the appointment with statuses ignore.
-                    appointments = appointments.Where(x => x.Status != (byte) StatusAppointment.Expired);
-                    appointments = appointments.Where(x => x.Status != (byte) StatusAppointment.Cancelled);
-                    appointments = appointments.Where(x => x.Status != (byte) StatusAppointment.Done);
+                    appointments = appointments.Where(x => x.Status != (byte)StatusAppointment.Expired);
+                    appointments = appointments.Where(x => x.Status != (byte)StatusAppointment.Cancelled);
+                    appointments = appointments.Where(x => x.Status != (byte)StatusAppointment.Done);
 
                     await appointments.ForEachAsync(x =>
                     {
                         // Change active appointment to done when time comes.
-                        if (x.Status == (byte) StatusAppointment.Active)
+                        if (x.Status == (byte)StatusAppointment.Active)
                         {
-                            x.Status = (byte) StatusAppointment.Done;
+                            x.Status = (byte)StatusAppointment.Done;
                             return;
                         }
 
-                        x.Status = (byte) StatusAppointment.Expired;
+                        x.Status = (byte)StatusAppointment.Expired;
                     });
 
                     #endregion
@@ -171,7 +236,7 @@ namespace Shared.Repositories
 
                     // Commit the transaction.
                     transaction.Commit();
-                    
+
                     return true;
                 }
                 catch (Exception exception)
@@ -183,6 +248,33 @@ namespace Shared.Repositories
                 }
             }
         }
-        
+
+        private void CleanInCompleteTasks()
+        {
+            // Lock the list to prevent another threads invocation.
+            lock (ContinuationTaskHelper.Instance.AppointmentMonitoringTasks)
+            {
+                var keys = ContinuationTaskHelper.Instance.AppointmentMonitoringTasks.Keys;
+
+                if (keys.Count < 0)
+                    return;
+
+                foreach (var key in keys)
+                {
+                    try
+                    {
+                        // Cancel all pending tasks.
+                        ContinuationTaskHelper.Instance.AppointmentMonitoringTasks[key].CancellationTokenSource.Cancel();
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                }
+
+                // Clear the list.
+                ContinuationTaskHelper.Instance.AppointmentMonitoringTasks.Clear();
+            }
+        }
     }
 }
