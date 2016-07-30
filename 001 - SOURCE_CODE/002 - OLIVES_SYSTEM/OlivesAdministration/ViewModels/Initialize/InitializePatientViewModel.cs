@@ -3,7 +3,7 @@ using Shared.Constants;
 using Shared.Resources;
 using Shared.ViewModels.Initialize;
 
-namespace OlivesAdministration.ViewModels
+namespace OlivesAdministration.ViewModels.Initialize
 {
     public class InitializePatientViewModel : InitializePersonViewModel
     {

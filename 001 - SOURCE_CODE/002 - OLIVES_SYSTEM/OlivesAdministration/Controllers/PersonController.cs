@@ -7,6 +7,7 @@ using System.Web.Http;
 using log4net;
 using OlivesAdministration.Attributes;
 using OlivesAdministration.ViewModels;
+using OlivesAdministration.ViewModels.Edit;
 using OlivesAdministration.ViewModels.Statistic;
 using Shared.Enumerations;
 using Shared.Interfaces;

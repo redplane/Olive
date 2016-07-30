@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Management.Instrumentation;
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels;
-using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
 namespace Shared.Repositories
@@ -69,7 +65,7 @@ namespace Shared.Repositories
 
             // Status is specified.
             if (status != null)
-                relationships = relationships.Where(x => x.Status == (byte)status);
+                relationships = relationships.Where(x => x.Status == (byte) status);
 
             #endregion
 
@@ -157,7 +153,7 @@ namespace Shared.Repositories
 
             // Status is defined.
             if (status != null)
-                relationships = relationships.Where(x => x.Status == (byte)status);
+                relationships = relationships.Where(x => x.Status == (byte) status);
 
             // Find the relation whose id is matched and has the specific person takes part in.
             context.Relations.RemoveRange(relationships);
@@ -207,13 +203,13 @@ namespace Shared.Repositories
 
             // Status is defined.
             if (status != null)
-                relationships = relationships.Where(x => x.Status == (byte)status.Value);
+                relationships = relationships.Where(x => x.Status == (byte) status.Value);
 
             // Response initialization.
             var response = new ResponseRelationshipFilter();
             response.Total = await relationships.CountAsync();
 
-            var skippedRecord = page * records;
+            var skippedRecord = page*records;
             response.Relationships = await relationships
                 .OrderByDescending(x => x.Created)
                 .Skip(skippedRecord)
@@ -245,26 +241,26 @@ namespace Shared.Repositories
 
             // Status is defined.
             if (status != null)
-                relationships = relationships.Where(x => x.Status == (byte)status.Value);
+                relationships = relationships.Where(x => x.Status == (byte) status.Value);
 
             // Take all people who are doctor.
             IQueryable<Doctor> doctors = context.Doctors;
 
             var fullResult = from r in relationships
-                             join d in doctors on r.Target equals d.Id
-                             select new RelatedDoctorViewModel
-                             {
-                                 Doctor = d,
-                                 RelationshipStatus = r.Status,
-                                 Created = r.Created
-                             };
+                join d in doctors on r.Target equals d.Id
+                select new RelatedDoctorViewModel
+                {
+                    Doctor = d,
+                    RelationshipStatus = r.Status,
+                    Created = r.Created
+                };
 
             var response = new ResponseRelatedDoctorFilter();
             response.Total = await fullResult.CountAsync();
 
             fullResult = fullResult.OrderByDescending(x => x.Created);
             if (records != null)
-                fullResult = fullResult.Skip(page * records.Value)
+                fullResult = fullResult.Skip(page*records.Value)
                     .Take(records.Value);
 
 
@@ -275,7 +271,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Check whether two people are connected to each other or not.
+        ///     Check whether two people are connected to each other or not.
         /// </summary>
         /// <param name="firstPerson"></param>
         /// <param name="secondPerson"></param>
@@ -293,7 +289,7 @@ namespace Shared.Repositories
             IQueryable<Person> people = context.People;
 
             // Find the active people.
-            people = people.Where(x => x.Status == (byte)StatusAccount.Active);
+            people = people.Where(x => x.Status == (byte) StatusAccount.Active);
 
             // Find the 2 people in the list.
             people = people.Where(x => x.Id == firstPerson || x.Id == secondPerson);
@@ -302,7 +298,7 @@ namespace Shared.Repositories
             var peopleCounter = await people.CountAsync();
             if (peopleCounter != 2)
                 return false;
-            
+
             // By default, take all relationships.
             IQueryable<Relation> relationships = context.Relations;
 

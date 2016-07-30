@@ -5,7 +5,7 @@ using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Resources;
 
-namespace Shared.ViewModels
+namespace Shared.ViewModels.Filter
 {
     public class FilterSpecialtyViewModel : IPagination
     {

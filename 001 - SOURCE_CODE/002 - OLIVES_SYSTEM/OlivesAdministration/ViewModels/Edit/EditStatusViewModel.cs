@@ -2,7 +2,7 @@
 using Shared.Enumerations;
 using Shared.Resources;
 
-namespace OlivesAdministration.ViewModels
+namespace OlivesAdministration.ViewModels.Edit
 {
     public class EditStatusViewModel
     {

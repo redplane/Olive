@@ -322,6 +322,7 @@
     <Compile Include="ViewModels\Initialize\InitializeRelationshipViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditMedicalExperiment.cs" />
     <Compile Include="ViewModels\Initialize\InitializeBloodSugarViewModel.cs" />
+    <Compile Include="ViewModels\MedicineInfoViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
