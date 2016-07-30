@@ -41,21 +41,22 @@ namespace Shared.Repositories
 
             return await patients.FirstOrDefaultAsync();
         }
-        
+
         /// <summary>
         ///     Filter patient by using specific conditions asynchronously.
         /// </summary>
         /// <param name="filter"></param>
         /// <param name="requester"></param>
         /// <returns></returns>
-        public async Task<ResponsePatientFilter> FilterPatientAsync(FilterPatientViewModel filter, Person requester = null)
+        public async Task<ResponsePatientFilter> FilterPatientAsync(FilterPatientViewModel filter,
+            Person requester = null)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
             // Response initialization.
             var response = new ResponsePatientFilter();
-            
+
             // By default, take all patients.
             IQueryable<Patient> patients = context.Patients;
 
@@ -78,7 +79,7 @@ namespace Shared.Repositories
                     join r in relationships on p.Id equals r.Source
                     select p;
             }
-            
+
             // Filter doctor by using email.
             if (!string.IsNullOrEmpty(filter.Email))
                 patients = patients.Where(x => x.Person.Email.Contains(filter.Email));
@@ -134,7 +135,7 @@ namespace Shared.Repositories
             // Filter by weight.
             if (filter.MinWeight != null) patients = patients.Where(x => x.Weight >= filter.MinWeight);
             if (filter.MaxWeight != null) patients = patients.Where(x => x.Weight <= filter.MaxWeight);
-            
+
             // Caculate the total matched results.
             response.Total = await patients.CountAsync();
 
@@ -151,7 +152,7 @@ namespace Shared.Repositories
             // Take the list of filtered patient.
             response.Patients = await patients
                 .ToListAsync();
-            
+
             return response;
         }
 
@@ -170,7 +171,10 @@ namespace Shared.Repositories
                 try
                 {
                     var results = from p in context.People
-                        join c in context.AccountCodes.Where(x => x.Code.Equals(code) && x.Type == (byte)TypeAccountCode.Activation) on p.Id equals c.Owner
+                        join c in
+                            context.AccountCodes.Where(
+                                x => x.Code.Equals(code) && x.Type == (byte) TypeAccountCode.Activation) on p.Id equals
+                            c.Owner
                         select new
                         {
                             Person = p,
@@ -277,7 +281,7 @@ namespace Shared.Repositories
             #endregion
 
             #region Doctors
-            
+
             // Filter doctor by place.
             if (!string.IsNullOrWhiteSpace(filter.City)) doctors = doctors.Where(x => x.City.Contains(filter.City));
             if (!string.IsNullOrWhiteSpace(filter.Country))
@@ -318,7 +322,7 @@ namespace Shared.Repositories
 
             // Total matched result.
             responseFilter.Total = await results.CountAsync();
-            
+
             // Sort by status.
             results = results.OrderBy(x => x.Person.Status);
 
@@ -330,8 +334,8 @@ namespace Shared.Repositories
             }
 
             responseFilter.Doctors = await results
-                 .ToListAsync();
-                
+                .ToListAsync();
+
             return responseFilter;
         }
 
@@ -417,7 +421,7 @@ namespace Shared.Repositories
             // Password is specified.
             if (!string.IsNullOrEmpty(password))
                 result = result.Where(x => x.Password.Equals(password));
-            
+
             // Role is specified.
             if (role != null)
                 result = result.Where(x => x.Role == role);
@@ -640,7 +644,7 @@ namespace Shared.Repositories
                         appointment.DaterFirstName = info.FirstName;
                         appointment.DaterLastName = info.LastName;
                     }
-                    
+
                     #endregion
 
                     #region Rating update
@@ -658,7 +662,7 @@ namespace Shared.Repositories
                         rating.TargetFirstName = info.FirstName;
                         rating.TargetLastName = info.LastName;
                     }
-                    
+
                     #endregion
 
                     // Save change to database.

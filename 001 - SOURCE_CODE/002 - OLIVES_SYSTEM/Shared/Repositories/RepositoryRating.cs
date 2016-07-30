@@ -1,7 +1,6 @@
 ﻿using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
@@ -74,7 +73,7 @@ namespace Shared.Repositories
 
             // By default, take all records.
             IQueryable<Rating> ratings = context.Ratings;
-            
+
             // Base on the mode of image filter to decide the role of requester.
             if (filter.Mode == RecordFilterMode.RequesterIsOwner)
             {
@@ -105,7 +104,7 @@ namespace Shared.Repositories
             // Created is defined.
             if (filter.MinCreated != null) ratings = ratings.Where(x => x.Created >= filter.MinCreated.Value);
             if (filter.MaxCreated != null) ratings = ratings.Where(x => x.Created <= filter.MaxCreated.Value);
-            
+
             // Value is defined.
             if (filter.MinValue != null) ratings = ratings.Where(x => x.Value >= filter.MinValue.Value);
             if (filter.MaxValue != null) ratings = ratings.Where(x => x.Value <= filter.MaxValue.Value);

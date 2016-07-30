@@ -16,17 +16,17 @@ namespace Shared.ViewModels.Filter
         public int? MedicalRecord { get; set; }
 
         /// <summary>
-        /// Who sent the filter request.
+        ///     Who sent the filter request.
         /// </summary>
         public int Requester { get; set; }
 
         /// <summary>
-        /// Who is included in medical prescription.
+        ///     Who is included in medical prescription.
         /// </summary>
         public int? Partner { get; set; }
 
         /// <summary>
-        /// Filter mode.
+        ///     Filter mode.
         /// </summary>
         public RecordFilterMode? Mode { get; set; }
 
@@ -91,7 +91,7 @@ namespace Shared.ViewModels.Filter
         public SortDirection Direction { get; set; } = SortDirection.Decending;
 
         /// <summary>
-        /// Index of result page.
+        ///     Index of result page.
         /// </summary>
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language),
@@ -99,7 +99,7 @@ namespace Shared.ViewModels.Filter
         public int Page { get; set; } = 0;
 
         /// <summary>
-        /// Number of records per page.
+        ///     Number of records per page.
         /// </summary>
         [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]

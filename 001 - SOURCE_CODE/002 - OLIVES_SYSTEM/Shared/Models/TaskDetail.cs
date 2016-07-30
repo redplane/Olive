@@ -5,25 +5,10 @@ namespace Shared.Models
 {
     public class TaskDetail
     {
-        /// <summary>
-        /// Id of task.
-        /// </summary>
-        public int Id { get; } 
-
-        /// <summary>
-        /// Type of task
-        /// </summary>
-        public TaskType Type { get; }
-
-        /// <summary>
-        /// Token which is used for cancelling task.
-        /// </summary>
-        public CancellationTokenSource CancellationTokenSource { get; }
-
         #region Constructor
 
         /// <summary>
-        /// Initialize a task detail instance.
+        ///     Initialize a task detail instance.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="type"></param>
@@ -36,5 +21,20 @@ namespace Shared.Models
         }
 
         #endregion
+
+        /// <summary>
+        ///     Id of task.
+        /// </summary>
+        public int Id { get; }
+
+        /// <summary>
+        ///     Type of task
+        /// </summary>
+        public TaskType Type { get; }
+
+        /// <summary>
+        ///     Token which is used for cancelling task.
+        /// </summary>
+        public CancellationTokenSource CancellationTokenSource { get; }
     }
 }

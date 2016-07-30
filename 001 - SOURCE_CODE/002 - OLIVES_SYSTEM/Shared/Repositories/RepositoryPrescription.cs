@@ -1,8 +1,6 @@
-﻿using System;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
@@ -210,7 +208,7 @@ namespace Shared.Repositories
             }
 
             // Calculate the number of records should be skipped.
-            var skippedRecord = filter.Page * filter.Records;
+            var skippedRecord = filter.Page*filter.Records;
 
             // Response initialization.
             var response = new ResponsePrescriptionFilterViewModel();
@@ -219,7 +217,7 @@ namespace Shared.Repositories
             // Record is defined.
             if (filter.Records != null)
             {
-                prescriptions = prescriptions.Skip(filter.Page * filter.Records.Value)
+                prescriptions = prescriptions.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 

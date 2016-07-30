@@ -5,7 +5,6 @@ using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Resources;
-using Shared.ViewModels;
 
 namespace Olives.ViewModels.Initialize
 {

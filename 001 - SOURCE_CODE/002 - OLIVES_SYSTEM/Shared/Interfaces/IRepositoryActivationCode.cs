@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Models;
@@ -33,7 +32,7 @@ namespace Shared.Interfaces
         void DeleteActivationCode(AccountCode activationCode);
 
         /// <summary>
-        /// Initialize new password from forgot password token.
+        ///     Initialize new password from forgot password token.
         /// </summary>
         /// <param name="token"></param>
         /// <param name="password"></param>

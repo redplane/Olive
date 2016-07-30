@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
@@ -71,7 +70,7 @@ namespace Shared.Repositories
             if (owner == null && string.IsNullOrWhiteSpace(code))
                 return null;
 
-            
+
             // By default, retrieve all results.
             IQueryable<AccountCode> results = context.AccountCodes;
 
@@ -115,7 +114,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Initialize a new password to a target account by searching token.
+        ///     Initialize a new password to a target account by searching token.
         /// </summary>
         /// <param name="token"></param>
         /// <param name="password"></param>

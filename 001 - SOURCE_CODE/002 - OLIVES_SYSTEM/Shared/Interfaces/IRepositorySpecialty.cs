@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Shared.Models;
-using Shared.ViewModels;
+using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
 namespace Shared.Interfaces

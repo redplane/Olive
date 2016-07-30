@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Shared.Models;
 using Shared.ViewModels.Filter;
@@ -11,7 +9,7 @@ namespace Shared.Interfaces
     public interface IRepositoryPlace
     {
         /// <summary>
-        /// Find place by using id asynchronously.
+        ///     Find place by using id asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="city"></param>
@@ -19,17 +17,18 @@ namespace Shared.Interfaces
         /// <param name="country"></param>
         /// <param name="countryComparison"></param>
         /// <returns></returns>
-        Task<Place> FindPlaceAsync(int? id, string city, StringComparison? cityComparision, string country, StringComparison? countryComparison);
+        Task<Place> FindPlaceAsync(int? id, string city, StringComparison? cityComparision, string country,
+            StringComparison? countryComparison);
 
         /// <summary>
-        /// Initialize a place asynchronously.
+        ///     Initialize a place asynchronously.
         /// </summary>
         /// <param name="place"></param>
         /// <returns></returns>
         Task<Place> InitializePlaceAsync(Place place);
 
         /// <summary>
-        /// Modify a place by using id asynchronously.
+        ///     Modify a place by using id asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="place"></param>
@@ -37,14 +36,14 @@ namespace Shared.Interfaces
         Task<Place> ModifyPlaceAsync(int id, Place place);
 
         /// <summary>
-        /// Delete place by using id.
+        ///     Delete place by using id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         Task<int> DeletePlaceAsync(int id);
 
         /// <summary>
-        /// Filter places by using specific conditions.
+        ///     Filter places by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>

@@ -13,16 +13,16 @@ namespace Shared.ViewModels.Filter
         ///     Amount of money user's must be higher than.
         /// </summary>
         [NumericPropertyCompare("MaxMoney", Comparision = Comparision.LowerEqual,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         public double? MinMoney { get; set; }
 
         /// <summary>
         ///     Amount of money user's must be lower than.
         /// </summary>
         [NumericPropertyCompare("MinMoney", Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public double? MaxMoney { get; set; }
-        
+
         [NumericPropertyCompare("MaxWeight", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         [Range(Values.MinBodyWeight, Values.MaxBodyWeight, ErrorMessageResourceType = typeof (Language),

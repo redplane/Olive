@@ -8,14 +8,14 @@ namespace Shared.Interfaces
     public interface IRepositoryRealTimeConnection
     {
         /// <summary>
-        /// Initialize/update real time connection information.
+        ///     Initialize/update real time connection information.
         /// </summary>
         /// <param name="initializer"></param>
         /// <returns></returns>
         Task<RealTimeConnection> InitializeRealTimeConnectionInfoAsync(RealTimeConnection initializer);
 
         /// <summary>
-        /// Find real time connection information asynchronously.
+        ///     Find real time connection information asynchronously.
         /// </summary>
         /// <param name="owner"></param>
         /// <param name="connectionId"></param>
@@ -23,7 +23,7 @@ namespace Shared.Interfaces
         Task<IEnumerable<RealTimeConnection>> FindRealTimeConnectionInfoAsync(int? owner, string connectionId);
 
         /// <summary>
-        /// Find the real time connection indexes by using specific conditions.
+        ///     Find the real time connection indexes by using specific conditions.
         /// </summary>
         /// <param name="owner"></param>
         /// <param name="connectionIndex"></param>
@@ -33,7 +33,7 @@ namespace Shared.Interfaces
             string connectionIndex, StringComparison? connectionIndexComparison);
 
         /// <summary>
-        /// Find and delete real time connection informations by using specific conditions.
+        ///     Find and delete real time connection informations by using specific conditions.
         /// </summary>
         /// <param name="owner"></param>
         /// <param name="connectionIndex"></param>

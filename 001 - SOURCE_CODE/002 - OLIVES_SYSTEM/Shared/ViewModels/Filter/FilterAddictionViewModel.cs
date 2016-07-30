@@ -11,7 +11,7 @@ namespace Shared.ViewModels.Filter
     public class FilterAddictionViewModel : IPagination
     {
         /// <summary>
-        /// Id of addiction.
+        ///     Id of addiction.
         /// </summary>
         public int? Id { get; set; }
 

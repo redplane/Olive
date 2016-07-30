@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Shared.Models;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
@@ -28,7 +27,7 @@ namespace Shared.Interfaces
         /// <param name="filter"></param>
         /// <returns></returns>
         Task<ResponseHeartbeatFilter> FilterHeartbeatAsync(FilterHeatbeatViewModel filter);
-        
+
         /// <summary>
         ///     Delete a heartbeat note asynchronously.
         /// </summary>

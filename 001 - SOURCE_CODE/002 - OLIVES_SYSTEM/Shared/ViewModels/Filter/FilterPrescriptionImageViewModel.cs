@@ -11,38 +11,39 @@ namespace Shared.ViewModels.Filter
     public class FilterPrescriptionImageViewModel : IPagination
     {
         /// <summary>
-        /// Who send the filter request.
+        ///     Who send the filter request.
         /// </summary>
         public int Requester { get; set; }
 
         /// <summary>
-        /// Who created prescription image or just own it.
+        ///     Who created prescription image or just own it.
         /// </summary>
         public int? Partner { get; set; }
 
         /// <summary>
-        /// Mode of prescription image filter.
+        ///     Mode of prescription image filter.
         /// </summary>
         public RecordFilterMode? Mode { get; set; }
-        
+
         /// <summary>
-        /// Index of prescription.
+        ///     Index of prescription.
         /// </summary>
-        [NumericCompare(1, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
+        [NumericCompare(1, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueIsInvalid")]
         public int Prescription { get; set; }
 
         /// <summary>
-        /// Index of result page.
+        ///     Index of result page.
         /// </summary>
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof(Language),
+            ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsInvalid")]
         public int Page { get; set; } = FieldLength.PageIndexMin;
 
         /// <summary>
-        /// Amount of records per page.
+        ///     Amount of records per page.
         /// </summary>
-        [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof(Language),
+        [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]
         public int? Records { get; set; }
     }

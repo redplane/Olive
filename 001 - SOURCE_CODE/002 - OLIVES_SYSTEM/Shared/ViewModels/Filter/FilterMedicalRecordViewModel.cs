@@ -11,17 +11,17 @@ namespace Shared.ViewModels.Filter
     public class FilterMedicalRecordViewModel : IPagination
     {
         /// <summary>
-        /// Who sent the filter request.
+        ///     Who sent the filter request.
         /// </summary>
         public int Requester { get; set; }
 
         /// <summary>
-        /// Who is included in medical record.
+        ///     Who is included in medical record.
         /// </summary>
         public int? Partner { get; set; }
-        
+
         /// <summary>
-        /// Filtering mode.
+        ///     Filtering mode.
         /// </summary>
         public RecordFilterMode? Mode { get; set; }
 
@@ -38,7 +38,7 @@ namespace Shared.ViewModels.Filter
         public float? MaxTime { get; set; }
 
         /// <summary>
-        /// Category of medical record.
+        ///     Category of medical record.
         /// </summary>
         public int? Category { get; set; }
 

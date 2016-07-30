@@ -11,7 +11,7 @@ namespace Shared.Repositories
     public class RepositoryRealTimeConnection : IRepositoryRealTimeConnection
     {
         /// <summary>
-        /// Find the real time connection by using account index and connection index.
+        ///     Find the real time connection by using account index and connection index.
         /// </summary>
         /// <param name="owner"></param>
         /// <param name="connectionId"></param>
@@ -22,13 +22,14 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Find the real time connection indexes by using specific conditions.
+        ///     Find the real time connection indexes by using specific conditions.
         /// </summary>
         /// <param name="owner"></param>
         /// <param name="connectionIndex"></param>
         /// <param name="connectionIndexComparison"></param>
         /// <returns></returns>
-        public async Task<IList<string>> FindRealTimeConnectionIndexesAsync(int? owner, string connectionIndex, StringComparison? connectionIndexComparison)
+        public async Task<IList<string>> FindRealTimeConnectionIndexesAsync(int? owner, string connectionIndex,
+            StringComparison? connectionIndexComparison)
         {
             // Database connection initialize.
             var context = new OlivesHealthEntities();
@@ -53,13 +54,12 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Initialize / update a real time connection information asynchronously.
+        ///     Initialize / update a real time connection information asynchronously.
         /// </summary>
         /// <param name="initializer"></param>
         /// <returns></returns>
         public async Task<RealTimeConnection> InitializeRealTimeConnectionInfoAsync(RealTimeConnection initializer)
         {
-
             // Database connection initialization.
             var context = new OlivesHealthEntities();
 
@@ -68,18 +68,19 @@ namespace Shared.Repositories
 
             // Save changes asynchrnously.
             await context.SaveChangesAsync();
-            
+
             return initializer;
         }
 
         /// <summary>
-        /// Delete a real time connection information.
+        ///     Delete a real time connection information.
         /// </summary>
         /// <param name="owner"></param>
         /// <param name="connectionIndex"></param>
         /// <param name="connectionIndexComparison"></param>
         /// <returns></returns>
-        public async Task<int> DeleteRealTimeConnectionInfoAsync(int? owner, string connectionIndex, StringComparison? connectionIndexComparison)
+        public async Task<int> DeleteRealTimeConnectionInfoAsync(int? owner, string connectionIndex,
+            StringComparison? connectionIndexComparison)
         {
             // Database connection initialize.
             var context = new OlivesHealthEntities();
@@ -107,7 +108,5 @@ namespace Shared.Repositories
 
             return records;
         }
-
-        
     }
 }

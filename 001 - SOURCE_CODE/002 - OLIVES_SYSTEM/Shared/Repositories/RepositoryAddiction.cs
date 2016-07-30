@@ -100,10 +100,10 @@ namespace Shared.Repositories
                     }
                     break;
             }
-            
+
             // Response initialization.
             var response = new ResponseAddictionFilter();
-            
+
             // Count the number of matched records.
             response.Total = await addictions.CountAsync();
 

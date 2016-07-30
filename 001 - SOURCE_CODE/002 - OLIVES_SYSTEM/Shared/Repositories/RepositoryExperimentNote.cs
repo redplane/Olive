@@ -1,8 +1,6 @@
-﻿using System;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
@@ -105,7 +103,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Filter experiment note asynchronously by using specific conditions
+        ///     Filter experiment note asynchronously by using specific conditions
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -202,7 +200,7 @@ namespace Shared.Repositories
                 experiments = experiments.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
             }
-            
+
             // Take the records.
             response.ExperimentNotes = await experiments.ToListAsync();
 

@@ -6,12 +6,12 @@ namespace Shared.ViewModels.Response
     public class ResponseExperimentNoteFilter
     {
         /// <summary>
-        /// Experiment note which match with the conditions.
+        ///     Experiment note which match with the conditions.
         /// </summary>
-        public IList<ExperimentNote> ExperimentNotes { get; set; } 
+        public IList<ExperimentNote> ExperimentNotes { get; set; }
 
         /// <summary>
-        /// Total record number.
+        ///     Total record number.
         /// </summary>
         public int Total { get; set; }
     }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
@@ -21,7 +20,6 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -79,7 +77,7 @@ namespace Shared.Repositories
 
             // Count the total matched results.
             response.Total = await places.CountAsync();
-            
+
             // Record is defined.
             if (filter.Records != null)
             {
@@ -95,7 +93,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Find the place by using specific conditions asynchronously.
+        ///     Find the place by using specific conditions asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="city"></param>
@@ -103,7 +101,8 @@ namespace Shared.Repositories
         /// <param name="country"></param>
         /// <param name="countryComparison"></param>
         /// <returns></returns>
-        public async Task<Place> FindPlaceAsync(int? id, string city, StringComparison? cityComparision, string country, StringComparison? countryComparison)
+        public async Task<Place> FindPlaceAsync(int? id, string city, StringComparison? cityComparision, string country,
+            StringComparison? countryComparison)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -128,7 +127,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Initialize / update a place to database.
+        ///     Initialize / update a place to database.
         /// </summary>
         /// <param name="place"></param>
         /// <returns></returns>
@@ -136,10 +135,10 @@ namespace Shared.Repositories
         {
             // Database context initialiazation.
             var context = new OlivesHealthEntities();
-            
+
             // Initialize/update place to database.
             context.Places.AddOrUpdate(place);
-            
+
             // Save changes asychronously.
             await context.SaveChangesAsync();
 

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
@@ -16,7 +14,7 @@ namespace Shared.Repositories
     public class RepositoryMedicalNote : IRepositoryMedicalNote
     {
         /// <summary>
-        /// Find the medical note by using id.
+        ///     Find the medical note by using id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -30,7 +28,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Initialize a medical note asynchronously.
+        ///     Initialize a medical note asynchronously.
         /// </summary>
         /// <param name="medicalNote"></param>
         /// <returns></returns>
@@ -49,7 +47,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Filter medical notes asynchronously by using conditions.
+        ///     Filter medical notes asynchronously by using conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -157,7 +155,7 @@ namespace Shared.Repositories
             // Record is defined.
             if (filter.Records != null)
             {
-                medicalNotes = medicalNotes.Skip(filter.Page * filter.Records.Value)
+                medicalNotes = medicalNotes.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 

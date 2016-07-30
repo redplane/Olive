@@ -73,7 +73,7 @@ namespace Shared.ViewModels.Filter
         [InEnumerationsArray(new object[] {Enumerations.Gender.Female, Enumerations.Gender.Male},
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "InvalidGender")]
         public int? Gender { get; set; }
-        
+
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MaxCreated", Comparision = Comparision.LowerEqual,

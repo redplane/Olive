@@ -1,8 +1,6 @@
-﻿using System;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
@@ -48,21 +46,6 @@ namespace Shared.Repositories
 
             // Find the record by using id.
             return await results.FirstOrDefaultAsync(x => x.Id == id);
-        }
-
-        /// <summary>
-        ///     Initialize / update medical image.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <returns></returns>
-        public async Task<MedicalImage> InitializeMedicalImageAsync(MedicalImage info)
-        {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
-            context.MedicalImages.AddOrUpdate(info);
-            await context.SaveChangesAsync();
-            return info;
         }
 
         /// <summary>
@@ -163,13 +146,28 @@ namespace Shared.Repositories
             // Record is defined.
             if (filter.Records != null)
             {
-                medicalRecords = medicalRecords.Skip(filter.Page * filter.Records.Value)
+                medicalRecords = medicalRecords.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
             response.MedicalRecords = await medicalRecords.ToListAsync();
 
             return response;
+        }
+
+        /// <summary>
+        ///     Initialize / update medical image.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        public async Task<MedicalImage> InitializeMedicalImageAsync(MedicalImage info)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            context.MedicalImages.AddOrUpdate(info);
+            await context.SaveChangesAsync();
+            return info;
         }
     }
 }

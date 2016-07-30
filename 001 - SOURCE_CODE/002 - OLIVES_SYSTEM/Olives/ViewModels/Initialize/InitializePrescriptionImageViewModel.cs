@@ -9,15 +9,16 @@ namespace Olives.ViewModels.Initialize
     public class InitializePrescriptionImageViewModel
     {
         /// <summary>
-        /// Id of prescription which images should belong to.
+        ///     Id of prescription which images should belong to.
         /// </summary>
-        [NumericCompare(1, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+        [NumericCompare(1, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public int Prescription { get; set; }
 
         /// <summary>
-        /// List of image which should be uploaded to server.
+        ///     List of image which should be uploaded to server.
         /// </summary>
-        [Required(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsRequired")]
+        [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueIsRequired")]
         public Image Image { get; set; }
     }
 }

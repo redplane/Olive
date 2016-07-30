@@ -114,12 +114,12 @@
         #region SignalR keys
 
         /// <summary>
-        /// SignalR email in query string.
+        ///     SignalR email in query string.
         /// </summary>
         public const string KeySignalrEmail = "Email";
 
         /// <summary>
-        /// SignalR password in query string.
+        ///     SignalR password in query string.
         /// </summary>
         public const string KeySignalrPassword = "Password";
 
@@ -130,17 +130,17 @@
         #region Doctor rank
 
         /// <summary>
-        /// Minimum rank of doctor.
+        ///     Minimum rank of doctor.
         /// </summary>
         public const int MinDoctorRank = 0;
 
         /// <summary>
-        /// Maximum rank of doctor.
+        ///     Maximum rank of doctor.
         /// </summary>
         public const int MaxDoctorRank = 5;
 
         /// <summary>
-        /// Minimum point which patient can vote for a doctor.
+        ///     Minimum point which patient can vote for a doctor.
         /// </summary>
         public const int MinDoctorRankVote = 1;
 

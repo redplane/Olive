@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Olives.ViewModels;
 using Shared.ViewModels;
 
 namespace Olives.Attributes

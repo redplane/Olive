@@ -2,7 +2,6 @@
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
@@ -16,7 +15,7 @@ namespace Shared.Repositories
     public class RepositoryMedicalCategory : IRepositoryMedicalCategory
     {
         /// <summary>
-        /// Find medical category asynchronously.
+        ///     Find medical category asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="name"></param>
@@ -43,7 +42,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Initialize medical category.
+        ///     Initialize medical category.
         /// </summary>
         /// <param name="initializer"></param>
         /// <returns></returns>
@@ -61,7 +60,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Filter medical categories asynchrously.
+        ///     Filter medical categories asynchrously.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -129,7 +128,7 @@ namespace Shared.Repositories
             // Record is defined.
             if (filter.Records != null)
             {
-                categories = categories.Skip(filter.Page * filter.Records.Value)
+                categories = categories.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
             }
             // Do pagination.

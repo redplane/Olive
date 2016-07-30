@@ -29,7 +29,7 @@ namespace Shared.Repositories
             // Id is specified.
             if (filter.Id != null)
                 allergies = allergies.Where(x => x.Id == filter.Id.Value);
-            
+
             // Owner has been specified.
             if (filter.Owner != null)
                 allergies = allergies.Where(x => x.Owner == filter.Owner);
@@ -57,7 +57,7 @@ namespace Shared.Repositories
                 allergies = allergies.Where(x => x.LastModified != null && x.LastModified >= filter.MinLastModified);
             if (filter.MaxLastModified != null)
                 allergies = allergies.Where(x => x.LastModified != null && x.LastModified >= filter.MaxLastModified);
-            
+
             // Result sorting.
             switch (filter.Direction)
             {
@@ -90,7 +90,7 @@ namespace Shared.Repositories
 
             // Count the matched records before result truncation.
             response.Total = await allergies.CountAsync();
-            
+
             // Record is defined.
             if (filter.Records != null)
             {

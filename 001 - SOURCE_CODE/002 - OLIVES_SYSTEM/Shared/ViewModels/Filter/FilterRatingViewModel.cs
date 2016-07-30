@@ -21,9 +21,10 @@ namespace Shared.ViewModels.Filter
         public int? Partner { get; set; }
 
         /// <summary>
-        /// Filtering mode
+        ///     Filtering mode
         /// </summary>
-        [InEnumerationsArray(new object[] {RecordFilterMode.RequesterIsCreator, RecordFilterMode.RequesterIsOwner}, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
+        [InEnumerationsArray(new object[] {RecordFilterMode.RequesterIsCreator, RecordFilterMode.RequesterIsOwner},
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
         public RecordFilterMode? Mode { get; set; }
 
         [NumericPropertyCompare("MaxCreated", Comparision = Comparision.LowerEqual,
@@ -37,7 +38,7 @@ namespace Shared.ViewModels.Filter
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? MaxCreated { get; set; }
-        
+
         /// <summary>
         ///     Value which rating must be greater than.
         /// </summary>

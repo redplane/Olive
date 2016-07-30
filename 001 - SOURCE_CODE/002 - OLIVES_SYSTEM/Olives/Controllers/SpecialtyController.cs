@@ -7,6 +7,7 @@ using log4net;
 using Shared.Interfaces;
 using Shared.Resources;
 using Shared.ViewModels;
+using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {

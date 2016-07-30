@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,11 +14,12 @@ namespace Shared.Repositories
     public class RepositoryAppointmentNotification : IRepositoryAppointmentNotification
     {
         /// <summary>
-        /// Filter appointment notification with specific conditions asynchronously.
+        ///     Filter appointment notification with specific conditions asynchronously.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<ResponseAppointmentNotificationFilter> FilterAppointmentNotificationAsync(FilterAppointmentNotificationViewModel filter)
+        public async Task<ResponseAppointmentNotificationFilter> FilterAppointmentNotificationAsync(
+            FilterAppointmentNotificationViewModel filter)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -48,7 +48,8 @@ namespace Shared.Repositories
             {
                 if (filter.Partner == null)
                     appointmentNotifications =
-                        appointmentNotifications.Where(x => x.Invoker == filter.Requester || x.Recipient == filter.Requester);
+                        appointmentNotifications.Where(
+                            x => x.Invoker == filter.Requester || x.Recipient == filter.Requester);
                 else
                     appointmentNotifications =
                         appointmentNotifications.Where(
@@ -113,7 +114,7 @@ namespace Shared.Repositories
 
             // Response initialization.
             var response = new ResponseAppointmentNotificationFilter();
-            
+
             // Count the total matched result.
             response.Total = await appointmentNotifications.CountAsync();
 
@@ -131,11 +132,12 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Initialize / update an appointment notification asynchronously.
+        ///     Initialize / update an appointment notification asynchronously.
         /// </summary>
         /// <param name="initializer"></param>
         /// <returns></returns>
-        public async Task<AppointmentNotification> InitializeAppointmentNotificationAsync(AppointmentNotification initializer)
+        public async Task<AppointmentNotification> InitializeAppointmentNotificationAsync(
+            AppointmentNotification initializer)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -166,6 +168,5 @@ namespace Shared.Repositories
                 }
             }
         }
-
     }
 }

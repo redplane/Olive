@@ -62,7 +62,8 @@ namespace Shared.Interfaces
         /// <param name="status"></param>
         /// <param name="page"></param>
         /// <param name="records"></param>
-        Task<ResponseRelationshipFilter> FilterRelationshipAsync(int requester, int? partner, RoleRelationship? role, StatusRelation? status, int page, int records);
+        Task<ResponseRelationshipFilter> FilterRelationshipAsync(int requester, int? partner, RoleRelationship? role,
+            StatusRelation? status, int page, int records);
 
         /// <summary>
         ///     Filter related doctors.
@@ -76,7 +77,7 @@ namespace Shared.Interfaces
             int? records);
 
         /// <summary>
-        /// This function is to check whether 2 people are connected to each other or not.
+        ///     This function is to check whether 2 people are connected to each other or not.
         /// </summary>
         /// <param name="firstPerson"></param>
         /// <param name="secondPerson"></param>

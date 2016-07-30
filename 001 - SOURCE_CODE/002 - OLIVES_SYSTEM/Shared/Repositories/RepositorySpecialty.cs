@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels;
+using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
 namespace Shared.Repositories

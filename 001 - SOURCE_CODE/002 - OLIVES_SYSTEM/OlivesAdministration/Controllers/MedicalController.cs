@@ -27,6 +27,11 @@ namespace OlivesAdministration.Controllers
         private readonly IRepositoryMedicalCategory _repositoryMedicalCategory;
 
         /// <summary>
+        /// Service which provides function to access time calculation.
+        /// </summary>
+        private readonly ITimeService _timeService;
+
+        /// <summary>
         /// Instance for logger.
         /// </summary>
         private readonly ILog _log;
@@ -39,10 +44,12 @@ namespace OlivesAdministration.Controllers
         /// Initialize an instance of MedicalController with dependencies.
         /// </summary>
         /// <param name="repositoryMedicalCategory"></param>
+        /// <param name="timeService"></param>
         /// <param name="log"></param>
-        public MedicalController(IRepositoryMedicalCategory repositoryMedicalCategory, ILog log)
+        public MedicalController(IRepositoryMedicalCategory repositoryMedicalCategory, ITimeService timeService, ILog log)
         {
             _repositoryMedicalCategory = repositoryMedicalCategory;
+            _timeService = timeService;
             _log = log;
         }
 
@@ -59,6 +66,8 @@ namespace OlivesAdministration.Controllers
         [HttpGet]
         public async Task<HttpResponseMessage> InitializeMedicalCategory([FromBody] InitializeMedicalCategoryViewModel initializer)
         {
+            #region Request parameters validation
+
             // Initializer hasn't been initialized.
             if (initializer == null)
             {
@@ -73,6 +82,10 @@ namespace OlivesAdministration.Controllers
                 _log.Error("Request parameters are invalid. Errors sent to client");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
+
+            #endregion
+
+            #region Record duplicate validation
 
             // Find the category by using name.
             var medicalCategory = await _repositoryMedicalCategory.FindMedicalCategoryAsync(null, initializer.Name,
@@ -91,6 +104,10 @@ namespace OlivesAdministration.Controllers
                 });
             }
 
+            #endregion
+
+            #region Record initialization & handling
+
             medicalCategory = new MedicalCategory();
             medicalCategory.Name = initializer.Name;
 
@@ -106,6 +123,8 @@ namespace OlivesAdministration.Controllers
                     medicalCategory.Created
                 }
             });
+
+            #endregion
         }
 
         /// <summary>
@@ -168,7 +187,7 @@ namespace OlivesAdministration.Controllers
 
             // Update information.
             medicalCategory.Name = modifier.Name;
-            medicalCategory.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            medicalCategory.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Save changes.
             await _repositoryMedicalCategory.InitializeMedicalCategoryAsync(medicalCategory);

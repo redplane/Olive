@@ -2,7 +2,7 @@
 using Shared.Constants;
 using Shared.Resources;
 
-namespace Shared.ViewModels
+namespace Olives.ViewModels
 {
     public class MedicineInfoViewModel
     {

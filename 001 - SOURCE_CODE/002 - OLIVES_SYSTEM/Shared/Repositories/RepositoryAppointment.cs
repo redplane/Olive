@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -117,7 +116,7 @@ namespace Shared.Repositories
             // Appointment status is specified.
             if (filter.Status != null)
             {
-                var status = (byte)filter.Status;
+                var status = (byte) filter.Status;
                 results = results.Where(x => x.Status == status);
             }
 
@@ -139,7 +138,7 @@ namespace Shared.Repositories
             // Record is defined.
             if (filter.Records != null)
             {
-                results = results.Skip(filter.Page * filter.Records.Value)
+                results = results.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 

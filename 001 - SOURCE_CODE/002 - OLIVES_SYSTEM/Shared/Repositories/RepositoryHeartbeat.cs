@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +6,6 @@ using Shared.Enumerations;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
@@ -43,7 +41,7 @@ namespace Shared.Repositories
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-            
+
             // Find heartbeat note by using id.
             return await context.Heartbeats.FirstOrDefaultAsync(x => x.Id == id);
         }
@@ -59,7 +57,7 @@ namespace Shared.Repositories
             {
                 // Database context initialization.
                 var context = new OlivesHealthEntities();
-                
+
                 // By default, take all information.
                 IQueryable<Heartbeat> heartbeats = context.Heartbeats;
 
@@ -167,7 +165,7 @@ namespace Shared.Repositories
                         case NoteResultSort.Created:
                             heartbeats = heartbeats.OrderByDescending(x => x.Created);
                             break;
-                            case NoteResultSort.LastModified:
+                        case NoteResultSort.LastModified:
                             heartbeats = heartbeats.OrderByDescending(x => x.LastModified);
                             break;
                         default:
@@ -190,11 +188,11 @@ namespace Shared.Repositories
                     }
                     break;
             }
-            
+
             // Initialize response and throw result back.
             var response = new ResponseHeartbeatFilter();
             response.Total = await heartbeats.CountAsync();
-            
+
             // Record is defined.
             if (filter.Records != null)
             {

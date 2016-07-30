@@ -11,7 +11,7 @@ namespace Shared.ViewModels.Filter
     public class FilterHeatbeatViewModel : IPagination
     {
         /// <summary>
-        /// Id of heartbeat note.
+        ///     Id of heartbeat note.
         /// </summary>
         public int? Id { get; set; }
 
@@ -21,7 +21,7 @@ namespace Shared.ViewModels.Filter
         public int? Owner { get; set; }
 
         /// <summary>
-        /// Minimum heart rate.
+        ///     Minimum heart rate.
         /// </summary>
         [Range(Values.MinHeartRate, Values.MaxHeartRate, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]
@@ -30,7 +30,7 @@ namespace Shared.ViewModels.Filter
         public double? MinRate { get; set; }
 
         /// <summary>
-        /// Maximum heart rate.
+        ///     Maximum heart rate.
         /// </summary>
         [Range(Values.MinHeartRate, Values.MaxHeartRate, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]
@@ -39,14 +39,14 @@ namespace Shared.ViewModels.Filter
         public double? MaxRate { get; set; }
 
         /// <summary>
-        /// Note of record.
+        ///     Note of record.
         /// </summary>
         [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Note { get; set; }
 
         /// <summary>
-        /// Time after which note was taken.
+        ///     Time after which note was taken.
         /// </summary>
         [NumericPropertyCompare("MaxTime", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
@@ -55,7 +55,7 @@ namespace Shared.ViewModels.Filter
         public double? MinTime { get; set; }
 
         /// <summary>
-        /// Time before which note had been taken.
+        ///     Time before which note had been taken.
         /// </summary>
         [NumericPropertyCompare("MinTime", Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
@@ -64,7 +64,7 @@ namespace Shared.ViewModels.Filter
         public double? MaxTime { get; set; }
 
         /// <summary>
-        /// Time after which note was created.
+        ///     Time after which note was created.
         /// </summary>
         [NumericPropertyCompare("MaxCreated", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
@@ -73,7 +73,7 @@ namespace Shared.ViewModels.Filter
         public double? MinCreated { get; set; }
 
         /// <summary>
-        /// Time before which note had been created.
+        ///     Time before which note had been created.
         /// </summary>
         [NumericPropertyCompare("MinCreated", Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
@@ -82,7 +82,7 @@ namespace Shared.ViewModels.Filter
         public double? MaxCreated { get; set; }
 
         /// <summary>
-        /// Time after which note was lastly modified.
+        ///     Time after which note was lastly modified.
         /// </summary>
         [NumericPropertyCompare("MaxLastModified", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
@@ -91,7 +91,7 @@ namespace Shared.ViewModels.Filter
         public double? MinLastModified { get; set; }
 
         /// <summary>
-        /// Time before which note had been lastly modified.
+        ///     Time before which note had been lastly modified.
         /// </summary>
         [NumericPropertyCompare("MinLastModified", Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]

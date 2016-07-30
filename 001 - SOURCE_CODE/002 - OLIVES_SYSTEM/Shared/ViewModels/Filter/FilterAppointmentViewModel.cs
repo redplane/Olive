@@ -10,24 +10,24 @@ namespace Shared.ViewModels.Filter
     public class FilterAppointmentViewModel : IPagination
     {
         /// <summary>
-        /// The mode of partner filter should be done.
+        ///     The mode of partner filter should be done.
         /// </summary>
         [InEnumerationsArray(new object[] {PartnerFilterMode.ParterIsDater, PartnerFilterMode.PartnerIsMaker},
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
         public PartnerFilterMode? Mode { get; set; }
 
         /// <summary>
-        /// Partner who takes part in the appointment.
+        ///     Partner who takes part in the appointment.
         /// </summary>
         public int? Partner { get; set; }
 
         /// <summary>
-        /// Person who sends the filter request.
+        ///     Person who sends the filter request.
         /// </summary>
         public int Requester { get; set; }
 
         /// <summary>
-        /// Id of appointment
+        ///     Id of appointment
         /// </summary>
         public int? Id { get; set; }
 
@@ -65,7 +65,10 @@ namespace Shared.ViewModels.Filter
 
         [InEnumerationsArray(
             new object[]
-            {StatusAppointment.Pending, StatusAppointment.Active, StatusAppointment.Cancelled, StatusAppointment.Done, StatusAppointment.Expired},
+            {
+                StatusAppointment.Pending, StatusAppointment.Active, StatusAppointment.Cancelled, StatusAppointment.Done,
+                StatusAppointment.Expired
+            },
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
         public StatusAppointment? Status { get; set; }
 

@@ -6,12 +6,12 @@ namespace Shared.ViewModels.Response
     public class ResponseAppointmentNotificationFilter
     {
         /// <summary>
-        /// List of filtered appointments.
+        ///     List of filtered appointments.
         /// </summary>
-        public IList<AppointmentNotification> AppointmentNotifications { get; set; } 
+        public IList<AppointmentNotification> AppointmentNotifications { get; set; }
 
         /// <summary>
-        /// Total condition matched records.
+        ///     Total condition matched records.
         /// </summary>
         public int Total { get; set; }
     }

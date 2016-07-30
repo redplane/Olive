@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Shared.Models;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
@@ -31,11 +30,10 @@ namespace Shared.Interfaces
         Task<int> DeleteExperimentNotesAsync(int experimentId, int? owner);
 
         /// <summary>
-        /// Filter experiment note asynchronously by using specific conditions
+        ///     Filter experiment note asynchronously by using specific conditions
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
         Task<ResponseExperimentNoteFilter> FilterExperimentNotesAsync(FilterExperimentNoteViewModel filter);
-        
     }
 }

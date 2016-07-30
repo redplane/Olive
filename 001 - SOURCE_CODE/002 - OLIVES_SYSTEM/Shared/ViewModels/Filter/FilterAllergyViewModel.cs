@@ -11,32 +11,32 @@ namespace Shared.ViewModels.Filter
     public class FilterAllergyViewModel : IPagination
     {
         /// <summary>
-        /// Id of allergy note record.
+        ///     Id of allergy note record.
         /// </summary>
         public int? Id { get; set; }
 
         /// <summary>
-        /// Id of record owner.
+        ///     Id of record owner.
         /// </summary>
         [NumericCompare(1, ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueIsInvalid")]
         public int? Owner { get; set; }
 
         /// <summary>
-        /// Name of allergy record.
+        ///     Name of allergy record.
         /// </summary>
         [StringLength(32, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Name { get; set; }
 
         /// <summary>
-        /// Which causes the allergy.
+        ///     Which causes the allergy.
         /// </summary>
         [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Cause { get; set; }
 
         /// <summary>
-        /// Note of record.
+        ///     Note of record.
         /// </summary>
         [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]

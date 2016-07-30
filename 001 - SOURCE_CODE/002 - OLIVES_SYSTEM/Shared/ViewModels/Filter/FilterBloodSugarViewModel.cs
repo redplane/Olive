@@ -11,12 +11,12 @@ namespace Shared.ViewModels.Filter
     public class FilterBloodSugarViewModel : IPagination
     {
         /// <summary>
-        /// Id of blood sugar record.
+        ///     Id of blood sugar record.
         /// </summary>
         public int? Id { get; set; }
 
         /// <summary>
-        /// Owner of blood sugar record.
+        ///     Owner of blood sugar record.
         /// </summary>
         public int? Owner { get; set; }
 

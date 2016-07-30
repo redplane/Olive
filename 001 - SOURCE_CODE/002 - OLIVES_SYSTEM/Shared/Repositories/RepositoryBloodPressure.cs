@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +6,6 @@ using Shared.Enumerations;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
@@ -215,7 +213,7 @@ namespace Shared.Repositories
             // Record is defined.
             if (filter.Records != null)
             {
-                bloodPressures = bloodPressures.Skip(filter.Page * filter.Records.Value)
+                bloodPressures = bloodPressures.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 

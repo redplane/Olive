@@ -13,26 +13,28 @@ namespace Shared.ViewModels.Filter
         ///     Amount of money user's must be higher than.
         /// </summary>
         [NumericPropertyCompare("MaxMoney", Comparision = Comparision.LowerEqual,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         public double? MinMoney { get; set; }
 
         /// <summary>
         ///     Amount of money user's must be lower than.
         /// </summary>
         [NumericPropertyCompare("MinMoney", Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public double? MaxMoney { get; set; }
-        
+
         /// <summary>
         ///     Name of city where doctor lives.
         /// </summary>
-        [StringLength(FieldLength.CityNameMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        [StringLength(FieldLength.CityNameMaxLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string City { get; set; }
 
         /// <summary>
-        /// Name of country where doctor lives.
+        ///     Name of country where doctor lives.
         /// </summary>
-        [StringLength(FieldLength.CountryNameMaxLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        [StringLength(FieldLength.CountryNameMaxLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Country { get; set; }
 
         /// <summary>
@@ -42,12 +44,14 @@ namespace Shared.ViewModels.Filter
             ErrorMessageResourceName = "ValueIsInvalid")]
         public int? Specialty { get; set; }
 
-        [Range(Values.MinDoctorRank, Values.MaxDoctorRank, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeFromTo")]
+        [Range(Values.MinDoctorRank, Values.MaxDoctorRank, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueMustBeFromTo")]
         [NumericPropertyCompare("MaxRank", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         public double? MinRank { get; set; }
 
-        [Range(Values.MinDoctorRank, Values.MaxDoctorRank, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeFromTo")]
+        [Range(Values.MinDoctorRank, Values.MaxDoctorRank, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueMustBeFromTo")]
         [NumericPropertyCompare("MinRank", Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public double? MaxRank { get; set; }

@@ -13,7 +13,7 @@ namespace Shared.Repositories
     public class RepositoryPrescriptionImage : IRepositoryPrescriptionImage
     {
         /// <summary>
-        /// Find the prescription image asynchronously by using id.
+        ///     Find the prescription image asynchronously by using id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -28,7 +28,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Initialize an image for prescription.
+        ///     Initialize an image for prescription.
         /// </summary>
         /// <param name="prescriptionImage"></param>
         /// <returns></returns>
@@ -56,7 +56,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Delete prescription image by using id.
+        ///     Delete prescription image by using id.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="owner"></param>
@@ -109,11 +109,10 @@ namespace Shared.Repositories
                     throw;
                 }
             }
-
         }
 
         /// <summary>
-        /// Filter prescription image.
+        ///     Filter prescription image.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -160,7 +159,7 @@ namespace Shared.Repositories
             // Record is defined.
             if (filter.Records != null)
             {
-                prescriptionImages = prescriptionImages.Skip(filter.Page * filter.Records.Value)
+                prescriptionImages = prescriptionImages.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 

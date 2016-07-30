@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -75,7 +74,7 @@ namespace Shared.Repositories
             // Record is defined.
             if (filter.Records != null)
             {
-                medicalImages = medicalImages.Skip(filter.Page * filter.Records.Value)
+                medicalImages = medicalImages.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
@@ -138,8 +137,22 @@ namespace Shared.Repositories
                     // Let the calling function handle the exception.
                     throw;
                 }
-
             }
+        }
+
+        /// <summary>
+        ///     Initialize / update medical image.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        public async Task<MedicalImage> InitializeMedicalImageAsync(MedicalImage info)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            context.MedicalImages.AddOrUpdate(info);
+            await context.SaveChangesAsync();
+            return info;
         }
 
         /// <summary>
@@ -240,28 +253,13 @@ namespace Shared.Repositories
             // Record is defined.
             if (filter.Records != null)
             {
-                medicalRecords = medicalRecords.Skip(filter.Page * filter.Records.Value)
+                medicalRecords = medicalRecords.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
             response.MedicalRecords = await medicalRecords.ToListAsync();
 
             return response;
-        }
-
-        /// <summary>
-        ///     Initialize / update medical image.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <returns></returns>
-        public async Task<MedicalImage> InitializeMedicalImageAsync(MedicalImage info)
-        {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
-            context.MedicalImages.AddOrUpdate(info);
-            await context.SaveChangesAsync();
-            return info;
         }
     }
 }
