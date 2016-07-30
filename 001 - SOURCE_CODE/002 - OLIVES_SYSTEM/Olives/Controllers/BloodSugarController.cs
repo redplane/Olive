@@ -17,27 +17,26 @@ using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
-    [Route("api/heartbeat")]
-    [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-    public class HeartbeatController : ApiParentController
+    [Route("api/bloodsugar")]
+    public class BloodSugarController : ApiParentController
     {
         #region Constructors
 
         /// <summary>
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryHeartbeat"></param>
+        /// <param name="repositorySugarblood"></param>
         /// <param name="repositoryRelation"></param>
-        /// <param name="timeService"></param>
         /// <param name="log"></param>
-        public HeartbeatController(IRepositoryHeartbeat repositoryHeartbeat,
-            IRepositoryRelation repositoryRelation, ITimeService timeService,
-            ILog log)
+        /// <param name="timeService"></param>
+        public BloodSugarController(IRepositoryBloodSugar repositorySugarblood, IRepositoryRelation repositoryRelation,
+            ILog log,
+            ITimeService timeService)
         {
-            _repositoryHeartbeat = repositoryHeartbeat;
+            _repositorySugarblood = repositorySugarblood;
             _repositoryRelation = repositoryRelation;
-            _timeService = timeService;
             _log = log;
+            _timeService = timeService;
         }
 
         #endregion
@@ -50,19 +49,22 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
+            #region Result find
+
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Retrieve the results list.
-            var heartbeat = await _repositoryHeartbeat.FindHeartbeatAsync(id);
+            var bloodSugar = await _repositorySugarblood.FindBloodSugarAsync(id);
 
             // No result has been received.
-            if (heartbeat == null)
+            if (bloodSugar == null)
             {
                 // Log the error.
-                _log.Error($"Heartbeat [Id: {id}] doesn't exist in database");
+                _log.Error($"There is no blood sugar [Id: {id}] in database");
 
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -71,140 +73,20 @@ namespace Olives.Controllers
                 });
             }
 
-            // Check whether the request has connection with the owner or not.
-            var isRelationshipAvailable = await _repositoryRelation.IsPeopleConnected(requester.Id, heartbeat.Owner);
+            #endregion
+
+            #region Relationship validation
+
+            // Find the relationship between requester and the owner.
+            var isRelationshipAvailable = await _repositoryRelation.IsPeopleConnected(requester.Id, bloodSugar.Owner);
+
+            // Requester doesn't have relationship with the record owner.
             if (!isRelationshipAvailable)
             {
                 // Log the error.
-                _log.Error(
-                    $"There is no relationship between Requester[Id: {requester.Id}] and heart beat owner [Id: {heartbeat.Owner}]");
+                _log.Error($"There is no relationship between requester [Id: {requester.Id}] and blood sugar owner [Id: {bloodSugar.Owner}]");
 
                 // Tell front-end, no record has been found.
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
-
-            return Request.CreateResponse(HttpStatusCode.OK, new
-            {
-                Heartbeat = new
-                {
-                    heartbeat.Id,
-                    heartbeat.Created,
-                    heartbeat.LastModified,
-                    heartbeat.Time,
-                    heartbeat.Note,
-                    heartbeat.Rate
-                }
-            });
-        }
-
-        /// <summary>
-        ///     Insert an allergy asyncrhonously.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<HttpResponseMessage> Post([FromBody] InitializeHeartbeatViewModel info)
-        {
-            #region ModelState result
-
-            // Model hasn't been initialized.
-            if (info == null)
-            {
-                info = new InitializeHeartbeatViewModel();
-                Validate(info);
-            }
-
-            // Invalid model state.
-            if (!ModelState.IsValid)
-            {
-                _log.Error("Invalid allergies filter request parameters");
-                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-            }
-
-            #endregion
-
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
-            // Only filter and receive the first result.
-            var heartbeat = new Heartbeat();
-            heartbeat.Owner = requester.Id;
-            heartbeat.Rate = info.Rate;
-            heartbeat.Note = info.Note;
-            heartbeat.Time = info.Time;
-            heartbeat.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
-
-            // Insert a new allergy to database.
-            var result = await _repositoryHeartbeat.InitializeHeartbeatNoteAsync(heartbeat);
-
-            return Request.CreateResponse(HttpStatusCode.OK, new
-            {
-                Heartbeat = new
-                {
-                    result.Id,
-                    result.Rate,
-                    result.Time,
-                    result.Note,
-                    result.Created
-                }
-            });
-        }
-
-        /// <summary>
-        ///     Edit an allergy.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="modifier"></param>
-        /// <returns></returns>
-        [HttpPut]
-        public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] EditHeartbeatViewModel modifier)
-        {
-            #region Request parameters are invalid
-
-            // Model hasn't been initialized.
-            if (modifier == null)
-            {
-                modifier = new EditHeartbeatViewModel();
-                Validate(modifier);
-            }
-
-            // Invalid model state.
-            if (!ModelState.IsValid)
-            {
-                _log.Error("Invalid allergies filter request parameters");
-                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-            }
-
-            #endregion
-
-            #region Record validation
-
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
-            // Find allergy by using allergy id and owner id.
-            var heartbeat = await _repositoryHeartbeat.FindHeartbeatAsync(id);
-
-            // Not record has been found.
-            if (heartbeat == null)
-            {
-                // Tell front-end, no record has been found.
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
-
-            // Requester is not the owner of record.
-            if (heartbeat.Owner != requester.Id)
-            {
-                // Log the error.
-                _log.Error($"Requester [Id: {requester.Id}] is not the owner of heartbeat [Id: {heartbeat.Id}]");
-
-                // Tell client no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
                     Error = $"{Language.WarnRecordNotFound}"
@@ -214,31 +96,170 @@ namespace Olives.Controllers
             #endregion
 
             #region Result handling
+            
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                BloodSugar = new
+                {
+                    bloodSugar.Id,
+                    bloodSugar.Owner,
+                    bloodSugar.Created,
+                    bloodSugar.LastModified,
+                    bloodSugar.Note,
+                    bloodSugar.Time,
+                    bloodSugar.Value
+                }
+            });
 
-            if (modifier.Rate != null)
-                heartbeat.Rate = modifier.Rate.Value;
+            #endregion
+        }
 
-            if (modifier.Time != null)
-                heartbeat.Time = modifier.Time.Value;
+        /// <summary>
+        ///     Insert an allergy asyncrhonously.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [OlivesAuthorize(new[] { Role.Patient })]
+        public async Task<HttpResponseMessage> Post([FromBody] InitializeBloodSugarViewModel info)
+        {
+            #region Request parameters validation
 
-            if (!string.IsNullOrWhiteSpace(modifier.Note))
-                heartbeat.Note = modifier.Note;
+            // Model hasn't been initialized.
+            if (info == null)
+            {
+                info = new InitializeBloodSugarViewModel();
+                Validate(info);
+            }
 
-            heartbeat.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+            // Invalid model state.
+            if (!ModelState.IsValid)
+            {
+                _log.Error("Invalid request parameters. Errors sent to client.");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
 
-            // Update heartbeat.
-            heartbeat = await _repositoryHeartbeat.InitializeHeartbeatNoteAsync(heartbeat);
+            #endregion
+
+            #region Record initialization & handling
+
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Only filter and receive the first result.
+            var bloodSugar = new SugarBlood();
+            bloodSugar.Owner = requester.Id;
+            bloodSugar.Value = info.Value;
+            bloodSugar.Note = info.Note;
+            bloodSugar.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+            bloodSugar.Time = info.Time;
+
+            // Insert a new allergy to database.
+            bloodSugar = await _repositorySugarblood.InitializeSugarbloodNoteAsync(bloodSugar);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Heartbeat = new
+                BloodSugar = new
                 {
-                    heartbeat.Id,
-                    heartbeat.Time,
-                    heartbeat.Created,
-                    heartbeat.LastModified,
-                    heartbeat.Note,
-                    heartbeat.Rate
+                    bloodSugar.Id,
+                    bloodSugar.Created,
+                    bloodSugar.Note,
+                    bloodSugar.Time,
+                    bloodSugar.Value
+                }
+            });
+
+            #endregion
+        }
+
+        /// <summary>
+        ///     Edit an allergy.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="modifier"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [OlivesAuthorize(new[] { Role.Patient })]
+        public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] EditBloodSugarViewModel modifier)
+        {
+            #region ModelState result
+
+            // Model hasn't been initialized.
+            if (modifier == null)
+            {
+                modifier = new EditBloodSugarViewModel();
+                Validate(modifier);
+            }
+
+            // Invalid model state.
+            if (!ModelState.IsValid)
+            {
+                _log.Error("Request parameters are invalid. Errors sent to client.");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            #endregion
+
+            #region Record find
+
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Find allergy by using allergy id and owner id.
+            var bloodSugar = await _repositorySugarblood.FindBloodSugarAsync(id);
+            
+            if (bloodSugar == null)
+            {
+                // Log the error.
+                _log.Error($"There is no blood sugar [Id: {id}] in database");
+
+                // Tell front-end, no record has been found.
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
+
+            if (requester.Id != bloodSugar.Owner)
+            {
+                // Log the error.
+                _log.Error($"Requester [Id: {requester.Id}] is not the owner of blood sugar [Id: {bloodSugar.Id}]");
+
+                // Tell front-end, no record has been found.
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
+
+            #endregion
+
+            #region Record modification & handling
+
+            if (modifier.Time != null)
+                bloodSugar.Time = modifier.Time.Value;
+
+            if (modifier.Value != null)
+                bloodSugar.Value = modifier.Value.Value;
+            
+            if (!string.IsNullOrWhiteSpace(bloodSugar.Note))
+                bloodSugar.Note = modifier.Note;
+
+            bloodSugar.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+
+            // Update allergy.
+            bloodSugar = await _repositorySugarblood.InitializeSugarbloodNoteAsync(bloodSugar);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                BloodSugar = new
+                {
+                    bloodSugar.Id,
+                    bloodSugar.Created,
+                    bloodSugar.LastModified,
+                    bloodSugar.Note,
+                    bloodSugar.Time,
+                    bloodSugar.Value
                 }
             });
 
@@ -251,24 +272,27 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
+        [OlivesAuthorize(new[] { Role.Patient })]
         public async Task<HttpResponseMessage> Delete([FromUri] int id)
         {
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
             try
             {
+                // Retrieve information of person who sent request.
+                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
                 // Filter initialization.
-                var filter = new FilterHeatbeatViewModel();
+                var filter = new FilterBloodSugarViewModel();
                 filter.Id = id;
                 filter.Owner = requester.Id;
 
-                // Remove the found allergy.
-                var deletedRecords = await _repositoryHeartbeat.DeleteHeartbeatNoteAsync(filter);
+                // Delete and retrieve the affected records.
+                var records = await _repositorySugarblood.DeleteBloodSugarAsync(filter);
 
-                // No record has been deleted.
-                if (deletedRecords < 1)
+                if (records < 1)
                 {
+                    // Log the error.
+                    _log.Error($"There is no blood sugar record [Id: {id}]");
+
                     // Tell front-end, no record has been found.
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {
@@ -276,13 +300,12 @@ namespace Olives.Controllers
                     });
                 }
 
+                // Tell client the result is OK.
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
             catch (Exception exception)
             {
-                // Log the error to file.
                 _log.Error(exception.Message, exception);
-
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new
                 {
                     Error = $"{Language.WarnInternalServerError}"
@@ -295,17 +318,17 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        [Route("api/heartbeat/filter")]
+        [Route("api/bloodsugar/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> Filter([FromBody] FilterHeatbeatViewModel filter)
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        public async Task<HttpResponseMessage> Filter([FromBody] FilterBloodSugarViewModel filter)
         {
-            #region Request parameters validation
+            #region ModelState result
 
             // Model hasn't been initialized.
             if (filter == null)
             {
-                filter = new FilterHeatbeatViewModel();
+                filter = new FilterBloodSugarViewModel();
                 Validate(filter);
             }
 
@@ -321,30 +344,23 @@ namespace Olives.Controllers
             #region Relationship validation
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
-            // No owner is specified. That means the owner is the requester.
+            // Owner is not specified. That means the requester wants to see his/her records.
             if (filter.Owner == null)
                 filter.Owner = requester.Id;
-            else
+
+            // Find the relationship between the requester and owner.
+            var isRelationshipAvailable = await _repositoryRelation.IsPeopleConnected(filter.Owner.Value, requester.Id);
+            if (!isRelationshipAvailable)
             {
-                // Check the relationship between the owner and requester.
-                var isRelationshipAvailable =
-                    await _repositoryRelation.IsPeopleConnected(requester.Id, filter.Owner.Value);
+                _log.Error($"There is no relationship between requester [Id: {requester.Id}] and blood sugar owner [Id: {filter.Owner}]");
 
-                // There is no active relationship between 'em.
-                if (!isRelationshipAvailable)
+                return Request.CreateResponse(HttpStatusCode.OK, new
                 {
-                    // Log the error.
-                    _log.Error(
-                        $"There is no relationship between requester [Id: {requester.Id}] and owner [Id:{filter.Owner}]");
-
-                    return Request.CreateResponse(HttpStatusCode.OK, new
-                    {
-                        Heartbeats = new object[0],
-                        Total = 0
-                    });
-                }
+                    BloodSugars = new object[0],
+                    Total = 0
+                });
             }
 
             #endregion
@@ -352,20 +368,21 @@ namespace Olives.Controllers
             #region Result handling
 
             // Retrieve the results list.
-            var result = await _repositoryHeartbeat.FilterHeartbeatAsync(filter);
-
+            var result = await _repositorySugarblood.FilterBloodSugarAsync(filter);
+            
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Heartbeats = result.Heartbeats.Select(x => new
+                BloodSugars = result.Sugarbloods.Select(x => new
                 {
                     x.Id,
                     x.Created,
                     x.LastModified,
                     x.Note,
                     x.Owner,
-                    x.Rate,
-                    x.Time
-                })
+                    x.Time,
+                    x.Value
+                }),
+                result.Total
             });
 
             #endregion
@@ -376,17 +393,17 @@ namespace Olives.Controllers
         #region Properties
 
         /// <summary>
-        ///     Repository of heartbeats
+        ///     Repository of sugarblood notes.
         /// </summary>
-        private readonly IRepositoryHeartbeat _repositoryHeartbeat;
+        private readonly IRepositoryBloodSugar _repositorySugarblood;
 
         /// <summary>
-        ///     Repository of relationships.
+        /// Repository of relationship.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
 
         /// <summary>
-        ///     Service which provides functions to access time calculation.
+        ///     Service which provides function to access
         /// </summary>
         private readonly ITimeService _timeService;
 

@@ -28,11 +28,10 @@ namespace Shared.Interfaces
         Task<Addiction> FindAddictionAsync(int id);
 
         /// <summary>
-        ///     Delete an allergy synchronously.
+        ///     Delete an allergy asynchronously.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="owner"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        Task<int> DeleteAddictionAsync(int id, int owner);
+        Task<int> DeleteAddictionAsync(FilterAddictionViewModel filter);
     }
 }

@@ -8,8 +8,16 @@ using Shared.Resources;
 
 namespace Shared.ViewModels.Filter
 {
-    public class FilterSugarbloodViewModel : IPagination
+    public class FilterBloodSugarViewModel : IPagination
     {
+        /// <summary>
+        /// Id of blood sugar record.
+        /// </summary>
+        public int? Id { get; set; }
+
+        /// <summary>
+        /// Owner of blood sugar record.
+        /// </summary>
         public int? Owner { get; set; }
 
         [Range(Values.MinSugarBloodMmol, Values.MaxSugarBloodMmol, ErrorMessageResourceType = typeof (Language),

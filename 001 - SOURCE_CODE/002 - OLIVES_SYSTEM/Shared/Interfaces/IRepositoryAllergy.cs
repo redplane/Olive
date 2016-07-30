@@ -24,16 +24,14 @@ namespace Shared.Interfaces
         ///     Find allergy by using id and owner id.
         /// </summary>
         /// <param name="id">Allergy Id</param>
-        /// <param name="owner">Allergy owner</param>
         /// <returns></returns>
-        Task<Allergy> FindAllergyAsync(int id, int? owner);
+        Task<Allergy> FindAllergyAsync(int id);
 
         /// <summary>
-        ///     Delete an allergy synchronously.
+        ///     Delete an allergy asynchronously.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="owner"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        Task<int> DeleteAllergyAsync(int id, int owner);
+        Task<int> DeleteAllergyAsync(FilterAllergyViewModel filter);
     }
 }

@@ -4,9 +4,9 @@ using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Resources;
 
-namespace Shared.ViewModels.Initialize
+namespace Olives.ViewModels.Initialize
 {
-    public class InitializeSugarbloodViewModel
+    public class InitializeBloodSugarViewModel
     {
         /// <summary>
         ///     Value of sugar in blood.

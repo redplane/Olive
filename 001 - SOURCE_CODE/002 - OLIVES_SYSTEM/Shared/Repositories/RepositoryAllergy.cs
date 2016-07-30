@@ -24,46 +24,51 @@ namespace Shared.Repositories
             var context = new OlivesHealthEntities();
 
             // By default, take all records.
-            IQueryable<Allergy> results = context.Allergies;
+            IQueryable<Allergy> allergies = context.Allergies;
+
+            // Id is specified.
+            if (filter.Id != null)
+                allergies = allergies.Where(x => x.Id == filter.Id.Value);
             
             // Owner has been specified.
             if (filter.Owner != null)
-                results = results.Where(x => x.Owner == filter.Owner);
+                allergies = allergies.Where(x => x.Owner == filter.Owner);
 
             // Name has been specified.
             if (!string.IsNullOrEmpty(filter.Name))
-                results = results.Where(x => x.Name.Contains(filter.Name));
+                allergies = allergies.Where(x => x.Name.Contains(filter.Name));
 
             // Cause has been specified.
             if (!string.IsNullOrEmpty(filter.Cause))
-                results = results.Where(x => x.Cause.Contains(filter.Cause));
+                allergies = allergies.Where(x => x.Cause.Contains(filter.Cause));
 
             // Note has been specified.
             if (!string.IsNullOrEmpty(filter.Note))
-                results = results.Where(x => x.Note.Contains(filter.Note));
+                allergies = allergies.Where(x => x.Note.Contains(filter.Note));
 
             // Either Min/Max Created has been specified.
             if (filter.MinCreated != null)
-                results = results.Where(x => x.Created >= filter.MinCreated);
+                allergies = allergies.Where(x => x.Created >= filter.MinCreated);
             if (filter.MaxCreated != null)
-                results = results.Where(x => x.Created <= filter.MaxCreated);
+                allergies = allergies.Where(x => x.Created <= filter.MaxCreated);
 
             // Either Min/Max LastModified has been specified.
             if (filter.MinLastModified != null)
-                results = results.Where(x => x.LastModified != null && x.LastModified >= filter.MinLastModified);
+                allergies = allergies.Where(x => x.LastModified != null && x.LastModified >= filter.MinLastModified);
             if (filter.MaxLastModified != null)
-                results = results.Where(x => x.LastModified != null && x.LastModified >= filter.MaxLastModified);
-
+                allergies = allergies.Where(x => x.LastModified != null && x.LastModified >= filter.MaxLastModified);
+            
+            // Result sorting.
             switch (filter.Direction)
             {
-                case SortDirection.Ascending:
+                case SortDirection.Decending:
                     switch (filter.Sort)
                     {
                         case NoteResultSort.Created:
-                            results = results.OrderBy(x => x.Created);
+                            allergies = allergies.OrderByDescending(x => x.Created);
                             break;
                         default:
-                            results = results.OrderBy(x => x.LastModified);
+                            allergies = allergies.OrderByDescending(x => x.LastModified);
                             break;
                     }
                     break;
@@ -71,10 +76,10 @@ namespace Shared.Repositories
                     switch (filter.Sort)
                     {
                         case NoteResultSort.Created:
-                            results = results.OrderByDescending(x => x.Created);
+                            allergies = allergies.OrderBy(x => x.Created);
                             break;
                         default:
-                            results = results.OrderByDescending(x => x.LastModified);
+                            allergies = allergies.OrderBy(x => x.LastModified);
                             break;
                     }
                     break;
@@ -84,18 +89,16 @@ namespace Shared.Repositories
             var response = new ResponseAllergyFilter();
 
             // Count the matched records before result truncation.
-            response.Total = await results.CountAsync();
+            response.Total = await allergies.CountAsync();
             
             // Record is defined.
             if (filter.Records != null)
             {
-                results = results.Skip(filter.Page*filter.Records.Value)
+                allergies = allergies.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
-            response.Allergies = await results
-                .ToListAsync();
-
+            response.Allergies = allergies;
             return response;
         }
 
@@ -122,43 +125,66 @@ namespace Shared.Repositories
         ///     Find allergy by using id and owner id.
         /// </summary>
         /// <param name="id">Allergy Id</param>
-        /// <param name="owner">Allergy owner</param>
         /// <returns></returns>
-        public async Task<Allergy> FindAllergyAsync(int id, int? owner)
+        public async Task<Allergy> FindAllergyAsync(int id)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
-            // By default, take all allergy.
-            IQueryable<Allergy> allergies = context.Allergies;
-
-            // Filter allergy by using id.
-            allergies = allergies.Where(x => x.Id == id);
-
-            // Ower is specified.
-            if (owner != null)
-                allergies = allergies.Where(x => x.Owner == owner);
-
-            // Find allergy with given conditions.
-            return await context.Allergies.FirstOrDefaultAsync(x => x.Id == id && x.Owner == owner);
+            return await context.Allergies.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         /// <summary>
         ///     Delete an allergy synchrounously.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="owner"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<int> DeleteAllergyAsync(int id, int owner)
+        public async Task<int> DeleteAllergyAsync(FilterAllergyViewModel filter)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
-            // Find and remove the condition matched result.
-            context.Allergies.RemoveRange(context.Allergies.Where(x => x.Id == id && x.Owner == owner));
+            // By default, take all records.
+            IQueryable<Allergy> allergies = context.Allergies;
 
-            // Count the number of affected records.
+            // Id is specified.
+            if (filter.Id != null)
+                allergies = allergies.Where(x => x.Id == filter.Id.Value);
+
+            // Owner has been specified.
+            if (filter.Owner != null)
+                allergies = allergies.Where(x => x.Owner == filter.Owner);
+
+            // Name has been specified.
+            if (!string.IsNullOrEmpty(filter.Name))
+                allergies = allergies.Where(x => x.Name.Contains(filter.Name));
+
+            // Cause has been specified.
+            if (!string.IsNullOrEmpty(filter.Cause))
+                allergies = allergies.Where(x => x.Cause.Contains(filter.Cause));
+
+            // Note has been specified.
+            if (!string.IsNullOrEmpty(filter.Note))
+                allergies = allergies.Where(x => x.Note.Contains(filter.Note));
+
+            // Either Min/Max Created has been specified.
+            if (filter.MinCreated != null)
+                allergies = allergies.Where(x => x.Created >= filter.MinCreated);
+            if (filter.MaxCreated != null)
+                allergies = allergies.Where(x => x.Created <= filter.MaxCreated);
+
+            // Either Min/Max LastModified has been specified.
+            if (filter.MinLastModified != null)
+                allergies = allergies.Where(x => x.LastModified != null && x.LastModified >= filter.MinLastModified);
+            if (filter.MaxLastModified != null)
+                allergies = allergies.Where(x => x.LastModified != null && x.LastModified >= filter.MaxLastModified);
+
+            // Remove the filtered result.
+            context.Allergies.RemoveRange(allergies);
+
+            // Save change.
             var records = await context.SaveChangesAsync();
+
             return records;
         }
     }

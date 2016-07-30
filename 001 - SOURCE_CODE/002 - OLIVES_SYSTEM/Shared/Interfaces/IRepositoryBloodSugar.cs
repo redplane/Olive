@@ -5,33 +5,33 @@ using Shared.ViewModels.Response;
 
 namespace Shared.Interfaces
 {
-    public interface IRepositoryBloodPressure
+    public interface IRepositoryBloodSugar
     {
         /// <summary>
-        ///     Initialize and save heart
+        ///     Initialize and save blood sugar
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        Task<BloodPressure> InitializeBloodPressureNoteAsync(BloodPressure info);
+        Task<SugarBlood> InitializeSugarbloodNoteAsync(SugarBlood info);
 
         /// <summary>
-        ///     Find heartbeat by using heartbeat note id.
+        ///     Find blood sugar by using blood sugar note id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BloodPressure> FindBloodPressureNoteAsync(int id);
+        Task<SugarBlood> FindBloodSugarAsync(int id);
 
         /// <summary>
-        ///     Find heartbeat by using conditions.
+        ///     Find blood sugar by using conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        Task<ResponseBloodPressureFilter> FilterBloodPressureNoteAsync(FilterBloodPressureViewModel filter);
+        Task<ResponseBloodSugarFilter> FilterBloodSugarAsync(FilterBloodSugarViewModel filter);
 
         /// <summary>
-        ///     Delete a heartbeat note asynchronously.
+        ///     Delete a blood sugar note asynchronously.
         /// </summary>
         /// <param name="filter"></param>
-        Task<int> DeleteBloodPressureNoteAsync(FilterBloodPressureViewModel filter);
+        Task<int> DeleteBloodSugarAsync(FilterBloodSugarViewModel filter);
     }
 }

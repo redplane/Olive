@@ -11,6 +11,11 @@ namespace Shared.ViewModels.Filter
     public class FilterBloodPressureViewModel : IPagination
     {
         /// <summary>
+        /// Id of note.
+        /// </summary>
+        public int? Id { get; set; }
+
+        /// <summary>
         ///     Owner id of heartbeat.
         /// </summary>
         public int? Owner { get; set; }

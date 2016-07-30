@@ -282,6 +282,10 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<bool> IsPeopleConnected(int firstPerson, int secondPerson)
         {
+            // Person is connect to him/herself.
+            if (firstPerson == secondPerson)
+                return true;
+
             // Database context initialization.
             var context = new OlivesHealthEntities();
 

@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
+using Olives.ViewModels.Edit;
+using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels.Filter;
-using Shared.ViewModels.Initialize;
 
 namespace Olives.Controllers
 {
@@ -51,6 +52,8 @@ namespace Olives.Controllers
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
+            #region Record find
+
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
@@ -60,6 +63,9 @@ namespace Olives.Controllers
             // No result has been received.
             if (addiction == null)
             {
+                // Log the error.
+                _log.Error($"There is no addiction [Id: {id}] in database");
+
                 // Tell client no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
@@ -67,25 +73,29 @@ namespace Olives.Controllers
                 });
             }
 
-            // Requester is requesting to see the personal note of another person.
-            if (requester.Id != addiction.Owner)
-            {
-                // Retrieve the relation between these 2 people.
-                var relationships =
-                    await
-                        _repositoryRelation.FindRelationshipAsync(requester.Id, addiction.Owner,
-                            (byte) StatusRelation.Active);
+            #endregion
 
-                // There is no relationship between these 2 people
-                if (relationships == null || relationships.Count < 1)
+            #region Relationship find
+
+            // Find the relationship between the requester and the owner.
+            var isRelationshipAvailable = await _repositoryRelation.IsPeopleConnected(requester.Id, addiction.Owner);
+
+            if (!isRelationshipAvailable)
+            {
+                // Log the error.
+                _log.Error(
+                    $"There is no relationship between requester [Id: {requester.Id}] and the record owner [Id: {addiction.Owner}]");
+
+                // Tell client no record has been found.
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    // Tell client no record has been found.
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new
-                    {
-                        Error = $"{Language.WarnRecordNotFound}"
-                    });
-                }
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
             }
+
+            #endregion
+
+            #region Result handling
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -99,6 +109,8 @@ namespace Olives.Controllers
                     addiction.Owner
                 }
             });
+
+            #endregion
         }
 
         /// <summary>
@@ -111,6 +123,8 @@ namespace Olives.Controllers
         [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> Post([FromBody] InitializeAddictionViewModel info)
         {
+            #region Request parameters validation
+
             // Model hasn't been initialized.
             if (info == null)
             {
@@ -126,6 +140,10 @@ namespace Olives.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
 
+            #endregion
+
+            #region Record initialization
+
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
@@ -135,6 +153,10 @@ namespace Olives.Controllers
             addiction.Cause = info.Cause;
             addiction.Note = info.Note;
             addiction.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+
+            #endregion
+
+            #region Result handling
 
             // Insert a new allergy to database.
             var result = await _repositoryAddiction.InitializeAddictionAsync(addiction);
@@ -149,39 +171,55 @@ namespace Olives.Controllers
                     result.Created
                 }
             });
+
+            #endregion
         }
 
         /// <summary>
         ///     Edit an addiction asynchronously.
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="info"></param>
+        /// <param name="modifier"></param>
         /// <returns></returns>
         [Route("api/addiction")]
         [HttpPut]
         [OlivesAuthorize(new[] {Role.Patient})]
-        public async Task<HttpResponseMessage> Put([FromUri] int id, InitializeAddictionViewModel info)
+        public async Task<HttpResponseMessage> Put([FromUri] int id, EditAddictionViewModel modifier)
         {
+            #region Request parameters validation
+
             // Request parameters haven't been initialized.
-            if (info == null)
+            if (modifier == null)
             {
-                info = new InitializeAddictionViewModel();
-                Validate(info);
+                modifier = new EditAddictionViewModel();
+                Validate(modifier);
             }
 
             // Request parameters are invalid.
             if (!ModelState.IsValid)
+            {
+                // Log the errors.
+                _log.Error("Request parameters are invalid. Errors sent to client.");
+
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            #endregion
+
+            #region Record find
 
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find the addiction of the requester with the same id.
-            var result = await _repositoryAddiction.FindAddictionAsync(id);
+            var addiction = await _repositoryAddiction.FindAddictionAsync(id);
 
             // Invalid record or record is not unique.
-            if (result == null || requester.Id != result.Owner)
+            if (addiction == null)
             {
+                // Log the error.
+                _log.Error($"There is no addiction [Id: {id}] in database");
+
                 // Tell client no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
@@ -189,31 +227,50 @@ namespace Olives.Controllers
                 });
             }
 
-            // Update the information.
-            if (!string.IsNullOrWhiteSpace(info.Cause))
-                result.Cause = info.Cause;
+            // Requester is not the owner of record.
+            if (addiction.Owner != requester.Id)
+            {
+                // Log the error.
+                _log.Error($"Requester is not the owner of addiction [Id: {id}]");
 
-            if (info.Note != null)
-                result.Note = info.Note;
+                // Tell client no record has been found.
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
+
+            #endregion
+
+            #region Result update & handling
+
+            // Update the information.
+            if (!string.IsNullOrWhiteSpace(modifier.Cause))
+                addiction.Cause = modifier.Cause;
+
+            if (!string.IsNullOrWhiteSpace(modifier.Note))
+                addiction.Note = modifier.Note;
 
             // Update the last time record was lastly modified.
-            result.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+            addiction.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Update record to database.
-            result = await _repositoryAddiction.InitializeAddictionAsync(result);
+            addiction = await _repositoryAddiction.InitializeAddictionAsync(addiction);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 Addiction = new
                 {
-                    result.Id,
-                    result.Cause,
-                    result.Note,
-                    result.Created,
-                    result.LastModified,
-                    result.Owner
+                    addiction.Id,
+                    addiction.Cause,
+                    addiction.Note,
+                    addiction.Created,
+                    addiction.LastModified,
+                    addiction.Owner
                 }
             });
+
+            #endregion
         }
 
         /// <summary>
@@ -231,12 +288,20 @@ namespace Olives.Controllers
 
             try
             {
+                // Initialize filter.
+                var filter = new FilterAddictionViewModel();
+                filter.Id = id;
+                filter.Owner = requester.Id;
+
                 // Remove the addiction of the requester.
-                var affectedRecords = await _repositoryAddiction.DeleteAddictionAsync(id, requester.Id);
+                var affectedRecords = await _repositoryAddiction.DeleteAddictionAsync(filter);
 
                 // No record has been affected.
                 if (affectedRecords < 1)
                 {
+                    // Log the error.
+                    _log.Error($"There is no addiction [Id: {id}] with owner [Id: {requester.Id}] in database");
+
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {
                         Error = $"{Language.WarnRecordNotFound}"
@@ -258,6 +323,11 @@ namespace Olives.Controllers
             }
         }
 
+        /// <summary>
+        ///     Filter list of addictions by using specific conditions.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         [Route("api/addiction/filter")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
@@ -285,31 +355,30 @@ namespace Olives.Controllers
 
             #region Relationship validation
 
-            // Requester is different from the addictions owner.
-            if (filter.Owner != null && requester.Id != filter.Owner.Value)
-            {
-                // Retrieve the relation between these 2 people.
-                var relationships =
-                    await
-                        _repositoryRelation.FindRelationshipAsync(requester.Id, filter.Owner.Value,
-                            (byte) StatusRelation.Active);
-
-                // There is no relationship between these 2 people
-                if (relationships == null || relationships.Count < 1)
-                {
-                    // Tell client no record has been found.
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                    {
-                        Error = $"{Language.WarnHasNoRelationship}"
-                    });
-                }
-            }
-            else
-            {
+            // Owner is not specified. That means requester wants to see his/her records.
+            if (filter.Owner == null)
                 filter.Owner = requester.Id;
+
+            // Check whether there is a relationship between requester and owner or not.
+            var isRelationshipAvailable = await _repositoryRelation.IsPeopleConnected(filter.Owner.Value, requester.Id);
+
+            // There is no relationship between 'em.
+            if (!isRelationshipAvailable)
+            {
+                // Log the error.
+                _log.Error(
+                    $"There is no relationship between requester [Id: {requester.Id}] and record owner [Id: {filter.Owner}]");
+
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    Addictions = new object[0],
+                    Total = 0
+                });
             }
 
             #endregion
+
+            #region Result filtering and handling
 
             // Filter addictions by using specific conditions.
             var result = await _repositoryAddiction.FilterAddictionAsync(filter);
@@ -327,6 +396,8 @@ namespace Olives.Controllers
                 }),
                 result.Total
             });
+
+            #endregion
         }
 
         #endregion

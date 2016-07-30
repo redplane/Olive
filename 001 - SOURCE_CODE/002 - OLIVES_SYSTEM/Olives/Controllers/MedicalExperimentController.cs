@@ -304,7 +304,7 @@ namespace Olives.Controllers
         /// <param name="filter"></param>
         /// <returns></returns>
         [Route("api/medical/experiment/filter")]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> FilterMedicalExperimentNoteAsync(
             [FromBody] FilterExperimentNoteViewModel filter)
         {

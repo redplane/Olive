@@ -2,15 +2,13 @@
 using Shared.Constants;
 using Shared.Resources;
 
-namespace Shared.ViewModels.Initialize
+namespace Olives.ViewModels.Edit
 {
-    public class InitializeAddictionViewModel
+    public class EditAddictionViewModel
     {
         /// <summary>
         ///     What patient is addictive with.
         /// </summary>
-        [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "ValueIsRequired")]
         [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Cause { get; set; }

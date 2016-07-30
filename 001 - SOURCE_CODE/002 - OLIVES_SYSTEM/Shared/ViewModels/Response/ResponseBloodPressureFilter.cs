@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Shared.Models;
 
 namespace Shared.ViewModels.Response
 {
@@ -7,7 +8,7 @@ namespace Shared.ViewModels.Response
         /// <summary>
         ///     List of specialties.
         /// </summary>
-        public IList<BloodPressureViewModel> BloodPressures { get; set; }
+        public IEnumerable<BloodPressure> BloodPressures { get; set; }
 
         /// <summary>
         ///     How many specialties match with conditions.

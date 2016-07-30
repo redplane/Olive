@@ -38,40 +38,85 @@ namespace Shared.Repositories
         ///     Find heartbeat note by using id and owner id.
         /// </summary>
         /// <param name="id">Allergy Id</param>
-        /// <param name="owner">Allergy owner</param>
         /// <returns></returns>
-        public async Task<IList<BloodPressure>> FindBloodPressureNoteAsync(int id, int? owner)
+        public async Task<BloodPressure> FindBloodPressureNoteAsync(int id)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
             // Find heartbeat note by using id.
-            var results = context.BloodPressures.Where(x => x.Id == id);
-
-            // Owner has been specified.
-            if (owner != null)
-                results = results.Where(x => x.Owner == owner);
-
-            return await results.ToListAsync();
+            return await context.BloodPressures.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         /// <summary>
-        ///     Delete a blood pressure note asynchrounously.
+        ///     Delete a blood pressure note asynchronously.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="owner"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<int> DeleteBloodPressureNoteAsync(int id, int owner)
+        public async Task<int> DeleteBloodPressureNoteAsync(FilterBloodPressureViewModel filter)
         {
-            // Database context initialization.
+            #region Record filter
+
+            // Data context initialization.
             var context = new OlivesHealthEntities();
 
+            // By default, take all information.
+            IQueryable<BloodPressure> bloodPressures = context.BloodPressures;
+
+            // Id is specified.
+            if (filter.Id != null)
+                bloodPressures = bloodPressures.Where(x => x.Id == filter.Id.Value);
+
+            // Owner has been specified.
+            if (filter.Owner != null)
+                bloodPressures = bloodPressures.Where(x => x.Owner == filter.Owner);
+
+            // Systolic has been specified.
+            if (filter.MinSystolic != null)
+                bloodPressures = bloodPressures.Where(x => x.Systolic >= filter.MinSystolic);
+            if (filter.MaxSystolic != null)
+                bloodPressures = bloodPressures.Where(x => x.Systolic <= filter.MaxSystolic);
+
+            // Diastolic has been specified.
+            if (filter.MinDiastolic != null)
+                bloodPressures = bloodPressures.Where(x => x.Diastolic >= filter.MinDiastolic);
+            if (filter.MaxDiastolic != null)
+                bloodPressures = bloodPressures.Where(x => x.Diastolic <= filter.MaxDiastolic);
+
+            // Time has been specified.
+            if (filter.MinTime != null)
+                bloodPressures = bloodPressures.Where(x => x.Time >= filter.MinTime);
+            if (filter.MaxTime != null)
+                bloodPressures = bloodPressures.Where(x => x.Time <= filter.MaxTime);
+
+            // Created has been specified.
+            if (filter.MinCreated != null)
+                bloodPressures = bloodPressures.Where(x => x.Created >= filter.MinCreated);
+            if (filter.MaxCreated != null)
+                bloodPressures = bloodPressures.Where(x => x.Created <= filter.MaxCreated);
+
+            // LastModified has been specified.
+            if (filter.MinLastModified != null)
+                bloodPressures = bloodPressures.Where(x => x.LastModified >= filter.MinLastModified);
+            if (filter.MaxLastModified != null)
+                bloodPressures = bloodPressures.Where(x => x.LastModified <= filter.MaxLastModified);
+
+            // Note has been specified.
+            if (!string.IsNullOrEmpty(filter.Note))
+                bloodPressures = bloodPressures.Where(x => x.Note.Contains(filter.Note));
+
+            #endregion
+
+            #region Record handling
+
             // Find and delete a note.
-            context.BloodPressures.RemoveRange(context.BloodPressures.Where(x => x.Id == id && x.Owner == owner));
+            context.BloodPressures.RemoveRange(bloodPressures);
 
             // Count the affeted records.
-            var deletedRecords = await context.SaveChangesAsync();
-            return deletedRecords;
+            var records = await context.SaveChangesAsync();
+            return records;
+
+            #endregion
         }
 
         /// <summary>
@@ -85,107 +130,97 @@ namespace Shared.Repositories
             var context = new OlivesHealthEntities();
 
             // By default, take all information.
-            IQueryable<BloodPressure> results = context.BloodPressures;
+            IQueryable<BloodPressure> bloodPressures = context.BloodPressures;
+
+            // Id is specified.
+            if (filter.Id != null)
+                bloodPressures = bloodPressures.Where(x => x.Id == filter.Id.Value);
 
             // Owner has been specified.
             if (filter.Owner != null)
-                results = results.Where(x => x.Owner == filter.Owner);
+                bloodPressures = bloodPressures.Where(x => x.Owner == filter.Owner);
 
             // Systolic has been specified.
             if (filter.MinSystolic != null)
-                results = results.Where(x => x.Systolic >= filter.MinSystolic);
+                bloodPressures = bloodPressures.Where(x => x.Systolic >= filter.MinSystolic);
             if (filter.MaxSystolic != null)
-                results = results.Where(x => x.Systolic <= filter.MaxSystolic);
+                bloodPressures = bloodPressures.Where(x => x.Systolic <= filter.MaxSystolic);
 
             // Diastolic has been specified.
             if (filter.MinDiastolic != null)
-                results = results.Where(x => x.Diastolic >= filter.MinDiastolic);
+                bloodPressures = bloodPressures.Where(x => x.Diastolic >= filter.MinDiastolic);
             if (filter.MaxDiastolic != null)
-                results = results.Where(x => x.Diastolic <= filter.MaxDiastolic);
+                bloodPressures = bloodPressures.Where(x => x.Diastolic <= filter.MaxDiastolic);
 
 
             // Time has been specified.
             if (filter.MinTime != null)
-                results = results.Where(x => x.Time >= filter.MinTime);
+                bloodPressures = bloodPressures.Where(x => x.Time >= filter.MinTime);
             if (filter.MaxTime != null)
-                results = results.Where(x => x.Time <= filter.MaxTime);
+                bloodPressures = bloodPressures.Where(x => x.Time <= filter.MaxTime);
 
             // Created has been specified.
             if (filter.MinCreated != null)
-                results = results.Where(x => x.Created >= filter.MinCreated);
+                bloodPressures = bloodPressures.Where(x => x.Created >= filter.MinCreated);
             if (filter.MaxCreated != null)
-                results = results.Where(x => x.Created <= filter.MaxCreated);
+                bloodPressures = bloodPressures.Where(x => x.Created <= filter.MaxCreated);
 
             // LastModified has been specified.
             if (filter.MinLastModified != null)
-                results = results.Where(x => x.LastModified >= filter.MinLastModified);
+                bloodPressures = bloodPressures.Where(x => x.LastModified >= filter.MinLastModified);
             if (filter.MaxLastModified != null)
-                results = results.Where(x => x.LastModified <= filter.MaxLastModified);
+                bloodPressures = bloodPressures.Where(x => x.LastModified <= filter.MaxLastModified);
 
             // Note has been specified.
             if (!string.IsNullOrEmpty(filter.Note))
-                results = results.Where(x => x.Note.Contains(filter.Note));
+                bloodPressures = bloodPressures.Where(x => x.Note.Contains(filter.Note));
 
-            // Order by last modified.
-            results = results.OrderByDescending(x => x.LastModified);
+            // Result sorting.
+            switch (filter.Direction)
+            {
+                case SortDirection.Decending:
+                    switch (filter.Sort)
+                    {
+                        case NoteResultSort.Created:
+                            bloodPressures = bloodPressures.OrderByDescending(x => x.Created);
+                            break;
+                        case NoteResultSort.LastModified:
+                            bloodPressures = bloodPressures.OrderByDescending(x => x.LastModified);
+                            break;
+                        default:
+                            bloodPressures = bloodPressures.OrderByDescending(x => x.Time);
+                            break;
+                    }
+                    break;
+                default:
+                    switch (filter.Sort)
+                    {
+                        case NoteResultSort.Created:
+                            bloodPressures = bloodPressures.OrderBy(x => x.Created);
+                            break;
+                        case NoteResultSort.LastModified:
+                            bloodPressures = bloodPressures.OrderBy(x => x.LastModified);
+                            break;
+                        default:
+                            bloodPressures = bloodPressures.OrderBy(x => x.Time);
+                            break;
+                    }
+                    break;
+            }
 
             // Initialize response and throw result back.
             var response = new ResponseBloodPressureFilter();
-            response.Total = await results.CountAsync();
-
-            // Calculate what records should be shown up.
-            var skippedRecords = filter.Page*filter.Records;
-
-            // Sort the result.
-            switch (filter.Sort)
-            {
-                case NoteResultSort.Created:
-                    if (filter.Direction == SortDirection.Ascending)
-                    {
-                        results = results.OrderBy(x => x.Created);
-                        break;
-                    }
-
-                    results = results.OrderByDescending(x => x.Created);
-                    break;
-                case NoteResultSort.LastModified:
-                    if (filter.Direction == SortDirection.Ascending)
-                    {
-                        results = results.OrderBy(x => x.LastModified);
-                        break;
-                    }
-                    results = results.OrderByDescending(x => x.LastModified);
-                    break;
-                default:
-                    if (filter.Direction == SortDirection.Ascending)
-                    {
-                        results = results.OrderBy(x => x.Time);
-                        break;
-                    }
-
-                    results = results.OrderByDescending(x => x.Time);
-                    break;
-            }
+            response.Total = await bloodPressures.CountAsync();
 
             // Record is defined.
             if (filter.Records != null)
             {
-                results = results.Skip(filter.Page*filter.Records.Value)
+                bloodPressures = bloodPressures.Skip(filter.Page * filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
-            response.BloodPressures = await results
-                .Select(x => new BloodPressureViewModel
-                {
-                    Id = x.Id,
-                    Systolic = x.Systolic,
-                    Diastolic = x.Diastolic,
-                    Time = x.Time,
-                    Note = x.Note,
-                    Created = x.Created,
-                    LastModified = x.LastModified
-                })
-                .ToListAsync();
+            // Response results construction.
+            response.BloodPressures = bloodPressures;
 
             // Return filtered result.
             return response;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -7,15 +6,15 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
+using Olives.ViewModels.Edit;
+using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
-using Shared.ViewModels;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Initialize;
-using Shared.ViewModels.Response;
 
 namespace Olives.Controllers
 {
@@ -53,15 +52,20 @@ namespace Olives.Controllers
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
+            #region Record find
+
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
-            // Retrieve the results list.
-            var results = await _repositoryBloodPressure.FindBloodPressureNoteAsync(id, requester.Id);
+            // Retrieve the result.
+            var bloodPressureNote = await _repositoryBloodPressure.FindBloodPressureNoteAsync(id);
 
             // No result has been received.
-            if (results == null || results.Count != 1)
+            if (bloodPressureNote == null)
             {
+                // Log the error.
+                _log.Error($"There is no blood pressure [Id: {id}] found in database");
+
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
@@ -69,25 +73,46 @@ namespace Olives.Controllers
                 });
             }
 
-            // Retrieve the 1st queried result.
-            var result = results
-                .Select(x => new BloodPressureViewModel
+            #endregion
+
+            #region Relationship check
+
+            // Check the relationship between the requester and owner.
+            var isRelationshipAvailable =
+                await _repositoryRelation.IsPeopleConnected(requester.Id, bloodPressureNote.Owner);
+
+            if (!isRelationshipAvailable)
+            {
+                // Log the error.
+                _log.Error($"There is no blood pressure [Id: {id}] found in database");
+
+                // Tell front-end, no record has been found.
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Id = x.Id,
-                    Created = x.Created,
-                    Diastolic = x.Diastolic,
-                    LastModified = x.LastModified,
-                    Note = x.Note,
-                    Owner = x.Owner,
-                    Systolic = x.Systolic,
-                    Time = x.Time
-                })
-                .FirstOrDefault();
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
+
+            #endregion
+
+            #region Result handling
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                BloodPressure = result
+                BloodPressure = new
+                {
+                    bloodPressureNote.Id,
+                    bloodPressureNote.Created,
+                    bloodPressureNote.Diastolic,
+                    bloodPressureNote.LastModified,
+                    bloodPressureNote.Note,
+                    bloodPressureNote.Owner,
+                    bloodPressureNote.Systolic,
+                    bloodPressureNote.Time
+                }
             });
+
+            #endregion
         }
 
         /// <summary>
@@ -99,7 +124,7 @@ namespace Olives.Controllers
         [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> Post([FromBody] InitializeBloodPressureViewModel info)
         {
-            #region ModelState result
+            #region Request parameter validation
 
             // Model hasn't been initialized.
             if (info == null)
@@ -119,6 +144,8 @@ namespace Olives.Controllers
             }
 
             #endregion
+
+            #region Record initalization
 
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
@@ -132,37 +159,43 @@ namespace Olives.Controllers
             bloodPressure.Note = info.Note;
             bloodPressure.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
+            #endregion
+
+            #region Result handling
+
             // Insert a new allergy to database.
-            var result = await _repositoryBloodPressure.InitializeBloodPressureNoteAsync(bloodPressure);
+            bloodPressure = await _repositoryBloodPressure.InitializeBloodPressureNoteAsync(bloodPressure);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 BloodPressure = new
                 {
-                    result.Id,
-                    result.Systolic,
-                    result.Diastolic,
-                    result.Time,
-                    result.Note,
-                    result.Created
+                    bloodPressure.Id,
+                    bloodPressure.Systolic,
+                    bloodPressure.Diastolic,
+                    bloodPressure.Time,
+                    bloodPressure.Note,
+                    bloodPressure.Created
                 }
             });
+
+            #endregion
         }
 
         /// <summary>
         ///     Edit an allergy.
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="info"></param>
+        /// <param name="modifier"></param>
         /// <returns></returns>
         [HttpPut]
         [OlivesAuthorize(new[] {Role.Patient})]
-        public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] InitializeBloodPressureViewModel info)
+        public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] EditBloodPressureViewModel modifier)
         {
-            #region ModelState result
+            #region Request parameters validation
 
             // Model hasn't been initialized.
-            if (info == null)
+            if (modifier == null)
             {
                 _log.Error("Invalid allergies filter request parameters");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new
@@ -180,15 +213,20 @@ namespace Olives.Controllers
 
             #endregion
 
+            #region Result find
+
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find allergy by using allergy id and owner id.
-            var results = await _repositoryBloodPressure.FindBloodPressureNoteAsync(id, requester.Id);
+            var bloodPressureNote = await _repositoryBloodPressure.FindBloodPressureNoteAsync(id);
 
             // Not record has been found.
-            if (results == null || results.Count < 1)
+            if (bloodPressureNote == null)
             {
+                // Log the error.
+                _log.Error($"Blood pressure note [Id: {id}] is not found");
+
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
@@ -196,50 +234,57 @@ namespace Olives.Controllers
                 });
             }
 
-            // Records are conflict.
-            if (results.Count != 1)
+            // Requester is not the owner of record.
+            if (bloodPressureNote.Owner != requester.Id)
             {
-                // Tell front-end, no record has been found.
+                // Log the error.
+                _log.Error(
+                    $"Requester [Id: {requester.Id}] is not the owner of blood pressure [Id: {bloodPressureNote.Id}]");
+
+                // Tell client no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
 
-            // Retrieve the first record.
-            var result = results.FirstOrDefault();
-            if (result == null)
-            {
-                // Tell front-end, no record has been found.
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
+            #endregion
 
-            // Confirm edit.
-            result.Diastolic = info.Diastolic;
-            result.Systolic = info.Systolic;
-            result.Time = info.Time;
-            result.Note = info.Note;
-            result.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+            #region Result handling
 
-            // Update allergy.
-            result = await _repositoryBloodPressure.InitializeBloodPressureNoteAsync(result);
+            if (modifier.Diastolic != null)
+                bloodPressureNote.Diastolic = modifier.Diastolic.Value;
+
+            if (modifier.Systolic != null)
+                bloodPressureNote.Systolic = modifier.Systolic.Value;
+
+            if (modifier.Time != null)
+                bloodPressureNote.Time = modifier.Time.Value;
+
+            if (!string.IsNullOrWhiteSpace(modifier.Note))
+                bloodPressureNote.Note = modifier.Note;
+
+            // Update the last modified time.
+            bloodPressureNote.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+
+            // Update the record.
+            bloodPressureNote = await _repositoryBloodPressure.InitializeBloodPressureNoteAsync(bloodPressureNote);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                BloodPressure = new BloodPressureViewModel
+                BloodPressure = new
                 {
-                    Id = result.Id,
-                    Systolic = result.Systolic,
-                    Diastolic = result.Diastolic,
-                    Time = result.Time,
-                    Note = result.Note,
-                    Created = result.Created,
-                    LastModified = result.LastModified
+                    bloodPressureNote.Id,
+                    bloodPressureNote.Systolic,
+                    bloodPressureNote.Diastolic,
+                    bloodPressureNote.Time,
+                    bloodPressureNote.Note,
+                    bloodPressureNote.Created,
+                    bloodPressureNote.LastModified
                 }
             });
+
+            #endregion
         }
 
         /// <summary>
@@ -256,10 +301,18 @@ namespace Olives.Controllers
 
             try
             {
+                // Filter initialization.
+                var filter = new FilterBloodPressureViewModel();
+                filter.Id = id;
+                filter.Owner = requester.Id;
+
                 // Remove the found allergy.
-                var deletedRecords = await _repositoryBloodPressure.DeleteBloodPressureNoteAsync(id, requester.Id);
+                var deletedRecords = await _repositoryBloodPressure.DeleteBloodPressureNoteAsync(filter);
                 if (deletedRecords < 1)
                 {
+                    // Log the error.
+                    _log.Error($"There is no blood pressure note [Id: {id} in database");
+
                     // Tell front-end, no record has been found.
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {
@@ -282,18 +335,20 @@ namespace Olives.Controllers
         /// <summary>
         ///     Filter specialties by using specific conditions.
         /// </summary>
-        /// <param name="info"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
         [Route("api/bloodpressure/filter")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> Filter([FromBody] FilterBloodPressureViewModel info)
+        public async Task<HttpResponseMessage> Filter([FromBody] FilterBloodPressureViewModel filter)
         {
+            #region Request parameters validation
+
             // Model hasn't been initialized.
-            if (info == null)
+            if (filter == null)
             {
-                info = new FilterBloodPressureViewModel();
-                Validate(info);
+                filter = new FilterBloodPressureViewModel();
+                Validate(filter);
             }
 
             // Invalid model state.
@@ -303,48 +358,56 @@ namespace Olives.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
 
+            #endregion
+
+            #region Relationship validation
+
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
-            // Owner has been specified.
-            if (info.Owner != null)
-            {
-                // Owner is the requester.
-                if (info.Owner == requester.Id)
-                    info.Owner = requester.Id;
-                else
-                {
-                    // Find the relation between the owner and the requester.
-                    var relationships = await _repositoryRelation.FindRelationshipAsync(requester.Id, info.Owner.Value,
-                        (byte) StatusAccount.Active);
+            // Owner hasn't been specified. That means the records belong to the requester.
+            if (filter.Owner == null)
+                filter.Owner = requester.Id;
 
-                    // No relationship has been found.
-                    if (relationships == null || relationships.Count < 1)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                        {
-                            Error = $"{Language.WarnHasNoRelationship}"
-                        });
-                    }
-                }
+            // Check the relationship between the requester and owner.
+            var isRelationshipAvailable = await _repositoryRelation.IsPeopleConnected(requester.Id, filter.Owner.Value);
+            if (!isRelationshipAvailable)
+            {
+                // Log the error.
+                _log.Error(
+                    $"There is no relationship between requester [Id: {requester.Id}] and record owner [Id: {filter.Owner}]");
+
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    BloodPressures = new object[0],
+                    Total = 0
+                });
             }
-            else
-                info.Owner = requester.Id;
+
+            #endregion
+
+            #region Result handling
 
             // Retrieve the results list.
-            var results = await _repositoryBloodPressure.FilterBloodPressureNoteAsync(info);
+            var result = await _repositoryBloodPressure.FilterBloodPressureNoteAsync(filter);
 
-            // No result has been received.
-            if (results == null || results.BloodPressures == null || results.BloodPressures.Count < 1)
+            return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                results = new ResponseBloodPressureFilter();
-                results.BloodPressures = new List<BloodPressureViewModel>();
-                results.Total = 0;
+                BloodPressures = result.BloodPressures.Select(x => new
+                {
+                    x.Id,
+                    x.Created,
+                    x.Diastolic,
+                    x.LastModified,
+                    x.Note,
+                    x.Owner,
+                    x.Systolic,
+                    x.Time
+                }),
+                result.Total
+            });
 
-                return Request.CreateResponse(HttpStatusCode.OK, results);
-            }
-
-            return Request.CreateResponse(HttpStatusCode.OK, results);
+            #endregion
         }
 
         #endregion

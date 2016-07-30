@@ -98,8 +98,8 @@ namespace Olives
                 .SingleInstance();
 
             // Repository of sugarblood registration.
-            builder.RegisterType<RepositorySugarblood>()
-                .As<IRepositorySugarblood>()
+            builder.RegisterType<RepositoryBloodSugar>()
+                .As<IRepositoryBloodSugar>()
                 .SingleInstance();
 
             builder.RegisterType<RepositoryAppointment>()

@@ -269,7 +269,7 @@
     <Compile Include="Controllers\MedicalCategoryController.cs" />
     <Compile Include="Controllers\AddictionController.cs" />
     <Compile Include="Controllers\BloodPressureController.cs" />
-    <Compile Include="Controllers\SugarbloodController.cs" />
+    <Compile Include="Controllers\BloodSugarController.cs" />
     <Compile Include="Controllers\HeartbeatController.cs" />
     <Compile Include="Controllers\AllergyController.cs" />
     <Compile Include="Controllers\AppointmentController.cs" />
@@ -290,7 +290,6 @@
     <Compile Include="Services\EmailService.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="ViewModels\ActivationSendViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditMedicalNoteViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditMedicalRecordViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditDoctorProfileViewModel.cs" />
@@ -300,25 +299,29 @@
     <Compile Include="ViewModels\Edit\EditAppointmentViewModel.cs" />
     <Compile Include="ViewModels\Edit\ForgotPasswordViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditHeartbeatViewModel.cs" />
+    <Compile Include="ViewModels\Edit\EditBloodPressureViewModel.cs" />
+    <Compile Include="ViewModels\Edit\EditAddictionViewModel.cs" />
+    <Compile Include="ViewModels\Edit\EditBloodSugarViewModel.cs" />
     <Compile Include="ViewModels\Edit\InitializeNewPasswordViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterAnotherPatientViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterRelatedPeopleViewModel.cs" />
-    <Compile Include="ViewModels\EditPatientStatusViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializeAddictionViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAllergyViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAppointmentViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAvatarViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializeBloodPressureViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeHeartbeatViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalExperiment.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalNoteViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalRecordViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePrescriptedMedicineViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePrescriptionImage.cs" />
+    <Compile Include="ViewModels\Initialize\InitializePrescriptionImageViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePrescriptionViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeRatingViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeRelationshipViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditMedicalExperiment.cs" />
-    <Compile Include="ViewModels\OliveInitializePersonViewModel.cs" />
-    <Compile Include="ViewModels\RetrieveDoctorViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializeBloodSugarViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

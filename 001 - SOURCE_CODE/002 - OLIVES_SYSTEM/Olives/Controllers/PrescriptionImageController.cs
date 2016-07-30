@@ -9,6 +9,7 @@ using log4net;
 using Olives.Attributes;
 using Olives.Interfaces;
 using Olives.Models;
+using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;

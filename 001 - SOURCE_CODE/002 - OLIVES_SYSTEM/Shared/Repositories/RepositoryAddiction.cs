@@ -16,18 +16,23 @@ namespace Shared.Repositories
         /// <summary>
         ///     Delete an addiction asynchronously.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="owner"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<int> DeleteAddictionAsync(int id, int owner)
+        public async Task<int> DeleteAddictionAsync(FilterAddictionViewModel filter)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
             // Find the record with the given conditions and remove 'em.
-            context.Addictions.RemoveRange(context.Addictions.Where(x => x.Id == id && x.Owner == owner));
-            var affectedRecords = await context.SaveChangesAsync();
-            return affectedRecords;
+            var response = await FilterAddictionAsync(filter);
+
+            // Delete and retrieve the affected records.
+            context.Addictions.RemoveRange(response.Addictions);
+
+            // Save changes.
+            var records = await context.SaveChangesAsync();
+
+            return records;
         }
 
         /// <summary>
@@ -42,6 +47,10 @@ namespace Shared.Repositories
 
             // By default, take all records from database.
             IQueryable<Addiction> addictions = context.Addictions;
+
+            // Id is specified.
+            if (filter.Id != null)
+                addictions = addictions.Where(x => x.Id == filter.Id);
 
             // Owner has been specified.
             if (filter.Owner != null)
@@ -65,43 +74,48 @@ namespace Shared.Repositories
             if (filter.MaxLastModified != null)
                 addictions = addictions.Where(x => x.LastModified <= filter.MaxLastModified);
 
-            // Calculate the records should be skipped.
-            var skippedRecords = filter.Page*filter.Records;
-
-            // Result sorting.
-            switch (filter.Sort)
+            // Result filter
+            switch (filter.Direction)
             {
-                case NoteResultSort.Created:
-                    if (filter.Direction == SortDirection.Ascending)
+                case SortDirection.Decending:
+                    switch (filter.Sort)
                     {
-                        addictions = addictions.OrderBy(x => x.Created);
-                        break;
+                        case NoteResultSort.Created:
+                            addictions = addictions.OrderByDescending(x => x.Created);
+                            break;
+                        default:
+                            addictions = addictions.OrderByDescending(x => x.LastModified);
+                            break;
                     }
-                    addictions = addictions.OrderByDescending(x => x.Created);
                     break;
                 default:
-                    if (filter.Direction == SortDirection.Ascending)
+                    switch (filter.Sort)
                     {
-                        addictions = addictions.OrderBy(x => x.LastModified);
-                        break;
+                        case NoteResultSort.Created:
+                            addictions = addictions.OrderBy(x => x.Created);
+                            break;
+                        default:
+                            addictions = addictions.OrderBy(x => x.LastModified);
+                            break;
                     }
-                    addictions = addictions.OrderByDescending(x => x.LastModified);
                     break;
             }
-
+            
             // Response initialization.
             var response = new ResponseAddictionFilter();
             
             // Count the number of matched records.
             response.Total = await addictions.CountAsync();
 
+            // Result pagination.
             if (filter.Records != null)
             {
                 addictions = addictions.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
             }
-            response.Addictions = await addictions
-                .ToListAsync();
+
+            // Take the paginated results.
+            response.Addictions = addictions;
 
             return response;
         }

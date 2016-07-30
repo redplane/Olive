@@ -8,7 +8,7 @@ namespace Shared.ViewModels.Response
         /// <summary>
         ///     List of filtered allergies.
         /// </summary>
-        public IList<Allergy> Allergies { get; set; }
+        public IEnumerable<Allergy> Allergies { get; set; }
 
         /// <summary>
         ///     Total records match the specific conditions.
