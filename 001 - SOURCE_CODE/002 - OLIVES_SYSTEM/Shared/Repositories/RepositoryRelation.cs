@@ -87,8 +87,7 @@ namespace Shared.Repositories
             // Find the participation of people in relationships.
             var results = context.Relations.Where(
                 x =>
-                    (x.Source == firstPerson && x.Target == secondPerson) || x.Source == secondPerson ||
-                    x.Target == firstPerson);
+                    (x.Source == firstPerson && x.Target == secondPerson) || (x.Source == secondPerson && x.Target == firstPerson));
 
             // Find the status which matches with the status we wanna find.
             results = results.Where(x => x.Status == status);
@@ -205,7 +204,7 @@ namespace Shared.Repositories
             if (status != null)
                 relationships = relationships.Where(x => x.Status == (byte) status.Value);
 
-            // Response initialization.
+            // Response initialization.Filter
             var response = new ResponseRelationshipFilter();
             response.Total = await relationships.CountAsync();
 

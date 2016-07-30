@@ -57,28 +57,14 @@ namespace Shared.Repositories
             // Response initialization.
             var response = new ResponsePatientFilter();
 
+            // Take all relations which requester takes part in.
+            IQueryable<Relation> relationships = context.Relations;
+            relationships = relationships.Where(x => x.Source == requester.Id || x.Target == requester.Id);
+            relationships = relationships.Where(x => x.Status == (byte) StatusRelation.Active);
+
             // By default, take all patients.
             IQueryable<Patient> patients = context.Patients;
-
-            // Requester is defined, this means only related patients can be shown up.
-            if (requester != null)
-            {
-                // Requester's role is not a doctor.
-                if (requester.Role != (byte) Role.Doctor)
-                {
-                    response.Patients = new List<Patient>();
-                    response.Total = 0;
-                    return response;
-                }
-
-                // Take all relations which requester takes part in.
-                IQueryable<Relation> relationships = context.Relations;
-                relationships = relationships.Where(x => x.Target == requester.Id);
-
-                patients = from p in patients
-                    join r in relationships on p.Id equals r.Source
-                    select p;
-            }
+            patients = patients.Where(x => x.Id != requester.Id);
 
             // Filter doctor by using email.
             if (!string.IsNullOrEmpty(filter.Email))
@@ -135,6 +121,12 @@ namespace Shared.Repositories
             // Filter by weight.
             if (filter.MinWeight != null) patients = patients.Where(x => x.Weight >= filter.MinWeight);
             if (filter.MaxWeight != null) patients = patients.Where(x => x.Weight <= filter.MaxWeight);
+            
+            // Relationship connection.
+            patients = from p in patients
+                from r in relationships
+                where (r.Source == p.Id && r.Target == requester.Id)  || (r.Source == requester.Id && r.Target == p.Id)
+                select p;
 
             // Caculate the total matched results.
             response.Total = await patients.CountAsync();
