@@ -4,7 +4,7 @@ using Shared.Attributes;
 using Shared.Constants;
 using Shared.Resources;
 
-namespace Olives.ViewModels.Modify
+namespace Olives.ViewModels.Edit
 {
     public class EditMedicalExperiment
     {

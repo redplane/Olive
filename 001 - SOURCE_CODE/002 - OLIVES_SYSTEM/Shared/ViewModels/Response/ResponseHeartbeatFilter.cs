@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Shared.Models;
 
 namespace Shared.ViewModels.Response
 {
@@ -7,7 +8,7 @@ namespace Shared.ViewModels.Response
         /// <summary>
         ///     List of filtered heartbeat notes.
         /// </summary>
-        public IList<HeartbeatViewModel> Heartbeats { get; set; }
+        public IEnumerable<Heartbeat> Heartbeats { get; set; }
 
         /// <summary>
         ///     Number of results match the condition.

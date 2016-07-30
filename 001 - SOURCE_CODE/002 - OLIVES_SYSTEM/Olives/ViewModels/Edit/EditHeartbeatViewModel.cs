@@ -4,23 +4,23 @@ using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Resources;
 
-namespace Shared.ViewModels.Initialize
+namespace Olives.ViewModels.Edit
 {
-    public class InitializeHeartbeatViewModel
+    public class EditHeartbeatViewModel
     {
         /// <summary>
         ///     Heart rate.
         /// </summary>
         [Range(Values.MinHeartRate, Values.MaxHeartRate, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]
-        public double Rate { get; set; }
+        public double? Rate { get; set; }
 
         /// <summary>
         ///     Time when measurement was done.
         /// </summary>
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
-        public double Time { get; set; }
+        public double? Time { get; set; }
 
         /// <summary>
         ///     Note of measurement.

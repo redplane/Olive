@@ -273,5 +273,44 @@ namespace Shared.Repositories
 
             return response;
         }
+
+        /// <summary>
+        /// Check whether two people are connected to each other or not.
+        /// </summary>
+        /// <param name="firstPerson"></param>
+        /// <param name="secondPerson"></param>
+        /// <returns></returns>
+        public async Task<bool> IsPeopleConnected(int firstPerson, int secondPerson)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // Take all people.
+            IQueryable<Person> people = context.People;
+
+            // Find the active people.
+            people = people.Where(x => x.Status == (byte)StatusAccount.Active);
+
+            // Find the 2 people in the list.
+            people = people.Where(x => x.Id == firstPerson || x.Id == secondPerson);
+
+            // Not only 2 people are returned. This means , one of 'em is disabled or both.
+            var peopleCounter = await people.CountAsync();
+            if (peopleCounter != 2)
+                return false;
+            
+            // By default, take all relationships.
+            IQueryable<Relation> relationships = context.Relations;
+
+            // Filter to take active relationship only.
+            relationships = relationships.Where(x => x.Status == (byte) StatusRelation.Active);
+
+            // Find the relationship which these 2 people take part in.
+            return await
+                relationships.AnyAsync(
+                    x =>
+                        (x.Source == firstPerson && x.Target == secondPerson) ||
+                        (x.Source == secondPerson && x.Target == firstPerson));
+        }
     }
 }

@@ -38,40 +38,70 @@ namespace Shared.Repositories
         ///     Find heartbeat note by using id and owner id.
         /// </summary>
         /// <param name="id">Allergy Id</param>
-        /// <param name="owner">Allergy owner</param>
         /// <returns></returns>
-        public async Task<IList<Heartbeat>> FindHeartbeatAsync(int id, int? owner)
+        public async Task<Heartbeat> FindHeartbeatAsync(int id)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-
+            
             // Find heartbeat note by using id.
-            var results = context.Heartbeats.Where(x => x.Id == id);
-
-            // Owner has been specified.
-            if (owner != null)
-                results = results.Where(x => x.Owner == owner);
-
-            return await results.ToListAsync();
+            return await context.Heartbeats.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         /// <summary>
-        ///     Delete a heartbeat note asynchrounously.
+        ///     Delete a heartbeat note asynchronously.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="owner"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<int> DeleteHeartbeatNoteAsync(int id, int owner)
+        public async Task<int> DeleteHeartbeatNoteAsync(FilterHeatbeatViewModel filter)
         {
             try
             {
                 // Database context initialization.
                 var context = new OlivesHealthEntities();
+                
+                // By default, take all information.
+                IQueryable<Heartbeat> heartbeats = context.Heartbeats;
 
-                // Remove the queried record from database.
-                context.Heartbeats.RemoveRange(context.Heartbeats.Where(x => x.Id == id && x.Owner == owner));
-                var deletedRecords = await context.SaveChangesAsync();
-                return deletedRecords;
+                // Id is specified.
+                if (filter.Id != null)
+                    heartbeats = heartbeats.Where(x => x.Id == filter.Id.Value);
+
+                // Owner has been specified.
+                if (filter.Owner != null)
+                    heartbeats = heartbeats.Where(x => x.Owner == filter.Owner);
+
+                // Rate has been specified.
+                if (filter.MinRate != null)
+                    heartbeats = heartbeats.Where(x => x.Rate >= filter.MinRate);
+                if (filter.MaxRate != null)
+                    heartbeats = heartbeats.Where(x => x.Rate <= filter.MaxRate);
+
+                // Created has been specified.
+                if (filter.MinCreated != null)
+                    heartbeats = heartbeats.Where(x => x.Created >= filter.MinCreated);
+                if (filter.MaxCreated != null)
+                    heartbeats = heartbeats.Where(x => x.Created <= filter.MaxCreated);
+
+                // Time has been specified.
+                if (filter.MinTime != null)
+                    heartbeats = heartbeats.Where(x => x.Time >= filter.MinTime);
+                if (filter.MaxTime != null)
+                    heartbeats = heartbeats.Where(x => x.Time <= filter.MaxTime);
+
+                // LastModified has been specified.
+                if (filter.MinLastModified != null)
+                    heartbeats = heartbeats.Where(x => x.LastModified >= filter.MinLastModified);
+                if (filter.MaxLastModified != null)
+                    heartbeats = heartbeats.Where(x => x.LastModified <= filter.MaxLastModified);
+
+                // Note has been specified.
+                if (!string.IsNullOrWhiteSpace(filter.Note))
+                    heartbeats = heartbeats.Where(x => x.Note.Contains(filter.Note));
+
+                context.Heartbeats.RemoveRange(heartbeats);
+                var records = await context.SaveChangesAsync();
+                return records;
             }
             catch
             {
@@ -90,100 +120,90 @@ namespace Shared.Repositories
             var context = new OlivesHealthEntities();
 
             // By default, take all information.
-            IQueryable<Heartbeat> results = context.Heartbeats;
+            IQueryable<Heartbeat> heartbeats = context.Heartbeats;
+
+            // Id is specified.
+            if (filter.Id != null)
+                heartbeats = heartbeats.Where(x => x.Id == filter.Id.Value);
 
             // Owner has been specified.
             if (filter.Owner != null)
-                results = results.Where(x => x.Owner == filter.Owner);
+                heartbeats = heartbeats.Where(x => x.Owner == filter.Owner);
 
             // Rate has been specified.
             if (filter.MinRate != null)
-                results = results.Where(x => x.Rate >= filter.MinRate);
+                heartbeats = heartbeats.Where(x => x.Rate >= filter.MinRate);
             if (filter.MaxRate != null)
-                results = results.Where(x => x.Rate <= filter.MaxRate);
+                heartbeats = heartbeats.Where(x => x.Rate <= filter.MaxRate);
 
             // Created has been specified.
             if (filter.MinCreated != null)
-                results = results.Where(x => x.Created >= filter.MinCreated);
+                heartbeats = heartbeats.Where(x => x.Created >= filter.MinCreated);
             if (filter.MaxCreated != null)
-                results = results.Where(x => x.Created <= filter.MaxCreated);
+                heartbeats = heartbeats.Where(x => x.Created <= filter.MaxCreated);
 
             // Time has been specified.
             if (filter.MinTime != null)
-                results = results.Where(x => x.Time >= filter.MinTime);
+                heartbeats = heartbeats.Where(x => x.Time >= filter.MinTime);
             if (filter.MaxTime != null)
-                results = results.Where(x => x.Time <= filter.MaxTime);
+                heartbeats = heartbeats.Where(x => x.Time <= filter.MaxTime);
 
             // LastModified has been specified.
             if (filter.MinLastModified != null)
-                results = results.Where(x => x.LastModified >= filter.MinLastModified);
+                heartbeats = heartbeats.Where(x => x.LastModified >= filter.MinLastModified);
             if (filter.MaxLastModified != null)
-                results = results.Where(x => x.LastModified <= filter.MaxLastModified);
+                heartbeats = heartbeats.Where(x => x.LastModified <= filter.MaxLastModified);
 
             // Note has been specified.
             if (!string.IsNullOrEmpty(filter.Note))
-                results = results.Where(x => x.Note.Contains(filter.Note));
+                heartbeats = heartbeats.Where(x => x.Note.Contains(filter.Note));
 
-            // Order by last modified.
-            results = results.OrderByDescending(x => x.LastModified);
-
-            // Initialize response and throw result back.
-            var response = new ResponseHeartbeatFilter();
-            response.Total = await results.CountAsync();
-
-            // Calculate what records should be shown up.
-            var skippedRecords = filter.Page*filter.Records;
-
-            // Sort the result.
-            switch (filter.Sort)
+            // Result sorting.
+            switch (filter.Direction)
             {
-                case NoteResultSort.Created:
-                    if (filter.Direction == SortDirection.Ascending)
+                case SortDirection.Decending:
+                    switch (filter.Sort)
                     {
-                        results = results.OrderBy(x => x.Created);
-                        break;
+                        case NoteResultSort.Created:
+                            heartbeats = heartbeats.OrderByDescending(x => x.Created);
+                            break;
+                            case NoteResultSort.LastModified:
+                            heartbeats = heartbeats.OrderByDescending(x => x.LastModified);
+                            break;
+                        default:
+                            heartbeats = heartbeats.OrderByDescending(x => x.Time);
+                            break;
                     }
-
-                    results = results.OrderByDescending(x => x.Created);
-                    break;
-                case NoteResultSort.LastModified:
-                    if (filter.Direction == SortDirection.Ascending)
-                    {
-                        results = results.OrderBy(x => x.LastModified);
-                        break;
-                    }
-                    results = results.OrderByDescending(x => x.LastModified);
                     break;
                 default:
-                    if (filter.Direction == SortDirection.Ascending)
+                    switch (filter.Sort)
                     {
-                        results = results.OrderBy(x => x.Time);
-                        break;
+                        case NoteResultSort.Created:
+                            heartbeats = heartbeats.OrderBy(x => x.Created);
+                            break;
+                        case NoteResultSort.LastModified:
+                            heartbeats = heartbeats.OrderBy(x => x.LastModified);
+                            break;
+                        default:
+                            heartbeats = heartbeats.OrderBy(x => x.Time);
+                            break;
                     }
-
-                    results = results.OrderByDescending(x => x.Time);
                     break;
             }
-
+            
+            // Initialize response and throw result back.
+            var response = new ResponseHeartbeatFilter();
+            response.Total = await heartbeats.CountAsync();
+            
             // Record is defined.
             if (filter.Records != null)
             {
-                results = results.Skip(filter.Page*filter.Records.Value)
+                heartbeats = heartbeats.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
             // Summarize results.
-            response.Heartbeats = await results
-                .Select(x => new HeartbeatViewModel
-                {
-                    Created = x.Created,
-                    Id = x.Id,
-                    LastModified = x.LastModified,
-                    Note = x.Note,
-                    Rate = x.Rate,
-                    Time = x.Time
-                })
-                .ToListAsync();
+            response.Heartbeats = heartbeats;
 
             // Return filtered result.
             return response;

@@ -19,9 +19,8 @@ namespace Shared.Interfaces
         ///     Find heartbeat by using heartbeat note id.
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="owner"></param>
         /// <returns></returns>
-        Task<IList<Heartbeat>> FindHeartbeatAsync(int id, int? owner);
+        Task<Heartbeat> FindHeartbeatAsync(int id);
 
         /// <summary>
         ///     Find heartbeat by using conditions.
@@ -29,13 +28,11 @@ namespace Shared.Interfaces
         /// <param name="filter"></param>
         /// <returns></returns>
         Task<ResponseHeartbeatFilter> FilterHeartbeatAsync(FilterHeatbeatViewModel filter);
-
-
+        
         /// <summary>
         ///     Delete a heartbeat note asynchronously.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="owner"></param>
-        Task<int> DeleteHeartbeatNoteAsync(int id, int owner);
+        /// <param name="filter"></param>
+        Task<int> DeleteHeartbeatNoteAsync(FilterHeatbeatViewModel filter);
     }
 }

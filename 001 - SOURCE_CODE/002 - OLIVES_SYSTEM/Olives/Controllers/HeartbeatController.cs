@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
+using Olives.ViewModels.Edit;
+using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
@@ -56,33 +58,46 @@ namespace Olives.Controllers
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Retrieve the results list.
-            var results = await _repositoryHeartbeat.FindHeartbeatAsync(id, requester.Id);
+            var heartbeat = await _repositoryHeartbeat.FindHeartbeatAsync(id);
 
             // No result has been received.
-            if (results == null || results.Count != 1)
+            if (heartbeat == null)
             {
+                // Log the error.
+                _log.Error($"Heartbeat [Id: {id}] doesn't exist in database");
+
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-            // Retrieve the 1st queried result.
-            var result = results
-                .Select(x => new HeartbeatViewModel
+            
+            // Check whether the request has connection with the owner or not.
+            var isRelationshipAvailable = await _repositoryRelation.IsPeopleConnected(requester.Id, heartbeat.Owner);
+            if (!isRelationshipAvailable)
+            {
+                // Log the error.
+                _log.Error($"There is no relationship between Requester[Id: {requester.Id}] and heart beat owner [Id: {heartbeat.Owner}]");
+
+                // Tell front-end, no record has been found.
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Id = x.Id,
-                    Created = x.Created,
-                    LastModified = x.LastModified,
-                    Time = x.Time,
-                    Note = x.Note,
-                    Rate = x.Rate
-                })
-                .FirstOrDefault();
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Heartbeat = result
+                Heartbeat = new
+                {
+                    heartbeat.Id,
+                    heartbeat.Created,
+                    heartbeat.LastModified,
+                    heartbeat.Time,
+                    heartbeat.Note,
+                    heartbeat.Rate
+                }
             });
         }
 
@@ -143,18 +158,18 @@ namespace Olives.Controllers
         ///     Edit an allergy.
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="info"></param>
+        /// <param name="modifier"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] InitializeHeartbeatViewModel info)
+        public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] EditHeartbeatViewModel modifier)
         {
-            #region ModelState result
+            #region Request parameters are invalid
 
             // Model hasn't been initialized.
-            if (info == null)
+            if (modifier == null)
             {
-                info = new InitializeHeartbeatViewModel();
-                Validate(info);
+                modifier = new EditHeartbeatViewModel();
+                Validate(modifier);
             }
 
             // Invalid model state.
@@ -166,14 +181,16 @@ namespace Olives.Controllers
 
             #endregion
 
+            #region Record validation
+
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find allergy by using allergy id and owner id.
-            var results = await _repositoryHeartbeat.FindHeartbeatAsync(id, requester.Id);
+            var heartbeat = await _repositoryHeartbeat.FindHeartbeatAsync(id);
 
             // Not record has been found.
-            if (results == null || results.Count < 1)
+            if (heartbeat == null)
             {
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -182,48 +199,39 @@ namespace Olives.Controllers
                 });
             }
 
-            // Records are conflict.
-            if (results.Count != 1)
-            {
-                // Tell front-end, no record has been found.
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
+            #endregion
 
-            // Retrieve the first record.
-            var result = results.FirstOrDefault();
-            if (result == null)
-            {
-                // Tell front-end, no record has been found.
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
+            #region Result handling
 
-            // Confirm edit.
-            result.Rate = info.Rate;
-            result.Time = info.Time;
-            result.Note = info.Note;
-            result.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+            if (modifier.Rate != null)
+                heartbeat.Rate = modifier.Rate.Value;
 
-            // Update allergy.
-            result = await _repositoryHeartbeat.InitializeHeartbeatNoteAsync(result);
+            if (modifier.Time != null)
+                heartbeat.Time = modifier.Time.Value;
+
+            if (!string.IsNullOrWhiteSpace(modifier.Note))
+                heartbeat.Note = modifier.Note;
+
+            heartbeat.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+
+            // Update heartbeat.
+            heartbeat = await _repositoryHeartbeat.InitializeHeartbeatNoteAsync(heartbeat);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
-                Heartbeat = new HeartbeatViewModel
+                Heartbeat = new
                 {
-                    Id = result.Id,
-                    Time = result.Time,
-                    Created = result.Created,
-                    LastModified = result.LastModified,
-                    Note = result.Note,
-                    Rate = result.Rate
+                    heartbeat.Id,
+                    heartbeat.Time,
+                    heartbeat.Created,
+                    heartbeat.LastModified,
+                    heartbeat.Note,
+                    heartbeat.Rate
                 }
             });
+
+            #endregion
+
         }
 
         /// <summary>
@@ -239,8 +247,15 @@ namespace Olives.Controllers
 
             try
             {
+                // Filter initialization.
+                var filter = new FilterHeatbeatViewModel();
+                filter.Id = id;
+                filter.Owner = requester.Id;
+
                 // Remove the found allergy.
-                var deletedRecords = await _repositoryHeartbeat.DeleteHeartbeatNoteAsync(id, requester.Id);
+                var deletedRecords = await _repositoryHeartbeat.DeleteHeartbeatNoteAsync(filter);
+
+                // No record has been deleted.
                 if (deletedRecords < 1)
                 {
                     // Tell front-end, no record has been found.
@@ -267,18 +282,20 @@ namespace Olives.Controllers
         /// <summary>
         ///     Filter specialties by using specific conditions.
         /// </summary>
-        /// <param name="info"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
         [Route("api/heartbeat/filter")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> Filter([FromBody] FilterHeatbeatViewModel info)
+        public async Task<HttpResponseMessage> Filter([FromBody] FilterHeatbeatViewModel filter)
         {
+            #region Request parameters validation
+
             // Model hasn't been initialized.
-            if (info == null)
+            if (filter == null)
             {
-                info = new FilterHeatbeatViewModel();
-                Validate(info);
+                filter = new FilterHeatbeatViewModel();
+                Validate(filter);
             }
 
             // Invalid model state.
@@ -288,38 +305,59 @@ namespace Olives.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
 
+            #endregion
+
+            #region Relationship validation
+
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
-            // Owner has been specified.
-            if (info.Owner != null)
+            // No owner is specified. That means the owner is the requester.
+            if (filter.Owner == null)
+                filter.Owner = requester.Id;
+            else
             {
-                // Owner is the requester.
-                if (info.Owner == requester.Id)
-                    info.Owner = requester.Id;
-                else
-                {
-                    // Find the relation between the owner and the requester.
-                    var relationships = await _repositoryRelation.FindRelationshipAsync(requester.Id, info.Owner.Value,
-                        (byte) StatusAccount.Active);
+                // Check the relationship between the owner and requester.
+                var isRelationshipAvailable =
+                    await _repositoryRelation.IsPeopleConnected(requester.Id, filter.Owner.Value);
 
-                    // No relationship has been found.
-                    if (relationships == null || relationships.Count < 1)
+                // There is no active relationship between 'em.
+                if (!isRelationshipAvailable)
+                {
+                    // Log the error.
+                    _log.Error($"There is no relationship between requester [Id: {requester.Id}] and owner [Id:{filter.Owner}]");
+
+                    return Request.CreateResponse(HttpStatusCode.OK, new
                     {
-                        return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                        {
-                            Error = $"{Language.WarnHasNoRelationship}"
-                        });
-                    }
+                        Heartbeats = new object[0],
+                        Total = 0
+                    });
                 }
             }
-            else
-                info.Owner = requester.Id;
+
+            #endregion
+
+            #region Result handling
 
             // Retrieve the results list.
-            var results = await _repositoryHeartbeat.FilterHeartbeatAsync(info);
+            var result = await _repositoryHeartbeat.FilterHeartbeatAsync(filter);
 
-            return Request.CreateResponse(HttpStatusCode.OK, results);
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                Heartbeats = result.Heartbeats.Select(x => new
+                {
+                    x.Id,
+                    x.Created,
+                    x.LastModified,
+                    x.Note,
+                    x.Owner,
+                    x.Rate,
+                    x.Time
+                })
+            });
+
+            #endregion
+
         }
 
         #endregion

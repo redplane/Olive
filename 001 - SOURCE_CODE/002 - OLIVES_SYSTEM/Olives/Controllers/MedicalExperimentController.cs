@@ -7,8 +7,8 @@ using System.Web.Http;
 using log4net;
 using Newtonsoft.Json;
 using Olives.Attributes;
+using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
-using Olives.ViewModels.Modify;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
@@ -304,6 +304,7 @@ namespace Olives.Controllers
         /// <param name="filter"></param>
         /// <returns></returns>
         [Route("api/medical/experiment/filter")]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> FilterMedicalExperimentNoteAsync(
             [FromBody] FilterExperimentNoteViewModel filter)
         {

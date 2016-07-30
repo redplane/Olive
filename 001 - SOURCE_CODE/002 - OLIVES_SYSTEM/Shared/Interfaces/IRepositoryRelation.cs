@@ -74,6 +74,13 @@ namespace Shared.Interfaces
         /// <returns></returns>
         Task<ResponseRelatedDoctorFilter> FilterRelatedDoctorAsync(int requester, StatusRelation? status, int page,
             int? records);
-        
+
+        /// <summary>
+        /// This function is to check whether 2 people are connected to each other or not.
+        /// </summary>
+        /// <param name="firstPerson"></param>
+        /// <param name="secondPerson"></param>
+        /// <returns></returns>
+        Task<bool> IsPeopleConnected(int firstPerson, int secondPerson);
     }
 }

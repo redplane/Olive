@@ -299,6 +299,7 @@
     <Compile Include="ViewModels\Edit\EditAllergyViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditAppointmentViewModel.cs" />
     <Compile Include="ViewModels\Edit\ForgotPasswordViewModel.cs" />
+    <Compile Include="ViewModels\Edit\EditHeartbeatViewModel.cs" />
     <Compile Include="ViewModels\Edit\InitializeNewPasswordViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterAnotherPatientViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterRelatedPeopleViewModel.cs" />
@@ -306,6 +307,7 @@
     <Compile Include="ViewModels\Initialize\InitializeAllergyViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAppointmentViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAvatarViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializeHeartbeatViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalExperiment.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalNoteViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalRecordViewModel.cs" />
@@ -314,7 +316,7 @@
     <Compile Include="ViewModels\Initialize\InitializePrescriptionViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeRatingViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeRelationshipViewModel.cs" />
-    <Compile Include="ViewModels\Modify\EditMedicalExperiment.cs" />
+    <Compile Include="ViewModels\Edit\EditMedicalExperiment.cs" />
     <Compile Include="ViewModels\OliveInitializePersonViewModel.cs" />
     <Compile Include="ViewModels\RetrieveDoctorViewModel.cs" />
   </ItemGroup>

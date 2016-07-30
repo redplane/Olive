@@ -292,7 +292,6 @@
     <Compile Include="ViewModels\Initialize\InitializeAddictionViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeBloodPressureViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeDoctorViewModel.cs" />
-    <Compile Include="ViewModels\Initialize\InitializeHeartbeatViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalImageViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePatientViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeSugarbloodViewModel.cs" />
