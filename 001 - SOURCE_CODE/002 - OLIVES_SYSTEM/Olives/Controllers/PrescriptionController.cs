@@ -492,6 +492,7 @@ namespace Olives.Controllers
                     {
                         x.Id,
                         MedicalRecord = x.MedicalRecordId,
+                        x.Owner,
                         x.From,
                         x.To,
                         x.Name,
