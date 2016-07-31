@@ -46,7 +46,7 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        ///     Find heartbeat by using conditions.
+        ///     Find blood sugar notes by using conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -57,49 +57,12 @@ namespace Shared.Repositories
 
             // By default, take all information.
             IQueryable<SugarBlood> bloodSugars = context.SugarBloods;
-
-            // Owner has been specified.
-            if (filter.Owner != null)
-                bloodSugars = bloodSugars.Where(x => x.Owner == filter.Owner);
-
-            // Value has been specified.
-            if (filter.MinValue != null)
-                bloodSugars = bloodSugars.Where(x => x.Value >= filter.MinValue);
-            if (filter.MinValue != null)
-                bloodSugars = bloodSugars.Where(x => x.Value <= filter.MaxValue);
-
-            // Time has been specified.
-            if (filter.MinTime != null)
-                bloodSugars = bloodSugars.Where(x => x.Time >= filter.MinTime);
-            if (filter.MaxTime != null)
-                bloodSugars = bloodSugars.Where(x => x.Time <= filter.MaxTime);
-
-            // Created has been specified.
-            if (filter.MinCreated != null)
-                bloodSugars = bloodSugars.Where(x => x.Created >= filter.MinCreated);
-            if (filter.MaxCreated != null)
-                bloodSugars = bloodSugars.Where(x => x.Created <= filter.MaxCreated);
-
-            // LastModified has been specified.
-            if (filter.MinLastModified != null)
-                bloodSugars = bloodSugars.Where(x => x.LastModified >= filter.MinLastModified);
-            if (filter.MaxLastModified != null)
-                bloodSugars = bloodSugars.Where(x => x.LastModified <= filter.MaxLastModified);
-
-            // Note has been specified.
-            if (!string.IsNullOrEmpty(filter.Note))
-                bloodSugars = bloodSugars.Where(x => x.Note.Contains(filter.Note));
-
-            // Order by last modified.
-            bloodSugars = bloodSugars.OrderByDescending(x => x.LastModified);
-
+            bloodSugars = FilterBloodSugars(bloodSugars, filter);
+            
             // Initialize response and throw result back.
             var response = new ResponseBloodSugarFilter();
             response.Total = await bloodSugars.CountAsync();
-
-            // Calculate what records should be shown up.
-            var skippedRecords = filter.Page*filter.Records;
-
+            
             // Sort the result.
             switch (filter.Sort)
             {
@@ -145,6 +108,52 @@ namespace Shared.Repositories
         }
 
         /// <summary>
+        /// Filter blood sugar notes by using specific conditions.
+        /// </summary>
+        /// <param name="bloodSugars"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        private IQueryable<SugarBlood> FilterBloodSugars(IQueryable<SugarBlood> bloodSugars,
+            FilterBloodSugarViewModel filter)
+        {
+            // Owner has been specified.
+            if (filter.Owner != null)
+                bloodSugars = bloodSugars.Where(x => x.Owner == filter.Owner);
+
+            // Value has been specified.
+            if (filter.MinValue != null)
+                bloodSugars = bloodSugars.Where(x => x.Value >= filter.MinValue);
+            if (filter.MinValue != null)
+                bloodSugars = bloodSugars.Where(x => x.Value <= filter.MaxValue);
+
+            // Time has been specified.
+            if (filter.MinTime != null)
+                bloodSugars = bloodSugars.Where(x => x.Time >= filter.MinTime);
+            if (filter.MaxTime != null)
+                bloodSugars = bloodSugars.Where(x => x.Time <= filter.MaxTime);
+
+            // Created has been specified.
+            if (filter.MinCreated != null)
+                bloodSugars = bloodSugars.Where(x => x.Created >= filter.MinCreated);
+            if (filter.MaxCreated != null)
+                bloodSugars = bloodSugars.Where(x => x.Created <= filter.MaxCreated);
+
+            // LastModified has been specified.
+            if (filter.MinLastModified != null)
+                bloodSugars = bloodSugars.Where(x => x.LastModified >= filter.MinLastModified);
+            if (filter.MaxLastModified != null)
+                bloodSugars = bloodSugars.Where(x => x.LastModified <= filter.MaxLastModified);
+
+            // Note has been specified.
+            if (!string.IsNullOrEmpty(filter.Note))
+                bloodSugars = bloodSugars.Where(x => x.Note.Contains(filter.Note));
+
+            // Order by last modified.
+            bloodSugars = bloodSugars.OrderByDescending(x => x.LastModified);
+            return bloodSugars;
+        }
+
+        /// <summary>
         ///     Delete a sugarblood note asynchronously.
         /// </summary>
         /// <param name="filter"></param>
@@ -153,11 +162,12 @@ namespace Shared.Repositories
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
-            // Call the filter function.
-            var result = await FilterBloodSugarAsync(filter);
+            // By default, take all information.
+            IQueryable<SugarBlood> bloodSugars = context.SugarBloods;
+            bloodSugars = FilterBloodSugars(bloodSugars, filter);
 
             // Delete the filtered record.
-            context.SugarBloods.RemoveRange(result.Sugarbloods);
+            context.SugarBloods.RemoveRange(bloodSugars);
 
             // Save changes and count the affected records.
             var records = await context.SaveChangesAsync();

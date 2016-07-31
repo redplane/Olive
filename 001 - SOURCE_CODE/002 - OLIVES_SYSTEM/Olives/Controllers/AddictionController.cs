@@ -381,7 +381,7 @@ namespace Olives.Controllers
             #region Result filtering and handling
 
             // Filter addictions by using specific conditions.
-            var result = await _repositoryAddiction.FilterAddictionAsync(filter);
+            var result = await _repositoryAddiction.FilterAddictionsAsync(filter);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {

@@ -25,39 +25,8 @@ namespace Shared.Repositories
 
             // By default, take all records.
             IQueryable<Allergy> allergies = context.Allergies;
-
-            // Id is specified.
-            if (filter.Id != null)
-                allergies = allergies.Where(x => x.Id == filter.Id.Value);
-
-            // Owner has been specified.
-            if (filter.Owner != null)
-                allergies = allergies.Where(x => x.Owner == filter.Owner);
-
-            // Name has been specified.
-            if (!string.IsNullOrEmpty(filter.Name))
-                allergies = allergies.Where(x => x.Name.Contains(filter.Name));
-
-            // Cause has been specified.
-            if (!string.IsNullOrEmpty(filter.Cause))
-                allergies = allergies.Where(x => x.Cause.Contains(filter.Cause));
-
-            // Note has been specified.
-            if (!string.IsNullOrEmpty(filter.Note))
-                allergies = allergies.Where(x => x.Note.Contains(filter.Note));
-
-            // Either Min/Max Created has been specified.
-            if (filter.MinCreated != null)
-                allergies = allergies.Where(x => x.Created >= filter.MinCreated);
-            if (filter.MaxCreated != null)
-                allergies = allergies.Where(x => x.Created <= filter.MaxCreated);
-
-            // Either Min/Max LastModified has been specified.
-            if (filter.MinLastModified != null)
-                allergies = allergies.Where(x => x.LastModified != null && x.LastModified >= filter.MinLastModified);
-            if (filter.MaxLastModified != null)
-                allergies = allergies.Where(x => x.LastModified != null && x.LastModified >= filter.MaxLastModified);
-
+            allergies = FilterAllergiesAsync(allergies, filter);
+            
             // Result sorting.
             switch (filter.Direction)
             {
@@ -103,6 +72,49 @@ namespace Shared.Repositories
         }
 
         /// <summary>
+        /// Filter allergies by using specific conditions.
+        /// </summary>
+        /// <param name="allergies"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public IQueryable<Allergy> FilterAllergiesAsync(IQueryable<Allergy> allergies, FilterAllergyViewModel filter)
+        {
+            // Id is specified.
+            if (filter.Id != null)
+                allergies = allergies.Where(x => x.Id == filter.Id.Value);
+
+            // Owner has been specified.
+            if (filter.Owner != null)
+                allergies = allergies.Where(x => x.Owner == filter.Owner);
+
+            // Name has been specified.
+            if (!string.IsNullOrEmpty(filter.Name))
+                allergies = allergies.Where(x => x.Name.Contains(filter.Name));
+
+            // Cause has been specified.
+            if (!string.IsNullOrEmpty(filter.Cause))
+                allergies = allergies.Where(x => x.Cause.Contains(filter.Cause));
+
+            // Note has been specified.
+            if (!string.IsNullOrEmpty(filter.Note))
+                allergies = allergies.Where(x => x.Note.Contains(filter.Note));
+
+            // Either Min/Max Created has been specified.
+            if (filter.MinCreated != null)
+                allergies = allergies.Where(x => x.Created >= filter.MinCreated);
+            if (filter.MaxCreated != null)
+                allergies = allergies.Where(x => x.Created <= filter.MaxCreated);
+
+            // Either Min/Max LastModified has been specified.
+            if (filter.MinLastModified != null)
+                allergies = allergies.Where(x => x.LastModified != null && x.LastModified >= filter.MinLastModified);
+            if (filter.MaxLastModified != null)
+                allergies = allergies.Where(x => x.LastModified != null && x.LastModified >= filter.MaxLastModified);
+
+            return allergies;
+        } 
+
+        /// <summary>
         ///     Initialize allergy to database.
         /// </summary>
         /// <param name="info"></param>
@@ -146,38 +158,9 @@ namespace Shared.Repositories
 
             // By default, take all records.
             IQueryable<Allergy> allergies = context.Allergies;
-
-            // Id is specified.
-            if (filter.Id != null)
-                allergies = allergies.Where(x => x.Id == filter.Id.Value);
-
-            // Owner has been specified.
-            if (filter.Owner != null)
-                allergies = allergies.Where(x => x.Owner == filter.Owner);
-
-            // Name has been specified.
-            if (!string.IsNullOrEmpty(filter.Name))
-                allergies = allergies.Where(x => x.Name.Contains(filter.Name));
-
-            // Cause has been specified.
-            if (!string.IsNullOrEmpty(filter.Cause))
-                allergies = allergies.Where(x => x.Cause.Contains(filter.Cause));
-
-            // Note has been specified.
-            if (!string.IsNullOrEmpty(filter.Note))
-                allergies = allergies.Where(x => x.Note.Contains(filter.Note));
-
-            // Either Min/Max Created has been specified.
-            if (filter.MinCreated != null)
-                allergies = allergies.Where(x => x.Created >= filter.MinCreated);
-            if (filter.MaxCreated != null)
-                allergies = allergies.Where(x => x.Created <= filter.MaxCreated);
-
-            // Either Min/Max LastModified has been specified.
-            if (filter.MinLastModified != null)
-                allergies = allergies.Where(x => x.LastModified != null && x.LastModified >= filter.MinLastModified);
-            if (filter.MaxLastModified != null)
-                allergies = allergies.Where(x => x.LastModified != null && x.LastModified >= filter.MaxLastModified);
+            
+            // Do filter.
+            allergies = FilterAllergiesAsync(allergies, filter);
 
             // Remove the filtered result.
             context.Allergies.RemoveRange(allergies);

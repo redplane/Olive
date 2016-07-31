@@ -135,10 +135,7 @@ namespace Shared.Repositories
                     }
                     break;
             }
-
-            // Calculate the number of records should be skipped.
-            var skippedRecords = filter.Page*filter.Records;
-
+            
             // Response initialization.
             var response = new ResponseRatingFilter();
 

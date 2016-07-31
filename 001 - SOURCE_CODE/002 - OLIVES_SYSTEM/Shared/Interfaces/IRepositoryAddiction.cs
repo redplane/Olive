@@ -12,7 +12,7 @@ namespace Shared.Interfaces
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        Task<ResponseAddictionFilter> FilterAddictionAsync(FilterAddictionViewModel filter);
+        Task<ResponseAddictionFilter> FilterAddictionsAsync(FilterAddictionViewModel filter);
 
         /// <summary>
         ///     Initialize an allergy with given information.

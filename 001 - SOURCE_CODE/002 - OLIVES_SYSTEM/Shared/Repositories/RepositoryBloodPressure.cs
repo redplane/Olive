@@ -60,48 +60,7 @@ namespace Shared.Repositories
 
             // By default, take all information.
             IQueryable<BloodPressure> bloodPressures = context.BloodPressures;
-
-            // Id is specified.
-            if (filter.Id != null)
-                bloodPressures = bloodPressures.Where(x => x.Id == filter.Id.Value);
-
-            // Owner has been specified.
-            if (filter.Owner != null)
-                bloodPressures = bloodPressures.Where(x => x.Owner == filter.Owner);
-
-            // Systolic has been specified.
-            if (filter.MinSystolic != null)
-                bloodPressures = bloodPressures.Where(x => x.Systolic >= filter.MinSystolic);
-            if (filter.MaxSystolic != null)
-                bloodPressures = bloodPressures.Where(x => x.Systolic <= filter.MaxSystolic);
-
-            // Diastolic has been specified.
-            if (filter.MinDiastolic != null)
-                bloodPressures = bloodPressures.Where(x => x.Diastolic >= filter.MinDiastolic);
-            if (filter.MaxDiastolic != null)
-                bloodPressures = bloodPressures.Where(x => x.Diastolic <= filter.MaxDiastolic);
-
-            // Time has been specified.
-            if (filter.MinTime != null)
-                bloodPressures = bloodPressures.Where(x => x.Time >= filter.MinTime);
-            if (filter.MaxTime != null)
-                bloodPressures = bloodPressures.Where(x => x.Time <= filter.MaxTime);
-
-            // Created has been specified.
-            if (filter.MinCreated != null)
-                bloodPressures = bloodPressures.Where(x => x.Created >= filter.MinCreated);
-            if (filter.MaxCreated != null)
-                bloodPressures = bloodPressures.Where(x => x.Created <= filter.MaxCreated);
-
-            // LastModified has been specified.
-            if (filter.MinLastModified != null)
-                bloodPressures = bloodPressures.Where(x => x.LastModified >= filter.MinLastModified);
-            if (filter.MaxLastModified != null)
-                bloodPressures = bloodPressures.Where(x => x.LastModified <= filter.MaxLastModified);
-
-            // Note has been specified.
-            if (!string.IsNullOrEmpty(filter.Note))
-                bloodPressures = bloodPressures.Where(x => x.Note.Contains(filter.Note));
+            bloodPressures = FilterBloodPressuresAsync(bloodPressures, filter);
 
             #endregion
 
@@ -129,49 +88,7 @@ namespace Shared.Repositories
 
             // By default, take all information.
             IQueryable<BloodPressure> bloodPressures = context.BloodPressures;
-
-            // Id is specified.
-            if (filter.Id != null)
-                bloodPressures = bloodPressures.Where(x => x.Id == filter.Id.Value);
-
-            // Owner has been specified.
-            if (filter.Owner != null)
-                bloodPressures = bloodPressures.Where(x => x.Owner == filter.Owner);
-
-            // Systolic has been specified.
-            if (filter.MinSystolic != null)
-                bloodPressures = bloodPressures.Where(x => x.Systolic >= filter.MinSystolic);
-            if (filter.MaxSystolic != null)
-                bloodPressures = bloodPressures.Where(x => x.Systolic <= filter.MaxSystolic);
-
-            // Diastolic has been specified.
-            if (filter.MinDiastolic != null)
-                bloodPressures = bloodPressures.Where(x => x.Diastolic >= filter.MinDiastolic);
-            if (filter.MaxDiastolic != null)
-                bloodPressures = bloodPressures.Where(x => x.Diastolic <= filter.MaxDiastolic);
-
-
-            // Time has been specified.
-            if (filter.MinTime != null)
-                bloodPressures = bloodPressures.Where(x => x.Time >= filter.MinTime);
-            if (filter.MaxTime != null)
-                bloodPressures = bloodPressures.Where(x => x.Time <= filter.MaxTime);
-
-            // Created has been specified.
-            if (filter.MinCreated != null)
-                bloodPressures = bloodPressures.Where(x => x.Created >= filter.MinCreated);
-            if (filter.MaxCreated != null)
-                bloodPressures = bloodPressures.Where(x => x.Created <= filter.MaxCreated);
-
-            // LastModified has been specified.
-            if (filter.MinLastModified != null)
-                bloodPressures = bloodPressures.Where(x => x.LastModified >= filter.MinLastModified);
-            if (filter.MaxLastModified != null)
-                bloodPressures = bloodPressures.Where(x => x.LastModified <= filter.MaxLastModified);
-
-            // Note has been specified.
-            if (!string.IsNullOrEmpty(filter.Note))
-                bloodPressures = bloodPressures.Where(x => x.Note.Contains(filter.Note));
+            bloodPressures = FilterBloodPressuresAsync(bloodPressures, filter);
 
             // Result sorting.
             switch (filter.Direction)
@@ -223,5 +140,60 @@ namespace Shared.Repositories
             // Return filtered result.
             return response;
         }
+
+        /// <summary>
+        /// Filter blood pressure notes by using specific conditions.
+        /// </summary>
+        /// <param name="bloodPressures"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        private IQueryable<BloodPressure> FilterBloodPressuresAsync(IQueryable<BloodPressure> bloodPressures,
+            FilterBloodPressureViewModel filter)
+        {
+            // Id is specified.
+            if (filter.Id != null)
+                bloodPressures = bloodPressures.Where(x => x.Id == filter.Id.Value);
+
+            // Owner has been specified.
+            if (filter.Owner != null)
+                bloodPressures = bloodPressures.Where(x => x.Owner == filter.Owner);
+
+            // Systolic has been specified.
+            if (filter.MinSystolic != null)
+                bloodPressures = bloodPressures.Where(x => x.Systolic >= filter.MinSystolic);
+            if (filter.MaxSystolic != null)
+                bloodPressures = bloodPressures.Where(x => x.Systolic <= filter.MaxSystolic);
+
+            // Diastolic has been specified.
+            if (filter.MinDiastolic != null)
+                bloodPressures = bloodPressures.Where(x => x.Diastolic >= filter.MinDiastolic);
+            if (filter.MaxDiastolic != null)
+                bloodPressures = bloodPressures.Where(x => x.Diastolic <= filter.MaxDiastolic);
+
+
+            // Time has been specified.
+            if (filter.MinTime != null)
+                bloodPressures = bloodPressures.Where(x => x.Time >= filter.MinTime);
+            if (filter.MaxTime != null)
+                bloodPressures = bloodPressures.Where(x => x.Time <= filter.MaxTime);
+
+            // Created has been specified.
+            if (filter.MinCreated != null)
+                bloodPressures = bloodPressures.Where(x => x.Created >= filter.MinCreated);
+            if (filter.MaxCreated != null)
+                bloodPressures = bloodPressures.Where(x => x.Created <= filter.MaxCreated);
+
+            // LastModified has been specified.
+            if (filter.MinLastModified != null)
+                bloodPressures = bloodPressures.Where(x => x.LastModified >= filter.MinLastModified);
+            if (filter.MaxLastModified != null)
+                bloodPressures = bloodPressures.Where(x => x.LastModified <= filter.MaxLastModified);
+
+            // Note has been specified.
+            if (!string.IsNullOrEmpty(filter.Note))
+                bloodPressures = bloodPressures.Where(x => x.Note.Contains(filter.Note));
+
+            return bloodPressures;
+        } 
     }
 }

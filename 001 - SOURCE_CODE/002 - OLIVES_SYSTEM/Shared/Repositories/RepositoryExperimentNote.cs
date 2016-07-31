@@ -116,7 +116,8 @@ namespace Shared.Repositories
             IQueryable<ExperimentNote> experiments = context.ExperimentNotes;
 
             // Filter by medical record id.
-            experiments = experiments.Where(x => x.Id == filter.MedicalRecord);
+            if (filter.MedicalRecord != null)
+                experiments = experiments.Where(x => x.Id == filter.MedicalRecord);
 
             // Base on the mode of image filter to decide the role of requester.
             if (filter.Mode == RecordFilterMode.RequesterIsOwner)
@@ -189,7 +190,7 @@ namespace Shared.Repositories
                     }
                     break;
             }
-
+            
             // Response initialization.
             var response = new ResponseExperimentNoteFilter();
             response.Total = await experiments.CountAsync();

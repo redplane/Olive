@@ -25,18 +25,16 @@ namespace Olives.Controllers
         /// <summary>
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryAccount"></param>
         /// <param name="repositoryMedicalNote"></param>
         /// <param name="repositoryMedicalRecord"></param>
         /// <param name="repositoryRelation"></param>
         /// <param name="timeService"></param>
         /// <param name="log"></param>
-        public MedicalNoteController(IRepositoryAccount repositoryAccount, IRepositoryMedicalNote repositoryMedicalNote,
+        public MedicalNoteController(IRepositoryMedicalNote repositoryMedicalNote,
             IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryRelation repositoryRelation,
             ITimeService timeService,
             ILog log)
         {
-            _repositoryAccount = repositoryAccount;
             _repositoryMedicalNote = repositoryMedicalNote;
             _repositoryMedicalRecord = repositoryMedicalRecord;
             _repositoryRelation = repositoryRelation;
@@ -57,16 +55,18 @@ namespace Olives.Controllers
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> FindMedicalNoteAsync([FromUri] int id)
         {
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
             try
             {
+                #region Record find
+
+                // Retrieve information of person who sent request.
+                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+                
                 // Find the medical record by using id.
-                var result = await _repositoryMedicalNote.FindMedicalNoteAsync(id);
+                var medicalNote = await _repositoryMedicalNote.FindMedicalNoteAsync(id);
 
                 // No result has been received.
-                if (result == null)
+                if (medicalNote == null)
                 {
                     // Log the error.
                     _log.Error($"Medical note [Id: {id}] is not found");
@@ -78,52 +78,42 @@ namespace Olives.Controllers
                     });
                 }
 
-                // Requester is requesting to see the personal note of another person.
-                if (requester.Id != result.Owner)
+                #endregion
+
+                #region Relationship check
+
+                var isRelationshipAvailable = await _repositoryRelation.IsPeopleConnected(requester.Id, medicalNote.Owner);
+                if (!isRelationshipAvailable)
                 {
-                    // Beside owner, only creator can only see the medical record.
-                    if (requester.Id != result.Creator)
+                    // Logging.
+                    _log.Error($"There is no relationship between requester [Id: {requester.Id}] and owner [Id: {medicalNote.Owner}]");
+
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {
-                        // Log the error first.
-                        _log.Error($"Requester [Id: {requester.Id}] is not the creator of medical note");
-
-                        // Tell client there is no result for him/her to see.
-                        return Request.CreateResponse(HttpStatusCode.NotFound, new
-                        {
-                            Error = $"{Language.WarnRecordNotFound}"
-                        });
-                    }
-
-                    // Find the relationship between the requester and medical record owner.
-                    var relationships =
-                        await
-                            _repositoryRelation.FindRelationshipAsync(requester.Id, result.Owner,
-                                (byte) StatusRelation.Active);
-
-                    // There is no active relationship between the requester and owner.
-                    if (relationships == null || relationships.Count < 1)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.NotFound, new
-                        {
-                            Error = $"{Language.WarnRecordNotFound}"
-                        });
-                    }
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
                 }
+
+                #endregion
+
+                #region Result handling
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     MedicalNote = new
                     {
-                        result.Id,
-                        MedicalRecord = result.MedicalRecordId,
-                        result.Owner,
-                        result.Creator,
-                        result.Note,
-                        result.Time,
-                        result.Created,
-                        result.LastModified
+                        medicalNote.Id,
+                        MedicalRecord = medicalNote.MedicalRecordId,
+                        medicalNote.Owner,
+                        medicalNote.Creator,
+                        medicalNote.Note,
+                        medicalNote.Time,
+                        medicalNote.Created,
+                        medicalNote.LastModified
                     }
                 });
+
+                #endregion
             }
             catch (Exception exception)
             {
@@ -187,34 +177,27 @@ namespace Olives.Controllers
             #endregion
 
             #region Owner & relationship validation
-
-            // Find the active patient.
-            var owner =
-                await _repositoryAccount.FindPersonAsync(medicalRecord.Owner, null, null, (byte) Role.Patient,
-                    StatusAccount.Active);
-
-            // Owner is not found.
-            if (owner == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                {
-                    Error = $"{Language.WarnOwnerNotActive}"
-                });
-            }
-
+            
             // Find the relationship between requester and the record owner.
-            var relationship =
-                await _repositoryRelation.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
-                    (byte) StatusRelation.Active);
+            var isRelationshipAvailable =
+                await _repositoryRelation.IsPeopleConnected(requester.Id, medicalRecord.Owner);
 
             // No relationship is found between 2 people.
-            if (relationship == null || relationship.Count < 1)
+            if (!isRelationshipAvailable)
+            {
+                // Log.
+                _log.Error(
+                    $"There is no relationship between requester [Id: {requester.Id}] and owner [Id: {medicalRecord.Owner}]");
+
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
                     Error = $"{Language.WarnHasNoRelationship}"
                 });
+            }
 
             #endregion
+
+            #region Result handling
 
             try
             {
@@ -251,6 +234,8 @@ namespace Olives.Controllers
                 // Tell the client something is wrong with the server.
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
+
+            #endregion
         }
 
         /// <summary>
@@ -264,10 +249,10 @@ namespace Olives.Controllers
         public async Task<HttpResponseMessage> ModifyMedicalNote([FromUri] int id,
             [FromBody] EditMedicalNoteViewModel modifier)
         {
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            #region Parameters validation
 
-            #region Paramters validation
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Model hasn't been initialized.
             if (modifier == null)
@@ -286,7 +271,7 @@ namespace Olives.Controllers
 
             #endregion
 
-            #region Medical note
+            #region Result find
 
             // Find the medical note.
             var medicalNote = await _repositoryMedicalNote.FindMedicalNoteAsync(id);
@@ -305,14 +290,15 @@ namespace Olives.Controllers
 
             #endregion
 
+            #region Relationship check
+
             // Find the relationship between the requester and owner.
-            var relationships =
+            var isRelationshipAvailable =
                 await
-                    _repositoryRelation.FindRelationshipAsync(requester.Id, medicalNote.Owner,
-                        (byte) StatusRelation.Active);
+                    _repositoryRelation.IsPeopleConnected(requester.Id, medicalNote.Owner);
 
             // No relationship is found.
-            if (relationships == null || relationships.Count < 1)
+            if (!isRelationshipAvailable)
             {
                 // Log the error.
                 _log.Error(
@@ -323,6 +309,8 @@ namespace Olives.Controllers
                     Error = $"{Language.WarnHasNoRelationship}"
                 });
             }
+
+            #endregion
 
             #region Information update
 
@@ -377,10 +365,11 @@ namespace Olives.Controllers
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> FilterMedicalNote([FromBody] FilterMedicalNoteViewModel filter)
         {
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
             #region Parameters validation
+
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
 
             // Model hasn't been initialized.
             if (filter == null)
@@ -439,12 +428,7 @@ namespace Olives.Controllers
         #endregion
 
         #region Properties
-
-        /// <summary>
-        ///     Repository of accounts
-        /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
-
+        
         /// <summary>
         ///     Repository of medical notes
         /// </summary>

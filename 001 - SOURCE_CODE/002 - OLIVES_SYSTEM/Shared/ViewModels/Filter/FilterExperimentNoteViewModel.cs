@@ -13,7 +13,7 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         ///     Medical record index
         /// </summary>
-        public int MedicalRecord { get; set; }
+        public int? MedicalRecord { get; set; }
 
         /// <summary>
         ///     Name of medical experiment note.

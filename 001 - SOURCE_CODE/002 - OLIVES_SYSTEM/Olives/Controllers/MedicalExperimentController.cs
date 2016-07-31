@@ -30,6 +30,7 @@ namespace Olives.Controllers
         /// <param name="repositoryExperimentNote"></param>
         /// <param name="repositoryRelation"></param>
         /// <param name="log"></param>
+        /// <param name="timeService"></param>
         public MedicalExperimentController(IRepositoryMedicalRecord repositoryMedicalRecord,
             IRepositoryExperimentNote repositoryExperimentNote,
             IRepositoryRelation repositoryRelation, ITimeService timeService,
@@ -56,10 +57,11 @@ namespace Olives.Controllers
         public async Task<HttpResponseMessage> InitializeMedialExperiment(
             [FromBody] InitializeMedicalExperiment initializer)
         {
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
             #region Parameters validation
+
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
 
             // Initializer hasn't been initialized.
             if (initializer == null)
@@ -95,31 +97,26 @@ namespace Olives.Controllers
             #endregion
 
             #region Relationship validation
+            
+            // Find the relationship between the requester and prescription owner.
+            var isRelationshipAvailable =
+                await
+                    _repositoryRelation.IsPeopleConnected(requester.Id, medicalRecord.Owner);
 
-            // Requester is different from the medical owner.
-            if (requester.Id != medicalRecord.Owner)
+            // No relationship is found
+            if (!isRelationshipAvailable)
             {
-                // Find the relationship between the requester and prescription owner.
-                var relationship =
-                    await
-                        _repositoryRelation.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
-                            (byte) StatusRelation.Active);
+                // Log the error first.
+                _log.Error(
+                    $"Requester [Id: {requester.Id}] doesn't have relationship with Medical Record [Owner: {medicalRecord.Owner}]");
 
-                // No relationship is found
-                if (relationship == null)
+                // Tell the client the request is forbidden
+                return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    // Log the error first.
-                    _log.Error(
-                        $"Requester [Id: {requester.Id}] doesn't have relationship with Medical Record [Owner: {medicalRecord.Owner}]");
-
-                    // Tell the client the request is forbidden
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                    {
-                        Error = $"{Language.WarnHasNoRelationship}"
-                    });
-                }
+                    Error = $"{Language.WarnHasNoRelationship}"
+                });
             }
-
+            
             #endregion
 
             #region Record initialization
@@ -192,32 +189,55 @@ namespace Olives.Controllers
 
             #endregion
 
-            #region Role validation
+            #region Record find
 
             // Find the medical record first.
             var experimentNote = await _repositoryExperimentNote.FindExperimentNoteAsync(experiment);
 
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
-            // Requester is different from the medical owner.
-            if (requester.Id != experimentNote.Owner)
+            if (experimentNote == null)
             {
-                // Find the relationship between the requester and prescription owner.
-                var relationship =
-                    await
-                        _repositoryRelation.FindRelationshipAsync(requester.Id, experimentNote.Owner,
-                            (byte) StatusRelation.Active);
+                // Log error.
+                _log.Error($"There is no experiment note [Id: {experiment}]");
 
-                // No relationship is found
-                if (relationship == null)
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                    {
-                        Error = $"{Language.WarnHasNoRelationship}"
-                    });
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
             }
 
             #endregion
+
+            #region Relationship find
+
+            // Retrieve information of person who sent request.
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Requester doesn't take part in the medical note.
+            if (requester.Id != experimentNote.Creator && requester.Id != experimentNote.Owner)
+            {
+                _log.Error($"There is no relationship between requester [Id: {requester.Id}] and owner [Id: {experimentNote.Owner}]");
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
+
+            // No relationship between the requester and the owner.
+            var isRelationshipAvailable =
+                await _repositoryRelation.IsPeopleConnected(requester.Id, experimentNote.Owner);
+
+            if (!isRelationshipAvailable)
+            {
+                _log.Error($"There is no relationship between requester [Id: {requester.Id}] and owner [Id: {experimentNote.Owner}]");
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
+
+            #endregion
+
+            #region Result handling
 
             try
             {
@@ -256,6 +276,8 @@ namespace Olives.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
+
+            #endregion
         }
 
         /// <summary>
@@ -278,6 +300,8 @@ namespace Olives.Controllers
                 // No record has been removed.
                 if (records < 1)
                 {
+                    _log.Error($"There is no experiment note [Id: {experiment}]");
+
                     // Tell the client that record is not found.
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {

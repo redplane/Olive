@@ -23,11 +23,11 @@ namespace Shared.Repositories
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
-            // Find the record with the given conditions and remove 'em.
-            var response = await FilterAddictionAsync(filter);
-
+            IQueryable<Addiction> addictions = context.Addictions;
+            addictions = FilterAddictionsAsync(addictions, filter);
+            
             // Delete and retrieve the affected records.
-            context.Addictions.RemoveRange(response.Addictions);
+            context.Addictions.RemoveRange(addictions);
 
             // Save changes.
             var records = await context.SaveChangesAsync();
@@ -40,39 +40,14 @@ namespace Shared.Repositories
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<ResponseAddictionFilter> FilterAddictionAsync(FilterAddictionViewModel filter)
+        public async Task<ResponseAddictionFilter> FilterAddictionsAsync(FilterAddictionViewModel filter)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
             // By default, take all records from database.
             IQueryable<Addiction> addictions = context.Addictions;
-
-            // Id is specified.
-            if (filter.Id != null)
-                addictions = addictions.Where(x => x.Id == filter.Id);
-
-            // Owner has been specified.
-            if (filter.Owner != null)
-                addictions = addictions.Where(x => x.Owner == filter.Owner);
-
-            // Cause has been specified.
-            if (!string.IsNullOrWhiteSpace(filter.Cause))
-                addictions = addictions.Where(x => x.Cause.Contains(filter.Cause));
-
-            // Note has been specified.
-            if (!string.IsNullOrWhiteSpace(filter.Note))
-                addictions = addictions.Where(x => x.Note.Contains(filter.Note));
-
-            // Created has been specified.
-            if (filter.MinCreated != null) addictions = addictions.Where(x => x.Created >= filter.MinCreated);
-            if (filter.MaxCreated != null) addictions = addictions.Where(x => x.Created <= filter.MaxCreated);
-
-            // Last modified has been specified.
-            if (filter.MinLastModified != null)
-                addictions = addictions.Where(x => x.LastModified >= filter.MinLastModified);
-            if (filter.MaxLastModified != null)
-                addictions = addictions.Where(x => x.LastModified <= filter.MaxLastModified);
+            addictions = FilterAddictionsAsync(addictions, filter);
 
             // Result filter
             switch (filter.Direction)
@@ -118,6 +93,43 @@ namespace Shared.Repositories
             response.Addictions = addictions;
 
             return response;
+        }
+
+        /// <summary>
+        /// Filter the addictions by using specific conditions.
+        /// </summary>
+        /// <param name="addictions"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        private IQueryable<Addiction> FilterAddictionsAsync(IQueryable<Addiction> addictions, FilterAddictionViewModel filter)
+        {
+            // Id is specified.
+            if (filter.Id != null)
+                addictions = addictions.Where(x => x.Id == filter.Id);
+
+            // Owner has been specified.
+            if (filter.Owner != null)
+                addictions = addictions.Where(x => x.Owner == filter.Owner);
+
+            // Cause has been specified.
+            if (!string.IsNullOrWhiteSpace(filter.Cause))
+                addictions = addictions.Where(x => x.Cause.Contains(filter.Cause));
+
+            // Note has been specified.
+            if (!string.IsNullOrWhiteSpace(filter.Note))
+                addictions = addictions.Where(x => x.Note.Contains(filter.Note));
+
+            // Created has been specified.
+            if (filter.MinCreated != null) addictions = addictions.Where(x => x.Created >= filter.MinCreated);
+            if (filter.MaxCreated != null) addictions = addictions.Where(x => x.Created <= filter.MaxCreated);
+
+            // Last modified has been specified.
+            if (filter.MinLastModified != null)
+                addictions = addictions.Where(x => x.LastModified >= filter.MinLastModified);
+            if (filter.MaxLastModified != null)
+                addictions = addictions.Where(x => x.LastModified <= filter.MaxLastModified);
+
+            return addictions;
         }
 
         /// <summary>
