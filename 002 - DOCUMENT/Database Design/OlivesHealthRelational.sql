@@ -375,10 +375,15 @@ CREATE TABLE RealTimeConnection
 	Created					FLOAT NOT NULL,
 )
 
-CREATE TABLE AppointmentCheckTask
+---------------------------------------------------------------------------------------------------
+-- Background tasks
+---------------------------------------------------------------------------------------------------
+-- This table is for storing task monotoring appointment.
+CREATE TABLE TaskCheckAppointment
 (
-	AppointmentId			INT PRIMARY KEY,
-	Time					FLOAT,
+	AppointmentId			INT NOT NULL PRIMARY KEY,
+	TaskId					INT NOT NUll,
+	StartTime				DateTime NOT NULL,
 
 	FOREIGN KEY (AppointmentId) REFERENCES Appointment(Id)
 )
