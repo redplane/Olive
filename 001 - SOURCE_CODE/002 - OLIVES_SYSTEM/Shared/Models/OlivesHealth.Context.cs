@@ -39,6 +39,7 @@ namespace Shared.Models
         public virtual DbSet<MedicalImage> MedicalImages { get; set; }
         public virtual DbSet<MedicalNote> MedicalNotes { get; set; }
         public virtual DbSet<MedicalRecord> MedicalRecords { get; set; }
+        public virtual DbSet<Message> Messages { get; set; }
         public virtual DbSet<Patient> Patients { get; set; }
         public virtual DbSet<Person> People { get; set; }
         public virtual DbSet<Place> Places { get; set; }
@@ -49,6 +50,6 @@ namespace Shared.Models
         public virtual DbSet<Relation> Relations { get; set; }
         public virtual DbSet<Specialty> Specialties { get; set; }
         public virtual DbSet<SugarBlood> SugarBloods { get; set; }
-        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
+        public virtual DbSet<TaskCheckAppointment> TaskCheckAppointments { get; set; }
     }
 }

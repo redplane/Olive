@@ -12,7 +12,7 @@ namespace Olives.ViewModels.Initialize
     {
         [NumericCompare(1, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
-        public int MedicalRecord { get; set; } = 1;
+        public int MedicalRecord { get; set; } = 0;
 
         [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsRequired")]

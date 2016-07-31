@@ -38,7 +38,8 @@ namespace Olives.Attributes
             if (MaxLengthName > 0)
             {
                 var invalidKey = dict.Keys.FirstOrDefault(x => x.Length > MaxLengthName);
-                return new ValidationResult(FormatErrorMessage(invalidKey));
+                if (invalidKey != null)
+                    return new ValidationResult(FormatErrorMessage(invalidKey));
             }
 
             return ValidationResult.Success;

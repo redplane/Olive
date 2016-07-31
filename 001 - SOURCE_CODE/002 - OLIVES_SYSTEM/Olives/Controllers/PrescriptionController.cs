@@ -378,11 +378,7 @@ namespace Olives.Controllers
 
                 // Initialize prescription to database.
                 prescription = await _repositoryPrescription.InitializePrescriptionAsync(prescription);
-
-                #endregion
-
-                #region Response initialization
-
+                
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     prescription.Id,
