@@ -227,6 +227,7 @@ namespace Olives.Controllers
             {
                 // Only filter and receive the first result.
                 var medicalRecord = new MedicalRecord();
+                medicalRecord.Creator = requester.Id;
                 medicalRecord.Owner = info.Owner.Value;
                 medicalRecord.Category = info.Category;
                 medicalRecord.Info = JsonConvert.SerializeObject(info.Infos);
