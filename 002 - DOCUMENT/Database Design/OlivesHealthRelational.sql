@@ -15,6 +15,7 @@ DROP TABLE Addiction;
 DROP TABLE SugarBlood;
 DROP TABLE BloodPressure;
 DROP TABLE Heartbeat;
+DROP TABLE AppointmentNotification;
 DROP TABLE Appointment;
 DROP TABLE Rating;
 DROP TABLE Relation;
@@ -22,6 +23,7 @@ DROP TABLE Patient;
 DROP TABLE Doctor;
 DROP TABLE Place;
 DROP TABLE Specialty;
+DROP TABLE [Message];
 DROP TABLE Person;
 DROP TABLE JunkFile;
 ---------------------------------------------------------------------------------------------------
@@ -373,7 +375,7 @@ CREATE TABLE RealTimeConnection
 	ConnectionId			NVARCHAR(MAX),
 	Created					FLOAT NOT NULL,
 )
-SELECT * FROM Person where Person.Id = 77
+
 ----------------------------------------------------------
 -- Messaging
 ----------------------------------------------------------
@@ -389,7 +391,6 @@ CREATE TABLE [Message]
 	FOREIGN KEY (Broadcaster) REFERENCES Person(Id),
 	FOREIGN KEY (Recipient) REFERENCES Person(Id)
 )
-
 
 SELECT * FROM RealTimeConnection
 SELECT * FROM Person
