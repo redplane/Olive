@@ -253,6 +253,7 @@
     <Compile Include="Attributes\OlivesAuthorizeAtrribute.cs" />
     <Compile Include="Constants\EmailType.cs" />
     <Compile Include="Controllers\ApiParentControllerHub.cs" />
+    <Compile Include="Controllers\MessageController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\AppointmentNotificationController.cs" />
     <Compile Include="Controllers\MedicalNoteController.cs" />
@@ -314,6 +315,7 @@
     <Compile Include="ViewModels\Initialize\InitializeMedicalExperiment.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalNoteViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalRecordViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializeMessageViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePrescriptedMedicineViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePrescriptionImage.cs" />
     <Compile Include="ViewModels\Initialize\InitializePrescriptionImageViewModel.cs" />

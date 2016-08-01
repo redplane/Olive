@@ -77,6 +77,11 @@
         /// </summary>
         public const int ActivationCodeHourDuration = 24;
 
+        /// <summary>
+        /// Maximum characters allowed in message content.
+        /// </summary>
+        public const int MaxMessageContentLength = 512;
+
         #region Blood pressure
 
         /// <summary>

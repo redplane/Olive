@@ -21,7 +21,6 @@ namespace Olives.Hubs
         /// Service which provides functions to access time calculation.
         /// </summary>
         private ITimeService TimeService => GlobalHost.DependencyResolver.Resolve<ITimeService>();
-
         
         #region Overriden methods
 

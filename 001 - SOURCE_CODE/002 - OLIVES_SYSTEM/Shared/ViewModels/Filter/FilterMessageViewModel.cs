@@ -40,12 +40,12 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         /// Whether records should be sorted ascendingly or decendingly.
         /// </summary>
-        public SortDirection Direction { get; set; }
+        public SortDirection Direction { get; set; } = SortDirection.Decending;
 
         /// <summary>
         /// Which property should be used for sorting.
         /// </summary>
-        public MessageFilterSort Sort { get; set; }
+        public MessageFilterSort Sort { get; set; } = MessageFilterSort.Created;
 
         /// <summary>
         /// Index of result page.
