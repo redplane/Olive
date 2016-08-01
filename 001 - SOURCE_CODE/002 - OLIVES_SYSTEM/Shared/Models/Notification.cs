@@ -12,12 +12,19 @@ namespace Shared.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class TaskCheckAppointment
+    public partial class Notification
     {
-        public int AppointmentId { get; set; }
-        public int TaskId { get; set; }
-        public System.DateTime StartTime { get; set; }
+        public int Id { get; set; }
+        public byte Type { get; set; }
+        public byte Topic { get; set; }
+        public int Broadcaster { get; set; }
+        public int Recipient { get; set; }
+        public int Record { get; set; }
+        public string Message { get; set; }
+        public double Created { get; set; }
+        public bool IsSeen { get; set; }
     
-        public virtual Appointment Appointment { get; set; }
+        public virtual Person Person { get; set; }
+        public virtual Person Person1 { get; set; }
     }
 }

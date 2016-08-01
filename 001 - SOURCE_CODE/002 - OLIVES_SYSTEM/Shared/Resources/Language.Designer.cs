@@ -439,6 +439,24 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} created an appointment with content : {1}.
+        /// </summary>
+        public static string NotificationAppointmentCreate {
+            get {
+                return ResourceManager.GetString("NotificationAppointmentCreate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} edited an appointment with content : {1}.
+        /// </summary>
+        public static string NotificationAppointmentEdit {
+            get {
+                return ResourceManager.GetString("NotificationAppointmentEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Olive account activation code.
         /// </summary>
         public static string OliveActivationCodeEmailTitle {

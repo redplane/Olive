@@ -14,12 +14,6 @@ namespace Shared.Models
     
     public partial class Appointment
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Appointment()
-        {
-            this.AppointmentNotifications = new HashSet<AppointmentNotification>();
-        }
-    
         public int Id { get; set; }
         public int Maker { get; set; }
         public string MakerFirstName { get; set; }
@@ -32,13 +26,10 @@ namespace Shared.Models
         public string Note { get; set; }
         public double Created { get; set; }
         public Nullable<double> LastModified { get; set; }
-        public byte Status { get; set; }
         public string LastModifiedNote { get; set; }
+        public byte Status { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AppointmentNotification> AppointmentNotifications { get; set; }
         public virtual Person Person { get; set; }
         public virtual Person Person1 { get; set; }
-        public virtual TaskCheckAppointment TaskCheckAppointment { get; set; }
     }
 }

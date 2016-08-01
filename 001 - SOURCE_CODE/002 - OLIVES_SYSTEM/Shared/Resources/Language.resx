@@ -468,4 +468,10 @@
   <data name="WarnRatingHasBeenDone" xml:space="preserve">
     <value>W035</value>
   </data>
+  <data name="NotificationAppointmentCreate" xml:space="preserve">
+    <value>{0} created an appointment with content : {1}</value>
+  </data>
+  <data name="NotificationAppointmentEdit" xml:space="preserve">
+    <value>{0} edited an appointment with content : {1}</value>
+  </data>
 </root>

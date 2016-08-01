@@ -8,7 +8,7 @@ using Shared.Resources;
 
 namespace Shared.ViewModels.Filter
 {
-    public class FilterAppointmentNotificationViewModel : IPagination
+    public class FilterNotificationViewModel : IPagination
     {
         /// <summary>
         ///     Id of appointment notification.
@@ -20,20 +20,24 @@ namespace Shared.ViewModels.Filter
         /// </summary>
         public int Requester { get; set; }
 
+        public RecordFilterMode? Mode { get; set; }
+
         /// <summary>
         ///     Who is included in medical record.
         /// </summary>
         public int? Partner { get; set; }
 
         /// <summary>
-        ///     Filtering mode.
+        /// Notification type.
         /// </summary>
-        public RecordFilterMode? Mode { get; set; }
-
+        public NotificationType? Type { get; set; }
+        
         /// <summary>
-        ///     Id of appointment.
+        /// Topic of notification.
         /// </summary>
-        public int? Appointment { get; set; }
+        public NotificationTopic? Topic { get; set; }
+        
+        public int? Record { get; set; }
 
         /// <summary>
         ///     Whether appointment notification has been seen or not.
@@ -55,15 +59,10 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         ///     Which property should be used for sorting.
         /// </summary>
-        [InEnumerationsArray(
-            new object[]
-            {
-                AppointmentNotificationFilterSort.Appointment, AppointmentNotificationFilterSort.Created,
-                AppointmentNotificationFilterSort.Seen, AppointmentNotificationFilterSort.Type
-            },
-            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
-        public AppointmentNotificationFilterSort Sort { get; set; } = AppointmentNotificationFilterSort.Created;
-
+        [InEnumerationsArray(new object[] { NotificationFilterSort.Created, NotificationFilterSort.IsSeen, NotificationFilterSort.Topic, NotificationFilterSort.Type },
+            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
+        public NotificationFilterSort Sort { get; set; } = NotificationFilterSort.Created;
+        
         /// <summary>
         ///     Whether record should be sorted ascendingly or decendingly.
         /// </summary>

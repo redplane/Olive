@@ -7,6 +7,7 @@ using System.Web.Http;
 using log4net;
 using Olives.Attributes;
 using Olives.Hubs;
+using Olives.Interfaces;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
@@ -27,24 +28,23 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="repositoryAccount"></param>
         /// <param name="repositoryAppointment"></param>
-        /// <param name="repositoryAppointmentNotification"></param>
-        /// <param name="repositoryTaskCheckAppointment"></param>
         /// <param name="repositoryRealTimeConnection"></param>
         /// <param name="repositoryRelation"></param>
         /// <param name="log"></param>
         /// <param name="timeService"></param>
+        /// <param name="notificationService"></param>
         public AppointmentController(IRepositoryAccount repositoryAccount, IRepositoryAppointment repositoryAppointment,
-            IRepositoryAppointmentNotification repositoryAppointmentNotification,
             IRepositoryRealTimeConnection repositoryRealTimeConnection, IRepositoryRelation repositoryRelation,
-            ILog log, ITimeService timeService)
+            ILog log, 
+            ITimeService timeService, INotificationService notificationService)
         {
             _repositoryAccount = repositoryAccount;
             _repositoryAppointment = repositoryAppointment;
-            _repositoryAppointmentNotification = repositoryAppointmentNotification;
             _repositoryRealTimeConnection = repositoryRealTimeConnection;
             _repositoryRelation = repositoryRelation;
             _log = log;
             _timeService = timeService;
+            _notificationService = notificationService;
         }
 
         #endregion
@@ -251,41 +251,20 @@ namespace Olives.Controllers
 
                 #endregion
 
-                #region Appointment notification initialization
+                #region Notification initialization
 
-                try
-                {
-                    // Appointment notification create.
-                    // As the notification is created successfully. Notification will be pushed to recipient real time.
-                    var appointmentNotification = new AppointmentNotification();
-                    appointmentNotification.Type = (byte) AppointmentNotificationType.Created;
-                    appointmentNotification.Invoker = requester.Id;
-                    appointmentNotification.Recipient = info.Dater;
-                    appointmentNotification.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
-                    appointmentNotification.AppointmentId = appointment.Id;
-                    appointmentNotification.IsSeen = false;
+                var notification = new Notification();
+                notification.Type = (byte) NotificationType.Create;
+                notification.Topic = (byte) NotificationTopic.Appointment;
+                notification.Broadcaster = requester.Id;
+                notification.Recipient = dater.Id;
+                notification.Record = appointment.Id;
+                notification.Message = string.Format(Language.NotificationAppointmentCreate, requester.FullName,
+                    appointment.Note);
+                notification.Created = unixTime;
 
-                    // Initialize appointment notification.
-                    await
-                        _repositoryAppointmentNotification.InitializeAppointmentNotificationAsync(
-                            appointmentNotification);
-
-                    // As the notification is created successfully. Notification should be sent.
-                    var connectionIndexes =
-                        await
-                            _repositoryRealTimeConnection.FindRealTimeConnectionIndexesAsync(dater.Id, null, null);
-
-                    // Send notification to all connection indexes which have been found.
-                    Hub.Clients.Clients(connectionIndexes)
-                        .notifyAppointment(requester.Id, appointmentNotification.Created,
-                            appointmentNotification.AppointmentId, appointmentNotification.Type);
-                }
-                catch (Exception exception)
-                {
-                    // As the notification creation is failed. Continue the function.
-                    // Notification can be displayed later by long polling request.
-                    _log.Error(exception.Message, exception);
-                }
+                // Broadcast the notification with fault tolerant.
+                await _notificationService.BroadcastNotificationAsync(notification, Hub);
 
                 #endregion
 
@@ -389,11 +368,17 @@ namespace Olives.Controllers
 
             #region Appointment modification
 
+            // Find the last modified time.
+            var lastModifiedTime = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+
             // Initialize an appointment information.
             if (info.From != null) appointment.From = info.From.Value;
             if (info.To != null) appointment.To = info.To.Value;
             if (!string.IsNullOrWhiteSpace(info.Note)) appointment.LastModifiedNote = info.Note;
             if (info.Status != null) appointment.Status = (byte) info.Status;
+
+            // Update the last modified time.
+            appointment.LastModified = lastModifiedTime;
 
             // Update the appointment.
             await _repositoryAppointment.InitializeAppointment(appointment);
@@ -401,38 +386,23 @@ namespace Olives.Controllers
             #endregion
 
             #region Notification initialization
+            
+            // Who should receive the notification.
+            var recipient = requester.Id == appointment.Maker ? appointment.Dater : appointment.Maker;
+            
+            var notification = new Notification();
+            notification.Type = (byte)NotificationType.Edit;
+            notification.Topic = (byte)NotificationTopic.Appointment;
+            notification.Broadcaster = requester.Id;
+            notification.Recipient = recipient;
+            notification.Record = appointment.Id;
+            notification.Message = string.Format(Language.NotificationAppointmentEdit, requester.FullName,
+                appointment.Note);
+            notification.Created = lastModifiedTime;
 
-            try
-            {
-                // Who should receive the notification.
-                var recipient = requester.Id == appointment.Maker ? appointment.Dater : appointment.Maker;
-
-                var appointmentNotification = new AppointmentNotification();
-                appointmentNotification.AppointmentId = appointment.Id;
-                appointmentNotification.Type = (byte) AppointmentNotificationType.Edited;
-                appointmentNotification.Recipient = recipient;
-                appointmentNotification.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
-
-                // Initialize the notification.
-                await _repositoryAppointmentNotification.InitializeAppointmentNotificationAsync(appointmentNotification);
-
-                // As the appointment is modified successfully. Notification should be sent.
-                var connectionIndexes =
-                    await
-                        _repositoryRealTimeConnection.FindRealTimeConnectionIndexesAsync(
-                            appointmentNotification.Recipient, null, null);
-
-                // Send notification to all connection indexes which have been found.
-                Hub.Clients.Clients(connectionIndexes)
-                    .notifyAppointment(requester.Id, appointmentNotification.Created,
-                        appointmentNotification.AppointmentId, appointmentNotification.Type);
-            }
-            catch (Exception exception)
-            {
-                // Notification creation is failed. Log the error and continue the function because it is not important.
-                _log.Error(exception.Message, exception);
-            }
-
+            // Broadcast the notification with fault tolerant.
+            await _notificationService.BroadcastNotificationAsync(notification, Hub);
+            
             #endregion
 
             #region Result handling
@@ -556,9 +526,9 @@ namespace Olives.Controllers
         private readonly IRepositoryAppointment _repositoryAppointment;
 
         /// <summary>
-        ///     Repository of appointment notification.
+        ///     Service of notification.
         /// </summary>
-        private readonly IRepositoryAppointmentNotification _repositoryAppointmentNotification;
+        private readonly INotificationService _notificationService;
 
         /// <summary>
         ///     Repository of relationships.

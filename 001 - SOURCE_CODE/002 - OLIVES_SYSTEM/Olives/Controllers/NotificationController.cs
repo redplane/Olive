@@ -16,19 +16,21 @@ using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
-    public class AppointmentNotificationController : ApiParentController
+    [Route("api/notification/filter")]
+    [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+    public class NotificationController : ApiParentController
     {
         #region Constructor
 
         /// <summary>
         ///     Initialize an instance with dependency injections.
         /// </summary>
-        /// <param name="repositoryAppointmentNotification"></param>
+        /// <param name="repositoryNotification"></param>
         /// <param name="log"></param>
-        public AppointmentNotificationController(IRepositoryAppointmentNotification repositoryAppointmentNotification,
+        public NotificationController(IRepositoryNotification repositoryNotification,
             ILog log)
         {
-            _repositoryAppointmentNotification = repositoryAppointmentNotification;
+            _repositoryNotification = repositoryNotification;
             _log = log;
         }
 
@@ -42,10 +44,8 @@ namespace Olives.Controllers
         /// <param name="filter"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("api/appointment/notification/filter")]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> FilterAppointmentNotificationAsync(
-            [FromBody] FilterAppointmentNotificationViewModel filter)
+            [FromBody] FilterNotificationViewModel filter)
         {
             #region Parameters validation
 
@@ -53,7 +53,7 @@ namespace Olives.Controllers
             if (filter == null)
             {
                 // Initialize the filter.
-                filter = new FilterAppointmentNotificationViewModel();
+                filter = new FilterNotificationViewModel();
 
                 // Do validation manually.
                 Validate(filter);
@@ -82,18 +82,19 @@ namespace Olives.Controllers
                 filter.Requester = requester.Id;
 
                 // Do the filter.
-                var result = await _repositoryAppointmentNotification.FilterAppointmentNotificationAsync(filter);
+                var result = await _repositoryNotification.FilterNotificationsAsync(filter);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
-                    AppointmentNotifications = result.AppointmentNotifications.Select(x => new
+                    Notifications = result.Notifications.Select(x => new
                     {
                         x.Id,
                         x.Type,
-                        x.Invoker,
+                        x.Broadcaster,
                         x.Recipient,
+                        x.Record,
+                        x.Message,
                         x.Created,
-                        Appointment = x.AppointmentId,
                         x.IsSeen
                     }),
                     result.Total
@@ -117,8 +118,7 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpPut]
-        [Route("api/appointment/notification/seen")]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [Route("api/notification/seen")]
         public async Task<HttpResponseMessage> MakeAppointmentNotificationSeen([FromUri] int id)
         {
             try
@@ -127,14 +127,14 @@ namespace Olives.Controllers
                 var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Find the appointment notification first.
-                var filter = new FilterAppointmentNotificationViewModel();
+                var filter = new FilterNotificationViewModel();
                 filter.Requester = requester.Id;
                 filter.Id = id;
                 filter.Mode = RecordFilterMode.RequesterIsOwner;
                 filter.IsSeen = false;
 
                 // Do the filter.
-                var result = await _repositoryAppointmentNotification.FilterAppointmentNotificationAsync(filter);
+                var result = await _repositoryNotification.FilterNotificationsAsync(filter);
 
                 // No record has been found.
                 if (result.Total != 1)
@@ -149,10 +149,10 @@ namespace Olives.Controllers
                 }
 
                 // Retrieve the first result.
-                var appointmentNotification = result.AppointmentNotifications.FirstOrDefault();
+                var notification = result.Notifications.FirstOrDefault();
 
                 // No record has been found.
-                if (appointmentNotification == null)
+                if (notification == null)
                 {
                     // Log the error.
                     _log.Error($"There (is/are) {result.Total} record(s) (has/have) been found.");
@@ -164,12 +164,25 @@ namespace Olives.Controllers
                 }
 
                 // Update the seen status.
-                appointmentNotification.IsSeen = true;
+                notification.IsSeen = true;
 
                 // Update the database.
-                await _repositoryAppointmentNotification.InitializeAppointmentNotificationAsync(appointmentNotification);
+                await _repositoryNotification.InitializeNotificationAsync(notification);
 
-                return Request.CreateResponse(HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    Notification = new
+                    {
+                        notification.Id,
+                        notification.Type,
+                        notification.Broadcaster,
+                        notification.Recipient,
+                        notification.Record,
+                        notification.Message,
+                        notification.Created,
+                        notification.IsSeen
+                    }
+                });
             }
             catch (Exception exception)
             {
@@ -188,7 +201,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Instance which provide functions to access Appointment Notification database.
         /// </summary>
-        private readonly IRepositoryAppointmentNotification _repositoryAppointmentNotification;
+        private readonly IRepositoryNotification _repositoryNotification;
 
         /// <summary>
         ///     Instance provides functions to access logger.

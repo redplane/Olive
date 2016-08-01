@@ -3,12 +3,12 @@ using Shared.Models;
 
 namespace Shared.ViewModels.Response
 {
-    public class ResponseAppointmentNotificationFilter
+    public class ResponseNotificationFilter
     {
         /// <summary>
         ///     List of filtered appointments.
         /// </summary>
-        public IList<AppointmentNotification> AppointmentNotifications { get; set; }
+        public IEnumerable<Notification> Notifications { get; set; }
 
         /// <summary>
         ///     Total condition matched records.

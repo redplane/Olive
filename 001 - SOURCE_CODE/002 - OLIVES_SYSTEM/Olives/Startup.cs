@@ -96,7 +96,7 @@ namespace Olives
             builder.RegisterType<RepositoryBloodSugar>().As<IRepositoryBloodSugar>().SingleInstance();
             builder.RegisterType<RepositoryAppointment>().As<IRepositoryAppointment>().SingleInstance();
             builder.RegisterType<RepositoryRating>().As<IRepositoryRating>().SingleInstance();
-            builder.RegisterType<RepositoryAppointmentNotification>().As<IRepositoryAppointmentNotification>().SingleInstance();
+            builder.RegisterType<RepositoryNotification>().As<IRepositoryNotification>().SingleInstance();
             builder.RegisterType<RepositoryRealTimeConnection>().As<IRepositoryRealTimeConnection>().SingleInstance();
             builder.RegisterType<RepositoryBloodPressure>().As<IRepositoryBloodPressure>().SingleInstance();
             builder.RegisterType<RepositoryMessage>().As<IRepositoryMessage>().SingleInstance();
