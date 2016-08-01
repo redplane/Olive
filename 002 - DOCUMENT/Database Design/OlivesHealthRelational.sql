@@ -366,7 +366,6 @@ CREATE TABLE AppointmentNotification
 ----------------------------------------------------------
 -- Real time connection
 ----------------------------------------------------------
-DROP TABLE RealTimeConnection
 CREATE TABLE RealTimeConnection
 (
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -374,19 +373,23 @@ CREATE TABLE RealTimeConnection
 	ConnectionId			NVARCHAR(MAX),
 	Created					FLOAT NOT NULL,
 )
-
----------------------------------------------------------------------------------------------------
--- Background tasks
----------------------------------------------------------------------------------------------------
--- This table is for storing task monotoring appointment.
-CREATE TABLE TaskCheckAppointment
+SELECT * FROM Person where Person.Id = 77
+----------------------------------------------------------
+-- Messaging
+----------------------------------------------------------
+CREATE TABLE [Message]
 (
-	AppointmentId			INT NOT NULL PRIMARY KEY,
-	TaskId					INT NOT NUll,
-	StartTime				DateTime NOT NULL,
+	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	Broadcaster				INT NOT NULL,
+	Recipient				INT NOT NULL,
+	Content					NVARCHAR(512),
+	Created					FLOAT NOT NULL,
+	IsSeen					BIT NOT NULL,
 
-	FOREIGN KEY (AppointmentId) REFERENCES Appointment(Id)
+	FOREIGN KEY (Broadcaster) REFERENCES Person(Id),
+	FOREIGN KEY (Recipient) REFERENCES Person(Id)
 )
+
 
 SELECT * FROM RealTimeConnection
 SELECT * FROM Person
