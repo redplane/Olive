@@ -61,10 +61,7 @@ namespace Olives
             #region Repositories
 
             // Repository account registration.
-            builder.RegisterType<RepositoryAccount>()
-                .As<IRepositoryAccount>()
-                .SingleInstance();
-
+            builder.RegisterType<RepositoryAccount>().As<IRepositoryAccount>().SingleInstance();
             builder.RegisterType<RepositoryRelation>().As<IRepositoryRelation>().SingleInstance();
 
             // Repository specialty registration.
@@ -93,30 +90,16 @@ namespace Olives
                 .SingleInstance();
 
             // Repository of addiction registration.
-            builder.RegisterType<RepositoryAddiction>()
-                .As<IRepositoryAddiction>()
-                .SingleInstance();
+            builder.RegisterType<RepositoryAddiction>().As<IRepositoryAddiction>().SingleInstance();
 
             // Repository of sugarblood registration.
-            builder.RegisterType<RepositoryBloodSugar>()
-                .As<IRepositoryBloodSugar>()
-                .SingleInstance();
-
-            builder.RegisterType<RepositoryAppointment>()
-                .As<IRepositoryAppointment>()
-                .SingleInstance();
-
-            builder.RegisterType<RepositoryRating>()
-                .As<IRepositoryRating>()
-                .SingleInstance();
-
-            builder.RegisterType<RepositoryAppointmentNotification>()
-                .As<IRepositoryAppointmentNotification>()
-                .SingleInstance();
-
+            builder.RegisterType<RepositoryBloodSugar>().As<IRepositoryBloodSugar>().SingleInstance();
+            builder.RegisterType<RepositoryAppointment>().As<IRepositoryAppointment>().SingleInstance();
+            builder.RegisterType<RepositoryRating>().As<IRepositoryRating>().SingleInstance();
+            builder.RegisterType<RepositoryAppointmentNotification>().As<IRepositoryAppointmentNotification>().SingleInstance();
             builder.RegisterType<RepositoryRealTimeConnection>().As<IRepositoryRealTimeConnection>().SingleInstance();
             builder.RegisterType<RepositoryBloodPressure>().As<IRepositoryBloodPressure>().SingleInstance();
-
+            builder.RegisterType<RepositoryMessage>().As<IRepositoryMessage>().SingleInstance();
 
             #region Medical repositories
 
