@@ -1,19 +1,16 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Data.Entity.Validation;
 using System.Linq;
-using System.Security.Permissions;
 using Newtonsoft.Json;
+using Olives.ViewModels;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Repositories;
-using Shared.ViewModels;
+using Shared.Services;
 
 namespace DataInitializer
 {
@@ -23,8 +20,10 @@ namespace DataInitializer
         private static readonly IRepositoryMedicalRecord RepositoryMedical = new RepositoryMedicalRecord();
         private static readonly IRepositoryPrescription RepositoryPrescription = new RepositoryPrescription();
         private static readonly IRepositoryRelation RepositoryRelation = new RepositoryRelation();
+        private static readonly ITimeService TimeService = new TimeService();
+        private static readonly IRepositoryExperimentNote RepositoryExperimentNote = new RepositoryExperimentNote();
 
-        private static int MaxRecord = 50;
+        private static readonly int MaxRecord = 50;
 
         private static void Main(string[] args)
         {
@@ -45,18 +44,18 @@ namespace DataInitializer
 
             Console.WriteLine("Initialize admins");
             InitializeAdmin(MaxRecord);
-            
+
             // Find the patient 26.
-            var patient = RepositoryAccount.FindPerson(null, "patient26@gmail.com", null, (byte)Role.Patient, null);
+            var patient = RepositoryAccount.FindPerson(null, "patient26@gmail.com", null, (byte) Role.Patient, null);
 
             // Find the doctor 26.
-            var doctor = RepositoryAccount.FindPerson(null, "doctor26@gmail.com", null, (byte)Role.Doctor, null);
+            var doctor = RepositoryAccount.FindPerson(null, "doctor26@gmail.com", null, (byte) Role.Doctor, null);
 
             // Initialize medical records collection.
             InitializeMedicalRecord(patient, doctor, 2);
 
             // Initialize personal notes.
-            
+
             Console.WriteLine("Initialize heartbeat notes");
             InitializeHeartbeatNote(patient.Patient, 90);
 
@@ -73,8 +72,8 @@ namespace DataInitializer
 
             for (var i = 26; i < 50; i++)
             {
-                patient = RepositoryAccount.FindPerson(null, $"patient{i}@gmail.com", null, (byte)Role.Patient, null);
-                doctor = RepositoryAccount.FindPerson(null, $"doctor{i}@gmail.com", null, (byte)Role.Doctor, null);
+                patient = RepositoryAccount.FindPerson(null, $"patient{i}@gmail.com", null, (byte) Role.Patient, null);
+                doctor = RepositoryAccount.FindPerson(null, $"doctor{i}@gmail.com", null, (byte) Role.Doctor, null);
 
                 if (patient != null)
                     Console.WriteLine($"Found {patient.Email} for creating relationship");
@@ -103,12 +102,12 @@ namespace DataInitializer
                 relationship.TargetFirstName = doctor.FirstName;
                 relationship.TargetLastName = doctor.LastName;
 
-                relationship.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+                relationship.Created = TimeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                 if (i > 40)
-                    relationship.Status = (byte)StatusRelation.Pending;
+                    relationship.Status = (byte) StatusRelation.Pending;
                 else
-                    relationship.Status = (byte)StatusRelation.Active;
+                    relationship.Status = (byte) StatusRelation.Active;
 
                 relationship = RepositoryRelation.InitializeRelationAsync(relationship).Result;
                 Console.WriteLine($"Created relationship. Id : {relationship.Id}");
@@ -195,17 +194,17 @@ namespace DataInitializer
                     person.LastName = $"LastName[{i}]";
                     person.FullName = person.FirstName + " " + person.LastName;
                     person.Gender = 0;
-                    person.Role = (byte)Role.Doctor;
-                    person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+                    person.Role = (byte) Role.Doctor;
+                    person.Created = TimeService.DateTimeUtcToUnix(DateTime.UtcNow);
                     person.Address = "New York, NY, USA";
-                    person.Birthday = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+                    person.Birthday = TimeService.DateTimeUtcToUnix(DateTime.UtcNow);
                     person.Photo = $"{random.Next(1, 4)}";
                     if (i > 25)
-                        person.Status = (byte)StatusAccount.Active;
+                        person.Status = (byte) StatusAccount.Active;
                     else if (i == 25)
-                        person.Status = (byte)StatusAccount.Pending;
+                        person.Status = (byte) StatusAccount.Pending;
                     else
-                        person.Status = (byte)StatusAccount.Inactive;
+                        person.Status = (byte) StatusAccount.Inactive;
 
                     var place = places[random.Next(places.Count)];
 
@@ -262,15 +261,15 @@ namespace DataInitializer
                 person.FullName = person.FirstName + " " + person.LastName;
                 person.Photo = $"{random.Next(1, 4)}";
                 person.Gender = 0;
-                person.Role = (byte)Role.Patient;
-                person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+                person.Role = (byte) Role.Patient;
+                person.Created = TimeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                 if (i > 25)
-                    person.Status = (byte)StatusAccount.Active;
+                    person.Status = (byte) StatusAccount.Active;
                 else if (i == 25)
-                    person.Status = (byte)StatusAccount.Pending;
+                    person.Status = (byte) StatusAccount.Pending;
                 else
-                    person.Status = (byte)StatusAccount.Inactive;
+                    person.Status = (byte) StatusAccount.Inactive;
 
                 // Specific information.
                 var patient = new Patient();
@@ -303,15 +302,15 @@ namespace DataInitializer
                 person.LastName = $"LastName[{i}]";
                 person.FullName = person.FirstName + " " + person.LastName;
                 person.Gender = 0;
-                person.Role = (byte)Role.Admin;
-                person.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.Now);
+                person.Role = (byte) Role.Admin;
+                person.Created = TimeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                 if (i > 25)
-                    person.Status = (byte)StatusAccount.Active;
+                    person.Status = (byte) StatusAccount.Active;
                 else if (i == 25)
-                    person.Status = (byte)StatusAccount.Pending;
+                    person.Status = (byte) StatusAccount.Pending;
                 else
-                    person.Status = (byte)StatusAccount.Inactive;
+                    person.Status = (byte) StatusAccount.Inactive;
 
                 context.People.Add(person);
             }
@@ -320,24 +319,24 @@ namespace DataInitializer
         }
 
         /// <summary>
-        /// Initialize medical record.
+        ///     Initialize medical record.
         /// </summary>
         /// <param name="patient"></param>
         /// <param name="doctor"></param>
         /// <param name="records"></param>
-        private static async void InitializeMedicalRecord(Person patient, Person doctor,int records)
+        private static async void InitializeMedicalRecord(Person patient, Person doctor, int records)
         {
             // Calculate the current date time to current UTC time.
-            var unix = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
-            
+            var unix = TimeService.DateTimeUtcToUnix(DateTime.UtcNow);
+
             // Initialize random number generator.
             var random = new Random();
-            
+
             for (var i = 0; i < records; i++)
             {
                 // From time calculate.
                 var fromTime = DateTime.UtcNow.Subtract(TimeSpan.FromDays(i));
-                var unixFromTime = EpochTimeHelper.Instance.DateTimeToEpochTime(fromTime);
+                var unixFromTime = TimeService.DateTimeUtcToUnix(fromTime);
 
                 #region Medical record
 
@@ -386,18 +385,41 @@ namespace DataInitializer
                     prescription.Medicine = JsonConvert.SerializeObject(prescriptedMedicine);
                     prescription.Note = $"Note[{i}]";
                     prescription.Created = unixFromTime;
-                    
+
                     // Initialize a new medical prescription to database.
                     prescription = await RepositoryPrescription.InitializePrescriptionAsync(prescription);
                 }
 
                 #endregion
 
+                #region Medical Experiment
+
+                for (var experiment = 0; experiment < 5; experiment++)
+                {
+                    var experimentNote = new ExperimentNote();
+                    experimentNote.MedicalRecordId = medicalRecord.Id;
+                    experimentNote.Owner = medicalRecord.Owner;
+                    experimentNote.Creator = medicalRecord.Creator;
+                    experimentNote.Name = $"ExperimentNote({experimentNote})";
+
+                    var infos = new Dictionary<string, double>();
+                    for (var key = 0; key < 5; key++)
+                        infos.Add($"Calcium[{key}]", key);
+
+                    experimentNote.Info = JsonConvert.SerializeObject(infos);
+                    experimentNote.Created = unix;
+
+                    await RepositoryExperimentNote.InitializeExperimentNote(experimentNote);
+
+
+                }
+
+                #endregion
             }
         }
 
         /// <summary>
-        /// Initialize a list of appointments.
+        ///     Initialize a list of appointments.
         /// </summary>
         /// <param name="patient"></param>
         /// <param name="doctor"></param>
@@ -405,12 +427,12 @@ namespace DataInitializer
         private static void InitializeAppointment(Person patient, Person doctor, int max = 60)
         {
             var context = new OlivesHealthEntities();
-            var half = max / 2;
-            var quarter = max / 4;
-            var secondQuater = quarter * 2;
-            var thirdQuater = quarter * 3;
+            var half = max/2;
+            var quarter = max/4;
+            var secondQuater = quarter*2;
+            var thirdQuater = quarter*3;
 
-            var toTime = EpochTimeHelper.Instance.DateTimeToEpochTime(new DateTime(2016, 12, 31).ToUniversalTime());
+            var toTime = TimeService.DateTimeUtcToUnix(new DateTime(2016, 12, 31).ToUniversalTime());
 
             var month = 1;
             var year = 2016;
@@ -440,24 +462,23 @@ namespace DataInitializer
                     appointment.MakerLastName = doctor.LastName;
                 }
 
-                
 
                 var fromTime = new DateTime(year, month, 20);
-                var epochFromTime = EpochTimeHelper.Instance.DateTimeToEpochTime(fromTime);
-                
+                var epochFromTime = TimeService.DateTimeUtcToUnix(fromTime);
+
                 appointment.From = epochFromTime;
                 appointment.To = toTime;
                 appointment.Note = $"Note[{i}]";
                 appointment.Created = epochFromTime;
 
                 if (i <= quarter)
-                    appointment.Status = (byte)StatusAppointment.Cancelled;
+                    appointment.Status = (byte) StatusAppointment.Cancelled;
                 else if (quarter < i && i <= secondQuater)
-                    appointment.Status = (byte)StatusAppointment.Pending;
+                    appointment.Status = (byte) StatusAppointment.Pending;
                 else if (secondQuater < i && i <= thirdQuater)
-                    appointment.Status = (byte)StatusAppointment.Active;
+                    appointment.Status = (byte) StatusAppointment.Active;
                 else
-                    appointment.Status = (byte)StatusAppointment.Done;
+                    appointment.Status = (byte) StatusAppointment.Done;
 
                 context.Appointments.Add(appointment);
 
@@ -469,11 +490,10 @@ namespace DataInitializer
             }
 
             context.SaveChanges();
-
         }
-        
+
         /// <summary>
-        /// Initialize a list of categories.
+        ///     Initialize a list of categories.
         /// </summary>
         /// <param name="records"></param>
         private static async void InitializeCategory(int records)
@@ -482,7 +502,7 @@ namespace DataInitializer
             var context = new OlivesHealthEntities();
 
             // Calcuate the current unix time.
-            var unix = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            var unix = TimeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Initialize a list of categories.
             for (var i = 0; i < records; i++)
@@ -496,7 +516,7 @@ namespace DataInitializer
             // Save change asynchronously.
             await context.SaveChangesAsync();
         }
-        
+
         #region Personal records
 
         /// <summary>
@@ -511,12 +531,12 @@ namespace DataInitializer
 
             // The current time when loop starts.
             var unixTime = DateTime.UtcNow;
-            var unixCurrentTime = EpochTimeHelper.Instance.DateTimeToEpochTime(unixTime);
+            var unixCurrentTime = TimeService.DateTimeUtcToUnix(unixTime);
 
             var random = new Random();
-            var iMinHeartRate = (int)Values.MinHeartRate;
-            var iMaxHeartRate = (int)Values.MaxHeartRate;
-            
+            var iMinHeartRate = (int) Values.MinHeartRate;
+            var iMaxHeartRate = (int) Values.MaxHeartRate;
+
             for (var i = 0; i < records; i++)
             {
                 // Note time.
@@ -525,7 +545,7 @@ namespace DataInitializer
                 var heartbeatNote = new Heartbeat();
                 heartbeatNote.Owner = patient.Id;
                 heartbeatNote.Created = unixCurrentTime;
-                heartbeatNote.Time = EpochTimeHelper.Instance.DateTimeToEpochTime(createdTime);
+                heartbeatNote.Time = TimeService.DateTimeUtcToUnix(createdTime);
                 heartbeatNote.Rate = random.Next(iMinHeartRate, iMaxHeartRate);
 
                 context.Heartbeats.Add(heartbeatNote);
@@ -543,25 +563,25 @@ namespace DataInitializer
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-           
+
             // Calculate the current unix time.
-            var unixTime = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            var unixTime = TimeService.DateTimeUtcToUnix(DateTime.UtcNow);
             var time = DateTime.UtcNow;
 
             // Random number generator.
             var random = new Random();
-            var iMinSugarMol = (int)Values.MinSugarBloodMmol;
-            var iMaxSugarMol = (int)Values.MaxSugarBloodMmol;
-            
+            var iMinSugarMol = (int) Values.MinSugarBloodMmol;
+            var iMaxSugarMol = (int) Values.MaxSugarBloodMmol;
+
             for (var i = 0; i < records; i++)
             {
                 var createdTime = time.Subtract(TimeSpan.FromDays(i));
 
                 var sugarblood = new SugarBlood();
                 sugarblood.Owner = patient.Id;
-                sugarblood.Created = EpochTimeHelper.Instance.DateTimeToEpochTime(createdTime);
-                sugarblood.LastModified = EpochTimeHelper.Instance.DateTimeToEpochTime(createdTime);
-                sugarblood.Time = EpochTimeHelper.Instance.DateTimeToEpochTime(createdTime);
+                sugarblood.Created = TimeService.DateTimeUtcToUnix(createdTime);
+                sugarblood.LastModified = TimeService.DateTimeUtcToUnix(createdTime);
+                sugarblood.Time = TimeService.DateTimeUtcToUnix(createdTime);
                 sugarblood.Value = random.Next(iMinSugarMol, iMaxSugarMol);
 
                 context.SugarBloods.Add(sugarblood);
@@ -579,7 +599,7 @@ namespace DataInitializer
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-            
+
             // Random number generator initialization.
             var random = new Random();
 
@@ -588,7 +608,7 @@ namespace DataInitializer
 
             for (var i = 0; i < records; i++)
             {
-                var unixCreated = EpochTimeHelper.Instance.DateTimeToEpochTime(time.Subtract(TimeSpan.FromDays(i)));
+                var unixCreated = TimeService.DateTimeUtcToUnix(time.Subtract(TimeSpan.FromDays(i)));
 
                 var bloodPressure = new BloodPressure();
                 bloodPressure.Owner = patient.Id;
@@ -612,7 +632,7 @@ namespace DataInitializer
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-           
+
             // Random number generator.
             var random = new Random();
 
@@ -622,7 +642,7 @@ namespace DataInitializer
             for (var i = 0; i < records; i++)
             {
                 // Time when record is created.
-                var unixCreated = EpochTimeHelper.Instance.DateTimeToEpochTime(time.Subtract(TimeSpan.FromDays(i)));
+                var unixCreated = TimeService.DateTimeUtcToUnix(time.Subtract(TimeSpan.FromDays(i)));
 
                 var allergy = new Allergy();
                 allergy.Owner = patient.Id;

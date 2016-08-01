@@ -5,9 +5,11 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
+using Olives.Attributes;
 using Olives.Hubs;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -16,6 +18,7 @@ using Shared.ViewModels.Filter;
 namespace Olives.Controllers
 {
     [Route("api/message")]
+    [OlivesAuthorize(new [] {Role.Doctor, Role.Patient})]
     public class MessageController : ApiParentControllerHub<NotificationHub>
     {
         #region Constructors
@@ -160,6 +163,7 @@ namespace Olives.Controllers
                 Hub.Clients.Clients(connectionIndexes)
                     .notifyMessage(new 
                     {
+                        message = message.Id,
                         broadcaster = requester.Id,
                         recipient = initializer.Recipient,
                         content = initializer.Content,
