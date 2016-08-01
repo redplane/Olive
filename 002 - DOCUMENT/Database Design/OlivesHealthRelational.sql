@@ -346,23 +346,20 @@ CREATE TABLE JunkFile
 ----------------------------------------------------------
 -- Notifications
 ----------------------------------------------------------
-CREATE TABLE AppointmentNotification
+CREATE TABLE Notification
 (
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	-- Type :
-	-- 1 : Created
-	-- 2 : Edited
-	-- 3 : Cancelled
-	[Type]					TINYINT NOT NULL,
-	Invoker					INT NOT NULL,
+	Type					TINYINT NOT NULL,
+	Topic					TINYINT NOT NULL,
+	Broadcaster				INT NOT NULL,
 	Recipient				INT NOT NULL,
+	Record					INT NOT NULL,
+	Message					NVARCHAR(512),
 	Created					FLOAT NOT NULL,
-	AppointmentId			INT NOT NULL,
-	IsSeen					BIT NOT NULL,
+	IsSeen					BIT NOT NULL
 
-	FOREIGN KEY (Invoker) REFERENCES Person(Id),
-	FOREIGN KEY (Recipient) REFERENCES Person(Id),
-	FOREIGN KEY (AppointmentId) REFERENCES Appointment(Id)
+	FOREIGN KEY (Broadcaster) REFERENCES Person(Id),
+	FOREIGN KEY (Recipient) REFERENCES Person(Id)
 )
 
 ----------------------------------------------------------

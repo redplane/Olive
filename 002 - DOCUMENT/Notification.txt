@@ -2,10 +2,10 @@ class Notification
 {
 	int Id;
 	int Type (1 - Create | 2 - Edit | 3 - Delete)
-	int About (1 - Appointment | 2 - Medical Record | 3 - Medical Image | 4 - Prescription | 5 - Prescription Image | 6 - Experiment note | 7 - Medical Note);
-	int Invoker [The person who caused event]
+	int Topic (1 - Appointment | 2 - Medical Record | 3 - Medical Image | 4 - Prescription | 5 - Prescription Image | 6 - Experiment note | 7 - Medical Note);
+	int Broadcaster [The person who caused event]
 	int Recipient [The person who should receive the notification]
-	int Target [The record should be seen]
+	int Record [The record should be seen]
 	string Message
 	int Created
 }
