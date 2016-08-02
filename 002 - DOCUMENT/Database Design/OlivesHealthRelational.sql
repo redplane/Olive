@@ -15,7 +15,7 @@ DROP TABLE Addiction;
 DROP TABLE SugarBlood;
 DROP TABLE BloodPressure;
 DROP TABLE Heartbeat;
-DROP TABLE AppointmentNotification;
+DROP TABLE Notification;
 DROP TABLE Appointment;
 DROP TABLE Rating;
 DROP TABLE Relation;
@@ -110,7 +110,7 @@ CREATE TABLE BloodPressure
 CREATE TABLE AccountCode
 (
 	Owner				INT NOT NULL,
-	Code				VARCHAR(10),
+	Code				VARCHAR(36),
 	Type				TINYINT NOT NULL,
 	Expired				DATETIME NOT NULL,
 	
@@ -388,45 +388,3 @@ CREATE TABLE [Message]
 	FOREIGN KEY (Broadcaster) REFERENCES Person(Id),
 	FOREIGN KEY (Recipient) REFERENCES Person(Id)
 )
-
-SELECT * FROM RealTimeConnection
-SELECT * FROM Person
-SELECT * FROM Country
-WHERE Country.Name = 'Bac giang'
-SELECT * FROM City
----------------------------------------------------------------------------------------------------
--- DELETE ALL RECORDS
----------------------------------------------------------------------------------------------------
-DELETE FROM Person;
-SELECT * FROM Person WHERE Person.Id = 27;
-UPDATE Doctor
-SET Rank = 0
-WHERE Doctor.Id = 27
-DELETE FROM Patient;
-SELECT * FROM Rating
-SELECT * FROM MedicalRecord
----------------------------------------------------------------------------------------------------
--- PROCEDURES
----------------------------------------------------------------------------------------------------
-
----------------------------------------------------------------------------------------------------
--- END PROCEDURES
----------------------------------------------------------------------------------------------------
-SELECT * FROM Heartbeat WHERE Heartbeat.Time >= 1466787397566 AND Heartbeat.Time <= 1467392197566
-ORDER BY Heartbeat.Time ASC
-
-
-DELETE FROM Heartbeat
-
-SELECT * FROM Person
-INNER JOIN Doctor ON Person.Id = Doctor.CityId
-WHERE Person.Id = 26
-
-SELECT * FROM Person
-WHERE Person.Email = 'patient26@gmail.com'
-
-UPDATE Person
-SET Email = 'patient26@gmail.com'
-WHERE Person.Id = 77
-
-SELECT * FROM Relation
