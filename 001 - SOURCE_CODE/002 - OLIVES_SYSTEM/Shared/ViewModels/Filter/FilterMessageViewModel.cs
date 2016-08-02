@@ -1,7 +1,11 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using Shared.Attributes;
+using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;
+using Shared.Resources;
 
 namespace Shared.ViewModels.Filter
 {
@@ -47,14 +51,13 @@ namespace Shared.ViewModels.Filter
         /// </summary>
         public MessageFilterSort Sort { get; set; } = MessageFilterSort.Created;
 
-        /// <summary>
-        /// Index of result page.
-        /// </summary>
-        public int Page { get; set; }
+        [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
+            ErrorMessageResourceType = typeof(Language),
+            ErrorMessageResourceName = "ValueIsInvalid")]
+        public int Page { get; set; } = 0;
 
-        /// <summary>
-        /// Number of records per page.
-        /// </summary>
+        [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof(Language),
+            ErrorMessageResourceName = "ValueMustBeFromTo")]
         public int? Records { get; set; }
     }
 }

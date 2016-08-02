@@ -457,6 +457,24 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} created a medical record.
+        /// </summary>
+        public static string NotifyMedicalRecordCreate {
+            get {
+                return ResourceManager.GetString("NotifyMedicalRecordCreate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} modified a medical record.
+        /// </summary>
+        public static string NotifyMedicalRecordEdit {
+            get {
+                return ResourceManager.GetString("NotifyMedicalRecordEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Olive account activation code.
         /// </summary>
         public static string OliveActivationCodeEmailTitle {
@@ -642,6 +660,15 @@ namespace Shared.Resources {
         public static string ValueCanOnlyContainKey {
             get {
                 return ResourceManager.GetString("ValueCanOnlyContainKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} has been registered before.
+        /// </summary>
+        public static string ValueHasBeenRegistered {
+            get {
+                return ResourceManager.GetString("ValueHasBeenRegistered", resourceCulture);
             }
         }
         

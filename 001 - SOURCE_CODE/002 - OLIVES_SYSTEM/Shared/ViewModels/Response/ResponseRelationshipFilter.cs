@@ -8,7 +8,7 @@ namespace Shared.ViewModels.Response
         /// <summary>
         ///     List of filtered relationships.
         /// </summary>
-        public IList<Relation> Relationships { get; set; }
+        public IEnumerable<Relation> Relationships { get; set; }
 
         /// <summary>
         ///     Total of record matched with conditions.

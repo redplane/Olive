@@ -15,7 +15,7 @@ namespace Olives.ViewModels.Edit
         [MedicalCategoryValidate(ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsInvalid")]
         public int? Category { get; set; }
-
+        
         /// <summary>
         ///     List of noticed information.
         /// </summary>

@@ -287,9 +287,7 @@
     <Compile Include="ViewModels\Response\ResponsePrescriptionImageFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseRatingFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseRelatedDoctorFilter.cs" />
-    <Compile Include="ViewModels\Initialize\InitializeDoctorViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalImageViewModel.cs" />
-    <Compile Include="ViewModels\Initialize\InitializePatientViewModel.cs" />
     <Compile Include="ViewModels\RelatedDoctorViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseAddictionFilter.cs" />
     <Compile Include="ViewModels\Response\ResponsePlaceFilter.cs" />
@@ -312,7 +310,6 @@
     <Compile Include="ViewModels\StatusSummaryViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterDoctorViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPersonViewModel.cs" />
-    <Compile Include="ViewModels\Initialize\InitializePersonViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

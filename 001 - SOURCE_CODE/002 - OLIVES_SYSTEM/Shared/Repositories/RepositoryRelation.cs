@@ -6,6 +6,7 @@ using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels;
+using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
 namespace Shared.Repositories
@@ -163,14 +164,8 @@ namespace Shared.Repositories
         /// <summary>
         ///     Filter relationship base on the role of requester.
         /// </summary>
-        /// <param name="requester"></param>
-        /// <param name="partner"></param>
-        /// <param name="role"></param>
-        /// <param name="status"></param>
-        /// <param name="page"></param>
-        /// <param name="records"></param>
-        public async Task<ResponseRelationshipFilter> FilterRelationshipAsync(int requester, int? partner,
-            RoleRelationship? role, StatusRelation? status, int page, int records)
+        /// <param name="filter"></param>
+        public async Task<ResponseRelationshipFilter> FilterRelationshipAsync(FilterRelationshipViewModel filter)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -179,42 +174,46 @@ namespace Shared.Repositories
             IQueryable<Relation> relationships = context.Relations;
 
             // In case the relationship role is defined.
-            if (role == RoleRelationship.Source)
+            if (filter.Mode == RoleRelationship.Source)
             {
                 // Requester is the source of relationship.
-                relationships = relationships.Where(x => x.Source == requester);
+                relationships = relationships.Where(x => x.Source == filter.Requester);
 
                 // Therefore, partner is the target of relationship.
-                if (partner != null)
-                    relationships = relationships.Where(x => x.Target == partner.Value);
+                if (filter.Partner != null)
+                    relationships = relationships.Where(x => x.Target == filter.Partner.Value);
             }
-            else if (role == RoleRelationship.Target)
+            else if (filter.Mode == RoleRelationship.Target)
             {
                 // Requester is the target of relationship.
-                relationships = relationships.Where(x => x.Target == requester);
+                relationships = relationships.Where(x => x.Target == filter.Requester);
 
                 // Therefore, partner is the source of relationship.
-                if (partner != null)
-                    relationships = relationships.Where(x => x.Source == partner.Value);
+                if (filter.Partner != null)
+                    relationships = relationships.Where(x => x.Source == filter.Partner.Value);
             }
             else
-                relationships = relationships.Where(x => x.Source == requester || x.Target == requester);
+                relationships = relationships.Where(x => x.Source == filter.Requester || x.Target == filter.Requester);
 
             // Status is defined.
-            if (status != null)
-                relationships = relationships.Where(x => x.Status == (byte) status.Value);
+            if (filter.Status != null)
+                relationships = relationships.Where(x => x.Status == (byte) filter.Status.Value);
+
+            // Created is defined.
+            if (filter.MinCreated != null)
+                relationships = relationships.Where(x => x.Created >= filter.MinCreated.Value);
+            if (filter.MaxCreated != null)
+                relationships = relationships.Where(x => x.Created <= filter.MaxCreated.Value);
 
             // Response initialization.Filter
             var response = new ResponseRelationshipFilter();
             response.Total = await relationships.CountAsync();
 
-            var skippedRecord = page*records;
-            response.Relationships = await relationships
-                .OrderByDescending(x => x.Created)
-                .Skip(skippedRecord)
-                .Take(records)
-                .ToListAsync();
+            if (filter.Records != null)
+                relationships = relationships.Skip(filter.Page*filter.Records.Value)
+                    .Take(filter.Records.Value);
 
+            response.Relationships = relationships;
             return response;
         }
 

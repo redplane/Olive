@@ -7,6 +7,8 @@ using System.Web.Http;
 using log4net;
 using Newtonsoft.Json;
 using Olives.Attributes;
+using Olives.Hubs;
+using Olives.Interfaces;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
@@ -19,26 +21,26 @@ using Shared.ViewModels.Filter;
 namespace Olives.Controllers
 {
     [Route("api/medical/record")]
-    public class MedicalRecordController : ApiParentController
+    public class MedicalRecordController : ApiParentControllerHub<NotificationHub>
     {
         #region Constructors
 
         /// <summary>
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryAccount"></param>
         /// <param name="repositoryMedical"></param>
         /// <param name="repositoryRelation"></param>
         /// <param name="timeService"></param>
+        /// <param name="notificationService"></param>
         /// <param name="log"></param>
-        public MedicalRecordController(IRepositoryAccount repositoryAccount, IRepositoryMedicalRecord repositoryMedical,
-            IRepositoryRelation repositoryRelation, ITimeService timeService,
+        public MedicalRecordController(IRepositoryMedicalRecord repositoryMedical, IRepositoryRelation repositoryRelation, 
+            ITimeService timeService, INotificationService notificationService,
             ILog log)
         {
-            _repositoryAccount = repositoryAccount;
             _repositoryMedical = repositoryMedical;
             _repositoryRelation = repositoryRelation;
             _timeService = timeService;
+            _notificationService = notificationService;
             _log = log;
         }
 
@@ -150,84 +152,62 @@ namespace Olives.Controllers
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
-            // Owner who owns the medical record.
-            Person owner = null;
-
-            // No owner is specified.
+            // Owner isn't defined. Owner will be the requester.
             if (info.Owner == null)
-            {
-                // Let the owner be requester as it hasn't been defined.
                 info.Owner = requester.Id;
-                owner = requester;
-            }
-            else
+
+            // The requester is a doctor.
+            switch ((Role)requester.Role)
             {
-                if (info.Owner == requester.Id)
-                    owner = requester;
-                else
-                    owner =
-                        await
-                            _repositoryAccount.FindPersonAsync(info.Owner, null, null, (byte) Role.Patient,
-                                StatusAccount.Active);
-            }
-
-            // Owner is not found.
-            if (owner == null)
-            {
-                // Log the error.
-                _log.Error($"Person (owner) [Id: {info.Owner}] is not found.");
-
-                // Tell the client that the action is forbidden.
-                return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                {
-                    Error = $"{Language.WarnOwnerNotActive}"
-                });
-            }
-
-            #endregion
-
-            #region Requester validate
-
-            // Requester is a doctor.
-            if (requester.Id == info.Owner.Value)
-            {
-                // Doctor cannot create medical record for him/herself.
-                if (requester.Role == (byte) Role.Doctor)
-                {
-                    // Log the error.
-                    _log.Error($"Doctor [Id: {requester.Id}] cannot create medical record for him/herself");
-
-                    // Tell the client about error.
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                case Role.Doctor:
+                    // Doctor cannot create a medical record for him/herself.
+                    if (requester.Id == info.Owner.Value)
                     {
-                        Error = $"{Language.WarnMedicalRecordDoctorToDoctor}"
-                    });
-                }
-            }
-            else
-            {
-                // Find the relationship between requester and the record owner.
-                var relationship =
-                    await _repositoryRelation.FindRelationshipAsync(requester.Id, info.Owner.Value,
-                        (byte) StatusRelation.Active);
+                        _log.Error($"Doctor [Id: {requester.Id}] cannot create medical record for him/herself");
+                        return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                        {
+                            Error = $"{Language.WarnMedicalRecordDoctorToDoctor}"
+                        });
+                    }
 
-                // No relationship is found between 2 people.
-                if (relationship == null || relationship.Count < 1)
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                    // Doctor doesn't have any relationship with patient.
+                    var isRelationshipAvailable =
+                        await _repositoryRelation.IsPeopleConnected(requester.Id, info.Owner.Value);
+                    if (!isRelationshipAvailable)
                     {
-                        Error = $"{Language.WarnHasNoRelationship}"
-                    });
+                        _log.Error($"There is no relationship between doctor [Id: {requester.Id}] and owner [Id: {info.Owner}]");
+                        return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                        {
+                            Error = $"{Language.WarnHasNoRelationship}"
+                        });
+                    }
+                    break;
+
+                default:
+                    // Owner and requester is different from each other.
+                    if (requester.Id != info.Owner.Value)
+                    {
+                        _log.Error($"Patient [{requester.Id}] can only create medical record for him/herself.");
+                        return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                        {
+                            Error = $"{Language.WarnRoleIsForbidden}"
+                        });
+                    }
+                    break;
             }
-
+            
             #endregion
-
-            #region Record initialization
+            
+            #region Record handling
 
             try
             {
+                #region Record initialization
+
                 // Only filter and receive the first result.
                 var medicalRecord = new MedicalRecord();
-                medicalRecord.Creator = requester.Id;
+                if (requester.Id != info.Owner.Value)
+                    medicalRecord.Creator = requester.Id;
                 medicalRecord.Owner = info.Owner.Value;
                 medicalRecord.Category = info.Category;
                 medicalRecord.Info = JsonConvert.SerializeObject(info.Infos);
@@ -237,6 +217,27 @@ namespace Olives.Controllers
                 // Insert a new allergy to database.
                 var result = await _repositoryMedical.InitializeMedicalRecordAsync(medicalRecord);
 
+                #endregion
+                
+                #region Notification initialization
+
+                if (requester.Id != info.Owner.Value)
+                { 
+                    var notification = new Notification();
+                    notification.Type = (byte)NotificationType.Create;
+                    notification.Topic = (byte)NotificationTopic.MedicalRecord;
+                    notification.Broadcaster = requester.Id;
+                    notification.Recipient = medicalRecord.Owner;
+                    notification.Record = medicalRecord.Id;
+                    notification.Message = string.Format(Language.NotifyMedicalRecordCreate, requester.FullName);
+                    notification.Created = medicalRecord.Created;
+
+                    // Broadcast the notification with fault tolerant.
+                    await _notificationService.BroadcastNotificationAsync(notification, Hub);
+                }
+
+                #endregion
+                
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     MedicalRecord = new
@@ -264,13 +265,13 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        ///     Edit an addiction asynchronously.
+        ///     Edit an medical record asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPut]
-        [OlivesAuthorize(new[] {Role.Doctor})]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] EditMedicalRecordViewModel info)
         {
             #region Paramters validation
@@ -315,23 +316,23 @@ namespace Olives.Controllers
 
             #endregion
 
-            #region Relationship validation
-
-            // Check the relationship between them.
-            var relationship = await _repositoryRelation.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
-                (byte) StatusAccount.Active);
-            if (relationship == null || relationship.Count < 1)
-                return Request.CreateResponse(HttpStatusCode.Forbidden, new
+            #region Role validation
+            
+            if (!(requester.Id == medicalRecord.Owner || requester.Id == medicalRecord.Creator))
+            {
+                _log.Error($"There is no relationship between requester [Id: {requester.Id}] with owner [Id: {medicalRecord.Owner}] or creator [Id: {medicalRecord.Creator}]");
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    Error = $"{Language.WarnHasNoRelationship}"
+                    Error = $"{Language.WarnRecordNotFound}"
                 });
+            }
 
             #endregion
 
-            #region Information update
-
             try
             {
+                #region Information update
+
                 // Infos needs updating.
                 if (info.Infos != null)
                     medicalRecord.Info = JsonConvert.SerializeObject(info.Infos);
@@ -339,13 +340,36 @@ namespace Olives.Controllers
                 // Time needs updating.
                 if (info.Time != null)
                     medicalRecord.Time = info.Time.Value;
-
+                
                 // Update the last time
                 medicalRecord.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                 // Insert a new allergy to database.
                 var result = await _repositoryMedical.InitializeMedicalRecordAsync(medicalRecord);
 
+                #endregion
+                
+                #region Notification initialization
+                
+                var recipient = (requester.Id == medicalRecord.Owner) ? medicalRecord.Creator : medicalRecord.Owner;
+
+                if (requester.Id != medicalRecord.Owner)
+                {
+                    var notification = new Notification();
+                    notification.Type = (byte)NotificationType.Edit;
+                    notification.Topic = (byte)NotificationTopic.MedicalRecord;
+                    notification.Broadcaster = requester.Id;
+                    notification.Recipient = recipient;
+                    notification.Record = medicalRecord.Id;
+                    notification.Message = string.Format(Language.NotifyMedicalRecordEdit, requester.FullName);
+                    notification.Created = medicalRecord.Created;
+
+                    // Broadcast the notification with fault tolerant.
+                    await _notificationService.BroadcastNotificationAsync(notification, Hub);
+                }
+
+                #endregion
+                
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     MedicalRecord = new
@@ -371,8 +395,6 @@ namespace Olives.Controllers
                 // Tell the client something goes wrong with the server.
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
-
-            #endregion
         }
 
         /// <summary>
@@ -452,12 +474,7 @@ namespace Olives.Controllers
         #endregion
 
         #region Properties
-
-        /// <summary>
-        ///     Repository of accounts
-        /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
-
+        
         /// <summary>
         ///     Repository of allergies
         /// </summary>
@@ -467,6 +484,11 @@ namespace Olives.Controllers
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
+        
+        /// <summary>
+        /// Notification service.
+        /// </summary>
+        private readonly INotificationService _notificationService;
 
         /// <summary>
         ///     Service which provides functions to access time calculation.

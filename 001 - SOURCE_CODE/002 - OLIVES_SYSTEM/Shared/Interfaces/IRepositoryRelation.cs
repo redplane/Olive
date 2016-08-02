@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Models;
+using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
 namespace Shared.Interfaces
@@ -56,14 +57,8 @@ namespace Shared.Interfaces
         /// <summary>
         ///     Filter relationship base on the role of requester.
         /// </summary>
-        /// <param name="requester"></param>
-        /// <param name="partner"></param>
-        /// <param name="role"></param>
-        /// <param name="status"></param>
-        /// <param name="page"></param>
-        /// <param name="records"></param>
-        Task<ResponseRelationshipFilter> FilterRelationshipAsync(int requester, int? partner, RoleRelationship? role,
-            StatusRelation? status, int page, int records);
+        /// <param name="filter"></param>
+        Task<ResponseRelationshipFilter> FilterRelationshipAsync(FilterRelationshipViewModel filter);
 
         /// <summary>
         ///     Filter related doctors.

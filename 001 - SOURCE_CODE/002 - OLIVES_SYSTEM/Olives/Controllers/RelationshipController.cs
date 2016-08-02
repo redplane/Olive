@@ -14,6 +14,7 @@ using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
+using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
@@ -315,6 +316,74 @@ namespace Olives.Controllers
             });
         }
 
+        /// <summary>
+        ///     Filter relationship by using specific conditions.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [Route("api/relationship/filter")]
+        [HttpPost]
+        [OlivesAuthorize(new[] { Role.Patient })]
+        public async Task<HttpResponseMessage> FilterRelationship([FromBody] FilterRelationshipViewModel filter)
+        {
+            #region Parameters validation
+
+            // Filter hasn't been initialized.
+            if (filter == null)
+            {
+                filter = new FilterRelationshipViewModel();
+                Validate(filter);
+            }
+
+            // Validation is not successful.
+            if (!ModelState.IsValid)
+            {
+                _log.Error("Parameters are invalid. Errors sent to client.");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            #endregion
+
+            #region Result handling
+
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Update the filter.
+            filter.Requester = requester.Id;
+
+            // Filter the relationship.
+            var result =
+                await
+                    _repositoryRelation.FilterRelationshipAsync(filter);
+
+            // Throw the list back to client.
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                Relationships = result.Relationships.Select(x => new
+                {
+                    x.Id,
+                    Source = new
+                    {
+                        x.Source,
+                        FirstName = x.SourceFirstName,
+                        LastName = x.SourceLastName
+                    },
+                    Target = new
+                    {
+                        x.Target,
+                        FirstName = x.TargetFirstName,
+                        LastName = x.TargetLastName
+                    },
+                    x.Created,
+                    x.Status
+                }),
+                result.Total
+            });
+
+            #endregion
+        }
+        
         #endregion
 
         #region Properties

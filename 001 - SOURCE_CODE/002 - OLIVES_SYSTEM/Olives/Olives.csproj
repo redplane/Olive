@@ -243,6 +243,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Attributes\AccountValidateAttribute.cs" />
     <Compile Include="Attributes\HubAuthorizeAttribute .cs" />
     <Compile Include="Attributes\ImageMinSizeValidateAttribute.cs" />
     <Compile Include="Attributes\ImageMaxSizeValidateAttribute.cs" />
@@ -313,11 +314,13 @@
     <Compile Include="ViewModels\Initialize\InitializeAppointmentViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAvatarViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeBloodPressureViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializeDoctorViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeHeartbeatViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalExperiment.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalNoteViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalRecordViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMessageViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\InitializePatientViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePrescriptedMedicineViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePrescriptionImage.cs" />
     <Compile Include="ViewModels\Initialize\InitializePrescriptionImageViewModel.cs" />

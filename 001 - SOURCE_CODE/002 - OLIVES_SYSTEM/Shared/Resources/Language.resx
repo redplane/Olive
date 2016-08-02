@@ -474,4 +474,13 @@
   <data name="NotificationAppointmentEdit" xml:space="preserve">
     <value>{0} edited an appointment with content : {1}</value>
   </data>
+  <data name="NotifyMedicalRecordCreate" xml:space="preserve">
+    <value>{0} created a medical record</value>
+  </data>
+  <data name="NotifyMedicalRecordEdit" xml:space="preserve">
+    <value>{0} modified a medical record</value>
+  </data>
+  <data name="ValueHasBeenRegistered" xml:space="preserve">
+    <value>{0} has been registered before</value>
+  </data>
 </root>

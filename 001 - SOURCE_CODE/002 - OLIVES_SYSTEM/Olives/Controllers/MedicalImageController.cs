@@ -91,6 +91,7 @@ namespace Olives.Controllers
             var medicalRecord = await _repositoryMedicalRecord.FindMedicalRecordAsync(info.MedicalRecord);
             if (medicalRecord == null)
             {
+                _log.Error($"Medical record [Id: {info.MedicalRecord}] is not found");
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
                     Error = $"{Language.WarnMedicalRecordNotFound}"

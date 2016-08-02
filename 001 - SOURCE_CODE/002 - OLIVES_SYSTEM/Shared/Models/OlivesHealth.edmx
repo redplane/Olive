@@ -312,7 +312,7 @@
           <Property Name="Created" Type="float" Nullable="false" />
           <Property Name="LastModified" Type="float" />
         </EntityType>
-        <Association Name="FK__AccountCo__Owner__0CE5D100">
+        <Association Name="FK__AccountCo__Owner__45E94432">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="AccountCode" Type="Self.AccountCode" Multiplicity="*" />
           <ReferentialConstraint>
@@ -324,7 +324,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Addiction__Owner__1A3FCC1E">
+        <Association Name="FK__Addiction__Owner__53433F50">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="Addiction" Type="Self.Addiction" Multiplicity="*" />
           <ReferentialConstraint>
@@ -336,7 +336,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Allergy__Owner__17635F73">
+        <Association Name="FK__Allergy__Owner__5066D2A5">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="Allergy" Type="Self.Allergy" Multiplicity="*" />
           <ReferentialConstraint>
@@ -348,7 +348,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Appointme__Dater__10B661E4">
+        <Association Name="FK__Appointme__Dater__49B9D516">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="Appointment" Type="Self.Appointment" Multiplicity="*" />
           <ReferentialConstraint>
@@ -360,7 +360,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Appointme__Statu__0FC23DAB">
+        <Association Name="FK__Appointme__Statu__48C5B0DD">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="Appointment" Type="Self.Appointment" Multiplicity="*" />
           <ReferentialConstraint>
@@ -372,7 +372,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__BloodPres__LastM__0A096455">
+        <Association Name="FK__BloodPres__LastM__430CD787">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="BloodPressure" Type="Self.BloodPressure" Multiplicity="*" />
           <ReferentialConstraint>
@@ -384,7 +384,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Doctor__Id__1D1C38C9">
+        <Association Name="FK__Doctor__Id__561FABFB">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="Doctor" Type="Self.Doctor" Multiplicity="0..1" />
           <ReferentialConstraint>
@@ -396,7 +396,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Doctor__PlaceId__1F04813B">
+        <Association Name="FK__Doctor__PlaceId__5807F46D">
           <End Role="Place" Type="Self.Place" Multiplicity="1" />
           <End Role="Doctor" Type="Self.Doctor" Multiplicity="*" />
           <ReferentialConstraint>
@@ -408,7 +408,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Doctor__Specialt__1E105D02">
+        <Association Name="FK__Doctor__Specialt__5713D034">
           <End Role="Specialty" Type="Self.Specialty" Multiplicity="1" />
           <End Role="Doctor" Type="Self.Doctor" Multiplicity="*" />
           <ReferentialConstraint>
@@ -420,7 +420,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Experimen__Creat__3E7D2C94">
+        <Association Name="FK__Experimen__Creat__77809FC6">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="ExperimentNote" Type="Self.ExperimentNote" Multiplicity="*" />
           <ReferentialConstraint>
@@ -432,7 +432,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Experimen__Medic__3C94E422">
+        <Association Name="FK__Experimen__Medic__75985754">
           <End Role="MedicalRecord" Type="Self.MedicalRecord" Multiplicity="1" />
           <End Role="ExperimentNote" Type="Self.ExperimentNote" Multiplicity="*" />
           <ReferentialConstraint>
@@ -444,7 +444,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Experimen__Owner__3D89085B">
+        <Association Name="FK__Experimen__Owner__768C7B8D">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="ExperimentNote" Type="Self.ExperimentNote" Multiplicity="*" />
           <ReferentialConstraint>
@@ -456,7 +456,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Heartbeat__LastM__04508AFF">
+        <Association Name="FK__Heartbeat__LastM__3D53FE31">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="Heartbeat" Type="Self.Heartbeat" Multiplicity="*" />
           <ReferentialConstraint>
@@ -468,7 +468,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MedicalIm__Medic__2B6A5820">
+        <Association Name="FK__MedicalIm__Medic__646DCB52">
           <End Role="MedicalRecord" Type="Self.MedicalRecord" Multiplicity="1" />
           <End Role="MedicalImage" Type="Self.MedicalImage" Multiplicity="*" />
           <ReferentialConstraint>
@@ -480,7 +480,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MedicalIm__Owner__2C5E7C59">
+        <Association Name="FK__MedicalIm__Owner__6561EF8B">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="MedicalImage" Type="Self.MedicalImage" Multiplicity="*" />
           <ReferentialConstraint>
@@ -492,7 +492,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MedicalNo__Creat__302F0D3D">
+        <Association Name="FK__MedicalNo__Creat__6932806F">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="MedicalNote" Type="Self.MedicalNote" Multiplicity="*" />
           <ReferentialConstraint>
@@ -504,7 +504,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MedicalNo__Medic__31233176">
+        <Association Name="FK__MedicalNo__Medic__6A26A4A8">
           <End Role="MedicalRecord" Type="Self.MedicalRecord" Multiplicity="1" />
           <End Role="MedicalNote" Type="Self.MedicalNote" Multiplicity="*" />
           <ReferentialConstraint>
@@ -516,7 +516,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MedicalNo__Owner__2F3AE904">
+        <Association Name="FK__MedicalNo__Owner__683E5C36">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="MedicalNote" Type="Self.MedicalNote" Multiplicity="*" />
           <ReferentialConstraint>
@@ -528,7 +528,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MedicalRe__Categ__288DEB75">
+        <Association Name="FK__MedicalRe__Categ__61915EA7">
           <End Role="MedicalCategory" Type="Self.MedicalCategory" Multiplicity="1" />
           <End Role="MedicalRecord" Type="Self.MedicalRecord" Multiplicity="*" />
           <ReferentialConstraint>
@@ -540,7 +540,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MedicalRe__Creat__2799C73C">
+        <Association Name="FK__MedicalRe__Creat__609D3A6E">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="MedicalRecord" Type="Self.MedicalRecord" Multiplicity="*" />
           <ReferentialConstraint>
@@ -552,7 +552,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MedicalRe__Owner__26A5A303">
+        <Association Name="FK__MedicalRe__Owner__5FA91635">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="MedicalRecord" Type="Self.MedicalRecord" Multiplicity="*" />
           <ReferentialConstraint>
@@ -564,7 +564,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Message__Broadca__4DBF7024">
+        <Association Name="FK__Message__Broadca__05CEBF1D">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="Message" Type="Self.Message" Multiplicity="*" />
           <ReferentialConstraint>
@@ -576,7 +576,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Message__Recipie__4EB3945D">
+        <Association Name="FK__Message__Recipie__06C2E356">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="Message" Type="Self.Message" Multiplicity="*" />
           <ReferentialConstraint>
@@ -588,7 +588,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Notificat__IsSee__5C0D8F7B">
+        <Association Name="FK__Notificat__IsSee__0015E5C7">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="Notification" Type="Self.Notification" Multiplicity="*" />
           <ReferentialConstraint>
@@ -600,7 +600,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Notificat__Recip__5D01B3B4">
+        <Association Name="FK__Notificat__Recip__010A0A00">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="Notification" Type="Self.Notification" Multiplicity="*" />
           <ReferentialConstraint>
@@ -612,7 +612,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Patient__Height__21E0EDE6">
+        <Association Name="FK__Patient__Height__5AE46118">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="Patient" Type="Self.Patient" Multiplicity="0..1" />
           <ReferentialConstraint>
@@ -624,7 +624,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Prescript__Creat__35E7E693">
+        <Association Name="FK__Prescript__Creat__6EEB59C5">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="Prescription" Type="Self.Prescription" Multiplicity="*" />
           <ReferentialConstraint>
@@ -636,7 +636,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Prescript__Creat__39B87777">
+        <Association Name="FK__Prescript__Creat__72BBEAA9">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="PrescriptionImage" Type="Self.PrescriptionImage" Multiplicity="*" />
           <ReferentialConstraint>
@@ -648,7 +648,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Prescript__Medic__33FF9E21">
+        <Association Name="FK__Prescript__Medic__6D031153">
           <End Role="MedicalRecord" Type="Self.MedicalRecord" Multiplicity="1" />
           <End Role="Prescription" Type="Self.Prescription" Multiplicity="*" />
           <ReferentialConstraint>
@@ -660,7 +660,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Prescript__Owner__34F3C25A">
+        <Association Name="FK__Prescript__Owner__6DF7358C">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="Prescription" Type="Self.Prescription" Multiplicity="*" />
           <ReferentialConstraint>
@@ -672,7 +672,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Prescript__Presc__38C4533E">
+        <Association Name="FK__Prescript__Presc__71C7C670">
           <End Role="Prescription" Type="Self.Prescription" Multiplicity="1" />
           <End Role="PrescriptionImage" Type="Self.PrescriptionImage" Multiplicity="*" />
           <ReferentialConstraint>
@@ -684,7 +684,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Rating__Maker__4159993F">
+        <Association Name="FK__Rating__Maker__7A5D0C71">
           <End Role="Patient" Type="Self.Patient" Multiplicity="1" />
           <End Role="Rating" Type="Self.Rating" Multiplicity="*" />
           <ReferentialConstraint>
@@ -696,7 +696,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Rating__Target__424DBD78">
+        <Association Name="FK__Rating__Target__7B5130AA">
           <End Role="Doctor" Type="Self.Doctor" Multiplicity="1" />
           <End Role="Rating" Type="Self.Rating" Multiplicity="*" />
           <ReferentialConstraint>
@@ -708,7 +708,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Relation__Source__1392CE8F">
+        <Association Name="FK__Relation__Source__4C9641C1">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="Relation" Type="Self.Relation" Multiplicity="*" />
           <ReferentialConstraint>
@@ -720,7 +720,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Relation__Target__1486F2C8">
+        <Association Name="FK__Relation__Target__4D8A65FA">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="Relation" Type="Self.Relation" Multiplicity="*" />
           <ReferentialConstraint>
@@ -732,7 +732,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__SugarBloo__LastM__072CF7AA">
+        <Association Name="FK__SugarBloo__LastM__40306ADC">
           <End Role="Person" Type="Self.Person" Multiplicity="1" />
           <End Role="SugarBlood" Type="Self.SugarBlood" Multiplicity="*" />
           <ReferentialConstraint>
@@ -770,147 +770,147 @@
           <EntitySet Name="Relation" EntityType="Self.Relation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Specialty" EntityType="Self.Specialty" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SugarBlood" EntityType="Self.SugarBlood" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__AccountCo__Owner__0CE5D100" Association="Self.FK__AccountCo__Owner__0CE5D100">
+          <AssociationSet Name="FK__AccountCo__Owner__45E94432" Association="Self.FK__AccountCo__Owner__45E94432">
             <End Role="Person" EntitySet="Person" />
             <End Role="AccountCode" EntitySet="AccountCode" />
           </AssociationSet>
-          <AssociationSet Name="FK__Addiction__Owner__1A3FCC1E" Association="Self.FK__Addiction__Owner__1A3FCC1E">
+          <AssociationSet Name="FK__Addiction__Owner__53433F50" Association="Self.FK__Addiction__Owner__53433F50">
             <End Role="Person" EntitySet="Person" />
             <End Role="Addiction" EntitySet="Addiction" />
           </AssociationSet>
-          <AssociationSet Name="FK__Allergy__Owner__17635F73" Association="Self.FK__Allergy__Owner__17635F73">
+          <AssociationSet Name="FK__Allergy__Owner__5066D2A5" Association="Self.FK__Allergy__Owner__5066D2A5">
             <End Role="Person" EntitySet="Person" />
             <End Role="Allergy" EntitySet="Allergy" />
           </AssociationSet>
-          <AssociationSet Name="FK__Appointme__Dater__10B661E4" Association="Self.FK__Appointme__Dater__10B661E4">
+          <AssociationSet Name="FK__Appointme__Dater__49B9D516" Association="Self.FK__Appointme__Dater__49B9D516">
             <End Role="Person" EntitySet="Person" />
             <End Role="Appointment" EntitySet="Appointment" />
           </AssociationSet>
-          <AssociationSet Name="FK__Appointme__Statu__0FC23DAB" Association="Self.FK__Appointme__Statu__0FC23DAB">
+          <AssociationSet Name="FK__Appointme__Statu__48C5B0DD" Association="Self.FK__Appointme__Statu__48C5B0DD">
             <End Role="Person" EntitySet="Person" />
             <End Role="Appointment" EntitySet="Appointment" />
           </AssociationSet>
-          <AssociationSet Name="FK__BloodPres__LastM__0A096455" Association="Self.FK__BloodPres__LastM__0A096455">
+          <AssociationSet Name="FK__BloodPres__LastM__430CD787" Association="Self.FK__BloodPres__LastM__430CD787">
             <End Role="Person" EntitySet="Person" />
             <End Role="BloodPressure" EntitySet="BloodPressure" />
           </AssociationSet>
-          <AssociationSet Name="FK__Doctor__Id__1D1C38C9" Association="Self.FK__Doctor__Id__1D1C38C9">
+          <AssociationSet Name="FK__Doctor__Id__561FABFB" Association="Self.FK__Doctor__Id__561FABFB">
             <End Role="Person" EntitySet="Person" />
             <End Role="Doctor" EntitySet="Doctor" />
           </AssociationSet>
-          <AssociationSet Name="FK__Doctor__PlaceId__1F04813B" Association="Self.FK__Doctor__PlaceId__1F04813B">
+          <AssociationSet Name="FK__Doctor__PlaceId__5807F46D" Association="Self.FK__Doctor__PlaceId__5807F46D">
             <End Role="Place" EntitySet="Place" />
             <End Role="Doctor" EntitySet="Doctor" />
           </AssociationSet>
-          <AssociationSet Name="FK__Doctor__Specialt__1E105D02" Association="Self.FK__Doctor__Specialt__1E105D02">
+          <AssociationSet Name="FK__Doctor__Specialt__5713D034" Association="Self.FK__Doctor__Specialt__5713D034">
             <End Role="Specialty" EntitySet="Specialty" />
             <End Role="Doctor" EntitySet="Doctor" />
           </AssociationSet>
-          <AssociationSet Name="FK__Experimen__Creat__3E7D2C94" Association="Self.FK__Experimen__Creat__3E7D2C94">
+          <AssociationSet Name="FK__Experimen__Creat__77809FC6" Association="Self.FK__Experimen__Creat__77809FC6">
             <End Role="Person" EntitySet="Person" />
             <End Role="ExperimentNote" EntitySet="ExperimentNote" />
           </AssociationSet>
-          <AssociationSet Name="FK__Experimen__Medic__3C94E422" Association="Self.FK__Experimen__Medic__3C94E422">
+          <AssociationSet Name="FK__Experimen__Medic__75985754" Association="Self.FK__Experimen__Medic__75985754">
             <End Role="MedicalRecord" EntitySet="MedicalRecord" />
             <End Role="ExperimentNote" EntitySet="ExperimentNote" />
           </AssociationSet>
-          <AssociationSet Name="FK__Experimen__Owner__3D89085B" Association="Self.FK__Experimen__Owner__3D89085B">
+          <AssociationSet Name="FK__Experimen__Owner__768C7B8D" Association="Self.FK__Experimen__Owner__768C7B8D">
             <End Role="Person" EntitySet="Person" />
             <End Role="ExperimentNote" EntitySet="ExperimentNote" />
           </AssociationSet>
-          <AssociationSet Name="FK__Heartbeat__LastM__04508AFF" Association="Self.FK__Heartbeat__LastM__04508AFF">
+          <AssociationSet Name="FK__Heartbeat__LastM__3D53FE31" Association="Self.FK__Heartbeat__LastM__3D53FE31">
             <End Role="Person" EntitySet="Person" />
             <End Role="Heartbeat" EntitySet="Heartbeat" />
           </AssociationSet>
-          <AssociationSet Name="FK__MedicalIm__Medic__2B6A5820" Association="Self.FK__MedicalIm__Medic__2B6A5820">
+          <AssociationSet Name="FK__MedicalIm__Medic__646DCB52" Association="Self.FK__MedicalIm__Medic__646DCB52">
             <End Role="MedicalRecord" EntitySet="MedicalRecord" />
             <End Role="MedicalImage" EntitySet="MedicalImage" />
           </AssociationSet>
-          <AssociationSet Name="FK__MedicalIm__Owner__2C5E7C59" Association="Self.FK__MedicalIm__Owner__2C5E7C59">
+          <AssociationSet Name="FK__MedicalIm__Owner__6561EF8B" Association="Self.FK__MedicalIm__Owner__6561EF8B">
             <End Role="Person" EntitySet="Person" />
             <End Role="MedicalImage" EntitySet="MedicalImage" />
           </AssociationSet>
-          <AssociationSet Name="FK__MedicalNo__Creat__302F0D3D" Association="Self.FK__MedicalNo__Creat__302F0D3D">
+          <AssociationSet Name="FK__MedicalNo__Creat__6932806F" Association="Self.FK__MedicalNo__Creat__6932806F">
             <End Role="Person" EntitySet="Person" />
             <End Role="MedicalNote" EntitySet="MedicalNote" />
           </AssociationSet>
-          <AssociationSet Name="FK__MedicalNo__Medic__31233176" Association="Self.FK__MedicalNo__Medic__31233176">
+          <AssociationSet Name="FK__MedicalNo__Medic__6A26A4A8" Association="Self.FK__MedicalNo__Medic__6A26A4A8">
             <End Role="MedicalRecord" EntitySet="MedicalRecord" />
             <End Role="MedicalNote" EntitySet="MedicalNote" />
           </AssociationSet>
-          <AssociationSet Name="FK__MedicalNo__Owner__2F3AE904" Association="Self.FK__MedicalNo__Owner__2F3AE904">
+          <AssociationSet Name="FK__MedicalNo__Owner__683E5C36" Association="Self.FK__MedicalNo__Owner__683E5C36">
             <End Role="Person" EntitySet="Person" />
             <End Role="MedicalNote" EntitySet="MedicalNote" />
           </AssociationSet>
-          <AssociationSet Name="FK__MedicalRe__Categ__288DEB75" Association="Self.FK__MedicalRe__Categ__288DEB75">
+          <AssociationSet Name="FK__MedicalRe__Categ__61915EA7" Association="Self.FK__MedicalRe__Categ__61915EA7">
             <End Role="MedicalCategory" EntitySet="MedicalCategory" />
             <End Role="MedicalRecord" EntitySet="MedicalRecord" />
           </AssociationSet>
-          <AssociationSet Name="FK__MedicalRe__Creat__2799C73C" Association="Self.FK__MedicalRe__Creat__2799C73C">
+          <AssociationSet Name="FK__MedicalRe__Creat__609D3A6E" Association="Self.FK__MedicalRe__Creat__609D3A6E">
             <End Role="Person" EntitySet="Person" />
             <End Role="MedicalRecord" EntitySet="MedicalRecord" />
           </AssociationSet>
-          <AssociationSet Name="FK__MedicalRe__Owner__26A5A303" Association="Self.FK__MedicalRe__Owner__26A5A303">
+          <AssociationSet Name="FK__MedicalRe__Owner__5FA91635" Association="Self.FK__MedicalRe__Owner__5FA91635">
             <End Role="Person" EntitySet="Person" />
             <End Role="MedicalRecord" EntitySet="MedicalRecord" />
           </AssociationSet>
-          <AssociationSet Name="FK__Message__Broadca__4DBF7024" Association="Self.FK__Message__Broadca__4DBF7024">
+          <AssociationSet Name="FK__Message__Broadca__05CEBF1D" Association="Self.FK__Message__Broadca__05CEBF1D">
             <End Role="Person" EntitySet="Person" />
             <End Role="Message" EntitySet="Message" />
           </AssociationSet>
-          <AssociationSet Name="FK__Message__Recipie__4EB3945D" Association="Self.FK__Message__Recipie__4EB3945D">
+          <AssociationSet Name="FK__Message__Recipie__06C2E356" Association="Self.FK__Message__Recipie__06C2E356">
             <End Role="Person" EntitySet="Person" />
             <End Role="Message" EntitySet="Message" />
           </AssociationSet>
-          <AssociationSet Name="FK__Notificat__IsSee__5C0D8F7B" Association="Self.FK__Notificat__IsSee__5C0D8F7B">
+          <AssociationSet Name="FK__Notificat__IsSee__0015E5C7" Association="Self.FK__Notificat__IsSee__0015E5C7">
             <End Role="Person" EntitySet="Person" />
             <End Role="Notification" EntitySet="Notification" />
           </AssociationSet>
-          <AssociationSet Name="FK__Notificat__Recip__5D01B3B4" Association="Self.FK__Notificat__Recip__5D01B3B4">
+          <AssociationSet Name="FK__Notificat__Recip__010A0A00" Association="Self.FK__Notificat__Recip__010A0A00">
             <End Role="Person" EntitySet="Person" />
             <End Role="Notification" EntitySet="Notification" />
           </AssociationSet>
-          <AssociationSet Name="FK__Patient__Height__21E0EDE6" Association="Self.FK__Patient__Height__21E0EDE6">
+          <AssociationSet Name="FK__Patient__Height__5AE46118" Association="Self.FK__Patient__Height__5AE46118">
             <End Role="Person" EntitySet="Person" />
             <End Role="Patient" EntitySet="Patient" />
           </AssociationSet>
-          <AssociationSet Name="FK__Prescript__Creat__35E7E693" Association="Self.FK__Prescript__Creat__35E7E693">
+          <AssociationSet Name="FK__Prescript__Creat__6EEB59C5" Association="Self.FK__Prescript__Creat__6EEB59C5">
             <End Role="Person" EntitySet="Person" />
             <End Role="Prescription" EntitySet="Prescription" />
           </AssociationSet>
-          <AssociationSet Name="FK__Prescript__Creat__39B87777" Association="Self.FK__Prescript__Creat__39B87777">
+          <AssociationSet Name="FK__Prescript__Creat__72BBEAA9" Association="Self.FK__Prescript__Creat__72BBEAA9">
             <End Role="Person" EntitySet="Person" />
             <End Role="PrescriptionImage" EntitySet="PrescriptionImage" />
           </AssociationSet>
-          <AssociationSet Name="FK__Prescript__Medic__33FF9E21" Association="Self.FK__Prescript__Medic__33FF9E21">
+          <AssociationSet Name="FK__Prescript__Medic__6D031153" Association="Self.FK__Prescript__Medic__6D031153">
             <End Role="MedicalRecord" EntitySet="MedicalRecord" />
             <End Role="Prescription" EntitySet="Prescription" />
           </AssociationSet>
-          <AssociationSet Name="FK__Prescript__Owner__34F3C25A" Association="Self.FK__Prescript__Owner__34F3C25A">
+          <AssociationSet Name="FK__Prescript__Owner__6DF7358C" Association="Self.FK__Prescript__Owner__6DF7358C">
             <End Role="Person" EntitySet="Person" />
             <End Role="Prescription" EntitySet="Prescription" />
           </AssociationSet>
-          <AssociationSet Name="FK__Prescript__Presc__38C4533E" Association="Self.FK__Prescript__Presc__38C4533E">
+          <AssociationSet Name="FK__Prescript__Presc__71C7C670" Association="Self.FK__Prescript__Presc__71C7C670">
             <End Role="Prescription" EntitySet="Prescription" />
             <End Role="PrescriptionImage" EntitySet="PrescriptionImage" />
           </AssociationSet>
-          <AssociationSet Name="FK__Rating__Maker__4159993F" Association="Self.FK__Rating__Maker__4159993F">
+          <AssociationSet Name="FK__Rating__Maker__7A5D0C71" Association="Self.FK__Rating__Maker__7A5D0C71">
             <End Role="Patient" EntitySet="Patient" />
             <End Role="Rating" EntitySet="Rating" />
           </AssociationSet>
-          <AssociationSet Name="FK__Rating__Target__424DBD78" Association="Self.FK__Rating__Target__424DBD78">
+          <AssociationSet Name="FK__Rating__Target__7B5130AA" Association="Self.FK__Rating__Target__7B5130AA">
             <End Role="Doctor" EntitySet="Doctor" />
             <End Role="Rating" EntitySet="Rating" />
           </AssociationSet>
-          <AssociationSet Name="FK__Relation__Source__1392CE8F" Association="Self.FK__Relation__Source__1392CE8F">
+          <AssociationSet Name="FK__Relation__Source__4C9641C1" Association="Self.FK__Relation__Source__4C9641C1">
             <End Role="Person" EntitySet="Person" />
             <End Role="Relation" EntitySet="Relation" />
           </AssociationSet>
-          <AssociationSet Name="FK__Relation__Target__1486F2C8" Association="Self.FK__Relation__Target__1486F2C8">
+          <AssociationSet Name="FK__Relation__Target__4D8A65FA" Association="Self.FK__Relation__Target__4D8A65FA">
             <End Role="Person" EntitySet="Person" />
             <End Role="Relation" EntitySet="Relation" />
           </AssociationSet>
-          <AssociationSet Name="FK__SugarBloo__LastM__072CF7AA" Association="Self.FK__SugarBloo__LastM__072CF7AA">
+          <AssociationSet Name="FK__SugarBloo__LastM__40306ADC" Association="Self.FK__SugarBloo__LastM__40306ADC">
             <End Role="Person" EntitySet="Person" />
             <End Role="SugarBlood" EntitySet="SugarBlood" />
           </AssociationSet>
@@ -948,147 +948,147 @@
           <EntitySet Name="Relations" EntityType="OlivesHealthModel.Relation" />
           <EntitySet Name="Specialties" EntityType="OlivesHealthModel.Specialty" />
           <EntitySet Name="SugarBloods" EntityType="OlivesHealthModel.SugarBlood" />
-          <AssociationSet Name="FK__AccountCo__Owner__0CE5D100" Association="OlivesHealthModel.FK__AccountCo__Owner__0CE5D100">
+          <AssociationSet Name="FK__AccountCo__Owner__45E94432" Association="OlivesHealthModel.FK__AccountCo__Owner__45E94432">
             <End Role="Person" EntitySet="People" />
             <End Role="AccountCode" EntitySet="AccountCodes" />
           </AssociationSet>
-          <AssociationSet Name="FK__Addiction__Owner__1A3FCC1E" Association="OlivesHealthModel.FK__Addiction__Owner__1A3FCC1E">
+          <AssociationSet Name="FK__Addiction__Owner__53433F50" Association="OlivesHealthModel.FK__Addiction__Owner__53433F50">
             <End Role="Person" EntitySet="People" />
             <End Role="Addiction" EntitySet="Addictions" />
           </AssociationSet>
-          <AssociationSet Name="FK__Allergy__Owner__17635F73" Association="OlivesHealthModel.FK__Allergy__Owner__17635F73">
+          <AssociationSet Name="FK__Allergy__Owner__5066D2A5" Association="OlivesHealthModel.FK__Allergy__Owner__5066D2A5">
             <End Role="Person" EntitySet="People" />
             <End Role="Allergy" EntitySet="Allergies" />
           </AssociationSet>
-          <AssociationSet Name="FK__Appointme__Dater__10B661E4" Association="OlivesHealthModel.FK__Appointme__Dater__10B661E4">
+          <AssociationSet Name="FK__Appointme__Dater__49B9D516" Association="OlivesHealthModel.FK__Appointme__Dater__49B9D516">
             <End Role="Person" EntitySet="People" />
             <End Role="Appointment" EntitySet="Appointments" />
           </AssociationSet>
-          <AssociationSet Name="FK__Appointme__Statu__0FC23DAB" Association="OlivesHealthModel.FK__Appointme__Statu__0FC23DAB">
+          <AssociationSet Name="FK__Appointme__Statu__48C5B0DD" Association="OlivesHealthModel.FK__Appointme__Statu__48C5B0DD">
             <End Role="Person" EntitySet="People" />
             <End Role="Appointment" EntitySet="Appointments" />
           </AssociationSet>
-          <AssociationSet Name="FK__BloodPres__LastM__0A096455" Association="OlivesHealthModel.FK__BloodPres__LastM__0A096455">
+          <AssociationSet Name="FK__BloodPres__LastM__430CD787" Association="OlivesHealthModel.FK__BloodPres__LastM__430CD787">
             <End Role="Person" EntitySet="People" />
             <End Role="BloodPressure" EntitySet="BloodPressures" />
           </AssociationSet>
-          <AssociationSet Name="FK__Doctor__Id__1D1C38C9" Association="OlivesHealthModel.FK__Doctor__Id__1D1C38C9">
+          <AssociationSet Name="FK__Doctor__Id__561FABFB" Association="OlivesHealthModel.FK__Doctor__Id__561FABFB">
             <End Role="Person" EntitySet="People" />
             <End Role="Doctor" EntitySet="Doctors" />
           </AssociationSet>
-          <AssociationSet Name="FK__Doctor__PlaceId__1F04813B" Association="OlivesHealthModel.FK__Doctor__PlaceId__1F04813B">
+          <AssociationSet Name="FK__Doctor__PlaceId__5807F46D" Association="OlivesHealthModel.FK__Doctor__PlaceId__5807F46D">
             <End Role="Place" EntitySet="Places" />
             <End Role="Doctor" EntitySet="Doctors" />
           </AssociationSet>
-          <AssociationSet Name="FK__Doctor__Specialt__1E105D02" Association="OlivesHealthModel.FK__Doctor__Specialt__1E105D02">
+          <AssociationSet Name="FK__Doctor__Specialt__5713D034" Association="OlivesHealthModel.FK__Doctor__Specialt__5713D034">
             <End Role="Specialty" EntitySet="Specialties" />
             <End Role="Doctor" EntitySet="Doctors" />
           </AssociationSet>
-          <AssociationSet Name="FK__Rating__Target__424DBD78" Association="OlivesHealthModel.FK__Rating__Target__424DBD78">
+          <AssociationSet Name="FK__Rating__Target__7B5130AA" Association="OlivesHealthModel.FK__Rating__Target__7B5130AA">
             <End Role="Doctor" EntitySet="Doctors" />
             <End Role="Rating" EntitySet="Ratings" />
           </AssociationSet>
-          <AssociationSet Name="FK__Experimen__Creat__3E7D2C94" Association="OlivesHealthModel.FK__Experimen__Creat__3E7D2C94">
+          <AssociationSet Name="FK__Experimen__Creat__77809FC6" Association="OlivesHealthModel.FK__Experimen__Creat__77809FC6">
             <End Role="Person" EntitySet="People" />
             <End Role="ExperimentNote" EntitySet="ExperimentNotes" />
           </AssociationSet>
-          <AssociationSet Name="FK__Experimen__Medic__3C94E422" Association="OlivesHealthModel.FK__Experimen__Medic__3C94E422">
+          <AssociationSet Name="FK__Experimen__Medic__75985754" Association="OlivesHealthModel.FK__Experimen__Medic__75985754">
             <End Role="MedicalRecord" EntitySet="MedicalRecords" />
             <End Role="ExperimentNote" EntitySet="ExperimentNotes" />
           </AssociationSet>
-          <AssociationSet Name="FK__Experimen__Owner__3D89085B" Association="OlivesHealthModel.FK__Experimen__Owner__3D89085B">
+          <AssociationSet Name="FK__Experimen__Owner__768C7B8D" Association="OlivesHealthModel.FK__Experimen__Owner__768C7B8D">
             <End Role="Person" EntitySet="People" />
             <End Role="ExperimentNote" EntitySet="ExperimentNotes" />
           </AssociationSet>
-          <AssociationSet Name="FK__Heartbeat__LastM__04508AFF" Association="OlivesHealthModel.FK__Heartbeat__LastM__04508AFF">
+          <AssociationSet Name="FK__Heartbeat__LastM__3D53FE31" Association="OlivesHealthModel.FK__Heartbeat__LastM__3D53FE31">
             <End Role="Person" EntitySet="People" />
             <End Role="Heartbeat" EntitySet="Heartbeats" />
           </AssociationSet>
-          <AssociationSet Name="FK__MedicalRe__Categ__288DEB75" Association="OlivesHealthModel.FK__MedicalRe__Categ__288DEB75">
+          <AssociationSet Name="FK__MedicalRe__Categ__61915EA7" Association="OlivesHealthModel.FK__MedicalRe__Categ__61915EA7">
             <End Role="MedicalCategory" EntitySet="MedicalCategories" />
             <End Role="MedicalRecord" EntitySet="MedicalRecords" />
           </AssociationSet>
-          <AssociationSet Name="FK__MedicalIm__Medic__2B6A5820" Association="OlivesHealthModel.FK__MedicalIm__Medic__2B6A5820">
+          <AssociationSet Name="FK__MedicalIm__Medic__646DCB52" Association="OlivesHealthModel.FK__MedicalIm__Medic__646DCB52">
             <End Role="MedicalRecord" EntitySet="MedicalRecords" />
             <End Role="MedicalImage" EntitySet="MedicalImages" />
           </AssociationSet>
-          <AssociationSet Name="FK__MedicalIm__Owner__2C5E7C59" Association="OlivesHealthModel.FK__MedicalIm__Owner__2C5E7C59">
+          <AssociationSet Name="FK__MedicalIm__Owner__6561EF8B" Association="OlivesHealthModel.FK__MedicalIm__Owner__6561EF8B">
             <End Role="Person" EntitySet="People" />
             <End Role="MedicalImage" EntitySet="MedicalImages" />
           </AssociationSet>
-          <AssociationSet Name="FK__MedicalNo__Creat__302F0D3D" Association="OlivesHealthModel.FK__MedicalNo__Creat__302F0D3D">
+          <AssociationSet Name="FK__MedicalNo__Creat__6932806F" Association="OlivesHealthModel.FK__MedicalNo__Creat__6932806F">
             <End Role="Person" EntitySet="People" />
             <End Role="MedicalNote" EntitySet="MedicalNotes" />
           </AssociationSet>
-          <AssociationSet Name="FK__MedicalNo__Medic__31233176" Association="OlivesHealthModel.FK__MedicalNo__Medic__31233176">
+          <AssociationSet Name="FK__MedicalNo__Medic__6A26A4A8" Association="OlivesHealthModel.FK__MedicalNo__Medic__6A26A4A8">
             <End Role="MedicalRecord" EntitySet="MedicalRecords" />
             <End Role="MedicalNote" EntitySet="MedicalNotes" />
           </AssociationSet>
-          <AssociationSet Name="FK__MedicalNo__Owner__2F3AE904" Association="OlivesHealthModel.FK__MedicalNo__Owner__2F3AE904">
+          <AssociationSet Name="FK__MedicalNo__Owner__683E5C36" Association="OlivesHealthModel.FK__MedicalNo__Owner__683E5C36">
             <End Role="Person" EntitySet="People" />
             <End Role="MedicalNote" EntitySet="MedicalNotes" />
           </AssociationSet>
-          <AssociationSet Name="FK__MedicalRe__Creat__2799C73C" Association="OlivesHealthModel.FK__MedicalRe__Creat__2799C73C">
+          <AssociationSet Name="FK__MedicalRe__Creat__609D3A6E" Association="OlivesHealthModel.FK__MedicalRe__Creat__609D3A6E">
             <End Role="Person" EntitySet="People" />
             <End Role="MedicalRecord" EntitySet="MedicalRecords" />
           </AssociationSet>
-          <AssociationSet Name="FK__MedicalRe__Owner__26A5A303" Association="OlivesHealthModel.FK__MedicalRe__Owner__26A5A303">
+          <AssociationSet Name="FK__MedicalRe__Owner__5FA91635" Association="OlivesHealthModel.FK__MedicalRe__Owner__5FA91635">
             <End Role="Person" EntitySet="People" />
             <End Role="MedicalRecord" EntitySet="MedicalRecords" />
           </AssociationSet>
-          <AssociationSet Name="FK__Prescript__Medic__33FF9E21" Association="OlivesHealthModel.FK__Prescript__Medic__33FF9E21">
+          <AssociationSet Name="FK__Prescript__Medic__6D031153" Association="OlivesHealthModel.FK__Prescript__Medic__6D031153">
             <End Role="MedicalRecord" EntitySet="MedicalRecords" />
             <End Role="Prescription" EntitySet="Prescriptions" />
           </AssociationSet>
-          <AssociationSet Name="FK__Message__Broadca__4DBF7024" Association="OlivesHealthModel.FK__Message__Broadca__4DBF7024">
+          <AssociationSet Name="FK__Message__Broadca__05CEBF1D" Association="OlivesHealthModel.FK__Message__Broadca__05CEBF1D">
             <End Role="Person" EntitySet="People" />
             <End Role="Message" EntitySet="Messages" />
           </AssociationSet>
-          <AssociationSet Name="FK__Message__Recipie__4EB3945D" Association="OlivesHealthModel.FK__Message__Recipie__4EB3945D">
+          <AssociationSet Name="FK__Message__Recipie__06C2E356" Association="OlivesHealthModel.FK__Message__Recipie__06C2E356">
             <End Role="Person" EntitySet="People" />
             <End Role="Message" EntitySet="Messages" />
           </AssociationSet>
-          <AssociationSet Name="FK__Notificat__IsSee__5C0D8F7B" Association="OlivesHealthModel.FK__Notificat__IsSee__5C0D8F7B">
+          <AssociationSet Name="FK__Notificat__IsSee__0015E5C7" Association="OlivesHealthModel.FK__Notificat__IsSee__0015E5C7">
             <End Role="Person" EntitySet="People" />
             <End Role="Notification" EntitySet="Notifications" />
           </AssociationSet>
-          <AssociationSet Name="FK__Notificat__Recip__5D01B3B4" Association="OlivesHealthModel.FK__Notificat__Recip__5D01B3B4">
+          <AssociationSet Name="FK__Notificat__Recip__010A0A00" Association="OlivesHealthModel.FK__Notificat__Recip__010A0A00">
             <End Role="Person" EntitySet="People" />
             <End Role="Notification" EntitySet="Notifications" />
           </AssociationSet>
-          <AssociationSet Name="FK__Patient__Height__21E0EDE6" Association="OlivesHealthModel.FK__Patient__Height__21E0EDE6">
+          <AssociationSet Name="FK__Patient__Height__5AE46118" Association="OlivesHealthModel.FK__Patient__Height__5AE46118">
             <End Role="Person" EntitySet="People" />
             <End Role="Patient" EntitySet="Patients" />
           </AssociationSet>
-          <AssociationSet Name="FK__Rating__Maker__4159993F" Association="OlivesHealthModel.FK__Rating__Maker__4159993F">
+          <AssociationSet Name="FK__Rating__Maker__7A5D0C71" Association="OlivesHealthModel.FK__Rating__Maker__7A5D0C71">
             <End Role="Patient" EntitySet="Patients" />
             <End Role="Rating" EntitySet="Ratings" />
           </AssociationSet>
-          <AssociationSet Name="FK__Prescript__Creat__35E7E693" Association="OlivesHealthModel.FK__Prescript__Creat__35E7E693">
+          <AssociationSet Name="FK__Prescript__Creat__6EEB59C5" Association="OlivesHealthModel.FK__Prescript__Creat__6EEB59C5">
             <End Role="Person" EntitySet="People" />
             <End Role="Prescription" EntitySet="Prescriptions" />
           </AssociationSet>
-          <AssociationSet Name="FK__Prescript__Creat__39B87777" Association="OlivesHealthModel.FK__Prescript__Creat__39B87777">
+          <AssociationSet Name="FK__Prescript__Creat__72BBEAA9" Association="OlivesHealthModel.FK__Prescript__Creat__72BBEAA9">
             <End Role="Person" EntitySet="People" />
             <End Role="PrescriptionImage" EntitySet="PrescriptionImages" />
           </AssociationSet>
-          <AssociationSet Name="FK__Prescript__Owner__34F3C25A" Association="OlivesHealthModel.FK__Prescript__Owner__34F3C25A">
+          <AssociationSet Name="FK__Prescript__Owner__6DF7358C" Association="OlivesHealthModel.FK__Prescript__Owner__6DF7358C">
             <End Role="Person" EntitySet="People" />
             <End Role="Prescription" EntitySet="Prescriptions" />
           </AssociationSet>
-          <AssociationSet Name="FK__Relation__Source__1392CE8F" Association="OlivesHealthModel.FK__Relation__Source__1392CE8F">
+          <AssociationSet Name="FK__Relation__Source__4C9641C1" Association="OlivesHealthModel.FK__Relation__Source__4C9641C1">
             <End Role="Person" EntitySet="People" />
             <End Role="Relation" EntitySet="Relations" />
           </AssociationSet>
-          <AssociationSet Name="FK__Relation__Target__1486F2C8" Association="OlivesHealthModel.FK__Relation__Target__1486F2C8">
+          <AssociationSet Name="FK__Relation__Target__4D8A65FA" Association="OlivesHealthModel.FK__Relation__Target__4D8A65FA">
             <End Role="Person" EntitySet="People" />
             <End Role="Relation" EntitySet="Relations" />
           </AssociationSet>
-          <AssociationSet Name="FK__SugarBloo__LastM__072CF7AA" Association="OlivesHealthModel.FK__SugarBloo__LastM__072CF7AA">
+          <AssociationSet Name="FK__SugarBloo__LastM__40306ADC" Association="OlivesHealthModel.FK__SugarBloo__LastM__40306ADC">
             <End Role="Person" EntitySet="People" />
             <End Role="SugarBlood" EntitySet="SugarBloods" />
           </AssociationSet>
-          <AssociationSet Name="FK__Prescript__Presc__38C4533E" Association="OlivesHealthModel.FK__Prescript__Presc__38C4533E">
+          <AssociationSet Name="FK__Prescript__Presc__71C7C670" Association="OlivesHealthModel.FK__Prescript__Presc__71C7C670">
             <End Role="Prescription" EntitySet="Prescriptions" />
             <End Role="PrescriptionImage" EntitySet="PrescriptionImages" />
           </AssociationSet>
@@ -1102,7 +1102,7 @@
           <Property Name="Code" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="Type" Type="Byte" Nullable="false" />
           <Property Name="Expired" Type="DateTime" Nullable="false" Precision="3" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__AccountCo__Owner__0CE5D100" FromRole="AccountCode" ToRole="Person" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__AccountCo__Owner__45E94432" FromRole="AccountCode" ToRole="Person" />
         </EntityType>
         <EntityType Name="Addiction">
           <Key>
@@ -1114,7 +1114,7 @@
           <Property Name="Note" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Addiction__Owner__1A3FCC1E" FromRole="Addiction" ToRole="Person" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Addiction__Owner__53433F50" FromRole="Addiction" ToRole="Person" />
         </EntityType>
         <EntityType Name="Allergy">
           <Key>
@@ -1127,7 +1127,7 @@
           <Property Name="Note" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Allergy__Owner__17635F73" FromRole="Allergy" ToRole="Person" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Allergy__Owner__5066D2A5" FromRole="Allergy" ToRole="Person" />
         </EntityType>
         <EntityType Name="Appointment">
           <Key>
@@ -1147,8 +1147,8 @@
           <Property Name="LastModified" Type="Double" />
           <Property Name="LastModifiedNote" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Status" Type="Byte" Nullable="false" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Appointme__Dater__10B661E4" FromRole="Appointment" ToRole="Person" />
-          <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__Appointme__Statu__0FC23DAB" FromRole="Appointment" ToRole="Person" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Appointme__Dater__49B9D516" FromRole="Appointment" ToRole="Person" />
+          <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__Appointme__Statu__48C5B0DD" FromRole="Appointment" ToRole="Person" />
         </EntityType>
         <EntityType Name="BloodPressure">
           <Key>
@@ -1162,7 +1162,7 @@
           <Property Name="Note" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__BloodPres__LastM__0A096455" FromRole="BloodPressure" ToRole="Person" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__BloodPres__LastM__430CD787" FromRole="BloodPressure" ToRole="Person" />
         </EntityType>
         <EntityType Name="Doctor">
           <Key>
@@ -1177,10 +1177,10 @@
           <Property Name="PlaceId" Type="Int32" Nullable="false" />
           <Property Name="City" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="true" />
           <Property Name="Country" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Doctor__Id__1D1C38C9" FromRole="Doctor" ToRole="Person" />
-          <NavigationProperty Name="Place" Relationship="OlivesHealthModel.FK__Doctor__PlaceId__1F04813B" FromRole="Doctor" ToRole="Place" />
-          <NavigationProperty Name="Specialty" Relationship="OlivesHealthModel.FK__Doctor__Specialt__1E105D02" FromRole="Doctor" ToRole="Specialty" />
-          <NavigationProperty Name="Ratings" Relationship="OlivesHealthModel.FK__Rating__Target__424DBD78" FromRole="Doctor" ToRole="Rating" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Doctor__Id__561FABFB" FromRole="Doctor" ToRole="Person" />
+          <NavigationProperty Name="Place" Relationship="OlivesHealthModel.FK__Doctor__PlaceId__5807F46D" FromRole="Doctor" ToRole="Place" />
+          <NavigationProperty Name="Specialty" Relationship="OlivesHealthModel.FK__Doctor__Specialt__5713D034" FromRole="Doctor" ToRole="Specialty" />
+          <NavigationProperty Name="Ratings" Relationship="OlivesHealthModel.FK__Rating__Target__7B5130AA" FromRole="Doctor" ToRole="Rating" />
         </EntityType>
         <EntityType Name="ExperimentNote">
           <Key>
@@ -1194,9 +1194,9 @@
           <Property Name="Info" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Experimen__Creat__3E7D2C94" FromRole="ExperimentNote" ToRole="Person" />
-          <NavigationProperty Name="MedicalRecord" Relationship="OlivesHealthModel.FK__Experimen__Medic__3C94E422" FromRole="ExperimentNote" ToRole="MedicalRecord" />
-          <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__Experimen__Owner__3D89085B" FromRole="ExperimentNote" ToRole="Person" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Experimen__Creat__77809FC6" FromRole="ExperimentNote" ToRole="Person" />
+          <NavigationProperty Name="MedicalRecord" Relationship="OlivesHealthModel.FK__Experimen__Medic__75985754" FromRole="ExperimentNote" ToRole="MedicalRecord" />
+          <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__Experimen__Owner__768C7B8D" FromRole="ExperimentNote" ToRole="Person" />
         </EntityType>
         <EntityType Name="Heartbeat">
           <Key>
@@ -1209,7 +1209,7 @@
           <Property Name="Note" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Heartbeat__LastM__04508AFF" FromRole="Heartbeat" ToRole="Person" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Heartbeat__LastM__3D53FE31" FromRole="Heartbeat" ToRole="Person" />
         </EntityType>
         <EntityType Name="JunkFile">
           <Key>
@@ -1226,7 +1226,7 @@
           <Property Name="Name" Type="String" MaxLength="32" FixedLength="false" Unicode="true" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
-          <NavigationProperty Name="MedicalRecords" Relationship="OlivesHealthModel.FK__MedicalRe__Categ__288DEB75" FromRole="MedicalCategory" ToRole="MedicalRecord" />
+          <NavigationProperty Name="MedicalRecords" Relationship="OlivesHealthModel.FK__MedicalRe__Categ__61915EA7" FromRole="MedicalCategory" ToRole="MedicalRecord" />
         </EntityType>
         <EntityType Name="MedicalImage">
           <Key>
@@ -1239,8 +1239,8 @@
           <Property Name="Image" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
           <Property Name="FullPath" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Created" Type="Double" Nullable="false" />
-          <NavigationProperty Name="MedicalRecord" Relationship="OlivesHealthModel.FK__MedicalIm__Medic__2B6A5820" FromRole="MedicalImage" ToRole="MedicalRecord" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__MedicalIm__Owner__2C5E7C59" FromRole="MedicalImage" ToRole="Person" />
+          <NavigationProperty Name="MedicalRecord" Relationship="OlivesHealthModel.FK__MedicalIm__Medic__646DCB52" FromRole="MedicalImage" ToRole="MedicalRecord" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__MedicalIm__Owner__6561EF8B" FromRole="MedicalImage" ToRole="Person" />
         </EntityType>
         <EntityType Name="MedicalNote">
           <Key>
@@ -1254,9 +1254,9 @@
           <Property Name="Time" Type="Double" Nullable="false" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__MedicalNo__Creat__302F0D3D" FromRole="MedicalNote" ToRole="Person" />
-          <NavigationProperty Name="MedicalRecord" Relationship="OlivesHealthModel.FK__MedicalNo__Medic__31233176" FromRole="MedicalNote" ToRole="MedicalRecord" />
-          <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__MedicalNo__Owner__2F3AE904" FromRole="MedicalNote" ToRole="Person" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__MedicalNo__Creat__6932806F" FromRole="MedicalNote" ToRole="Person" />
+          <NavigationProperty Name="MedicalRecord" Relationship="OlivesHealthModel.FK__MedicalNo__Medic__6A26A4A8" FromRole="MedicalNote" ToRole="MedicalRecord" />
+          <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__MedicalNo__Owner__683E5C36" FromRole="MedicalNote" ToRole="Person" />
         </EntityType>
         <EntityType Name="MedicalRecord">
           <Key>
@@ -1270,13 +1270,13 @@
           <Property Name="Time" Type="Double" Nullable="false" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
-          <NavigationProperty Name="ExperimentNotes" Relationship="OlivesHealthModel.FK__Experimen__Medic__3C94E422" FromRole="MedicalRecord" ToRole="ExperimentNote" />
-          <NavigationProperty Name="MedicalCategory" Relationship="OlivesHealthModel.FK__MedicalRe__Categ__288DEB75" FromRole="MedicalRecord" ToRole="MedicalCategory" />
-          <NavigationProperty Name="MedicalImages" Relationship="OlivesHealthModel.FK__MedicalIm__Medic__2B6A5820" FromRole="MedicalRecord" ToRole="MedicalImage" />
-          <NavigationProperty Name="MedicalNotes" Relationship="OlivesHealthModel.FK__MedicalNo__Medic__31233176" FromRole="MedicalRecord" ToRole="MedicalNote" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__MedicalRe__Creat__2799C73C" FromRole="MedicalRecord" ToRole="Person" />
-          <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__MedicalRe__Owner__26A5A303" FromRole="MedicalRecord" ToRole="Person" />
-          <NavigationProperty Name="Prescriptions" Relationship="OlivesHealthModel.FK__Prescript__Medic__33FF9E21" FromRole="MedicalRecord" ToRole="Prescription" />
+          <NavigationProperty Name="ExperimentNotes" Relationship="OlivesHealthModel.FK__Experimen__Medic__75985754" FromRole="MedicalRecord" ToRole="ExperimentNote" />
+          <NavigationProperty Name="MedicalCategory" Relationship="OlivesHealthModel.FK__MedicalRe__Categ__61915EA7" FromRole="MedicalRecord" ToRole="MedicalCategory" />
+          <NavigationProperty Name="MedicalImages" Relationship="OlivesHealthModel.FK__MedicalIm__Medic__646DCB52" FromRole="MedicalRecord" ToRole="MedicalImage" />
+          <NavigationProperty Name="MedicalNotes" Relationship="OlivesHealthModel.FK__MedicalNo__Medic__6A26A4A8" FromRole="MedicalRecord" ToRole="MedicalNote" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__MedicalRe__Creat__609D3A6E" FromRole="MedicalRecord" ToRole="Person" />
+          <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__MedicalRe__Owner__5FA91635" FromRole="MedicalRecord" ToRole="Person" />
+          <NavigationProperty Name="Prescriptions" Relationship="OlivesHealthModel.FK__Prescript__Medic__6D031153" FromRole="MedicalRecord" ToRole="Prescription" />
         </EntityType>
         <EntityType Name="Message">
           <Key>
@@ -1288,8 +1288,8 @@
           <Property Name="Content" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="IsSeen" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Message__Broadca__4DBF7024" FromRole="Message" ToRole="Person" />
-          <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__Message__Recipie__4EB3945D" FromRole="Message" ToRole="Person" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Message__Broadca__05CEBF1D" FromRole="Message" ToRole="Person" />
+          <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__Message__Recipie__06C2E356" FromRole="Message" ToRole="Person" />
         </EntityType>
         <EntityType Name="Notification">
           <Key>
@@ -1304,8 +1304,8 @@
           <Property Name="Message" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="IsSeen" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Notificat__IsSee__5C0D8F7B" FromRole="Notification" ToRole="Person" />
-          <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__Notificat__Recip__5D01B3B4" FromRole="Notification" ToRole="Person" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Notificat__IsSee__0015E5C7" FromRole="Notification" ToRole="Person" />
+          <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__Notificat__Recip__010A0A00" FromRole="Notification" ToRole="Person" />
         </EntityType>
         <EntityType Name="Patient">
           <Key>
@@ -1315,8 +1315,8 @@
           <Property Name="Money" Type="Int32" Nullable="false" />
           <Property Name="Weight" Type="Double" />
           <Property Name="Height" Type="Double" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Patient__Height__21E0EDE6" FromRole="Patient" ToRole="Person" />
-          <NavigationProperty Name="Ratings" Relationship="OlivesHealthModel.FK__Rating__Maker__4159993F" FromRole="Patient" ToRole="Rating" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Patient__Height__5AE46118" FromRole="Patient" ToRole="Person" />
+          <NavigationProperty Name="Ratings" Relationship="OlivesHealthModel.FK__Rating__Maker__7A5D0C71" FromRole="Patient" ToRole="Rating" />
         </EntityType>
         <EntityType Name="Person">
           <Key>
@@ -1337,32 +1337,32 @@
           <Property Name="Status" Type="Byte" Nullable="false" />
           <Property Name="Address" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Photo" Type="String" MaxLength="32" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="AccountCodes" Relationship="OlivesHealthModel.FK__AccountCo__Owner__0CE5D100" FromRole="Person" ToRole="AccountCode" />
-          <NavigationProperty Name="Addictions" Relationship="OlivesHealthModel.FK__Addiction__Owner__1A3FCC1E" FromRole="Person" ToRole="Addiction" />
-          <NavigationProperty Name="Allergies" Relationship="OlivesHealthModel.FK__Allergy__Owner__17635F73" FromRole="Person" ToRole="Allergy" />
-          <NavigationProperty Name="Appointments" Relationship="OlivesHealthModel.FK__Appointme__Dater__10B661E4" FromRole="Person" ToRole="Appointment" />
-          <NavigationProperty Name="Appointments1" Relationship="OlivesHealthModel.FK__Appointme__Statu__0FC23DAB" FromRole="Person" ToRole="Appointment" />
-          <NavigationProperty Name="BloodPressures" Relationship="OlivesHealthModel.FK__BloodPres__LastM__0A096455" FromRole="Person" ToRole="BloodPressure" />
-          <NavigationProperty Name="Doctor" Relationship="OlivesHealthModel.FK__Doctor__Id__1D1C38C9" FromRole="Person" ToRole="Doctor" />
-          <NavigationProperty Name="ExperimentNotes" Relationship="OlivesHealthModel.FK__Experimen__Creat__3E7D2C94" FromRole="Person" ToRole="ExperimentNote" />
-          <NavigationProperty Name="ExperimentNotes1" Relationship="OlivesHealthModel.FK__Experimen__Owner__3D89085B" FromRole="Person" ToRole="ExperimentNote" />
-          <NavigationProperty Name="Heartbeats" Relationship="OlivesHealthModel.FK__Heartbeat__LastM__04508AFF" FromRole="Person" ToRole="Heartbeat" />
-          <NavigationProperty Name="MedicalImages" Relationship="OlivesHealthModel.FK__MedicalIm__Owner__2C5E7C59" FromRole="Person" ToRole="MedicalImage" />
-          <NavigationProperty Name="MedicalNotes" Relationship="OlivesHealthModel.FK__MedicalNo__Creat__302F0D3D" FromRole="Person" ToRole="MedicalNote" />
-          <NavigationProperty Name="MedicalNotes1" Relationship="OlivesHealthModel.FK__MedicalNo__Owner__2F3AE904" FromRole="Person" ToRole="MedicalNote" />
-          <NavigationProperty Name="MedicalRecords" Relationship="OlivesHealthModel.FK__MedicalRe__Creat__2799C73C" FromRole="Person" ToRole="MedicalRecord" />
-          <NavigationProperty Name="MedicalRecords1" Relationship="OlivesHealthModel.FK__MedicalRe__Owner__26A5A303" FromRole="Person" ToRole="MedicalRecord" />
-          <NavigationProperty Name="Messages" Relationship="OlivesHealthModel.FK__Message__Broadca__4DBF7024" FromRole="Person" ToRole="Message" />
-          <NavigationProperty Name="Messages1" Relationship="OlivesHealthModel.FK__Message__Recipie__4EB3945D" FromRole="Person" ToRole="Message" />
-          <NavigationProperty Name="Notifications" Relationship="OlivesHealthModel.FK__Notificat__IsSee__5C0D8F7B" FromRole="Person" ToRole="Notification" />
-          <NavigationProperty Name="Notifications1" Relationship="OlivesHealthModel.FK__Notificat__Recip__5D01B3B4" FromRole="Person" ToRole="Notification" />
-          <NavigationProperty Name="Patient" Relationship="OlivesHealthModel.FK__Patient__Height__21E0EDE6" FromRole="Person" ToRole="Patient" />
-          <NavigationProperty Name="Prescriptions" Relationship="OlivesHealthModel.FK__Prescript__Creat__35E7E693" FromRole="Person" ToRole="Prescription" />
-          <NavigationProperty Name="PrescriptionImages" Relationship="OlivesHealthModel.FK__Prescript__Creat__39B87777" FromRole="Person" ToRole="PrescriptionImage" />
-          <NavigationProperty Name="Prescriptions1" Relationship="OlivesHealthModel.FK__Prescript__Owner__34F3C25A" FromRole="Person" ToRole="Prescription" />
-          <NavigationProperty Name="Relations" Relationship="OlivesHealthModel.FK__Relation__Source__1392CE8F" FromRole="Person" ToRole="Relation" />
-          <NavigationProperty Name="Relations1" Relationship="OlivesHealthModel.FK__Relation__Target__1486F2C8" FromRole="Person" ToRole="Relation" />
-          <NavigationProperty Name="SugarBloods" Relationship="OlivesHealthModel.FK__SugarBloo__LastM__072CF7AA" FromRole="Person" ToRole="SugarBlood" />
+          <NavigationProperty Name="AccountCodes" Relationship="OlivesHealthModel.FK__AccountCo__Owner__45E94432" FromRole="Person" ToRole="AccountCode" />
+          <NavigationProperty Name="Addictions" Relationship="OlivesHealthModel.FK__Addiction__Owner__53433F50" FromRole="Person" ToRole="Addiction" />
+          <NavigationProperty Name="Allergies" Relationship="OlivesHealthModel.FK__Allergy__Owner__5066D2A5" FromRole="Person" ToRole="Allergy" />
+          <NavigationProperty Name="Appointments" Relationship="OlivesHealthModel.FK__Appointme__Dater__49B9D516" FromRole="Person" ToRole="Appointment" />
+          <NavigationProperty Name="Appointments1" Relationship="OlivesHealthModel.FK__Appointme__Statu__48C5B0DD" FromRole="Person" ToRole="Appointment" />
+          <NavigationProperty Name="BloodPressures" Relationship="OlivesHealthModel.FK__BloodPres__LastM__430CD787" FromRole="Person" ToRole="BloodPressure" />
+          <NavigationProperty Name="Doctor" Relationship="OlivesHealthModel.FK__Doctor__Id__561FABFB" FromRole="Person" ToRole="Doctor" />
+          <NavigationProperty Name="ExperimentNotes" Relationship="OlivesHealthModel.FK__Experimen__Creat__77809FC6" FromRole="Person" ToRole="ExperimentNote" />
+          <NavigationProperty Name="ExperimentNotes1" Relationship="OlivesHealthModel.FK__Experimen__Owner__768C7B8D" FromRole="Person" ToRole="ExperimentNote" />
+          <NavigationProperty Name="Heartbeats" Relationship="OlivesHealthModel.FK__Heartbeat__LastM__3D53FE31" FromRole="Person" ToRole="Heartbeat" />
+          <NavigationProperty Name="MedicalImages" Relationship="OlivesHealthModel.FK__MedicalIm__Owner__6561EF8B" FromRole="Person" ToRole="MedicalImage" />
+          <NavigationProperty Name="MedicalNotes" Relationship="OlivesHealthModel.FK__MedicalNo__Creat__6932806F" FromRole="Person" ToRole="MedicalNote" />
+          <NavigationProperty Name="MedicalNotes1" Relationship="OlivesHealthModel.FK__MedicalNo__Owner__683E5C36" FromRole="Person" ToRole="MedicalNote" />
+          <NavigationProperty Name="MedicalRecords" Relationship="OlivesHealthModel.FK__MedicalRe__Creat__609D3A6E" FromRole="Person" ToRole="MedicalRecord" />
+          <NavigationProperty Name="MedicalRecords1" Relationship="OlivesHealthModel.FK__MedicalRe__Owner__5FA91635" FromRole="Person" ToRole="MedicalRecord" />
+          <NavigationProperty Name="Messages" Relationship="OlivesHealthModel.FK__Message__Broadca__05CEBF1D" FromRole="Person" ToRole="Message" />
+          <NavigationProperty Name="Messages1" Relationship="OlivesHealthModel.FK__Message__Recipie__06C2E356" FromRole="Person" ToRole="Message" />
+          <NavigationProperty Name="Notifications" Relationship="OlivesHealthModel.FK__Notificat__IsSee__0015E5C7" FromRole="Person" ToRole="Notification" />
+          <NavigationProperty Name="Notifications1" Relationship="OlivesHealthModel.FK__Notificat__Recip__010A0A00" FromRole="Person" ToRole="Notification" />
+          <NavigationProperty Name="Patient" Relationship="OlivesHealthModel.FK__Patient__Height__5AE46118" FromRole="Person" ToRole="Patient" />
+          <NavigationProperty Name="Prescriptions" Relationship="OlivesHealthModel.FK__Prescript__Creat__6EEB59C5" FromRole="Person" ToRole="Prescription" />
+          <NavigationProperty Name="PrescriptionImages" Relationship="OlivesHealthModel.FK__Prescript__Creat__72BBEAA9" FromRole="Person" ToRole="PrescriptionImage" />
+          <NavigationProperty Name="Prescriptions1" Relationship="OlivesHealthModel.FK__Prescript__Owner__6DF7358C" FromRole="Person" ToRole="Prescription" />
+          <NavigationProperty Name="Relations" Relationship="OlivesHealthModel.FK__Relation__Source__4C9641C1" FromRole="Person" ToRole="Relation" />
+          <NavigationProperty Name="Relations1" Relationship="OlivesHealthModel.FK__Relation__Target__4D8A65FA" FromRole="Person" ToRole="Relation" />
+          <NavigationProperty Name="SugarBloods" Relationship="OlivesHealthModel.FK__SugarBloo__LastM__40306ADC" FromRole="Person" ToRole="SugarBlood" />
         </EntityType>
         <EntityType Name="Place">
           <Key>
@@ -1371,7 +1371,7 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="City" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="true" />
           <Property Name="Country" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Doctors" Relationship="OlivesHealthModel.FK__Doctor__PlaceId__1F04813B" FromRole="Place" ToRole="Doctor" />
+          <NavigationProperty Name="Doctors" Relationship="OlivesHealthModel.FK__Doctor__PlaceId__5807F46D" FromRole="Place" ToRole="Doctor" />
         </EntityType>
         <EntityType Name="Prescription">
           <Key>
@@ -1388,10 +1388,10 @@
           <Property Name="Note" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
-          <NavigationProperty Name="MedicalRecord" Relationship="OlivesHealthModel.FK__Prescript__Medic__33FF9E21" FromRole="Prescription" ToRole="MedicalRecord" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Prescript__Creat__35E7E693" FromRole="Prescription" ToRole="Person" />
-          <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__Prescript__Owner__34F3C25A" FromRole="Prescription" ToRole="Person" />
-          <NavigationProperty Name="PrescriptionImages" Relationship="OlivesHealthModel.FK__Prescript__Presc__38C4533E" FromRole="Prescription" ToRole="PrescriptionImage" />
+          <NavigationProperty Name="MedicalRecord" Relationship="OlivesHealthModel.FK__Prescript__Medic__6D031153" FromRole="Prescription" ToRole="MedicalRecord" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Prescript__Creat__6EEB59C5" FromRole="Prescription" ToRole="Person" />
+          <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__Prescript__Owner__6DF7358C" FromRole="Prescription" ToRole="Person" />
+          <NavigationProperty Name="PrescriptionImages" Relationship="OlivesHealthModel.FK__Prescript__Presc__71C7C670" FromRole="Prescription" ToRole="PrescriptionImage" />
         </EntityType>
         <EntityType Name="PrescriptionImage">
           <Key>
@@ -1404,8 +1404,8 @@
           <Property Name="Owner" Type="Int32" Nullable="false" />
           <Property Name="Creator" Type="Int32" Nullable="false" />
           <Property Name="Created" Type="Double" Nullable="false" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Prescript__Creat__39B87777" FromRole="PrescriptionImage" ToRole="Person" />
-          <NavigationProperty Name="Prescription" Relationship="OlivesHealthModel.FK__Prescript__Presc__38C4533E" FromRole="PrescriptionImage" ToRole="Prescription" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Prescript__Creat__72BBEAA9" FromRole="PrescriptionImage" ToRole="Person" />
+          <NavigationProperty Name="Prescription" Relationship="OlivesHealthModel.FK__Prescript__Presc__71C7C670" FromRole="PrescriptionImage" ToRole="Prescription" />
         </EntityType>
         <EntityType Name="Rating">
           <Key>
@@ -1422,8 +1422,8 @@
           <Property Name="Comment" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
-          <NavigationProperty Name="Doctor" Relationship="OlivesHealthModel.FK__Rating__Target__424DBD78" FromRole="Rating" ToRole="Doctor" />
-          <NavigationProperty Name="Patient" Relationship="OlivesHealthModel.FK__Rating__Maker__4159993F" FromRole="Rating" ToRole="Patient" />
+          <NavigationProperty Name="Doctor" Relationship="OlivesHealthModel.FK__Rating__Target__7B5130AA" FromRole="Rating" ToRole="Doctor" />
+          <NavigationProperty Name="Patient" Relationship="OlivesHealthModel.FK__Rating__Maker__7A5D0C71" FromRole="Rating" ToRole="Patient" />
         </EntityType>
         <EntityType Name="RealTimeConnection">
           <Key>
@@ -1447,8 +1447,8 @@
           <Property Name="TargetLastName" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="Status" Type="Byte" Nullable="false" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Relation__Source__1392CE8F" FromRole="Relation" ToRole="Person" />
-          <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__Relation__Target__1486F2C8" FromRole="Relation" ToRole="Person" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Relation__Source__4C9641C1" FromRole="Relation" ToRole="Person" />
+          <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__Relation__Target__4D8A65FA" FromRole="Relation" ToRole="Person" />
         </EntityType>
         <EntityType Name="Specialty">
           <Key>
@@ -1456,7 +1456,7 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Doctors" Relationship="OlivesHealthModel.FK__Doctor__Specialt__1E105D02" FromRole="Specialty" ToRole="Doctor" />
+          <NavigationProperty Name="Doctors" Relationship="OlivesHealthModel.FK__Doctor__Specialt__5713D034" FromRole="Specialty" ToRole="Doctor" />
         </EntityType>
         <EntityType Name="SugarBlood">
           <Key>
@@ -1469,9 +1469,9 @@
           <Property Name="Note" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
-          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__SugarBloo__LastM__072CF7AA" FromRole="SugarBlood" ToRole="Person" />
+          <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__SugarBloo__LastM__40306ADC" FromRole="SugarBlood" ToRole="Person" />
         </EntityType>
-        <Association Name="FK__AccountCo__Owner__0CE5D100">
+        <Association Name="FK__AccountCo__Owner__45E94432">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.AccountCode" Role="AccountCode" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1483,7 +1483,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Addiction__Owner__1A3FCC1E">
+        <Association Name="FK__Addiction__Owner__53433F50">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.Addiction" Role="Addiction" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1495,7 +1495,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Allergy__Owner__17635F73">
+        <Association Name="FK__Allergy__Owner__5066D2A5">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.Allergy" Role="Allergy" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1507,7 +1507,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Appointme__Dater__10B661E4">
+        <Association Name="FK__Appointme__Dater__49B9D516">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.Appointment" Role="Appointment" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1519,7 +1519,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Appointme__Statu__0FC23DAB">
+        <Association Name="FK__Appointme__Statu__48C5B0DD">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.Appointment" Role="Appointment" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1531,7 +1531,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__BloodPres__LastM__0A096455">
+        <Association Name="FK__BloodPres__LastM__430CD787">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.BloodPressure" Role="BloodPressure" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1543,7 +1543,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Doctor__Id__1D1C38C9">
+        <Association Name="FK__Doctor__Id__561FABFB">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.Doctor" Role="Doctor" Multiplicity="0..1" />
           <ReferentialConstraint>
@@ -1555,7 +1555,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Doctor__PlaceId__1F04813B">
+        <Association Name="FK__Doctor__PlaceId__5807F46D">
           <End Type="OlivesHealthModel.Place" Role="Place" Multiplicity="1" />
           <End Type="OlivesHealthModel.Doctor" Role="Doctor" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1567,7 +1567,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Doctor__Specialt__1E105D02">
+        <Association Name="FK__Doctor__Specialt__5713D034">
           <End Type="OlivesHealthModel.Specialty" Role="Specialty" Multiplicity="1" />
           <End Type="OlivesHealthModel.Doctor" Role="Doctor" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1579,7 +1579,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Rating__Target__424DBD78">
+        <Association Name="FK__Rating__Target__7B5130AA">
           <End Type="OlivesHealthModel.Doctor" Role="Doctor" Multiplicity="1" />
           <End Type="OlivesHealthModel.Rating" Role="Rating" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1591,7 +1591,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Experimen__Creat__3E7D2C94">
+        <Association Name="FK__Experimen__Creat__77809FC6">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.ExperimentNote" Role="ExperimentNote" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1603,7 +1603,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Experimen__Medic__3C94E422">
+        <Association Name="FK__Experimen__Medic__75985754">
           <End Type="OlivesHealthModel.MedicalRecord" Role="MedicalRecord" Multiplicity="1" />
           <End Type="OlivesHealthModel.ExperimentNote" Role="ExperimentNote" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1615,7 +1615,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Experimen__Owner__3D89085B">
+        <Association Name="FK__Experimen__Owner__768C7B8D">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.ExperimentNote" Role="ExperimentNote" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1627,7 +1627,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Heartbeat__LastM__04508AFF">
+        <Association Name="FK__Heartbeat__LastM__3D53FE31">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.Heartbeat" Role="Heartbeat" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1639,7 +1639,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MedicalRe__Categ__288DEB75">
+        <Association Name="FK__MedicalRe__Categ__61915EA7">
           <End Type="OlivesHealthModel.MedicalCategory" Role="MedicalCategory" Multiplicity="1" />
           <End Type="OlivesHealthModel.MedicalRecord" Role="MedicalRecord" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1651,7 +1651,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MedicalIm__Medic__2B6A5820">
+        <Association Name="FK__MedicalIm__Medic__646DCB52">
           <End Type="OlivesHealthModel.MedicalRecord" Role="MedicalRecord" Multiplicity="1" />
           <End Type="OlivesHealthModel.MedicalImage" Role="MedicalImage" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1663,7 +1663,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MedicalIm__Owner__2C5E7C59">
+        <Association Name="FK__MedicalIm__Owner__6561EF8B">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.MedicalImage" Role="MedicalImage" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1675,7 +1675,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MedicalNo__Creat__302F0D3D">
+        <Association Name="FK__MedicalNo__Creat__6932806F">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.MedicalNote" Role="MedicalNote" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1687,7 +1687,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MedicalNo__Medic__31233176">
+        <Association Name="FK__MedicalNo__Medic__6A26A4A8">
           <End Type="OlivesHealthModel.MedicalRecord" Role="MedicalRecord" Multiplicity="1" />
           <End Type="OlivesHealthModel.MedicalNote" Role="MedicalNote" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1699,7 +1699,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MedicalNo__Owner__2F3AE904">
+        <Association Name="FK__MedicalNo__Owner__683E5C36">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.MedicalNote" Role="MedicalNote" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1711,7 +1711,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MedicalRe__Creat__2799C73C">
+        <Association Name="FK__MedicalRe__Creat__609D3A6E">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.MedicalRecord" Role="MedicalRecord" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1723,7 +1723,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MedicalRe__Owner__26A5A303">
+        <Association Name="FK__MedicalRe__Owner__5FA91635">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.MedicalRecord" Role="MedicalRecord" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1735,7 +1735,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Prescript__Medic__33FF9E21">
+        <Association Name="FK__Prescript__Medic__6D031153">
           <End Type="OlivesHealthModel.MedicalRecord" Role="MedicalRecord" Multiplicity="1" />
           <End Type="OlivesHealthModel.Prescription" Role="Prescription" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1747,7 +1747,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Message__Broadca__4DBF7024">
+        <Association Name="FK__Message__Broadca__05CEBF1D">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.Message" Role="Message" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1759,7 +1759,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Message__Recipie__4EB3945D">
+        <Association Name="FK__Message__Recipie__06C2E356">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.Message" Role="Message" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1771,7 +1771,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Notificat__IsSee__5C0D8F7B">
+        <Association Name="FK__Notificat__IsSee__0015E5C7">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.Notification" Role="Notification" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1783,7 +1783,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Notificat__Recip__5D01B3B4">
+        <Association Name="FK__Notificat__Recip__010A0A00">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.Notification" Role="Notification" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1795,7 +1795,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Patient__Height__21E0EDE6">
+        <Association Name="FK__Patient__Height__5AE46118">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.Patient" Role="Patient" Multiplicity="0..1" />
           <ReferentialConstraint>
@@ -1807,7 +1807,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Rating__Maker__4159993F">
+        <Association Name="FK__Rating__Maker__7A5D0C71">
           <End Type="OlivesHealthModel.Patient" Role="Patient" Multiplicity="1" />
           <End Type="OlivesHealthModel.Rating" Role="Rating" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1819,7 +1819,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Prescript__Creat__35E7E693">
+        <Association Name="FK__Prescript__Creat__6EEB59C5">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.Prescription" Role="Prescription" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1831,7 +1831,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Prescript__Creat__39B87777">
+        <Association Name="FK__Prescript__Creat__72BBEAA9">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.PrescriptionImage" Role="PrescriptionImage" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1843,7 +1843,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Prescript__Owner__34F3C25A">
+        <Association Name="FK__Prescript__Owner__6DF7358C">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.Prescription" Role="Prescription" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1855,7 +1855,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Relation__Source__1392CE8F">
+        <Association Name="FK__Relation__Source__4C9641C1">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.Relation" Role="Relation" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1867,7 +1867,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Relation__Target__1486F2C8">
+        <Association Name="FK__Relation__Target__4D8A65FA">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.Relation" Role="Relation" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1879,7 +1879,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__SugarBloo__LastM__072CF7AA">
+        <Association Name="FK__SugarBloo__LastM__40306ADC">
           <End Type="OlivesHealthModel.Person" Role="Person" Multiplicity="1" />
           <End Type="OlivesHealthModel.SugarBlood" Role="SugarBlood" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1891,7 +1891,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Prescript__Presc__38C4533E">
+        <Association Name="FK__Prescript__Presc__71C7C670">
           <End Type="OlivesHealthModel.Prescription" Role="Prescription" Multiplicity="1" />
           <End Type="OlivesHealthModel.PrescriptionImage" Role="PrescriptionImage" Multiplicity="*" />
           <ReferentialConstraint>
