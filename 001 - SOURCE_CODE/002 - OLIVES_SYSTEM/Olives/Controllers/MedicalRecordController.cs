@@ -244,11 +244,7 @@ namespace Olives.Controllers
                         result.Id,
                         result.Owner,
                         result.Creator,
-                        Category = new
-                        {
-                            result.MedicalCategory.Id,
-                            result.MedicalCategory.Name
-                        },
+                        result.Category,
                         result.Info,
                         result.Time,
                         result.Created

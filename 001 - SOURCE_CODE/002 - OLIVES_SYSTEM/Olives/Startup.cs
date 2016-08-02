@@ -58,6 +58,17 @@ namespace Olives
 
             #region IoC registration
 
+            #region Modules
+
+            // Log4net module registration (this is for logging)
+            var log = new Log4NetModule();
+            builder.RegisterModule<Log4NetModule>();
+
+            // Application setting instance.
+            builder.RegisterInstance(applicationSetting).As<ApplicationSetting>();
+
+            #endregion
+
             #region Repositories
 
             // Repository account registration.
@@ -65,29 +76,19 @@ namespace Olives
             builder.RegisterType<RepositoryRelation>().As<IRepositoryRelation>().SingleInstance();
 
             // Repository specialty registration.
-            builder.RegisterType<RepositorySpecialty>()
-                .As<IRepositorySpecialty>()
-                .SingleInstance();
+            builder.RegisterType<RepositorySpecialty>().As<IRepositorySpecialty>().SingleInstance();
 
             // Repository specialty registration.
-            builder.RegisterType<RepositoryHeartbeat>()
-                .As<IRepositoryHeartbeat>()
-                .SingleInstance();
+            builder.RegisterType<RepositoryHeartbeat>().As<IRepositoryHeartbeat>().SingleInstance();
 
             // Repository heartbeat registration.
-            builder.RegisterType<RepositoryAllergy>()
-                .As<IRepositoryAllergy>()
-                .SingleInstance();
+            builder.RegisterType<RepositoryAllergy>().As<IRepositoryAllergy>().SingleInstance();
 
             //  Repository activation code registration.
-            builder.RegisterType<RepositoryCode>()
-                .As<IRepositoryActivationCode>()
-                .SingleInstance();
+            builder.RegisterType<RepositoryCode>().As<IRepositoryActivationCode>().SingleInstance();
 
             // Repository of place registration.
-            builder.RegisterType<RepositoryPlace>()
-                .As<IRepositoryPlace>()
-                .SingleInstance();
+            builder.RegisterType<RepositoryPlace>().As<IRepositoryPlace>().SingleInstance();
 
             // Repository of addiction registration.
             builder.RegisterType<RepositoryAddiction>().As<IRepositoryAddiction>().SingleInstance();
@@ -97,7 +98,11 @@ namespace Olives
             builder.RegisterType<RepositoryAppointment>().As<IRepositoryAppointment>().SingleInstance();
             builder.RegisterType<RepositoryRating>().As<IRepositoryRating>().SingleInstance();
             builder.RegisterType<RepositoryNotification>().As<IRepositoryNotification>().SingleInstance();
-            builder.RegisterType<RepositoryRealTimeConnection>().As<IRepositoryRealTimeConnection>().SingleInstance();
+
+            // Real time notification.
+            var repositoryRealtimeConnection = new RepositoryRealTimeConnection();
+            builder.RegisterType<RepositoryRealTimeConnection>().As<IRepositoryRealTimeConnection>().OnActivating(e => e.ReplaceInstance(repositoryRealtimeConnection)).SingleInstance();
+            
             builder.RegisterType<RepositoryBloodPressure>().As<IRepositoryBloodPressure>().SingleInstance();
             builder.RegisterType<RepositoryMessage>().As<IRepositoryMessage>().SingleInstance();
 
@@ -131,20 +136,19 @@ namespace Olives
                 }
             }
 
-            builder.RegisterType<EmailService>()
-                .As<IEmailService>()
-                .OnActivating(e => e.ReplaceInstance(emailService))
-                .SingleInstance();
+            builder.RegisterType<EmailService>().As<IEmailService>().OnActivating(e => e.ReplaceInstance(emailService)).SingleInstance();
 
             // File service.
-            builder.RegisterType<FileService>()
-                .As<IFileService>()
-                .SingleInstance();
+            builder.RegisterType<FileService>().As<IFileService>().SingleInstance();
 
             // Time service.
-            builder.RegisterType<TimeService>()
-                .As<ITimeService>();
+            builder.RegisterType<TimeService>().As<ITimeService>();
 
+            // Notification service.
+            var notificationService = new NotificationService(repositoryRealtimeConnection);
+            builder.RegisterType<NotificationService>()
+                .As<INotificationService>()
+                .OnActivating(e => e.ReplaceInstance(notificationService));
             #endregion
 
             #region Attributes
@@ -159,15 +163,7 @@ namespace Olives
 
             #endregion
 
-            #region Modules
-
-            // Log4net module registration (this is for logging)
-            builder.RegisterModule<Log4NetModule>();
-
-            // Application setting instance.
-            builder.RegisterInstance(applicationSetting).As<ApplicationSetting>();
-
-            #endregion
+            
 
             // Web api dependency registration.
             builder.RegisterWebApiFilterProvider(GlobalConfiguration.Configuration);
@@ -179,8 +175,8 @@ namespace Olives
             GlobalHost.DependencyResolver = new Autofac.Integration.SignalR.AutofacDependencyResolver(container);
 
             // When application starts up. Remove all real time connection created before.
-            var repositoryRealTimeConnection = DependencyResolver.Current.GetService<IRepositoryRealTimeConnection>();
-            repositoryRealTimeConnection.DeleteRealTimeConnectionInfoAsync(null, null, null);
+            repositoryRealtimeConnection.DeleteRealTimeConnectionInfoAsync(null, null, null).Wait();
+
             // Map all signalr hubs.
             app.MapSignalR();
 

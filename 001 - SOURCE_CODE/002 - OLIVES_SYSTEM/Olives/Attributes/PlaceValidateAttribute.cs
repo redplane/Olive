@@ -32,8 +32,8 @@ namespace Olives.Attributes
             var placeId = Convert.ToInt32(value);
 
             // Find the medical inside the repository.
-            var place = repositoryPlace.FindPlaceAsync(placeId, City, CityNameComparision, Country,
-                CountryNameComparision).Result;
+            var place = repositoryPlace.FindPlace(placeId, City, CityNameComparision, Country,
+                CountryNameComparision);
 
             if (place == null)
                 return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));

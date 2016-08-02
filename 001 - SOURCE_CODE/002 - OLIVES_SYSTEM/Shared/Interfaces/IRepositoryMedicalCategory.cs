@@ -18,6 +18,15 @@ namespace Shared.Interfaces
         Task<MedicalCategory> FindMedicalCategoryAsync(int? id, string name, StringComparison? comparison);
 
         /// <summary>
+        /// Find medical record by using synchrnously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="comparison"></param>
+        /// <returns></returns>
+        MedicalCategory FindMedicalCategory(int? id, string name, StringComparison? comparison);
+
+        /// <summary>
         ///     Initialize medical category.
         /// </summary>
         /// <param name="initializer"></param>

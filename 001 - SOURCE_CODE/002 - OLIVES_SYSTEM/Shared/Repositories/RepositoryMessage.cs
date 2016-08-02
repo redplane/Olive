@@ -26,6 +26,9 @@ namespace Shared.Repositories
             // Initialize a message to database.
             context.Messages.Add(initializer);
 
+            // Save changes.
+            await context.SaveChangesAsync();
+
             return initializer;
         }
         

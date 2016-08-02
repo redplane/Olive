@@ -32,7 +32,7 @@ namespace Olives.Attributes
             var repositoryMedicalCategory = DependencyResolver.Current.GetService<IRepositoryMedicalCategory>();
 
             // Find the medical inside the repository.
-            var result = repositoryMedicalCategory.FindMedicalCategoryAsync(medicalRecord, Name, Comparision).Result;
+            var result = repositoryMedicalCategory.FindMedicalCategory(medicalRecord, Name, Comparision);
 
             if (result == null)
                 return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));

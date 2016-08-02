@@ -21,6 +21,18 @@ namespace Shared.Interfaces
             StringComparison? countryComparison);
 
         /// <summary>
+        ///     Find place by using id synchronously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="city"></param>
+        /// <param name="cityComparision"></param>
+        /// <param name="country"></param>
+        /// <param name="countryComparison"></param>
+        /// <returns></returns>
+        Place FindPlace(int? id, string city, StringComparison? cityComparision, string country,
+            StringComparison? countryComparison);
+
+        /// <summary>
         ///     Initialize a place asynchronously.
         /// </summary>
         /// <param name="place"></param>

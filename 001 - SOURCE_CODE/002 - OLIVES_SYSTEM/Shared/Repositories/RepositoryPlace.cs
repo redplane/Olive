@@ -101,6 +101,39 @@ namespace Shared.Repositories
         /// <param name="country"></param>
         /// <param name="countryComparison"></param>
         /// <returns></returns>
+        public Place FindPlace(int? id, string city, StringComparison? cityComparision, string country, StringComparison? countryComparison)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // By default, take all places.
+            IQueryable<Place> places = context.Places;
+
+            // Id is specified.
+            if (id != null)
+                places = places.Where(x => x.Id == id);
+
+            // City is defined.
+            if (city != null)
+                places = places.Where(x => x.City.Equals(city, cityComparision ?? StringComparison.Ordinal));
+
+            // Country is defined.
+            if (country != null)
+                places = places.Where(x => x.Country.Equals(country, countryComparison ?? StringComparison.Ordinal));
+
+            // Take the first result.
+            return places.FirstOrDefault();
+        }
+
+        /// <summary>
+        ///     Find the place by using specific conditions asynchronously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="city"></param>
+        /// <param name="cityComparision"></param>
+        /// <param name="country"></param>
+        /// <param name="countryComparison"></param>
+        /// <returns></returns>
         public async Task<Place> FindPlaceAsync(int? id, string city, StringComparison? cityComparision, string country,
             StringComparison? countryComparison)
         {

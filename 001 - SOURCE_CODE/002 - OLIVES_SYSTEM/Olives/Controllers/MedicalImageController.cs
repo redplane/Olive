@@ -193,7 +193,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [HttpDelete]
         [OlivesAuthorize(new[] {Role.Patient})]
-        public async Task<HttpResponseMessage> DeleteMedicalImage([FromBody] int id)
+        public async Task<HttpResponseMessage> DeleteMedicalImage([FromUri] int id)
         {
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];

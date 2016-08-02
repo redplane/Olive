@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 using log4net;
 using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hubs;
-using Olives.Hubs;
 using Olives.Interfaces;
 using Shared.Interfaces;
 using Shared.Models;
@@ -12,25 +11,22 @@ namespace Olives.Services
 {
     public class NotificationService : INotificationService
     {
+        private ILog Log
+        {
+            get { return DependencyResolver.Current.GetService<ILog>(); }
+        }
         /// <summary>
         /// Intstance which provides access to real time connection database.
         /// </summary>
         private readonly IRepositoryRealTimeConnection _repositoryRealTimeConnection;
-
-        /// <summary>
-        /// Instance which provides function to access log4net functions.
-        /// </summary>
-        private readonly ILog _log;
-
+        
         /// <summary>
         /// Initialize an instance of NotificationService.
         /// </summary>
         /// <param name="repositoryRealTimeConnection"></param>
-        /// <param name="log"></param>
-        public NotificationService(IRepositoryRealTimeConnection repositoryRealTimeConnection, ILog log)
+        public NotificationService(IRepositoryRealTimeConnection repositoryRealTimeConnection)
         {
             _repositoryRealTimeConnection = repositoryRealTimeConnection;
-            _log = log;
         }
 
         /// <summary>
@@ -78,7 +74,7 @@ namespace Olives.Services
                     catch (Exception exception)
                     {
                         // As exception happens, log it and let the function continue running.
-                        _log.Error(exception.Message, exception);
+                        Log.Error(exception.Message, exception);
                     }
 
                     #endregion
@@ -94,7 +90,7 @@ namespace Olives.Services
                     transaction.Rollback();
 
                     // As exception happens, log it and let the function continue running.
-                    _log.Error(exception.Message, exception);
+                    Log.Error(exception.Message, exception);
 
                     return null;
                 }

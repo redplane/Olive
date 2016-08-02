@@ -42,6 +42,33 @@ namespace Shared.Repositories
         }
 
         /// <summary>
+        ///     Find medical category synchronously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="comparision"></param>
+        /// <returns></returns>
+        public MedicalCategory FindMedicalCategory(int? id, string name, StringComparison? comparision)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // By default, take all record.
+            IQueryable<MedicalCategory> medicalCategories = context.MedicalCategories;
+
+            // Id is defined.
+            if (id != null)
+                medicalCategories = medicalCategories.Where(x => x.Id == id);
+
+            // Name is defined.
+            if (name != null)
+                medicalCategories =
+                    medicalCategories.Where(x => x.Name.Equals(name, comparision ?? StringComparison.Ordinal));
+
+            return medicalCategories.FirstOrDefault();
+        }
+
+        /// <summary>
         ///     Initialize medical category.
         /// </summary>
         /// <param name="initializer"></param>
