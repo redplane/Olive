@@ -11,6 +11,7 @@ using Olives.Attributes;
 using Olives.Constants;
 using Olives.Interfaces;
 using Olives.Models;
+using Olives.ViewModels;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Filter;
 using Olives.ViewModels.Initialize;
@@ -1109,28 +1110,25 @@ namespace Olives.Controllers
         /// <summary>
         ///     Request an activation code for not activated account.
         /// </summary>
-        /// <param name="info"></param>
+        /// <param name="initializer"></param>
         /// <returns></returns>
         [Route("api/account/code")]
         [HttpGet]
-        public async Task<HttpResponseMessage> RequestActivationCode([FromUri] AccountViewModel info)
+        public async Task<HttpResponseMessage> RequestActivationCode([FromUri] RequestActivationCodeViewModel initializer)
         {
             #region ModelState result
 
             // Model hasn't been initialized.
-            if (info == null)
+            if (initializer == null)
             {
-                _log.Error("Invalid account information");
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new
-                {
-                    Errors = new[] {Language.InvalidRequestParameters}
-                });
+                initializer = new RequestActivationCodeViewModel();
+                Validate(initializer);
             }
 
             // Invalid model state.
             if (!ModelState.IsValid)
             {
-                _log.Error("Invalid account information");
+                _log.Error("Request parameters are invalid. Errors sent to client.");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
 
@@ -1140,20 +1138,14 @@ namespace Olives.Controllers
 
             // Find the account whose email and password match with given conditions.
             var account =
-                await _repositoryAccount.FindPersonAsync(null, info.Email, info.Password, (byte) Role.Patient, null);
+                await _repositoryAccount.FindPersonAsync(null, initializer.Email, null, (byte) Role.Patient, StatusAccount.Pending);
+
             if (account == null)
             {
-                _log.Error($"Couldn't find account: '{info.Email}' : '{info.Password}'");
+                _log.Error($"Couldn't find account: '{initializer.Email}'");
                 return Request.CreateResponse(HttpStatusCode.NotFound);
             }
-
-            // Account is not waiting for being activated. Treat this as not found.
-            if (account.Status != (byte) StatusAccount.Pending)
-            {
-                _log.Error($"Couldn't create activation code for '{info.Email}' due to its status {account.Status}");
-                return Request.CreateResponse(HttpStatusCode.NotFound);
-            }
-
+            
             #endregion
 
             // Initialize activation code.
@@ -1168,7 +1160,7 @@ namespace Olives.Controllers
 
             // Write an email to user to notify him/her to activate account.
             await
-                _emailService.InitializeTokenEmail(info.Email, Language.OliveActivationCodeEmailTitle, account.FirstName,
+                _emailService.InitializeTokenEmail(initializer.Email, Language.OliveActivationCodeEmailTitle, account.FirstName,
                     account.LastName, activationToken, url, EmailType.Activation);
 
             // Respond status 200 with no content to notify user to check email for activation code.

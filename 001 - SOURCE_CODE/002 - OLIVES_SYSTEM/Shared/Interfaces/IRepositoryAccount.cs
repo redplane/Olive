@@ -40,14 +40,7 @@ namespace Shared.Interfaces
         /// <param name="status"></param>
         /// <returns></returns>
         Task<Person> FindPersonAsync(int? id, string email, string password, byte? role, StatusAccount? status);
-
-        /// <summary>
-        ///     Find a person asynchronously by using activation code.
-        /// </summary>
-        /// <param name="code"></param>
-        /// <returns></returns>
-        Task<Person> FindPersonAsync(string code);
-
+        
         /// <summary>
         ///     Edit person status asynchronously.
         /// </summary>
