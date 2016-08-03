@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
-using Olives.Interfaces;
 using Olives.Models;
 using Olives.ViewModels.Filter;
 using Olives.ViewModels.Initialize;
@@ -19,6 +18,7 @@ using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
+    [Route("api/relationship")]
     public class RelationshipController : ApiParentController
     {
         #region Constructors
@@ -26,17 +26,16 @@ namespace Olives.Controllers
         /// <summary>
         ///     Initialize an instance of AccountController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositoryRelation"></param>
         /// <param name="timeService"></param>
         /// <param name="applicationSetting"></param>
         /// <param name="log"></param>
-        public RelationshipController(IRepositoryAccountExtended repositoryAccountExtended, IRepositoryRelation repositoryRelation,
+        public RelationshipController(
+            IRepositoryRelation repositoryRelation,
             ITimeService timeService,
             ApplicationSetting applicationSetting,
             ILog log)
         {
-            _repositoryAccountExtended = repositoryAccountExtended;
             _repositoryRelation = repositoryRelation;
             _timeService = timeService;
             _applicationSetting = applicationSetting;
@@ -52,7 +51,6 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="initializer"></param>
         /// <returns></returns>
-        [Route("api/relationship")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> InitializeRelation([FromBody] InitializeRelationshipViewModel initializer)
@@ -83,19 +81,6 @@ namespace Olives.Controllers
                 // Retrieve information of person who sent request.
                 var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
-                // Find the target.
-                var person =
-                    await _repositoryAccountExtended.FindPersonAsync(initializer.Target, null, null, null, StatusAccount.Active);
-
-                // Cannot find the target.
-                if (person == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new
-                    {
-                        Error = $"{Language.WarnTargetAccountNotFound}"
-                    });
-                }
-
                 // Check whether these two people have relation or not.
                 var relationship =
                     await _repositoryRelation.FindRelationshipAsync(requester.Id, initializer.Target, null);
@@ -104,7 +89,8 @@ namespace Olives.Controllers
                 if (relationship != null && relationship.Count > 0)
                 {
                     // Relationship has already been registered.
-                    _log.Error($"Relationship from Requester[Id: {requester.Id}] to Owner[Id: {person.Id}] exists.");
+                    _log.Error(
+                        $"Relationship from Requester[Id: {requester.Id}] to Owner[Id: {initializer.Target}] exists.");
 
                     // Tell client about the conflict.
                     return Request.CreateResponse(HttpStatusCode.Conflict, new
@@ -116,37 +102,13 @@ namespace Olives.Controllers
                 // Create an instance of relation.
                 var relation = new Relation();
                 relation.Source = requester.Id;
-                relation.SourceFirstName = requester.FirstName;
-                relation.SourceLastName = requester.LastName;
                 relation.Target = initializer.Target;
-                relation.TargetFirstName = person.FirstName;
-                relation.TargetLastName = person.LastName;
                 relation.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
                 relation.Status = (byte) StatusRelation.Pending;
 
                 await _repositoryRelation.InitializeRelationAsync(relation);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new
-                {
-                    Relationship = new
-                    {
-                        relation.Id,
-                        Source = new
-                        {
-                            Id = relation.Source,
-                            FirstName = relation.SourceFirstName,
-                            LastName = relation.SourceLastName
-                        },
-                        Target = new
-                        {
-                            Id = relation.Target,
-                            FirstName = relation.TargetFirstName,
-                            LastName = relation.TargetLastName
-                        },
-                        relation.Created,
-                        relation.Status
-                    }
-                });
+                return Request.CreateResponse(HttpStatusCode.OK);
             }
             catch (Exception exception)
             {
@@ -165,7 +127,7 @@ namespace Olives.Controllers
         [Route("api/relationship/confirm")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
-        public async Task<HttpResponseMessage> ConfirmRemoveRelationship([FromBody] int id)
+        public async Task<HttpResponseMessage> ConfirmDeleteRelationship([FromBody] int id)
         {
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
@@ -186,27 +148,7 @@ namespace Olives.Controllers
             }
 
             relationship.Status = (byte) StatusRelation.Active;
-            return Request.CreateResponse(HttpStatusCode.OK, new
-            {
-                Relationship = new
-                {
-                    relationship.Id,
-                    Source = new
-                    {
-                        Id = relationship.Source,
-                        FirstName = relationship.SourceFirstName,
-                        LastName = relationship.SourceLastName
-                    },
-                    Target = new
-                    {
-                        Id = relationship.Target,
-                        FirstName = relationship.TargetFirstName,
-                        LastName = relationship.TargetLastName
-                    },
-                    relationship.Created,
-                    relationship.Status
-                }
-            });
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
         /// <summary>
@@ -214,10 +156,9 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Route("api/relationship")]
         [HttpDelete]
         [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
-        public async Task<HttpResponseMessage> RemoveRelationship([FromUri] int id)
+        public async Task<HttpResponseMessage> DeleteRelationship([FromUri] int id)
         {
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
@@ -324,7 +265,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/relationship/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> FilterRelationship([FromBody] FilterRelationshipViewModel filter)
         {
             #region Parameters validation
@@ -348,7 +289,7 @@ namespace Olives.Controllers
             #region Result handling
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Update the filter.
             filter.Requester = requester.Id;
@@ -367,14 +308,14 @@ namespace Olives.Controllers
                     Source = new
                     {
                         Id = x.Source,
-                        FirstName = x.SourceFirstName,
-                        LastName = x.SourceLastName
+                        x.Patient.Person.FirstName,
+                        x.Patient.Person.LastName
                     },
                     Target = new
                     {
                         Id = x.Target,
-                        FirstName = x.TargetFirstName,
-                        LastName = x.TargetLastName
+                        x.Doctor.Person.FirstName,
+                        x.Doctor.Person.LastName
                     },
                     x.Created,
                     x.Status
@@ -384,15 +325,10 @@ namespace Olives.Controllers
 
             #endregion
         }
-        
+
         #endregion
 
         #region Properties
-
-        /// <summary>
-        ///     Repository of accounts
-        /// </summary>
-        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
         ///     Repository of relationships.

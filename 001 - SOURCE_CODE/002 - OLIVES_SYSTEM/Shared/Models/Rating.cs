@@ -15,11 +15,7 @@ namespace Shared.Models
     public partial class Rating
     {
         public int Maker { get; set; }
-        public string MakerFirstName { get; set; }
-        public string MakerLastName { get; set; }
         public int Target { get; set; }
-        public string TargetFirstName { get; set; }
-        public string TargetLastName { get; set; }
         public int Value { get; set; }
         public string Comment { get; set; }
         public double Created { get; set; }

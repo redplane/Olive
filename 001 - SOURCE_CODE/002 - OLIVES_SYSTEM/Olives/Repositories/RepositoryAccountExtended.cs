@@ -146,7 +146,7 @@ namespace Olives.Repositories
                     .Take(filter.Records.Value);
             }
 
-            responseFilter.Doctors = doctors;
+            responseFilter.Doctors = await doctors.ToListAsync();
             return responseFilter;
 
             #endregion
@@ -310,27 +310,7 @@ namespace Olives.Repositories
                 {
                     // Add or update information base on the primary key.
                     context.People.AddOrUpdate(info);
-
-                    #region Relationship update
-
-                    // Because data is redundant in Relationship table, name should be changed.
-                    var relationships = context.Relations.Where(x => x.Source == id || x.Target == id);
-
-                    foreach (var relationship in relationships)
-                    {
-                        if (relationship.Source == id)
-                        {
-                            relationship.SourceFirstName = info.FirstName;
-                            relationship.SourceLastName = info.LastName;
-                            continue;
-                        }
-
-                        relationship.TargetFirstName = info.FirstName;
-                        relationship.TargetLastName = info.LastName;
-                    }
-
-                    #endregion
-
+                    
                     #region Appointment update
 
                     var appointments = context.Appointments.Where(x => x.Maker == id || x.Dater == id);
@@ -348,25 +328,7 @@ namespace Olives.Repositories
                     }
 
                     #endregion
-
-                    #region Rating update
-
-                    var ratings = context.Ratings.Where(x => x.Maker == id || x.Target == id);
-                    foreach (var rating in ratings)
-                    {
-                        if (rating.Maker == id)
-                        {
-                            rating.MakerFirstName = info.FirstName;
-                            rating.MakerLastName = info.LastName;
-                            continue;
-                        }
-
-                        rating.TargetFirstName = info.FirstName;
-                        rating.TargetLastName = info.LastName;
-                    }
-
-                    #endregion
-
+                    
                     // Save change to database.
                     await context.SaveChangesAsync();
 

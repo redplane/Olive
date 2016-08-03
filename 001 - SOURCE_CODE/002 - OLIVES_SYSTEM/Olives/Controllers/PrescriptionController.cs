@@ -197,33 +197,13 @@ namespace Olives.Controllers
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
-            // Requester is different from the medical record owner.
-            if (requester.Id != medicalRecord.Owner)
+            if (requester.Id != medicalRecord.Creator && requester.Id != medicalRecord.Owner)
             {
-                // Find the owner of medical record.
-                var owner =
-                    await
-                        _repositoryAccountExtended.FindPersonAsync(medicalRecord.Owner, null, null, null, StatusAccount.Active);
-                if (owner == null)
+                _log.Error($"Requester [Id: {requester.Id}] is not the creator or owner of medical record [Id: {medicalRecord.Id}]");
+                return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                    {
-                        Error = $"{Language.WarnOwnerNotActive}"
-                    });
-                }
-
-                // Find the relationship between requester and owner.
-                var relationships = await _repositoryRelation.FindRelationshipAsync(requester.Id, owner.Id,
-                    (byte) StatusRelation.Active);
-
-                // No active relationship is found.
-                if (relationships == null || relationships.Count < 1)
-                {
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                    {
-                        Error = $"{Language.WarnHasNoRelationship}"
-                    });
-                }
+                    Error = $"{Language.WarnRequesterNotInRecord}"
+                });
             }
 
             #endregion
@@ -320,40 +300,14 @@ namespace Olives.Controllers
 
             #region Prescription owner validation
 
-            // Requester is different from the medical record owner.
-            if (requester.Id != prescription.Owner)
+            // Requester is not the creator or owner of prescription.
+            if (requester.Id != prescription.Creator && requester.Id != prescription.Owner)
             {
-                // Find the owner of medical record.
-                var owner =
-                    await
-                        _repositoryAccountExtended.FindPersonAsync(prescription.Owner, null, null, (byte) Role.Patient,
-                            StatusAccount.Active);
-
-                // Owner cannot be found.
-                if (owner == null)
+                _log.Error($"Requester [Id: {requester.Id}] is not prescription [Id:{prescription.Id}] owner or creator");
+                return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    // Log the error.
-                    _log.Error($"Owner [Id: {prescription.Owner}] is not found as active.");
-
-                    // Tell the client about the result.
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                    {
-                        Error = $"{Language.WarnOwnerNotActive}"
-                    });
-                }
-
-                // Find the relationship between requester and owner.
-                var relationships = await _repositoryRelation.FindRelationshipAsync(requester.Id, owner.Id,
-                    (byte) StatusRelation.Active);
-
-                // No active relationship is found.
-                if (relationships == null || relationships.Count < 1)
-                {
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                    {
-                        Error = $"{Language.WarnHasNoRelationship}"
-                    });
-                }
+                    Error = $"{Language.WarnRequesterNotInRecord}"
+                });
             }
 
             #endregion

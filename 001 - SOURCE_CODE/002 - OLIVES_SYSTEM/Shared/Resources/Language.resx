@@ -483,4 +483,7 @@
   <data name="ValueHasBeenRegistered" xml:space="preserve">
     <value>{0} has been registered before</value>
   </data>
+  <data name="WarnRequesterNotInRecord" xml:space="preserve">
+    <value>W036</value>
+  </data>
 </root>

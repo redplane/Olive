@@ -213,7 +213,7 @@ namespace Shared.Repositories
                 relationships = relationships.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
 
-            response.Relationships = relationships;
+            response.Relationships = await relationships.ToListAsync();
             return response;
         }
 

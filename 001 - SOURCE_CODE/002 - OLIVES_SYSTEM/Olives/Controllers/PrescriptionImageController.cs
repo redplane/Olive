@@ -113,36 +113,13 @@ namespace Olives.Controllers
 
             #region Relationship validation
 
-            // Requester is not the creator of prescription.
-            if (requester.Id != prescription.Owner)
+            if (requester.Id != prescription.Owner && requester.Id != prescription.Creator)
             {
-                // Find the owner.
-                var owner = _repositoryAccountExtended.FindPersonAsync(prescription.Owner, null, null, null,
-                    StatusAccount.Active);
-
-                // No active owner is found.
-                if (owner == null)
+                _log.Error($"Requester [Id: {requester.Id}] is not either creator or owner of Prescription [Id: {prescription.Id}]");
+                return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    // Log the error for future tracking.
-                    _log.Error($"Owner [Id: {prescription.Owner}] is not found");
-
-                    // Tell the client to try again.
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                    {
-                        Error = $"{Language.WarnOwnerNotActive}"
-                    });
-                }
-
-                // Find the relationship between requester and the record owner.
-                var relationship = await _repositoryRelation.FindRelationshipAsync(requester.Id, prescription.Owner,
-                    (byte) StatusRelation.Active);
-
-                // No relationship is found between 2 people.
-                if (relationship == null || relationship.Count < 1)
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                    {
-                        Error = $"{Language.WarnHasNoRelationship}"
-                    });
+                    Error = $"{Language.WarnRequesterNotInRecord}"
+                });
             }
 
             #endregion

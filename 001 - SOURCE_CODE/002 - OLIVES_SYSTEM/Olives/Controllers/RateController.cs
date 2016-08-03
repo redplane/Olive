@@ -75,40 +75,22 @@ namespace Olives.Controllers
 
             #endregion
 
-            #region Initialization
+            #region Initialization & handling
 
             try
             {
-                // Find the rated person.
-                var rated = await _repositoryAccountExtended.FindPersonAsync(initializer.Target, null, null, (byte) Role.Doctor,
-                    StatusAccount.Active);
-
-                // The rated isn't found.
-                if (rated == null)
-                {
-                    // Log the error.
-                    _log.Error($"Cannot find the person [Id: {initializer.Rate}]");
-
-                    // Tell the client about the rate.
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new
-                    {
-                        Error = $"{Language.WarnTheRatedNotFound}"
-                    });
-                }
-
                 // Retrieve information of person who sent request.
                 var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Check the relationship between requester and the rated.
-                var relationships = await _repositoryRelation.FindRelationshipAsync(requester.Id, rated.Id,
-                    (byte) StatusRelation.Active);
+                var isRelationshipAvailable = await _repositoryRelation.IsPeopleConnected(requester.Id, initializer.Target);
 
                 // No relationship has been found.
-                if (relationships == null || relationships.Count < 1)
+                if (!isRelationshipAvailable)
                 {
                     // Log the error.
                     _log.Error(
-                        $"There is no relationship between requester [Id: {requester.Id}] and the rated [Id: {rated.Id}]");
+                        $"There is no relationship between requester [Id: {requester.Id}] and the rated [Id: {initializer.Target}]");
 
                     // Tell the client about this error.
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
@@ -117,10 +99,11 @@ namespace Olives.Controllers
                     });
                 }
 
-                // Find the rating.
+                #region Rating duplicate check
+
                 var filter = new FilterRatingViewModel();
                 filter.Requester = requester.Id;
-                filter.Partner = rated.Id;
+                filter.Partner = initializer.Target;
                 filter.Mode = RecordFilterMode.RequesterIsCreator;
 
                 // Do the filter.
@@ -128,7 +111,7 @@ namespace Olives.Controllers
                 if (result.Rates != null && result.Rates.Count > 0)
                 {
                     // Log the error first.
-                    _log.Error($"The rating of requester [Id: {requester.Id}] and rated [Id: {rated.Id}]");
+                    _log.Error($"The rating of requester [Id: {requester.Id}] and rated [Id: {initializer.Target}]");
 
                     // The rate has been done before.
                     return Request.CreateResponse(HttpStatusCode.Conflict, new
@@ -137,39 +120,23 @@ namespace Olives.Controllers
                     });
                 }
 
+                #endregion
+                
+                #region Result initialization
+
                 var rating = new Rating();
                 rating.Maker = requester.Id;
-                rating.MakerFirstName = requester.FirstName;
-                rating.MakerLastName = requester.LastName;
-                rating.Target = rated.Id;
-                rating.TargetFirstName = rated.FirstName;
-                rating.TargetLastName = rated.LastName;
+                rating.Target = initializer.Target;
                 rating.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
                 rating.Value = (byte) initializer.Rate;
                 rating.Comment = initializer.Comment;
 
                 // Initialize rating.
-                await _repositoryRating.InitializeRatingAsync(rating, rated.Id);
+                await _repositoryRating.InitializeRatingAsync(rating, initializer.Target);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new
-                {
-                    Maker = new
-                    {
-                        Id = rating.Maker,
-                        FirstName = rating.MakerFirstName,
-                        LastName = rating.MakerLastName
-                    },
-                    Target = new
-                    {
-                        Id = rating.Target,
-                        FirstName = rating.TargetFirstName,
-                        LastName = rating.TargetLastName
-                    },
-                    rating.Value,
-                    rating.Comment,
-                    rating.Created,
-                    rating.LastModified
-                });
+                return Request.CreateResponse(HttpStatusCode.OK);
+
+                #endregion
             }
             catch (Exception exception)
             {
@@ -234,14 +201,14 @@ namespace Olives.Controllers
                         Maker = new
                         {
                             Id = x.Maker,
-                            FirstName = x.MakerFirstName,
-                            LastName = x.MakerLastName
+                            x.Patient.Person.FirstName,
+                            x.Patient.Person.LastName
                         },
                         Target = new
                         {
                             Id = x.Target,
-                            FirstName = x.TargetFirstName,
-                            LastName = x.TargetLastName
+                            x.Doctor.Person.FirstName,
+                            x.Doctor.Person.LastName
                         },
                         x.Value,
                         x.Comment,

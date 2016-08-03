@@ -1024,6 +1024,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to W036.
+        /// </summary>
+        public static string WarnRequesterNotInRecord {
+            get {
+                return ResourceManager.GetString("WarnRequesterNotInRecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to W022.
         /// </summary>
         public static string WarnRoleIsForbidden {

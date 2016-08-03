@@ -102,37 +102,14 @@ namespace Olives.Controllers
 
             #region Relationship validation
 
-            // Requester is requesting to create medical record for another person
-            if (requester.Id != medicalRecord.Owner)
+            // Requester doesn't take part in medical record.
+            if (requester.Id != medicalRecord.Owner && requester.Id != medicalRecord.Creator)
             {
-                // Find the owner of medical record.
-                var owner =
-                    await
-                        _repositoryAccountExtended.FindPersonAsync(medicalRecord.Owner, null, null, null, StatusAccount.Active);
-
-                // No active owner is found.
-                if (owner == null)
+                _log.Error($"Requester [Id: {requester.Id}] isn't either medical record creator [Id: {medicalRecord.Creator}] and medical record owner [Id: {medicalRecord.Owner}]");
+                return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    // Log the error.
-                    _log.Error($"Owner [Id: {medicalRecord.Owner}] is not found.");
-
-                    // Tell the client about this error.
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                    {
-                        Error = $"{Language.WarnOwnerNotActive}"
-                    });
-                }
-
-                // Find the relationship between requester and the record owner.
-                var relationship = await _repositoryRelation.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
-                    (byte) StatusRelation.Active);
-
-                // No relationship is found between 2 people.
-                if (relationship == null || relationship.Count < 1)
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                    {
-                        Error = $"{Language.WarnHasNoRelationship}"
-                    });
+                    Error = $"{Language.WarnRequesterNotInRecord}"
+                });
             }
 
             #endregion

@@ -22,58 +22,62 @@ namespace DataInitializer
         private static readonly IRepositoryRelation RepositoryRelation = new RepositoryRelation();
         private static readonly ITimeService TimeService = new TimeService();
         private static readonly IRepositoryExperimentNote RepositoryExperimentNote = new RepositoryExperimentNote();
+        private static readonly IRepositoryMedicalNote RepositoryMedicalNote = new RepositoryMedicalNote();
 
         private static readonly int MaxRecord = 50;
 
         private static void Main(string[] args)
         {
             Console.WriteLine("Intialize category");
-            InitializeCategory(MaxRecord);
+            //InitializeCategory(MaxRecord);
 
             Console.WriteLine("Initialize places");
-            InitializePlaces(MaxRecord);
+            //InitializePlaces(MaxRecord);
 
             Console.WriteLine("Initialize specialty");
-            InitializeSpecialties(MaxRecord);
+            //InitializeSpecialties(MaxRecord);
 
             Console.WriteLine("Initialize doctors");
-            InitializeDoctor(MaxRecord);
+            //InitializeDoctor(MaxRecord);
 
             Console.WriteLine("Initialize patients");
-            InitializePatient(MaxRecord);
+            //InitializePatient(MaxRecord);
 
             Console.WriteLine("Initialize admins");
-            InitializeAdmin(MaxRecord);
+            //InitializeAdmin(MaxRecord);
 
             // Find the patient 26.
-            var patient = RepositoryAccount.FindPerson(null, "patient26@gmail.com", null, (byte) Role.Patient, null);
+            //var patient = RepositoryAccount.FindPerson(null, "patient26@gmail.com", null, (byte) Role.Patient, null);
 
             // Find the doctor 26.
-            var doctor = RepositoryAccount.FindPerson(null, "doctor26@gmail.com", null, (byte) Role.Doctor, null);
+            //var doctor = RepositoryAccount.FindPerson(null, "doctor26@gmail.com", null, (byte) Role.Doctor, null);
+
+            // Initialize messages.
+            //InitializeMessageAsync(doctor, patient);
 
             // Initialize medical records collection.
-            InitializeMedicalRecord(patient, doctor, 2);
+            //InitializeMedicalRecord(patient, doctor, 2);
 
             // Initialize personal notes.
 
-            Console.WriteLine("Initialize heartbeat notes");
-            InitializeHeartbeatNote(patient.Patient, 90);
+            //Console.WriteLine("Initialize heartbeat notes");
+            //InitializeHeartbeatNote(patient.Patient, 90);
 
-            Console.WriteLine("Initialize sugar bloods");
-            InitializeSugarbloodNote(patient.Patient, 90);
+            //Console.WriteLine("Initialize sugar bloods");
+            //InitializeSugarbloodNote(patient.Patient, 90);
 
-            Console.WriteLine("Initialize blood pressures");
-            InitializeBloodPressureNote(patient.Patient, 90);
+            //Console.WriteLine("Initialize blood pressures");
+            //InitializeBloodPressureNote(patient.Patient, 90);
 
-            Console.WriteLine("Initialize allergy notes");
-            InitializeAllergyNote(patient.Patient, 90);
+            //Console.WriteLine("Initialize allergy notes");
+            //InitializeAllergyNote(patient.Patient, 90);
 
             #region Relationship create
 
             for (var i = 26; i < 50; i++)
             {
-                patient = RepositoryAccount.FindPerson(null, $"patient{i}@gmail.com", null, (byte) Role.Patient, null);
-                doctor = RepositoryAccount.FindPerson(null, $"doctor{i}@gmail.com", null, (byte) Role.Doctor, null);
+                var patient = RepositoryAccount.FindPerson(null, $"patient{i}@gmail.com", null, (byte)Role.Patient, null);
+                var doctor = RepositoryAccount.FindPerson(null, $"doctor{i}@gmail.com", null, (byte)Role.Doctor, null);
 
                 if (patient != null)
                     Console.WriteLine($"Found {patient.Email} for creating relationship");
@@ -95,13 +99,7 @@ namespace DataInitializer
 
                 var relationship = new Relation();
                 relationship.Source = patient.Id;
-                relationship.SourceFirstName = patient.FirstName;
-                relationship.SourceLastName = patient.LastName;
-
                 relationship.Target = doctor.Id;
-                relationship.TargetFirstName = doctor.FirstName;
-                relationship.TargetLastName = doctor.LastName;
-
                 relationship.Created = TimeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                 if (i > 40)
@@ -117,9 +115,10 @@ namespace DataInitializer
 
             #region Appointment create
 
-            InitializeAppointment(patient, doctor, 50);
+            //InitializeAppointment(patient, doctor, 50);
 
             #endregion
+            
         }
 
         /// <summary>
@@ -212,10 +211,7 @@ namespace DataInitializer
                     doctor.SpecialtyId = 1;
                     doctor.Person = person;
                     doctor.PlaceId = place.Id;
-                    doctor.City = place.City;
-                    doctor.Country = place.Country;
                     doctor.Rank = random.Next(0, 10);
-                    doctor.SpecialtyName = specialty.Name;
                     doctor.Specialty = specialty;
                     context.Doctors.Add(doctor);
                 }
@@ -396,26 +392,61 @@ namespace DataInitializer
 
                 for (var experiment = 0; experiment < 5; experiment++)
                 {
-                    var experimentNote = new ExperimentNote();
-                    experimentNote.MedicalRecordId = medicalRecord.Id;
-                    experimentNote.Owner = medicalRecord.Owner;
-                    experimentNote.Creator = medicalRecord.Creator;
-                    experimentNote.Name = $"ExperimentNote({experimentNote})";
+                    try
+                    {
+                        var experimentNote = new ExperimentNote();
+                        experimentNote.MedicalRecordId = medicalRecord.Id;
+                        experimentNote.Owner = medicalRecord.Owner;
+                        experimentNote.Creator = medicalRecord.Creator;
+                        experimentNote.Name = $"ExperimentNote({experiment})";
 
-                    var infos = new Dictionary<string, double>();
-                    for (var key = 0; key < 5; key++)
-                        infos.Add($"Calcium[{key}]", key);
+                        var infos = new Dictionary<string, double>();
+                        for (var key = 0; key < 5; key++)
+                            infos.Add($"Calcium[{key}]", key);
 
-                    experimentNote.Info = JsonConvert.SerializeObject(infos);
-                    experimentNote.Created = unix;
+                        experimentNote.Info = JsonConvert.SerializeObject(infos);
+                        experimentNote.Created = unix;
 
-                    await RepositoryExperimentNote.InitializeExperimentNote(experimentNote);
+                        await RepositoryExperimentNote.InitializeExperimentNote(experimentNote);
+                    }
+                    catch (DbEntityValidationException e)
+                    {
+                        foreach (var eve in e.EntityValidationErrors)
+                        {
+                            Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+                                eve.Entry.Entity.GetType().Name, eve.Entry.State);
+                            foreach (var ve in eve.ValidationErrors)
+                            {
+                                Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
+                                    ve.PropertyName, ve.ErrorMessage);
+                            }
+                        }
+                        continue;
+                    }
 
 
+                }
+                
+                #endregion
+
+                #region Medical note
+
+                for (var note = 0; note < 5; note++)
+                {
+                    var medicalNote = new MedicalNote();
+                    medicalNote.MedicalRecordId = medicalRecord.Id;
+                    medicalNote.Creator = medicalRecord.Creator;
+                    medicalNote.Owner = medicalRecord.Owner;
+                    medicalNote.Note = $"This is the note {i} of medical record [Id: {medicalRecord.Id}]";
+                    medicalNote.Time = unix;
+                    medicalNote.Created = unix;
+
+                    await RepositoryMedicalNote.InitializeMedicalNoteAsync(medicalNote);
                 }
 
                 #endregion
             }
+            
         }
 
         /// <summary>
@@ -652,6 +683,24 @@ namespace DataInitializer
                 allergy.Note = $"Note{i}";
 
                 context.Allergies.Add(allergy);
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        private static async void InitializeMessageAsync(Person broadcaster, Person recipient)
+        {
+            var context = new OlivesHealthEntities();
+            for (var i = 0; i < 100; i++)
+            {
+                var message = new Message();
+                message.Broadcaster = broadcaster.Id;
+                message.Recipient = recipient.Id;
+                message.Content = $"MessageContent [{i}]";
+                message.Created = i;
+
+                context.Messages.Add(message);
+
             }
 
             await context.SaveChangesAsync();

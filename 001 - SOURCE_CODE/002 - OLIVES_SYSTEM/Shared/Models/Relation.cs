@@ -16,15 +16,11 @@ namespace Shared.Models
     {
         public int Id { get; set; }
         public int Source { get; set; }
-        public string SourceFirstName { get; set; }
-        public string SourceLastName { get; set; }
         public int Target { get; set; }
-        public string TargetFirstName { get; set; }
-        public string TargetLastName { get; set; }
         public double Created { get; set; }
         public byte Status { get; set; }
     
-        public virtual Person Person { get; set; }
-        public virtual Person Person1 { get; set; }
+        public virtual Doctor Doctor { get; set; }
+        public virtual Patient Patient { get; set; }
     }
 }

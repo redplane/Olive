@@ -98,22 +98,17 @@ namespace Olives.Controllers
 
             #region Relationship validation
             
-            // Find the relationship between the requester and prescription owner.
-            var isRelationshipAvailable =
-                await
-                    _repositoryRelation.IsPeopleConnected(requester.Id, medicalRecord.Owner);
-
             // No relationship is found
-            if (!isRelationshipAvailable)
+            if (requester.Id != medicalRecord.Owner && requester.Id != medicalRecord.Creator)
             {
                 // Log the error first.
                 _log.Error(
-                    $"Requester [Id: {requester.Id}] doesn't have relationship with Medical Record [Owner: {medicalRecord.Owner}]");
+                    $"Requester [Id: {requester.Id}] is not the creator or owner of medical record [Id: {medicalRecord.Id}]");
 
                 // Tell the client the request is forbidden
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    Error = $"{Language.WarnHasNoRelationship}"
+                    Error = $"{Language.WarnRequesterNotInRecord}"
                 });
             }
             
@@ -215,26 +210,13 @@ namespace Olives.Controllers
             // Requester doesn't take part in the medical note.
             if (requester.Id != experimentNote.Creator && requester.Id != experimentNote.Owner)
             {
-                _log.Error($"There is no relationship between requester [Id: {requester.Id}] and owner [Id: {experimentNote.Owner}]");
+                _log.Error($"Requester is not the creator of experiment note [Id: {experimentNote.Id}]");
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-
-            // No relationship between the requester and the owner.
-            var isRelationshipAvailable =
-                await _repositoryRelation.IsPeopleConnected(requester.Id, experimentNote.Owner);
-
-            if (!isRelationshipAvailable)
-            {
-                _log.Error($"There is no relationship between requester [Id: {requester.Id}] and owner [Id: {experimentNote.Owner}]");
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
-
+            
             #endregion
 
             #region Result handling

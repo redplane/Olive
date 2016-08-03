@@ -177,21 +177,14 @@ namespace Olives.Controllers
             #endregion
 
             #region Owner & relationship validation
-            
-            // Find the relationship between requester and the record owner.
-            var isRelationshipAvailable =
-                await _repositoryRelation.IsPeopleConnected(requester.Id, medicalRecord.Owner);
 
-            // No relationship is found between 2 people.
-            if (!isRelationshipAvailable)
+            // Requester doesn't take part in the medical record.
+            if (requester.Id != medicalRecord.Creator)
             {
-                // Log.
-                _log.Error(
-                    $"There is no relationship between requester [Id: {requester.Id}] and owner [Id: {medicalRecord.Owner}]");
-
+                _log.Error($"Requester [Id: {requester.Id}] is not the creator of medical record [Id: {medicalRecord.Id}]");
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    Error = $"{Language.WarnHasNoRelationship}"
+                    Error = $"{Language.WarnRequesterNotInRecord}"
                 });
             }
 
@@ -291,22 +284,17 @@ namespace Olives.Controllers
             #endregion
 
             #region Relationship check
-
-            // Find the relationship between the requester and owner.
-            var isRelationshipAvailable =
-                await
-                    _repositoryRelation.IsPeopleConnected(requester.Id, medicalNote.Owner);
-
+            
             // No relationship is found.
-            if (!isRelationshipAvailable)
+            if (requester.Id != medicalNote.Owner && requester.Id != medicalNote.Creator)
             {
                 // Log the error.
                 _log.Error(
-                    $"There is no active relationship between Requester[Id: {requester.Id}] and Owner[Id: {medicalNote.Owner}]");
+                    $"Requester [Id: {requester.Id}] is not the creator of medical note [Id: {medicalNote.Id}]");
 
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
-                    Error = $"{Language.WarnHasNoRelationship}"
+                    Error = $"{Language.WarnRequesterNotInRecord}"
                 });
             }
 
