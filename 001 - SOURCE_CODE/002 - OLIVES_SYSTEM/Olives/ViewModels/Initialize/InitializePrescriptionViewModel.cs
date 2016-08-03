@@ -10,9 +10,9 @@ namespace Olives.ViewModels.Initialize
 {
     public class InitializePrescriptionViewModel
     {
-        [NumericCompare(1, ErrorMessageResourceType = typeof (Language),
+        [NumericCompare(1, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
-        public int MedicalRecord { get; set; } = 0;
+        public int MedicalRecord { get; set; }
 
         [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsRequired")]

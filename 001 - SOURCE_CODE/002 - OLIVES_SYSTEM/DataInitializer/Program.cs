@@ -29,55 +29,55 @@ namespace DataInitializer
         private static void Main(string[] args)
         {
             Console.WriteLine("Intialize category");
-            //InitializeCategory(MaxRecord);
+            InitializeCategory(MaxRecord);
 
             Console.WriteLine("Initialize places");
-            //InitializePlaces(MaxRecord);
+            InitializePlaces(MaxRecord);
 
             Console.WriteLine("Initialize specialty");
-            //InitializeSpecialties(MaxRecord);
+            InitializeSpecialties(MaxRecord);
 
             Console.WriteLine("Initialize doctors");
-            //InitializeDoctor(MaxRecord);
+            InitializeDoctor(MaxRecord);
 
             Console.WriteLine("Initialize patients");
-            //InitializePatient(MaxRecord);
+            InitializePatient(MaxRecord);
 
             Console.WriteLine("Initialize admins");
-            //InitializeAdmin(MaxRecord);
+            InitializeAdmin(MaxRecord);
 
             // Find the patient 26.
-            //var patient = RepositoryAccount.FindPerson(null, "patient26@gmail.com", null, (byte) Role.Patient, null);
+            var patient = RepositoryAccount.FindPerson(null, "patient26@gmail.com", null, (byte)Role.Patient, null);
 
             // Find the doctor 26.
-            //var doctor = RepositoryAccount.FindPerson(null, "doctor26@gmail.com", null, (byte) Role.Doctor, null);
+            var doctor = RepositoryAccount.FindPerson(null, "doctor26@gmail.com", null, (byte)Role.Doctor, null);
 
             // Initialize messages.
-            //InitializeMessageAsync(doctor, patient);
+            InitializeMessageAsync(doctor, patient);
 
             // Initialize medical records collection.
-            //InitializeMedicalRecord(patient, doctor, 2);
+            InitializeMedicalRecord(patient, doctor, 2);
 
             // Initialize personal notes.
 
             //Console.WriteLine("Initialize heartbeat notes");
-            //InitializeHeartbeatNote(patient.Patient, 90);
+            InitializeHeartbeatNote(patient.Patient, 90);
 
             //Console.WriteLine("Initialize sugar bloods");
-            //InitializeSugarbloodNote(patient.Patient, 90);
+            InitializeSugarbloodNote(patient.Patient, 90);
 
             //Console.WriteLine("Initialize blood pressures");
-            //InitializeBloodPressureNote(patient.Patient, 90);
+            InitializeBloodPressureNote(patient.Patient, 90);
 
             //Console.WriteLine("Initialize allergy notes");
-            //InitializeAllergyNote(patient.Patient, 90);
+            InitializeAllergyNote(patient.Patient, 90);
 
             #region Relationship create
 
             for (var i = 26; i < 50; i++)
             {
-                var patient = RepositoryAccount.FindPerson(null, $"patient{i}@gmail.com", null, (byte)Role.Patient, null);
-                var doctor = RepositoryAccount.FindPerson(null, $"doctor{i}@gmail.com", null, (byte)Role.Doctor, null);
+                patient = RepositoryAccount.FindPerson(null, $"patient{i}@gmail.com", null, (byte)Role.Patient, null);
+                doctor = RepositoryAccount.FindPerson(null, $"doctor{i}@gmail.com", null, (byte)Role.Doctor, null);
 
                 if (patient != null)
                     Console.WriteLine($"Found {patient.Email} for creating relationship");
@@ -103,9 +103,9 @@ namespace DataInitializer
                 relationship.Created = TimeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                 if (i > 40)
-                    relationship.Status = (byte) StatusRelation.Pending;
+                    relationship.Status = (byte)StatusRelation.Pending;
                 else
-                    relationship.Status = (byte) StatusRelation.Active;
+                    relationship.Status = (byte)StatusRelation.Active;
 
                 relationship = RepositoryRelation.InitializeRelationAsync(relationship).Result;
                 Console.WriteLine($"Created relationship. Id : {relationship.Id}");
@@ -115,10 +115,10 @@ namespace DataInitializer
 
             #region Appointment create
 
-            //InitializeAppointment(patient, doctor, 50);
+            InitializeAppointment(patient, doctor, 50);
 
             #endregion
-            
+
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace DataInitializer
                     doctor.SpecialtyId = 1;
                     doctor.Person = person;
                     doctor.PlaceId = place.Id;
-                    doctor.Rank = random.Next(0, 10);
+                    doctor.Rank = random.Next(Values.MinDoctorRank, Values.MaxDoctorRank);
                     doctor.Specialty = specialty;
                     context.Doctors.Add(doctor);
                 }
