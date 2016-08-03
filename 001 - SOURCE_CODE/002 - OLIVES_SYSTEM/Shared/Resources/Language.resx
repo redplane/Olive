@@ -477,7 +477,7 @@
   <data name="NotifyMedicalRecordCreate" xml:space="preserve">
     <value>{0} created a medical record</value>
   </data>
-  <data name="NotifyMedicalRecordEdit" xml:space="preserve">
+  <data name="NotifyMedicalRecordModified" xml:space="preserve">
     <value>{0} modified a medical record</value>
   </data>
   <data name="ValueHasBeenRegistered" xml:space="preserve">
@@ -485,5 +485,26 @@
   </data>
   <data name="WarnRequesterNotInRecord" xml:space="preserve">
     <value>W036</value>
+  </data>
+  <data name="NotifyExperimentNoteCreate" xml:space="preserve">
+    <value>{0} created an experiment note</value>
+  </data>
+  <data name="NotifyExperimentNoteEdit" xml:space="preserve">
+    <value>{0} modified an experiment note</value>
+  </data>
+  <data name="NotifyMedicalNoteCreate" xml:space="preserve">
+    <value>{0} created a medical note</value>
+  </data>
+  <data name="NotifyMedicalNoteEdit" xml:space="preserve">
+    <value>{0} modified a medical note</value>
+  </data>
+  <data name="NotifyPrescriptionCreate" xml:space="preserve">
+    <value>{0} created a prescription</value>
+  </data>
+  <data name="NotifyPrescriptionImageCreate" xml:space="preserve">
+    <value>{0} uploaded a prescription image</value>
+  </data>
+  <data name="NotifyPrescriptionModified" xml:space="preserve">
+    <value>{0} modified a prescription</value>
   </data>
 </root>

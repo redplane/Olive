@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
+using Olives.Hubs;
 using Olives.Interfaces;
 using Olives.Models;
 using Olives.ViewModels.Initialize;
@@ -16,38 +17,37 @@ using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels.Filter;
-using Shared.ViewModels.Initialize;
+using Olives.Controllers;
 
 namespace Olives.Controllers
 {
     [Route("api/medical/prescription/image")]
-    public class PrescriptionImageController : ApiParentController
+    public class PrescriptionImageController : ApiParentControllerHub<NotificationHub>
     {
         #region Constructors
 
         /// <summary>
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositoryPrescription"></param>
         /// <param name="repositoryPrescriptionImage"></param>
-        /// <param name="repositoryRelation"></param>
         /// <param name="log"></param>
         /// <param name="fileService"></param>
         /// <param name="timeService"></param>
+        /// <param name="notificationService"></param>
         /// <param name="applicationSetting"></param>
-        public PrescriptionImageController(IRepositoryAccountExtended repositoryAccountExtended,
+        public PrescriptionImageController(
             IRepositoryPrescription repositoryPrescription, IRepositoryPrescriptionImage repositoryPrescriptionImage,
-            IRepositoryRelation repositoryRelation,
-            ILog log, IFileService fileService, ITimeService timeService, ApplicationSetting applicationSetting)
+            ILog log, 
+            IFileService fileService, ITimeService timeService, INotificationService notificationService,
+            ApplicationSetting applicationSetting)
         {
-            _repositoryAccountExtended = repositoryAccountExtended;
             _repositoryPrescription = repositoryPrescription;
             _repositoryPrescriptionImage = repositoryPrescriptionImage;
-            _repositoryRelation = repositoryRelation;
             _log = log;
             _fileService = fileService;
             _timeService = timeService;
+            _notificationService = notificationService;
             _applicationSetting = applicationSetting;
         }
 
@@ -128,6 +128,8 @@ namespace Olives.Controllers
 
             try
             {
+                #region File initialization
+
                 // Generate file name and save the file first.
                 var fileName = Guid.NewGuid().ToString("N");
 
@@ -137,6 +139,10 @@ namespace Olives.Controllers
 
                 // Save the image first.
                 initializer.Image.Save(fullPath);
+
+                #endregion
+
+                #region Result initialization
 
                 // Initialize a prescription image.
                 var prescriptionImage = new PrescriptionImage();
@@ -148,7 +154,34 @@ namespace Olives.Controllers
                 prescriptionImage.Owner = prescription.Owner;
 
                 // Save the prescription image to database.
-                await _repositoryPrescriptionImage.InitializePrescriptionImage(prescriptionImage);
+                prescriptionImage = await _repositoryPrescriptionImage.InitializePrescriptionImage(prescriptionImage);
+
+                #endregion
+                
+                #region Notification broadcast
+
+                if (prescriptionImage.Creator != prescriptionImage.Owner)
+                {
+                    var recipient = prescriptionImage.Owner;
+                    if (requester.Id == prescriptionImage.Owner)
+                        recipient = prescriptionImage.Creator;
+
+                    var notification = new Notification();
+                    notification.Type = (byte)NotificationType.Create;
+                    notification.Topic = (byte)NotificationTopic.PrescriptionImage;
+                    notification.Broadcaster = requester.Id;
+                    notification.Recipient = recipient;
+                    notification.Record = prescriptionImage.Id;
+                    notification.Message = string.Format(Language.NotifyPrescriptionImageCreate, requester.FullName);
+                    notification.Created = prescriptionImage.Created;
+
+                    // Broadcast the notification with fault tolerant.
+                    await _notificationService.BroadcastNotificationAsync(notification, Hub);
+                }
+
+                #endregion
+                
+                #region Result handling
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -159,6 +192,8 @@ namespace Olives.Controllers
                         prescriptionImage.Owner
                     }
                 });
+
+                #endregion
             }
             catch (Exception exception)
             {
@@ -300,12 +335,7 @@ namespace Olives.Controllers
         #endregion
 
         #region Properties
-
-        /// <summary>
-        ///     Repository of accounts
-        /// </summary>
-        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
-
+        
         /// <summary>
         ///     Repository of prescription images.
         /// </summary>
@@ -315,16 +345,16 @@ namespace Olives.Controllers
         ///     Repository of prescriptions.
         /// </summary>
         private readonly IRepositoryPrescription _repositoryPrescription;
-
-        /// <summary>
-        ///     Repository of relationships.
-        /// </summary>
-        private readonly IRepositoryRelation _repositoryRelation;
-
+        
         /// <summary>
         ///     Service which provides functions to access time calculation.
         /// </summary>
         private readonly ITimeService _timeService;
+
+        /// <summary>
+        /// Service which provides functions for accessing notification.
+        /// </summary>
+        private readonly INotificationService _notificationService;
 
         /// <summary>
         ///     Instance of module which is used for logging.

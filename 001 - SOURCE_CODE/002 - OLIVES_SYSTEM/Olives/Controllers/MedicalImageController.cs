@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
+using Olives.Hubs;
 using Olives.Interfaces;
 using Olives.Models;
 using Shared.Constants;
@@ -16,36 +17,35 @@ using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Initialize;
+using Olives.Controllers;
 
 namespace Olives.Controllers
 {
     [Route("api/medical/image")]
-    public class MedicalImageController : ApiParentController
+    public class MedicalImageController : ApiParentControllerHub<NotificationHub>
     {
         #region Constructors
 
         /// <summary>
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositoryMedicalRecord"></param>
         /// <param name="repositoryMedicalImage"></param>
-        /// <param name="repositoryRelation"></param>
         /// <param name="timeService"></param>
         /// <param name="log"></param>
         /// <param name="fileService"></param>
+        /// <param name="notificationService"></param>
         /// <param name="applicationSetting"></param>
-        public MedicalImageController(IRepositoryAccountExtended repositoryAccountExtended,
+        public MedicalImageController(
             IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryMedicalImage repositoryMedicalImage,
-            IRepositoryRelation repositoryRelation, ITimeService timeService,
+            ITimeService timeService, INotificationService notificationService,
             ILog log, IFileService fileService, ApplicationSetting applicationSetting)
         {
-            _repositoryAccountExtended = repositoryAccountExtended;
             _repositoryMedicalRecord = repositoryMedicalRecord;
             _repositoryMedicalImage = repositoryMedicalImage;
-            _repositoryRelation = repositoryRelation;
             _log = log;
             _timeService = timeService;
+            _notificationService = notificationService;
             _fileService = fileService;
             _applicationSetting = applicationSetting;
         }
@@ -118,6 +118,8 @@ namespace Olives.Controllers
 
             try
             {
+                #region Record initialization
+
                 // Use GUID to randomize image file name.
                 var imageName = Guid.NewGuid().ToString("N");
 
@@ -136,7 +138,34 @@ namespace Olives.Controllers
 
                 // Update image full path.
                 // Save the medical record to database.
-                await _repositoryMedicalImage.InitializeMedicalImageAsync(medicalImage);
+                medicalImage = await _repositoryMedicalImage.InitializeMedicalImageAsync(medicalImage);
+
+                #endregion
+                
+                #region Notification broadcast
+
+                if (medicalImage.Creator != medicalImage.Owner)
+                {
+                    var recipient = medicalRecord.Owner;
+                    if (requester.Id == medicalImage.Owner)
+                        recipient = medicalImage.Creator;
+
+                    var notification = new Notification();
+                    notification.Type = (byte) NotificationType.Create;
+                    notification.Topic = (byte) NotificationTopic.MedicalImage;
+                    notification.Broadcaster = requester.Id;
+                    notification.Recipient = recipient;
+                    notification.Record = medicalImage.Id;
+                    notification.Message = string.Format(Language.NotifyPrescriptionCreate, requester.FullName);
+                    notification.Created = medicalImage.Created;
+
+                    // Broadcast the notification with fault tolerant.
+                    await _notificationService.BroadcastNotificationAsync(notification, Hub);
+                }
+
+                #endregion
+                
+                #region Result handling
 
                 // Tell the client about the result of upload.
                 return Request.CreateResponse(HttpStatusCode.OK, new
@@ -150,6 +179,8 @@ namespace Olives.Controllers
                         medicalImage.Created
                     }
                 });
+
+                #endregion
             }
             catch (Exception exception)
             {
@@ -276,12 +307,7 @@ namespace Olives.Controllers
         #endregion
 
         #region Properties
-
-        /// <summary>
-        ///     Repository of accounts
-        /// </summary>
-        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
-
+        
         /// <summary>
         ///     Repository of medical record
         /// </summary>
@@ -291,16 +317,16 @@ namespace Olives.Controllers
         ///     Repository of medical image.
         /// </summary>
         private readonly IRepositoryMedicalImage _repositoryMedicalImage;
-
-        /// <summary>
-        ///     Repository of relationships.
-        /// </summary>
-        private readonly IRepositoryRelation _repositoryRelation;
-
+        
         /// <summary>
         ///     Service which provides functions to access time calculation.
         /// </summary>
         private readonly ITimeService _timeService;
+
+        /// <summary>
+        /// Service which provides functions to access notification broadcast.
+        /// </summary>
+        private readonly INotificationService _notificationService;
 
         /// <summary>
         ///     Instance of module which is used for logging.

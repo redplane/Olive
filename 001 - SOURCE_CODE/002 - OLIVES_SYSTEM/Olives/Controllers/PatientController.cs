@@ -36,18 +36,21 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositoryCode"></param>
+        /// <param name="repositoryRelation"></param>
         /// <param name="timeService"></param>
         /// <param name="emailService"></param>
         /// <param name="log"></param>
         /// <param name="applicationSetting"></param>
         public PatientController(
             IRepositoryAccountExtended repositoryAccountExtended, IRepositoryCode repositoryCode,
+            IRepositoryRelation repositoryRelation,
             ITimeService timeService, IEmailService emailService,
             ILog log,
             ApplicationSetting applicationSetting)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
             _repositoryCode = repositoryCode;
+            _repositoryRelation = repositoryRelation;
             _log = log;
             _timeService = timeService;
             _emailService = emailService;
@@ -63,16 +66,18 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [OlivesAuthorize(new[] { Role.Doctor })]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> FindPatientAsync([FromUri] int id)
         {
             try
             {
+                #region Result find
+
                 // Retrieve information of person who sent request.
-                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Find the patient by using account id.
-                var account = await _repositoryAccountExtended.FindPersonAsync(id, null, null, (byte) Role.Patient,
+                var account = await _repositoryAccountExtended.FindPersonAsync(id, null, null, (byte)Role.Patient,
                     StatusAccount.Active);
 
                 // No patient has been found as active in system.
@@ -84,6 +89,23 @@ namespace Olives.Controllers
                         Error = $"{Language.WarnRecordNotFound}"
                     });
                 }
+
+                #endregion
+
+
+                #region Relationship validate
+
+                var isRelationshipAvailable = await _repositoryRelation.IsPeopleConnected(requester.Id, account.Id);
+                if (!isRelationshipAvailable)
+                {
+                    _log.Error($"There is no relationship between requester [Id: {requester.Id}] and owner [Id: {account.Id}]");
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
+                }
+
+                #endregion
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -199,13 +221,13 @@ namespace Olives.Controllers
 
             #endregion
         }
-        
+
         /// <summary>
         ///     Find a patient by using specific id.
         /// </summary>
         /// <returns></returns>
         [HttpPut]
-        [OlivesAuthorize(new[] {Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Patient })]
         public async Task<HttpResponseMessage> EditPatientAsync([FromBody] EditPatientProfileViewModel editor)
         {
             #region Request parameters validation
@@ -225,12 +247,12 @@ namespace Olives.Controllers
             }
 
             #endregion
-            
+
             #region Information construction
 
             // Retrieve information of person who sent request.
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+
             // First name is defined.
             if (!string.IsNullOrWhiteSpace(editor.FirstName))
                 requester.FirstName = editor.FirstName;
@@ -249,7 +271,7 @@ namespace Olives.Controllers
 
             // Gender is defined.
             if (editor.Gender != null)
-                requester.Gender = (byte) editor.Gender;
+                requester.Gender = (byte)editor.Gender;
 
             // Phone is defined.
             if (!string.IsNullOrWhiteSpace(editor.Phone))
@@ -261,7 +283,7 @@ namespace Olives.Controllers
 
             // Update person full name.
             requester.FullName = requester.FirstName + " " + requester.LastName;
-            
+
             if (requester.Patient == null)
                 requester.Patient = new Patient();
 
@@ -319,7 +341,7 @@ namespace Olives.Controllers
 
             #endregion
         }
-        
+
         /// <summary>
         ///     Filter a list of another patient.
         /// </summary>
@@ -327,7 +349,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/patient/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Doctor})]
+        [OlivesAuthorize(new[] { Role.Doctor })]
         public async Task<HttpResponseMessage> FilterPatientAsync([FromBody] FilterPatientViewModel filter)
         {
             // Filter hasn't been initialized.
@@ -345,7 +367,7 @@ namespace Olives.Controllers
             }
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
             filter.Requester = requester.Id;
 
             // Call the filter function.
@@ -371,7 +393,7 @@ namespace Olives.Controllers
                 result.Total
             });
         }
-        
+
         /// <summary>
         ///     Request an activation code for not activated account.
         /// </summary>
@@ -457,7 +479,7 @@ namespace Olives.Controllers
                     account.FirstName,
                     account.LastName, activationToken, url, EmailType.Activation);
         }
-        
+
         #endregion
 
         #region Properties
@@ -466,12 +488,17 @@ namespace Olives.Controllers
         ///     Repository of accounts
         /// </summary>
         private readonly IRepositoryAccountExtended _repositoryAccountExtended;
-        
+
+        /// <summary>
+        /// Repository which provides functions to relationship database.
+        /// </summary>
+        private readonly IRepositoryRelation _repositoryRelation;
+
         /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-        
+
         /// <summary>
         ///     Property which contains settings of application which had been deserialized from json file.
         /// </summary>
@@ -491,7 +518,7 @@ namespace Olives.Controllers
         /// Service which provides functions to access mail sending service.
         /// </summary>
         private readonly IEmailService _emailService;
-        
+
         #endregion
     }
 }

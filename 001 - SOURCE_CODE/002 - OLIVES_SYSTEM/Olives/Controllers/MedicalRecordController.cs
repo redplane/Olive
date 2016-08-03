@@ -361,7 +361,7 @@ namespace Olives.Controllers
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
                     notification.Record = medicalRecord.Id;
-                    notification.Message = string.Format(Language.NotifyMedicalRecordEdit, requester.FullName);
+                    notification.Message = string.Format(Language.NotifyMedicalRecordModified, requester.FullName);
                     notification.Created = medicalRecord.Created;
 
                     // Broadcast the notification with fault tolerant.

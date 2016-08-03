@@ -7,6 +7,7 @@ using System.Web.Http;
 using log4net;
 using Newtonsoft.Json;
 using Olives.Attributes;
+using Olives.Hubs;
 using Olives.Interfaces;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
@@ -16,11 +17,12 @@ using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels.Filter;
+using Olives.Controllers;
 
 namespace Olives.Controllers
 {
     [Route("api/medical/prescription")]
-    public class PrescriptionController : ApiParentController
+    public class PrescriptionController : ApiParentControllerHub<NotificationHub>
     {
         #region Constructors
 
@@ -32,16 +34,19 @@ namespace Olives.Controllers
         /// <param name="repositoryPrescription"></param>
         /// <param name="repositoryRelation"></param>
         /// <param name="timeService"></param>
+        /// <param name="notificationService"></param>
         /// <param name="log"></param>
         public PrescriptionController(IRepositoryAccountExtended repositoryAccountExtended,
             IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryPrescription repositoryPrescription,
-            IRepositoryRelation repositoryRelation, ITimeService timeService,
+            IRepositoryRelation repositoryRelation,
+            ITimeService timeService, INotificationService notificationService,
             ILog log)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
             _repositoryMedicalRecord = repositoryMedicalRecord;
             _repositoryPrescription = repositoryPrescription;
             _repositoryRelation = repositoryRelation;
+            _notificationService = notificationService;
             _timeService = timeService;
             _log = log;
         }
@@ -212,6 +217,8 @@ namespace Olives.Controllers
 
             try
             {
+                #region Prescription initialization
+
                 var prescription = new Prescription();
                 prescription.Owner = medicalRecord.Owner;
                 prescription.MedicalRecordId = medicalRecord.Id;
@@ -226,6 +233,29 @@ namespace Olives.Controllers
                 // Initialize prescription to database.
                 prescription = await _repositoryPrescription.InitializePrescriptionAsync(prescription);
 
+                #endregion
+
+                #region Notification broadcast
+
+                var recipient = prescription.Owner;
+                if (requester.Id == prescription.Owner)
+                    recipient = prescription.Creator;
+
+                var notification = new Notification();
+                notification.Type = (byte)NotificationType.Create;
+                notification.Topic = (byte)NotificationTopic.Prescription;
+                notification.Broadcaster = requester.Id;
+                notification.Recipient = recipient;
+                notification.Record = prescription.Id;
+                notification.Message = string.Format(Language.NotifyPrescriptionCreate, requester.FullName);
+                notification.Created = prescription.Created;
+
+                // Broadcast the notification with fault tolerant.
+                await _notificationService.BroadcastNotificationAsync(notification, Hub);
+
+                #endregion
+
+                #region Result return
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -238,6 +268,8 @@ namespace Olives.Controllers
                     prescription.Note,
                     prescription.Created
                 });
+
+                #endregion
             }
             catch (Exception exception)
             {
@@ -316,6 +348,8 @@ namespace Olives.Controllers
 
             try
             {
+                #region Information update
+
                 if (info.From != null)
                     prescription.From = info.From.Value;
 
@@ -329,11 +363,36 @@ namespace Olives.Controllers
                     prescription.Note = info.Note;
 
                 // Update last modified time.
-                prescription.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+                var unix = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+                prescription.LastModified = unix;
 
                 // Initialize prescription to database.
                 prescription = await _repositoryPrescription.InitializePrescriptionAsync(prescription);
+
+                #endregion
                 
+                #region Notification broadcast
+
+                var recipient = prescription.Owner;
+                if (requester.Id == prescription.Owner)
+                    recipient = prescription.Creator;
+                
+                var notification = new Notification();
+                notification.Type = (byte)NotificationType.Edit;
+                notification.Topic = (byte)NotificationTopic.Prescription;
+                notification.Broadcaster = requester.Id;
+                notification.Recipient = recipient;
+                notification.Record = prescription.Id;
+                notification.Message = string.Format(Language.NotifyPrescriptionModified, requester.FullName);
+                notification.Created = unix;
+
+                // Broadcast the notification with fault tolerant.
+                await _notificationService.BroadcastNotificationAsync(notification, Hub);
+                
+                #endregion
+                
+                #region Result handling
+
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     prescription.Id,
@@ -346,6 +405,8 @@ namespace Olives.Controllers
                     prescription.Created,
                     prescription.LastModified
                 });
+
+                #endregion
             }
             catch (Exception exception)
             {
@@ -379,12 +440,13 @@ namespace Olives.Controllers
                 // No record has been deleted.
                 if (records < 1)
                 {
+                    _log.Error($"There is no prescription [Id: {id}] whose owner is [Id: {requester.Id}]");
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {
                         Error = $"{Language.WarnRecordNotFound}"
                     });
                 }
-
+                
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
             catch (Exception exception)
@@ -490,6 +552,11 @@ namespace Olives.Controllers
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
+
+        /// <summary>
+        /// Repository of notification.
+        /// </summary>
+        private readonly INotificationService _notificationService;
 
         /// <summary>
         ///     Service which provides functions to access time calculation.

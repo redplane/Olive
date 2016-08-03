@@ -457,6 +457,42 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} created an experiment note.
+        /// </summary>
+        public static string NotifyExperimentNoteCreate {
+            get {
+                return ResourceManager.GetString("NotifyExperimentNoteCreate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} modified an experiment note.
+        /// </summary>
+        public static string NotifyExperimentNoteEdit {
+            get {
+                return ResourceManager.GetString("NotifyExperimentNoteEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} created a medical note.
+        /// </summary>
+        public static string NotifyMedicalNoteCreate {
+            get {
+                return ResourceManager.GetString("NotifyMedicalNoteCreate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} modified a medical note.
+        /// </summary>
+        public static string NotifyMedicalNoteEdit {
+            get {
+                return ResourceManager.GetString("NotifyMedicalNoteEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} created a medical record.
         /// </summary>
         public static string NotifyMedicalRecordCreate {
@@ -468,9 +504,36 @@ namespace Shared.Resources {
         /// <summary>
         ///   Looks up a localized string similar to {0} modified a medical record.
         /// </summary>
-        public static string NotifyMedicalRecordEdit {
+        public static string NotifyMedicalRecordModified {
             get {
-                return ResourceManager.GetString("NotifyMedicalRecordEdit", resourceCulture);
+                return ResourceManager.GetString("NotifyMedicalRecordModified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} created a prescription.
+        /// </summary>
+        public static string NotifyPrescriptionCreate {
+            get {
+                return ResourceManager.GetString("NotifyPrescriptionCreate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} uploaded a prescription image.
+        /// </summary>
+        public static string NotifyPrescriptionImageCreate {
+            get {
+                return ResourceManager.GetString("NotifyPrescriptionImageCreate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} modified a prescription.
+        /// </summary>
+        public static string NotifyPrescriptionModified {
+            get {
+                return ResourceManager.GetString("NotifyPrescriptionModified", resourceCulture);
             }
         }
         

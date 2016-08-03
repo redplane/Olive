@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
+using Olives.Hubs;
+using Olives.Interfaces;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
@@ -18,7 +20,7 @@ using Shared.ViewModels.Filter;
 namespace Olives.Controllers
 {
     [Route("api/medical/note")]
-    public class MedicalNoteController : ApiParentController
+    public class MedicalNoteController : ApiParentControllerHub<NotificationHub>
     {
         #region Constructors
 
@@ -29,16 +31,18 @@ namespace Olives.Controllers
         /// <param name="repositoryMedicalRecord"></param>
         /// <param name="repositoryRelation"></param>
         /// <param name="timeService"></param>
+        /// <param name="notificationService"></param>
         /// <param name="log"></param>
         public MedicalNoteController(IRepositoryMedicalNote repositoryMedicalNote,
             IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryRelation repositoryRelation,
-            ITimeService timeService,
+            ITimeService timeService, INotificationService notificationService,
             ILog log)
         {
             _repositoryMedicalNote = repositoryMedicalNote;
             _repositoryMedicalRecord = repositoryMedicalRecord;
             _repositoryRelation = repositoryRelation;
             _timeService = timeService;
+            _notificationService = notificationService;
             _log = log;
         }
 
@@ -194,6 +198,8 @@ namespace Olives.Controllers
 
             try
             {
+                #region Result initialization
+
                 // Initialize an instance of MedicalNote.
                 var medicalNote = new MedicalNote();
                 medicalNote.MedicalRecordId = initializer.MedicalRecord;
@@ -205,6 +211,33 @@ namespace Olives.Controllers
 
                 // Insert a new allergy to database.
                 medicalNote = await _repositoryMedicalNote.InitializeMedicalNoteAsync(medicalNote);
+
+                #endregion
+
+                #region Notification broadcast
+
+                if (medicalNote.Creator != medicalNote.Owner)
+                {
+                    var recipient = medicalNote.Owner;
+                    if (requester.Id == medicalNote.Owner)
+                        recipient = medicalNote.Creator;
+
+                    var notification = new Notification();
+                    notification.Type = (byte)NotificationType.Create;
+                    notification.Topic = (byte)NotificationTopic.MedicalNote;
+                    notification.Broadcaster = requester.Id;
+                    notification.Recipient = recipient;
+                    notification.Record = medicalNote.Id;
+                    notification.Message = string.Format(Language.NotifyMedicalNoteCreate, requester.FullName);
+                    notification.Created = medicalNote.Created;
+
+                    // Broadcast the notification with fault tolerant.
+                    await _notificationService.BroadcastNotificationAsync(notification, Hub);
+                }
+
+                #endregion
+
+                #region Result handling
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -218,6 +251,8 @@ namespace Olives.Controllers
                         medicalNote.Created
                     }
                 });
+
+                #endregion
             }
             catch (Exception exception)
             {
@@ -304,6 +339,8 @@ namespace Olives.Controllers
 
             try
             {
+                #region Result update
+
                 // Note is defined.
                 if (modifier.Note != null)
                     medicalNote.Note = modifier.Note;
@@ -316,6 +353,33 @@ namespace Olives.Controllers
 
                 // Insert a new allergy to database.
                 var result = await _repositoryMedicalNote.InitializeMedicalNoteAsync(medicalNote);
+
+                #endregion
+
+                #region Notification broadcast
+
+                if (medicalNote.Creator != medicalNote.Owner)
+                {
+                    var recipient = medicalNote.Owner;
+                    if (requester.Id == medicalNote.Owner)
+                        recipient = medicalNote.Creator;
+
+                    var notification = new Notification();
+                    notification.Type = (byte)NotificationType.Create;
+                    notification.Topic = (byte)NotificationTopic.MedicalNote;
+                    notification.Broadcaster = requester.Id;
+                    notification.Recipient = recipient;
+                    notification.Record = medicalNote.Id;
+                    notification.Message = string.Format(Language.NotifyMedicalNoteEdit, requester.FullName);
+                    notification.Created = medicalNote.Created;
+
+                    // Broadcast the notification with fault tolerant.
+                    await _notificationService.BroadcastNotificationAsync(notification, Hub);
+                }
+
+                #endregion
+
+                #region Result handling
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -330,6 +394,8 @@ namespace Olives.Controllers
                         result.LastModified
                     }
                 });
+
+                #endregion
             }
             catch (Exception exception)
             {
@@ -436,6 +502,11 @@ namespace Olives.Controllers
         ///     Service which provides function to access time calculation.
         /// </summary>
         private readonly ITimeService _timeService;
+
+        /// <summary>
+        /// Service which provides functions to access notification broadcast functions.
+        /// </summary>
+        private readonly INotificationService _notificationService;
 
         /// <summary>
         ///     Instance of module which is used for logging.

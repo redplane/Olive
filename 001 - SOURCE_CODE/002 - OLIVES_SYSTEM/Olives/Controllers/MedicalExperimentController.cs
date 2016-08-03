@@ -7,6 +7,8 @@ using System.Web.Http;
 using log4net;
 using Newtonsoft.Json;
 using Olives.Attributes;
+using Olives.Hubs;
+using Olives.Interfaces;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
@@ -19,7 +21,7 @@ using Shared.ViewModels.Filter;
 namespace Olives.Controllers
 {
     [Route("api/medical/experiment")]
-    public class MedicalExperimentController : ApiParentController
+    public class MedicalExperimentController : ApiParentControllerHub<NotificationHub>
     {
         #region Constructors
 
@@ -28,18 +30,18 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="repositoryMedicalRecord"></param>
         /// <param name="repositoryExperimentNote"></param>
-        /// <param name="repositoryRelation"></param>
         /// <param name="log"></param>
         /// <param name="timeService"></param>
+        /// <param name="notificationService"></param>
         public MedicalExperimentController(IRepositoryMedicalRecord repositoryMedicalRecord,
             IRepositoryExperimentNote repositoryExperimentNote,
-            IRepositoryRelation repositoryRelation, ITimeService timeService,
+            ITimeService timeService, INotificationService notificationService,
             ILog log)
         {
             _repositoryMedicalRecord = repositoryMedicalRecord;
             _repositoryExperimentNote = repositoryExperimentNote;
-            _repositoryRelation = repositoryRelation;
             _timeService = timeService;
+            _notificationService = notificationService;
             _log = log;
         }
 
@@ -118,6 +120,8 @@ namespace Olives.Controllers
 
             try
             {
+                #region Record initialization
+
                 // Initialize note.
                 var note = new ExperimentNote();
                 note.Info = JsonConvert.SerializeObject(initializer.Infos);
@@ -128,6 +132,34 @@ namespace Olives.Controllers
                 note.Creator = requester.Id;
 
                 note = await _repositoryExperimentNote.InitializeExperimentNote(note);
+
+                #endregion
+
+                #region Notification broadcast
+
+                if (note.Creator != note.Owner)
+                {
+                    var recipient = note.Owner;
+                    if (requester.Id == note.Owner)
+                        recipient = note.Creator;
+
+                    var notification = new Notification();
+                    notification.Type = (byte)NotificationType.Create;
+                    notification.Topic = (byte)NotificationTopic.ExperimentNote;
+                    notification.Broadcaster = requester.Id;
+                    notification.Recipient = recipient;
+                    notification.Record = note.Id;
+                    notification.Message = string.Format(Language.NotifyExperimentNoteCreate, requester.FullName);
+                    notification.Created = note.Created;
+
+                    // Broadcast the notification with fault tolerant.
+                    await _notificationService.BroadcastNotificationAsync(notification, Hub);
+                }
+
+                #endregion
+
+                #region Result handling
+
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     Note = new
@@ -140,6 +172,7 @@ namespace Olives.Controllers
                         note.Created
                     }
                 });
+                #endregion
             }
             catch (Exception exception)
             {
@@ -223,6 +256,8 @@ namespace Olives.Controllers
 
             try
             {
+                #region Record initialization
+
                 // Name is defined/
                 if (!string.IsNullOrWhiteSpace(modifier.Name))
                     experimentNote.Name = modifier.Name;
@@ -237,6 +272,33 @@ namespace Olives.Controllers
                 // Update the experiment note.
                 experimentNote = await _repositoryExperimentNote.InitializeExperimentNote(experimentNote);
 
+                #endregion
+
+                #region Notification broadcast
+
+                if (experimentNote.Creator != experimentNote.Owner)
+                {
+                    var recipient = experimentNote.Owner;
+                    if (requester.Id == experimentNote.Owner)
+                        recipient = experimentNote.Creator;
+
+                    var notification = new Notification();
+                    notification.Type = (byte)NotificationType.Edit;
+                    notification.Topic = (byte)NotificationTopic.ExperimentNote;
+                    notification.Broadcaster = requester.Id;
+                    notification.Recipient = recipient;
+                    notification.Record = experimentNote.Id;
+                    notification.Message = string.Format(Language.NotifyExperimentNoteEdit, requester.FullName);
+                    notification.Created = experimentNote.Created;
+
+                    // Broadcast the notification with fault tolerant.
+                    await _notificationService.BroadcastNotificationAsync(notification, Hub);
+                }
+
+                #endregion
+
+                #region Result handling
+
                 // Send the list of failed record back to client.
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -250,6 +312,8 @@ namespace Olives.Controllers
                         experimentNote.LastModified
                     }
                 });
+                #endregion
+
             }
             catch (Exception exception)
             {
@@ -392,9 +456,9 @@ namespace Olives.Controllers
         private readonly IRepositoryExperimentNote _repositoryExperimentNote;
 
         /// <summary>
-        ///     Repository of relationships.
+        /// Notification service which provides functions to access notification broadcast functionalities.
         /// </summary>
-        private readonly IRepositoryRelation _repositoryRelation;
+        private readonly INotificationService _notificationService;
 
         /// <summary>
         ///     Service which provides functions to access calculation.
