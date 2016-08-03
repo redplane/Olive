@@ -15,6 +15,7 @@ using Olives.Attributes;
 using Olives.Interfaces;
 using Olives.Models;
 using Olives.Module;
+using Olives.Repositories;
 using Olives.Services;
 using Shared.Interfaces;
 using Shared.Repositories;
@@ -72,37 +73,20 @@ namespace Olives
             #region Repositories
 
             // Repository account registration.
-            builder.RegisterType<RepositoryAccount>().As<IRepositoryAccount>().SingleInstance();
+            builder.RegisterType<RepositoryAccountExtended>().As<IRepositoryAccountExtended>().SingleInstance();
             builder.RegisterType<RepositoryRelation>().As<IRepositoryRelation>().SingleInstance();
-
-            // Repository specialty registration.
             builder.RegisterType<RepositorySpecialty>().As<IRepositorySpecialty>().SingleInstance();
-
-            // Repository specialty registration.
             builder.RegisterType<RepositoryHeartbeat>().As<IRepositoryHeartbeat>().SingleInstance();
-
-            // Repository heartbeat registration.
             builder.RegisterType<RepositoryAllergy>().As<IRepositoryAllergy>().SingleInstance();
-
-            //  Repository activation code registration.
-            builder.RegisterType<RepositoryCode>().As<IRepositoryActivationCode>().SingleInstance();
-
-            // Repository of place registration.
+            builder.RegisterType<RepositoryCode>().As<IRepositoryCode>().SingleInstance();
             builder.RegisterType<RepositoryPlace>().As<IRepositoryPlace>().SingleInstance();
-
-            // Repository of addiction registration.
             builder.RegisterType<RepositoryAddiction>().As<IRepositoryAddiction>().SingleInstance();
-
-            // Repository of sugarblood registration.
             builder.RegisterType<RepositoryBloodSugar>().As<IRepositoryBloodSugar>().SingleInstance();
             builder.RegisterType<RepositoryAppointment>().As<IRepositoryAppointment>().SingleInstance();
             builder.RegisterType<RepositoryRating>().As<IRepositoryRating>().SingleInstance();
             builder.RegisterType<RepositoryNotification>().As<IRepositoryNotification>().SingleInstance();
-
-            // Real time notification.
             var repositoryRealtimeConnection = new RepositoryRealTimeConnection();
             builder.RegisterType<RepositoryRealTimeConnection>().As<IRepositoryRealTimeConnection>().OnActivating(e => e.ReplaceInstance(repositoryRealtimeConnection)).SingleInstance();
-            
             builder.RegisterType<RepositoryBloodPressure>().As<IRepositoryBloodPressure>().SingleInstance();
             builder.RegisterType<RepositoryMessage>().As<IRepositoryMessage>().SingleInstance();
 

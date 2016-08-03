@@ -5,7 +5,7 @@ using Shared.Models;
 
 namespace Shared.Interfaces
 {
-    public interface IRepositoryActivationCode
+    public interface IRepositoryCode
     {
         /// <summary>
         ///     Initialize an allergy with given information.

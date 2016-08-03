@@ -1,10 +1,14 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using log4net;
 using OlivesAdministration.Attributes;
+using OlivesAdministration.Interfaces;
 using OlivesAdministration.Models;
+using OlivesAdministration.ViewModels.Filter;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
@@ -21,11 +25,15 @@ namespace OlivesAdministration.Controllers
         /// <summary>
         ///     Initialize an instance of AdminController.
         /// </summary>
-        /// <param name="repositoryAccount"></param>
+        /// <param name="repositoryAccountExtended"></param>
+        /// <param name="log"></param>
         /// <param name="applicationSetting"></param>
-        public PatientController(IRepositoryAccount repositoryAccount, ApplicationSetting applicationSetting)
+        public PatientController(IRepositoryAccountExtended repositoryAccountExtended, 
+            ILog log,
+            ApplicationSetting applicationSetting)
         {
-            _repositoryAccount = repositoryAccount;
+            _repositoryAccountExtended = repositoryAccountExtended;
+            _log = log;
             _applicationSetting = applicationSetting;
         }
 
@@ -36,7 +44,12 @@ namespace OlivesAdministration.Controllers
         /// <summary>
         ///     Repository account DI
         /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
+        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
+
+        /// <summary>
+        /// Instance which provides functions for logging.
+        /// </summary>
+        private readonly ILog _log;
 
         /// <summary>
         ///     Class stores application settings.
@@ -56,43 +69,60 @@ namespace OlivesAdministration.Controllers
         [OlivesAuthorize(new[] {Role.Admin})]
         public async Task<HttpResponseMessage> Get(int id)
         {
-            // Retrieve list of patients.
-            var patient = await _repositoryAccount.FindPatientAsync(id, null);
+            #region Result find & handling
 
-            // No patient has been found.
-            if (patient == null)
+            try
             {
-                // TODO: Add log here.
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                // Retrieve list of patients.
+                var account =
+                    await
+                        _repositoryAccountExtended.FindPersonAsync(id, null, null, (byte) Role.Patient,
+                            StatusAccount.Active);
+
+                // No patient has been found.
+                if (account == null)
                 {
-                    Error = $"{Language.WarnRecordNotFound}"
+                    _log.Error($"There is no patient [Id: {id}] in database.");
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
+                }
+
+                // Respond to client.
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    Patient = new
+                    {
+                        account.Id,
+                        account.Email,
+                        account.Password,
+                        account.FirstName,
+                        account.LastName,
+                        account.Birthday,
+                        account.Phone,
+                        account.Role,
+                        account.Created,
+                        account.LastModified,
+                        account.Gender,
+                        account.Status,
+                        account.Address,
+                        Photo =
+                            InitializeUrl(_applicationSetting.AvatarStorage.Relative, account.Photo,
+                                Values.StandardImageExtension),
+                        account.Patient.Money,
+                        account.Patient.Height,
+                        account.Patient.Weight
+                    }
                 });
             }
-
-            // Respond to client.
-            return Request.CreateResponse(HttpStatusCode.OK, new
+            catch (Exception exception)
             {
-                Patient = new
-                {
-                    patient.Id,
-                    patient.Person.Email,
-                    patient.Person.Password,
-                    patient.Person.FirstName,
-                    patient.Person.LastName,
-                    patient.Person.Birthday,
-                    patient.Person.Phone,
-                    patient.Person.Role,
-                    patient.Person.Created,
-                    patient.Person.LastModified,
-                    patient.Person.Gender,
-                    patient.Person.Status,
-                    patient.Person.Address,
-                    patient.Person.Photo,
-                    patient.Money,
-                    patient.Height,
-                    patient.Weight
-                }
-            });
+                _log.Error(exception.Message, exception);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+
+            #endregion
         }
 
         /// <summary>
@@ -105,6 +135,8 @@ namespace OlivesAdministration.Controllers
         [OlivesAuthorize(new[] {Role.Admin})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterPatientViewModel filter)
         {
+            #region Request parameters validation
+
             // Filter hasn't been initialized . Initialize it.
             if (filter == null)
             {
@@ -119,8 +151,12 @@ namespace OlivesAdministration.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
 
+            #endregion
+
+            #region Result handling
+
             // Filter patient by using specific conditions.
-            var result = await _repositoryAccount.FilterPatientAsync(filter);
+            var result = await _repositoryAccountExtended.FilterPatientsAsync(filter);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -148,6 +184,8 @@ namespace OlivesAdministration.Controllers
                 }),
                 result.Total
             });
+
+            #endregion
         }
 
         #endregion

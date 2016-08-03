@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using OlivesAdministration.Attributes;
+using OlivesAdministration.Interfaces;
 using OlivesAdministration.Models;
+using OlivesAdministration.ViewModels.Filter;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Interfaces;
 using Shared.Resources;
-using Shared.ViewModels.Filter;
 
 namespace OlivesAdministration.Controllers
 {
@@ -23,11 +23,12 @@ namespace OlivesAdministration.Controllers
         /// <summary>
         ///     Initialize an instance of DoctorController
         /// </summary>
-        /// <param name="repositoryAccount"></param>
+        /// <param name="repositoryAccountExtended"></param>
+        /// <param name="log"></param>
         /// <param name="applicationSetting"></param>
-        public DoctorController(IRepositoryAccount repositoryAccount, ILog log, ApplicationSetting applicationSetting)
+        public DoctorController(IRepositoryAccountExtended repositoryAccountExtended, ILog log, ApplicationSetting applicationSetting)
         {
-            _repositoryAccount = repositoryAccount;
+            _repositoryAccountExtended = repositoryAccountExtended;
             _applicationSetting = applicationSetting;
             _log = log;
         }
@@ -47,10 +48,10 @@ namespace OlivesAdministration.Controllers
             try
             {
                 // Retrieve filtered result asynchronously.
-                var doctor = await _repositoryAccount.FindDoctorAsync(id, null);
+                var account = await _repositoryAccountExtended.FindPersonAsync(id, null, null, (byte)Role.Doctor, null);
 
                 // No result has been found.
-                if (doctor == null)
+                if (account == null)
                 {
                     // Log error.
                     _log.Error($"Cannot find the doctor [Id : {id}]");
@@ -59,40 +60,40 @@ namespace OlivesAdministration.Controllers
                         Error = $"{Language.WarnRecordNotFound}"
                     });
                 }
-
+                
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     Doctor = new
                     {
-                        doctor.Id,
-                        doctor.Person.FirstName,
-                        doctor.Person.LastName,
-                        doctor.Person.Email,
-                        doctor.Person.Password,
-                        doctor.Person.Birthday,
-                        doctor.Person.Gender,
-                        doctor.Person.Address,
-                        doctor.Person.Phone,
-                        doctor.Person.Role,
+                        account.Id,
+                        account.FirstName,
+                        account.LastName,
+                        account.Email,
+                        account.Password,
+                        account.Birthday,
+                        account.Gender,
+                        account.Address,
+                        account.Phone,
+                        account.Role,
                         Photo =
-                            InitializeUrl(_applicationSetting.AvatarStorage.Absolute, doctor.Person.Photo,
+                            InitializeUrl(_applicationSetting.AvatarStorage.Relative, account.Photo,
                                 Values.StandardImageExtension),
-                        doctor.Rank,
+                        account.Doctor.Rank,
                         Specialty = new
                         {
-                            Id = doctor.SpecialtyId,
-                            Name = doctor.SpecialtyName
+                            Id = account.Doctor.SpecialtyId,
+                            Name = account.Doctor.SpecialtyName
                         },
                         Place = new
                         {
-                            Id = doctor.PlaceId,
-                            doctor.City,
-                            doctor.Country
+                            Id = account.Doctor.PlaceId,
+                            account.Doctor.City,
+                            account.Doctor.Country
                         },
-                        doctor.Voters,
-                        doctor.Money,
-                        doctor.Person.Created,
-                        doctor.Person.LastModified
+                        account.Doctor.Voters,
+                        account.Doctor.Money,
+                        account.Created,
+                        account.LastModified
                     }
                 });
             }
@@ -115,6 +116,8 @@ namespace OlivesAdministration.Controllers
         [OlivesAuthorize(new[] {Role.Admin})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterDoctorViewModel filter)
         {
+            #region Request parameters validation
+
             // Request parameters haven't been initialized.
             if (filter == null)
             {
@@ -126,46 +129,63 @@ namespace OlivesAdministration.Controllers
             // Invalid data validation.
             if (!ModelState.IsValid)
             {
-                // Log the error.
+                _log.Error("Request parameters are invalid. Errors sent to client");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
-            // Retrieve result from server.
-            var result = await _repositoryAccount.FilterDoctorAsync(filter);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new
+            #endregion
+
+            #region Result filtering & handling
+
+            try
             {
-                Doctors = result.Doctors.Select(x => new
+                // Retrieve result from server.
+                var result = await _repositoryAccountExtended.FilterDoctorsAsync(filter);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new
                 {
-                    x.Id,
-                    x.Person.FirstName,
-                    x.Person.LastName,
-                    x.Person.Email,
-                    x.Person.Password,
-                    x.Person.Birthday,
-                    x.Person.Gender,
-                    x.Person.Address,
-                    x.Person.Phone,
-                    x.Person.Role,
-                    Photo = InitializeUrl(_applicationSetting.AvatarStorage.Absolute, x.Person.Photo, Values.StandardImageExtension),
-                    x.Rank,
-                    Specialty = new
+                    Doctors = result.Doctors.Select(x => new
                     {
-                        Id = x.SpecialtyId,
-                        Name = x.SpecialtyName
-                    },
-                    Place = new
-                    {
-                        Id = x.PlaceId,
-                        x.City,
-                        x.Country
-                    },
-                    x.Voters,
-                    x.Money,
-                    x.Person.Created,
-                    x.Person.LastModified
-                }),
-                result.Total
-            });
+                        x.Id,
+                        x.Person.FirstName,
+                        x.Person.LastName,
+                        x.Person.Email,
+                        x.Person.Password,
+                        x.Person.Birthday,
+                        x.Person.Gender,
+                        x.Person.Address,
+                        x.Person.Phone,
+                        x.Person.Role,
+                        Photo =
+                            InitializeUrl(_applicationSetting.AvatarStorage.Absolute, x.Person.Photo,
+                                Values.StandardImageExtension),
+                        x.Rank,
+                        Specialty = new
+                        {
+                            Id = x.SpecialtyId,
+                            Name = x.SpecialtyName
+                        },
+                        Place = new
+                        {
+                            Id = x.PlaceId,
+                            x.City,
+                            x.Country
+                        },
+                        x.Voters,
+                        x.Money,
+                        x.Person.Created,
+                        x.Person.LastModified
+                    }),
+                    result.Total
+                });
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception.Message, exception);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+
+            #endregion
         }
 
         #region Properties
@@ -173,7 +193,7 @@ namespace OlivesAdministration.Controllers
         /// <summary>
         ///     Instance of repository account.
         /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
+        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
         /// Instance for logging management.

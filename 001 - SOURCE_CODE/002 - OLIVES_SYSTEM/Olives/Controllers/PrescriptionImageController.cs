@@ -28,7 +28,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryAccount"></param>
+        /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositoryPrescription"></param>
         /// <param name="repositoryPrescriptionImage"></param>
         /// <param name="repositoryRelation"></param>
@@ -36,12 +36,12 @@ namespace Olives.Controllers
         /// <param name="fileService"></param>
         /// <param name="timeService"></param>
         /// <param name="applicationSetting"></param>
-        public PrescriptionImageController(IRepositoryAccount repositoryAccount,
+        public PrescriptionImageController(IRepositoryAccountExtended repositoryAccountExtended,
             IRepositoryPrescription repositoryPrescription, IRepositoryPrescriptionImage repositoryPrescriptionImage,
             IRepositoryRelation repositoryRelation,
             ILog log, IFileService fileService, ITimeService timeService, ApplicationSetting applicationSetting)
         {
-            _repositoryAccount = repositoryAccount;
+            _repositoryAccountExtended = repositoryAccountExtended;
             _repositoryPrescription = repositoryPrescription;
             _repositoryPrescriptionImage = repositoryPrescriptionImage;
             _repositoryRelation = repositoryRelation;
@@ -117,7 +117,7 @@ namespace Olives.Controllers
             if (requester.Id != prescription.Owner)
             {
                 // Find the owner.
-                var owner = _repositoryAccount.FindPersonAsync(prescription.Owner, null, null, null,
+                var owner = _repositoryAccountExtended.FindPersonAsync(prescription.Owner, null, null, null,
                     StatusAccount.Active);
 
                 // No active owner is found.
@@ -327,7 +327,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of accounts
         /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
+        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
         ///     Repository of prescription images.

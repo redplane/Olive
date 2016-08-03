@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Olives.Attributes;
 using Shared.Constants;
+using Shared.Enumerations;
 using Shared.Resources;
 
 namespace Olives.ViewModels
@@ -15,6 +17,5 @@ namespace Olives.ViewModels
         [RegularExpression(Regexes.Email, ErrorMessageResourceType = typeof(Language),
             ErrorMessageResourceName = "InvalidEmailFormat")]
         public string Email { get; set; }
-
     }
 }

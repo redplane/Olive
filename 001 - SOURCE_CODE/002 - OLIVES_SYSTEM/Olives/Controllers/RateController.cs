@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
+using Olives.Interfaces;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
@@ -24,16 +25,16 @@ namespace Olives.Controllers
         /// <summary>
         ///     Initialize an instance of AccountController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryAccount"></param>
+        /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositoryRating"></param>
         /// <param name="repositoryRelation"></param>
         /// <param name="timeService"></param>
         /// <param name="log"></param>
-        public RateController(IRepositoryAccount repositoryAccount, IRepositoryRating repositoryRating,
+        public RateController(IRepositoryAccountExtended repositoryAccountExtended, IRepositoryRating repositoryRating,
             IRepositoryRelation repositoryRelation,
             ITimeService timeService, ILog log)
         {
-            _repositoryAccount = repositoryAccount;
+            _repositoryAccountExtended = repositoryAccountExtended;
             _repositoryRating = repositoryRating;
             _repositoryRelation = repositoryRelation;
             _timeService = timeService;
@@ -79,7 +80,7 @@ namespace Olives.Controllers
             try
             {
                 // Find the rated person.
-                var rated = await _repositoryAccount.FindPersonAsync(initializer.Target, null, null, (byte) Role.Doctor,
+                var rated = await _repositoryAccountExtended.FindPersonAsync(initializer.Target, null, null, (byte) Role.Doctor,
                     StatusAccount.Active);
 
                 // The rated isn't found.
@@ -269,7 +270,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of accounts
         /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
+        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
         ///     Repository of rating.

@@ -7,6 +7,7 @@ using System.Web.Http;
 using log4net;
 using Newtonsoft.Json;
 using Olives.Attributes;
+using Olives.Interfaces;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
@@ -26,18 +27,18 @@ namespace Olives.Controllers
         /// <summary>
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryAccount"></param>
+        /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositoryMedicalRecord"></param>
         /// <param name="repositoryPrescription"></param>
         /// <param name="repositoryRelation"></param>
         /// <param name="timeService"></param>
         /// <param name="log"></param>
-        public PrescriptionController(IRepositoryAccount repositoryAccount,
+        public PrescriptionController(IRepositoryAccountExtended repositoryAccountExtended,
             IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryPrescription repositoryPrescription,
             IRepositoryRelation repositoryRelation, ITimeService timeService,
             ILog log)
         {
-            _repositoryAccount = repositoryAccount;
+            _repositoryAccountExtended = repositoryAccountExtended;
             _repositoryMedicalRecord = repositoryMedicalRecord;
             _repositoryPrescription = repositoryPrescription;
             _repositoryRelation = repositoryRelation;
@@ -81,7 +82,7 @@ namespace Olives.Controllers
 
             // Find the owner of medical record.
             var owner =
-                await _repositoryAccount.FindPersonAsync(prescription.Owner, null, null, null, StatusAccount.Active);
+                await _repositoryAccountExtended.FindPersonAsync(prescription.Owner, null, null, null, StatusAccount.Active);
             if (owner == null)
             {
                 // Tell requester the record isn't found.
@@ -202,7 +203,7 @@ namespace Olives.Controllers
                 // Find the owner of medical record.
                 var owner =
                     await
-                        _repositoryAccount.FindPersonAsync(medicalRecord.Owner, null, null, null, StatusAccount.Active);
+                        _repositoryAccountExtended.FindPersonAsync(medicalRecord.Owner, null, null, null, StatusAccount.Active);
                 if (owner == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
@@ -325,7 +326,7 @@ namespace Olives.Controllers
                 // Find the owner of medical record.
                 var owner =
                     await
-                        _repositoryAccount.FindPersonAsync(prescription.Owner, null, null, (byte) Role.Patient,
+                        _repositoryAccountExtended.FindPersonAsync(prescription.Owner, null, null, (byte) Role.Patient,
                             StatusAccount.Active);
 
                 // Owner cannot be found.
@@ -519,7 +520,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of accounts
         /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
+        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
         ///     Repository of medical record

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
+using Olives.Interfaces;
 using Olives.Models;
 using Olives.ViewModels.Filter;
 using Olives.ViewModels.Initialize;
@@ -25,17 +26,17 @@ namespace Olives.Controllers
         /// <summary>
         ///     Initialize an instance of AccountController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryAccount"></param>
+        /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositoryRelation"></param>
         /// <param name="timeService"></param>
         /// <param name="applicationSetting"></param>
         /// <param name="log"></param>
-        public RelationshipController(IRepositoryAccount repositoryAccount, IRepositoryRelation repositoryRelation,
+        public RelationshipController(IRepositoryAccountExtended repositoryAccountExtended, IRepositoryRelation repositoryRelation,
             ITimeService timeService,
             ApplicationSetting applicationSetting,
             ILog log)
         {
-            _repositoryAccount = repositoryAccount;
+            _repositoryAccountExtended = repositoryAccountExtended;
             _repositoryRelation = repositoryRelation;
             _timeService = timeService;
             _applicationSetting = applicationSetting;
@@ -84,7 +85,7 @@ namespace Olives.Controllers
 
                 // Find the target.
                 var person =
-                    await _repositoryAccount.FindPersonAsync(initializer.Target, null, null, null, StatusAccount.Active);
+                    await _repositoryAccountExtended.FindPersonAsync(initializer.Target, null, null, null, StatusAccount.Active);
 
                 // Cannot find the target.
                 if (person == null)
@@ -300,8 +301,8 @@ namespace Olives.Controllers
                         x.Doctor.Person.LastName,
                         Specialty = new
                         {
-                            Id = x.Doctor.SpecialtyId,
-                            Name = x.Doctor.SpecialtyName
+                            x.Doctor.Specialty.Id,
+                            x.Doctor.Specialty.Name
                         },
                         x.Doctor.Rank,
                         x.Doctor.Person.Address,
@@ -365,13 +366,13 @@ namespace Olives.Controllers
                     x.Id,
                     Source = new
                     {
-                        x.Source,
+                        Id = x.Source,
                         FirstName = x.SourceFirstName,
                         LastName = x.SourceLastName
                     },
                     Target = new
                     {
-                        x.Target,
+                        Id = x.Target,
                         FirstName = x.TargetFirstName,
                         LastName = x.TargetLastName
                     },
@@ -391,7 +392,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of accounts
         /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
+        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
         ///     Repository of relationships.

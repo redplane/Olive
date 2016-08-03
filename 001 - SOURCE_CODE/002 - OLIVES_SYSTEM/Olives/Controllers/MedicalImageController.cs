@@ -27,7 +27,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryAccount"></param>
+        /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositoryMedicalRecord"></param>
         /// <param name="repositoryMedicalImage"></param>
         /// <param name="repositoryRelation"></param>
@@ -35,12 +35,12 @@ namespace Olives.Controllers
         /// <param name="log"></param>
         /// <param name="fileService"></param>
         /// <param name="applicationSetting"></param>
-        public MedicalImageController(IRepositoryAccount repositoryAccount,
+        public MedicalImageController(IRepositoryAccountExtended repositoryAccountExtended,
             IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryMedicalImage repositoryMedicalImage,
             IRepositoryRelation repositoryRelation, ITimeService timeService,
             ILog log, IFileService fileService, ApplicationSetting applicationSetting)
         {
-            _repositoryAccount = repositoryAccount;
+            _repositoryAccountExtended = repositoryAccountExtended;
             _repositoryMedicalRecord = repositoryMedicalRecord;
             _repositoryMedicalImage = repositoryMedicalImage;
             _repositoryRelation = repositoryRelation;
@@ -108,7 +108,7 @@ namespace Olives.Controllers
                 // Find the owner of medical record.
                 var owner =
                     await
-                        _repositoryAccount.FindPersonAsync(medicalRecord.Owner, null, null, null, StatusAccount.Active);
+                        _repositoryAccountExtended.FindPersonAsync(medicalRecord.Owner, null, null, null, StatusAccount.Active);
 
                 // No active owner is found.
                 if (owner == null)
@@ -303,7 +303,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of accounts
         /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
+        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
         ///     Repository of medical record

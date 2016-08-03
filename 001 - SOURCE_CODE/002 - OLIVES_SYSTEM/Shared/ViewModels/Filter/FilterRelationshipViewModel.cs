@@ -2,7 +2,6 @@
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Resources;
 
@@ -32,7 +31,7 @@ namespace Shared.ViewModels.Filter
             ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MinCreated", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
-        public float? MinCreated { get; set; }
+        public double? MinCreated { get; set; }
 
         /// <summary>
         /// Time before which relationship which had been created.
@@ -41,7 +40,7 @@ namespace Shared.ViewModels.Filter
             ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MinCreated", Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
-        public float? MaxCreated { get; set; }
+        public double? MaxCreated { get; set; }
 
         /// <summary>
         /// Status of relationship.

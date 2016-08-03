@@ -11,14 +11,7 @@ namespace Shared.Interfaces
     public interface IRepositoryAccount
     {
         #region Shared
-
-        /// <summary>
-        ///     Find person by using specific information asynchronously.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <returns></returns>
-        Task<IList<Person>> LoginAsync(LoginViewModel info);
-
+        
         /// <summary>
         ///     Find person by using specific information synchronously.
         /// </summary>
@@ -42,74 +35,16 @@ namespace Shared.Interfaces
         Task<Person> FindPersonAsync(int? id, string email, string password, byte? role, StatusAccount? status);
         
         /// <summary>
-        ///     Edit person status asynchronously.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        Task<Person> EditPersonStatusAsync(int id, byte status);
-
-        /// <summary>
-        ///     Summary person by using role.
-        /// </summary>
-        /// <returns></returns>
-        Task<IList<StatusSummaryViewModel>> SummarizePersonRoleAsync(byte? role);
-
-        /// <summary>
         ///     Initialize or update person information asynchronously.
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
         Task<Person> InitializePersonAsync(Person info);
 
-        /// <summary>
-        ///     Edit a person by using id.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="info"></param>
-        /// <returns></returns>
-        Task<Person> EditPersonProfileAsync(int id, Person info);
-
         #endregion
-
-        #region Doctor
-
-        /// <summary>
-        ///     Filter doctor by using id.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        Task<Doctor> FindDoctorAsync(int id, StatusAccount? status);
-
-        /// <summary>
-        ///     Filter doctor by using specific conditions.
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
-        Task<ResponseDoctorFilter> FilterDoctorAsync(FilterDoctorViewModel filter);
-
-        #endregion
-
+        
         #region Patient
-
-        /// <summary>
-        ///     Find the patient by using id and perhaps status asynchronously.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        Task<Patient> FindPatientAsync(int id, byte? status);
-
-        /// <summary>
-        ///     Filter patient by using specific conditions asynchronously.
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <param name="requester"></param>
-        /// <returns></returns>
-        Task<ResponsePatientFilter> FilterPatientAsync(FilterPatientViewModel filter,
-            Person requester = null);
-
+        
         /// <summary>
         ///     Activate patient's account by search person id.
         /// </summary>

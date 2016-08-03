@@ -4,6 +4,7 @@ using System.Web.Profile;
 using log4net;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
+using Olives.Interfaces;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
@@ -17,7 +18,7 @@ namespace Olives.Attributes
         /// <summary>
         /// Repository which provides functions to access account databases.
         /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
+        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
         /// Logger instance.
@@ -32,7 +33,7 @@ namespace Olives.Attributes
         public HubAuthorizeAttribute()
         {
             // Dependencies loader.
-            _repositoryAccount = GlobalHost.DependencyResolver.Resolve<IRepositoryAccount>();
+            _repositoryAccountExtended = GlobalHost.DependencyResolver.Resolve<IRepositoryAccountExtended>();
             _log = GlobalHost.DependencyResolver.Resolve<ILog>();
         }
 
@@ -51,7 +52,7 @@ namespace Olives.Attributes
             try
             {
                 // Find the account.
-                var account = _repositoryAccount.FindPerson(null, email, password, null, StatusAccount.Active);
+                var account = _repositoryAccountExtended.FindPerson(null, email, password, null, StatusAccount.Active);
 
                 // Invalid account. The request is unauthorized.
                 if (account == null)
@@ -88,7 +89,7 @@ namespace Olives.Attributes
             try
             {
                 // Find the account.
-                var account = _repositoryAccount.FindPerson(null, email, password, null, StatusAccount.Active);
+                var account = _repositoryAccountExtended.FindPerson(null, email, password, null, StatusAccount.Active);
 
                 if (account == null)
                     return false;

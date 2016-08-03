@@ -1,4 +1,4 @@
-﻿namespace Shared.Enumerations
+﻿namespace Shared.Enumerations.Filter
 {
     public enum PartnerFilterMode
     {

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using log4net;
+using Olives.Interfaces;
 using Shared.Interfaces;
 using Shared.Resources;
 
@@ -17,23 +18,17 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository which provides functions to access account database.
         /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
-
-        /// <summary>
-        ///     Repository which provides functions to access activation code database.
-        /// </summary>
-        private readonly IRepositoryActivationCode _repositoryActivationCode;
-
+        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
+        
         #region Constructors
 
         /// <summary>
         ///     Initialize an instance of AccountVerifyController with given information.
         /// </summary>
-        public ServiceController(IRepositoryAccount repositoryAccount,
-            IRepositoryActivationCode repositoryActivationCode, ILog log)
+        public ServiceController(IRepositoryAccountExtended repositoryAccountExtended, 
+            ILog log)
         {
-            _repositoryAccount = repositoryAccount;
-            _repositoryActivationCode = repositoryActivationCode;
+            _repositoryAccountExtended = repositoryAccountExtended;
             _log = log;
         }
 
@@ -58,7 +53,7 @@ namespace Olives.Controllers
             try
             {
                 // Activate the account.
-                await _repositoryAccount.InitializePatientActivation(code);
+                await _repositoryAccountExtended.InitializePatientActivation(code);
             }
             catch (Exception exception)
             {

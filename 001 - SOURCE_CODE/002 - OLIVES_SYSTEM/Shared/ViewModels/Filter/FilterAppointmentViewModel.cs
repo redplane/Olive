@@ -2,6 +2,7 @@
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
+using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Resources;
 

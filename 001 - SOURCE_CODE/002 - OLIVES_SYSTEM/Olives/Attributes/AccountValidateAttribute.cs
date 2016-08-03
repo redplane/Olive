@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
+using Olives.Interfaces;
 using Shared.Enumerations;
 using Shared.Interfaces;
 
@@ -27,7 +29,7 @@ namespace Olives.Attributes
         /// <summary>
         /// Repository which provides functions to access account database.
         /// </summary>
-        private IRepositoryAccount RepositoryAccount => DependencyResolver.Current.GetService<IRepositoryAccount>();
+        private IRepositoryAccountExtended RepositoryAccountExtended => DependencyResolver.Current.GetService<IRepositoryAccountExtended>();
 
         /// <summary>
         /// Type of object which is input to be checked.
@@ -112,7 +114,7 @@ namespace Olives.Attributes
                     break;
             }
 
-            var account = RepositoryAccount.FindPerson(id, email, null, Role, Status);
+            var account = RepositoryAccountExtended.FindPerson(id, email, null, Role, Status);
             if (!_isAccountAvailable)
             {
                 if (account == null)

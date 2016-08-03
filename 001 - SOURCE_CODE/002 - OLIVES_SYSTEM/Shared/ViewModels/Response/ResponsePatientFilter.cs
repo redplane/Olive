@@ -8,7 +8,7 @@ namespace Shared.ViewModels.Response
         /// <summary>
         ///     List of filtered patients.
         /// </summary>
-        public IList<Patient> Patients { get; set; }
+        public IEnumerable<Patient> Patients { get; set; }
 
         /// <summary>
         ///     Total filtered result number.

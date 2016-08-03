@@ -82,6 +82,11 @@
         /// </summary>
         public const int MaxMessageContentLength = 512;
 
+        /// <summary>
+        /// Maximum length of account code.
+        /// </summary>
+        public const int MaxAccountCodeLength = 36;
+
         #region Blood pressure
 
         /// <summary>

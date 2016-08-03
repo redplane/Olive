@@ -23,12 +23,9 @@ namespace Shared.Models
         public int Id { get; set; }
         public Nullable<double> Rank { get; set; }
         public int SpecialtyId { get; set; }
-        public string SpecialtyName { get; set; }
         public int Voters { get; set; }
         public int Money { get; set; }
         public int PlaceId { get; set; }
-        public string City { get; set; }
-        public string Country { get; set; }
     
         public virtual Person Person { get; set; }
         public virtual Place Place { get; set; }

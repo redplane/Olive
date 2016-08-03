@@ -11,7 +11,7 @@ using Shared.Models;
 
 namespace Shared.Repositories
 {
-    public class RepositoryCode : IRepositoryActivationCode
+    public class RepositoryCode : IRepositoryCode
     {
         /// <summary>
         ///     Initialize an allergy with given information.
@@ -23,24 +23,9 @@ namespace Shared.Repositories
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-
-            // Initialize a random code
-            string code;
-            while (true)
-            {
-                // Find the unique code.
-                var initializedCode = CodeGeneratorHelper.Instance.Generate(FieldLength.ActivationCodeLength);
-                var isCreated = await context.AccountCodes.AnyAsync(x => x.Code.Equals(initializedCode));
-                if (!isCreated)
-                {
-                    code = initializedCode;
-                    break;
-                }
-            }
-
-
+            
             var accountCode = new AccountCode();
-            accountCode.Code = code;
+            accountCode.Code = Guid.NewGuid().ToString();
             accountCode.Expired = DateTime.UtcNow.AddHours(Values.ActivationCodeHourDuration);
             accountCode.Owner = owner;
             accountCode.Type = (byte) type;

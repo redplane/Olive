@@ -1,4 +1,4 @@
-﻿namespace Shared.ViewModels
+﻿namespace OlivesAdministration.ViewModels.Statistic
 {
     public class StatusSummaryViewModel
     {

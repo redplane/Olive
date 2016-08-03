@@ -1,8 +1,10 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
+using OlivesAdministration.Interfaces;
 using OlivesAdministration.Models;
 using Shared.Constants;
 using Shared.Enumerations;
@@ -19,12 +21,12 @@ namespace OlivesAdministration.Controllers
         /// <summary>
         ///     Initialize an instance of AdminController.
         /// </summary>
-        /// <param name="repositoryAccount"></param>
+        /// <param name="repositoryAccountExtended"></param>
         /// <param name="applicationSetting"></param>
         /// <param name="log"></param>
-        public AdminController(IRepositoryAccount repositoryAccount, ApplicationSetting applicationSetting, ILog log)
+        public AdminController(IRepositoryAccountExtended repositoryAccountExtended, ApplicationSetting applicationSetting, ILog log)
         {
-            _repositoryAccount = repositoryAccount;
+            _repositoryAccountExtended = repositoryAccountExtended;
             _applicationSetting = applicationSetting;
             _log = log;
         }
@@ -43,6 +45,8 @@ namespace OlivesAdministration.Controllers
         [HttpPost]
         public async Task<HttpResponseMessage> Login([FromBody] LoginViewModel loginViewModel)
         {
+            #region Request parameters validation
+
             // Model hasn't been initialized.
             if (loginViewModel == null)
             {
@@ -52,45 +56,63 @@ namespace OlivesAdministration.Controllers
             
             // Invalid model state.
             if (!ModelState.IsValid)
-                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-
-            // Pass parameter to login function. 
-            var admin =
-                await
-                    _repositoryAccount.FindPersonAsync(null, loginViewModel.Email, loginViewModel.Password,
-                        (byte) Role.Admin, StatusAccount.Active);
-
-            // If no result return, that means no account.
-            if (admin == null)
             {
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
+                _log.Error("Request parameters are invalid. Errors sent to client");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
 
-            return Request.CreateResponse(HttpStatusCode.OK, new
+            #endregion
+
+            #region Account find & handling
+
+            try
             {
-                User = new
+                // Pass parameter to login function. 
+                var admin =
+                    await
+                        _repositoryAccountExtended.FindPersonAsync(null, loginViewModel.Email, loginViewModel.Password,
+                            (byte)Role.Admin, StatusAccount.Active);
+
+                // If no result return, that means no account.
+                if (admin == null)
                 {
-                    admin.Id,
-                    admin.LastName,
-                    admin.FirstName,
-                    admin.Birthday,
-                    admin.Gender,
-                    admin.Email,
-                    admin.Password,
-                    admin.Phone,
-                    admin.Created,
-                    admin.Address,
-                    admin.Role,
-                    admin.Status,
-                    Photo =
-                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, admin.Photo,
-                            Values.StandardImageExtension),
-                    admin.LastModified
+                    _log.Error($"There is no admin [Id: {loginViewModel.Email}] is found in database");
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
                 }
-            });
+
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    User = new
+                    {
+                        admin.Id,
+                        admin.LastName,
+                        admin.FirstName,
+                        admin.Birthday,
+                        admin.Gender,
+                        admin.Email,
+                        admin.Password,
+                        admin.Phone,
+                        admin.Created,
+                        admin.Address,
+                        admin.Role,
+                        admin.Status,
+                        Photo =
+                            InitializeUrl(_applicationSetting.AvatarStorage.Relative, admin.Photo,
+                                Values.StandardImageExtension),
+                        admin.LastModified
+                    }
+                });
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception.Message, exception);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+            
+            #endregion
         }
 
         #endregion
@@ -100,7 +122,7 @@ namespace OlivesAdministration.Controllers
         /// <summary>
         ///     Repository account.
         /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
+        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
         ///     Application setting.

@@ -26,21 +26,18 @@ namespace Olives.Controllers
         /// <summary>
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryAccount"></param>
+        /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositoryAppointment"></param>
-        /// <param name="repositoryRealTimeConnection"></param>
         /// <param name="repositoryRelation"></param>
         /// <param name="log"></param>
         /// <param name="timeService"></param>
         /// <param name="notificationService"></param>
-        public AppointmentController(IRepositoryAccount repositoryAccount, IRepositoryAppointment repositoryAppointment,
-            IRepositoryRealTimeConnection repositoryRealTimeConnection, IRepositoryRelation repositoryRelation,
+        public AppointmentController(IRepositoryAccountExtended repositoryAccountExtended, IRepositoryAppointment repositoryAppointment, IRepositoryRelation repositoryRelation,
             ILog log, 
             ITimeService timeService, INotificationService notificationService)
         {
-            _repositoryAccount = repositoryAccount;
+            _repositoryAccountExtended = repositoryAccountExtended;
             _repositoryAppointment = repositoryAppointment;
-            _repositoryRealTimeConnection = repositoryRealTimeConnection;
             _repositoryRelation = repositoryRelation;
             _log = log;
             _timeService = timeService;
@@ -184,7 +181,7 @@ namespace Olives.Controllers
                 var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Find the dater by using id.
-                var dater = await _repositoryAccount.FindPersonAsync(info.Dater, null, null, null, StatusAccount.Active);
+                var dater = await _repositoryAccountExtended.FindPersonAsync(info.Dater, null, null, null, StatusAccount.Active);
 
                 // No information has been found.
                 if (dater == null)
@@ -518,7 +515,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository which provides functions to access account database.
         /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
+        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
         ///     Repository of appointments
@@ -534,12 +531,7 @@ namespace Olives.Controllers
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
-
-        /// <summary>
-        ///     Repository which provides function to access real time connection database.
-        /// </summary>
-        private readonly IRepositoryRealTimeConnection _repositoryRealTimeConnection;
-
+        
         private readonly ITimeService _timeService;
 
         /// <summary>

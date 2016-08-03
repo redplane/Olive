@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using OlivesAdministration.Attributes;
-using OlivesAdministration.ViewModels;
+using OlivesAdministration.Interfaces;
 using OlivesAdministration.ViewModels.Edit;
 using OlivesAdministration.ViewModels.Statistic;
 using Shared.Enumerations;
-using Shared.Interfaces;
 using Shared.Resources;
 
 namespace OlivesAdministration.Controllers
@@ -23,7 +22,7 @@ namespace OlivesAdministration.Controllers
         /// <summary>
         ///     Repository account DI
         /// </summary>
-        private readonly IRepositoryAccount _repositoryAccount;
+        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
         /// Instance of log.
@@ -37,11 +36,11 @@ namespace OlivesAdministration.Controllers
         /// <summary>
         ///     Initialize an instance of AdminController.
         /// </summary>
-        /// <param name="repositoryAccount"></param>
+        /// <param name="repositoryAccountExtended"></param>
         /// <param name="log"></param>
-        public PersonController(IRepositoryAccount repositoryAccount, ILog log)
+        public PersonController(IRepositoryAccountExtended repositoryAccountExtended, ILog log)
         {
-            _repositoryAccount = repositoryAccount;
+            _repositoryAccountExtended = repositoryAccountExtended;
             _log = log;
         }
 
@@ -84,7 +83,7 @@ namespace OlivesAdministration.Controllers
             try
             {
                 // Find the person from database using unique identity.
-                var person = await _repositoryAccount.FindPersonAsync(id, null, null, null, null);
+                var person = await _repositoryAccountExtended.FindPersonAsync(id, null, null, null, null);
 
                 // No person has been found.
                 if (person == null)
@@ -103,7 +102,7 @@ namespace OlivesAdministration.Controllers
                 person.Status = (byte)modifier.Status;
                 
                 // Save changes to database.
-                await _repositoryAccount.InitializePersonAsync(person);
+                await _repositoryAccountExtended.InitializePersonAsync(person);
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
             catch (Exception exception)
@@ -138,12 +137,12 @@ namespace OlivesAdministration.Controllers
             // Request parameters are invalid.
             if (!ModelState.IsValid)
             {
-                // TODO: Log the error to file.
+                _log.Error("Request parameters are invalid. Errors sent to client.");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
             }
 
             // Find the person from database using unique identity.
-            var summaryResult = await _repositoryAccount.SummarizePersonRoleAsync(summarizer.Role);
+            var summaryResult = await _repositoryAccountExtended.SummarizePersonRoleAsync(summarizer.Role);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {

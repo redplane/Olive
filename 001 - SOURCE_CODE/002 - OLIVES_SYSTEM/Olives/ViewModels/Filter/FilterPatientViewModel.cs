@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Olives.Enumerations.Filter;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
@@ -7,8 +8,15 @@ using Shared.Resources;
 
 namespace Olives.ViewModels.Filter
 {
-    public class FilterAnotherPatientViewModel : IPagination
+    public class FilterPatientViewModel : IPagination
     {
+        public int? Id { get; set; }
+
+        /// <summary>
+        /// Person who sent the patient filter request.
+        /// </summary>
+        public int Requester { get; set; }
+
         /// <summary>
         ///     Email address which is used for registration or for contacting.
         /// </summary>
@@ -57,11 +65,36 @@ namespace Olives.ViewModels.Filter
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "InvalidGender")]
         public int? Gender { get; set; }
 
+        /// <summary>
+        /// Whether records should be sorted ascendingly or decendingly.
+        /// </summary>
+        [InEnumerationsArray(new object[] {SortDirection.Ascending, SortDirection.Decending},
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
+        public SortDirection Direction { get; set; } = SortDirection.Ascending;
+
+        /// <summary>
+        /// Which property should be used for sorting.
+        /// </summary>
+        [InEnumerationsArray(
+            new object[]
+            {
+                PatientFilterSort.Email, PatientFilterSort.Phone, PatientFilterSort.FirstName, PatientFilterSort.LastName, PatientFilterSort.Birthday,
+                PatientFilterSort.Gender
+            }, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueMustBeOneOfArray")]
+        public PatientFilterSort Sort { get; set; } = PatientFilterSort.Email;
+
+        /// <summary>
+        /// Index of result page.
+        /// </summary>
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsInvalid")]
         public int Page { get; set; } = FieldLength.PageIndexMin;
 
+        /// <summary>
+        /// Records per page.
+        /// </summary>
         [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]
         public int? Records { get; set; }

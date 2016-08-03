@@ -8,9 +8,10 @@ using Autofac;
 using Autofac.Integration.WebApi;
 using Newtonsoft.Json;
 using OlivesAdministration.Attributes;
-using OlivesAdministration.Controllers;
+using OlivesAdministration.Interfaces;
 using OlivesAdministration.Models;
 using OlivesAdministration.Module;
+using OlivesAdministration.Repositories;
 using Shared.Interfaces;
 using Shared.Repositories;
 
@@ -37,7 +38,7 @@ namespace OlivesAdministration
 
             // Find the file on physical path.
             var applicationConfigFile = Server.MapPath($"~/{applicationConfig}.json");
-            
+
             // Invalid application configuration file.
             if (!File.Exists(applicationConfigFile))
                 throw new NotImplementedException($"{applicationConfigFile} is required to make server run properly.");
@@ -61,40 +62,18 @@ namespace OlivesAdministration
 
             #endregion
 
-            #region IoC Initialization
+            #region IoC registration
 
             var builder = new ContainerBuilder();
 
-            // You can register controllers all at once using assembly scanning...
-            //builder.RegisterControllers(typeof(AdminController).Assembly);
-
             //// ...or you can register individual controlllers manually.
-            builder.RegisterType<AdminController>().InstancePerRequest();
-            builder.RegisterType<DoctorController>().InstancePerRequest();
-            builder.RegisterType<PatientController>().InstancePerRequest();
-            builder.RegisterType<PersonController>().InstancePerRequest();
-            builder.RegisterType<PlaceController>().InstancePerRequest();
-            builder.RegisterType<MedicalController>().InstancePerRequest();
-
-            #endregion
-
-            #region IoC registration
+            builder.RegisterApiControllers(typeof (WebApiApplication).Assembly);
 
             #region Repositories
 
-            // Repository account registration.
-            builder.RegisterType<RepositoryAccount>()
-                .As<IRepositoryAccount>()
-                .SingleInstance();
-
-            // Repository place registration.
-            builder.RegisterType<RepositoryPlace>()
-                .As<IRepositoryPlace>()
-                .SingleInstance();
-
-            builder.RegisterType<RepositoryMedicalRecord>()
-                .As<IRepositoryMedicalRecord>()
-                .SingleInstance();
+            builder.RegisterType<RepositoryAccountExtended>().As<IRepositoryAccountExtended>().SingleInstance();
+            builder.RegisterType<RepositoryPlace>().As<IRepositoryPlace>().SingleInstance();
+            builder.RegisterType<RepositoryMedicalRecord>().As<IRepositoryMedicalRecord>().SingleInstance();
 
             #endregion
 
