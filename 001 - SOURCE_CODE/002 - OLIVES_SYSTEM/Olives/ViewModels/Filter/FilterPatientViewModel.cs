@@ -13,7 +13,7 @@ namespace Olives.ViewModels.Filter
         public int? Id { get; set; }
 
         /// <summary>
-        /// Person who sent the patient filter request.
+        ///     Person who sent the patient filter request.
         /// </summary>
         public int Requester { get; set; }
 
@@ -66,26 +66,27 @@ namespace Olives.ViewModels.Filter
         public int? Gender { get; set; }
 
         /// <summary>
-        /// Whether records should be sorted ascendingly or decendingly.
+        ///     Whether records should be sorted ascendingly or decendingly.
         /// </summary>
         [InEnumerationsArray(new object[] {SortDirection.Ascending, SortDirection.Decending},
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
         public SortDirection Direction { get; set; } = SortDirection.Ascending;
 
         /// <summary>
-        /// Which property should be used for sorting.
+        ///     Which property should be used for sorting.
         /// </summary>
         [InEnumerationsArray(
             new object[]
             {
-                PatientFilterSort.Email, PatientFilterSort.Phone, PatientFilterSort.FirstName, PatientFilterSort.LastName, PatientFilterSort.Birthday,
+                PatientFilterSort.Email, PatientFilterSort.Phone, PatientFilterSort.FirstName,
+                PatientFilterSort.LastName, PatientFilterSort.Birthday,
                 PatientFilterSort.Gender
             }, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeOneOfArray")]
         public PatientFilterSort Sort { get; set; } = PatientFilterSort.Email;
 
         /// <summary>
-        /// Index of result page.
+        ///     Index of result page.
         /// </summary>
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language),
@@ -93,7 +94,7 @@ namespace Olives.ViewModels.Filter
         public int Page { get; set; } = FieldLength.PageIndexMin;
 
         /// <summary>
-        /// Records per page.
+        ///     Records per page.
         /// </summary>
         [Range(FieldLength.RecordMin, FieldLength.RecordMax, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]

@@ -16,8 +16,8 @@ using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels.Filter;
-using Shared.ViewModels.Initialize;
 using Olives.Controllers;
+using Olives.ViewModels.Initialize;
 
 namespace Olives.Controllers
 {

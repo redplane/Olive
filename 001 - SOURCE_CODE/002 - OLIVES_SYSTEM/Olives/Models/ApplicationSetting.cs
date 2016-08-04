@@ -15,15 +15,15 @@ namespace Olives.Models
         ///     Folder where avatar files should be stored.
         /// </summary>
         [JsonProperty("avatarStorage")]
-        public ServerPath AvatarStorage { get; set; }
+        public PathService AvatarStorage { get; set; }
 
         /// <summary>
         ///     Folder where private files should be stored.
         /// </summary>
         [JsonProperty("medicalImageStorage")]
-        public ServerPath MedicalImageStorage { get; set; }
+        public PathService MedicalImageStorage { get; set; }
 
         [JsonProperty("prescriptionImageStorage")]
-        public ServerPath PrescriptionStorage { get; set; }
+        public PathService PrescriptionStorage { get; set; }
     }
 }

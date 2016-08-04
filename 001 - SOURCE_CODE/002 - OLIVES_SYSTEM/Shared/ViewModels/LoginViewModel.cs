@@ -24,9 +24,5 @@ namespace Shared.ViewModels
         [RegexMatch(Regexes.Password, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "RegexPassword")]
         public string Password { get; set; }
-
-        [InEnumerationsArray(new object[] {Enumerations.Role.Patient, Enumerations.Role.Admin, Enumerations.Role.Doctor},
-            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "InvalidRole")]
-        public int? Role { get; set; }
     }
 }

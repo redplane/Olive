@@ -218,14 +218,13 @@
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ResponseErrror.cs" />
-    <Compile Include="Models\ServerPath.cs" />
+    <Compile Include="Models\PathService.cs" />
     <Compile Include="Models\Specialty.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SugarBlood.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\TaskDetail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\RepositoryMessage.cs" />
     <Compile Include="Repositories\RepositoryNotification.cs" />
@@ -260,7 +259,6 @@
       <DependentUpon>Language.vi.resx</DependentUpon>
     </Compile>
     <Compile Include="Services\TimeService.cs" />
-    <Compile Include="ViewModels\AccountViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterAddictionViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterAllergyViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterAppointmentViewModel.cs" />
@@ -287,14 +285,11 @@
     <Compile Include="ViewModels\Response\ResponsePrescriptionImageFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseRatingFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseRelatedDoctorFilter.cs" />
-    <Compile Include="ViewModels\Initialize\InitializeMedicalImageViewModel.cs" />
     <Compile Include="ViewModels\RelatedDoctorViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseAddictionFilter.cs" />
     <Compile Include="ViewModels\Response\ResponsePlaceFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseAllergyFilter.cs" />
-    <Compile Include="ViewModels\Response\ResponseAppointment.cs" />
     <Compile Include="ViewModels\Response\ResponseAppointmentFilter.cs" />
-    <Compile Include="ViewModels\PersonViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseBloodPressureFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseMedicalImageFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseMedicalRecordFilter.cs" />

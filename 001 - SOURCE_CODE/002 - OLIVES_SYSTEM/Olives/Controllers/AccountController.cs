@@ -359,7 +359,7 @@ namespace Olives.Controllers
             if (account == null)
             {
                 _log.Error(
-                    $"No record has been found with {loginViewModel.Email} - {loginViewModel.Password} - {loginViewModel.Role} ");
+                    $"No record has been found with {loginViewModel.Email} - {loginViewModel.Password} ");
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
                     Error = $"{Language.WarnRecordNotFound}"

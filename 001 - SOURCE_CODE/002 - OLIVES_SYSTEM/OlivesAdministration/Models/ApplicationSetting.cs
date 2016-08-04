@@ -9,12 +9,12 @@ namespace OlivesAdministration.Models
         ///     Folder where avatar files should be stored.
         /// </summary>
         [JsonProperty("avatarStorage")]
-        public ServerPath AvatarStorage { get; set; }
+        public PathService AvatarStorage { get; set; }
 
         /// <summary>
         ///     Folder where private files should be stored.
         /// </summary>
         [JsonProperty("privateStorage")]
-        public ServerPath PrivateStorage { get; set; }
+        public PathService PrivateStorage { get; set; }
     }
 }

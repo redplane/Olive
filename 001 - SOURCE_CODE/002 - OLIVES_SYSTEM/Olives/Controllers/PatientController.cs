@@ -22,7 +22,6 @@ using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels;
 using Shared.ViewModels.Filter;
-using Shared.ViewModels.Initialize;
 
 namespace Olives.Controllers
 {
