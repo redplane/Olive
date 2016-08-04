@@ -265,7 +265,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/relationship/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Patient})]
+        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
         public async Task<HttpResponseMessage> FilterRelationship([FromBody] FilterRelationshipViewModel filter)
         {
             #region Parameters validation
@@ -309,13 +309,15 @@ namespace Olives.Controllers
                     {
                         Id = x.Source,
                         x.Patient.Person.FirstName,
-                        x.Patient.Person.LastName
+                        x.Patient.Person.LastName,
+                        Photo = InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Patient.Person.Photo, Values.StandardImageExtension)
                     },
                     Target = new
                     {
                         Id = x.Target,
                         x.Doctor.Person.FirstName,
-                        x.Doctor.Person.LastName
+                        x.Doctor.Person.LastName,
+                        Photo = InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Doctor.Person.Photo, Values.StandardImageExtension)
                     },
                     x.Created,
                     x.Status

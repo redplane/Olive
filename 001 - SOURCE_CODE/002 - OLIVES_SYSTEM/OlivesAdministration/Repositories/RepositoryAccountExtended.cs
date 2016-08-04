@@ -79,9 +79,9 @@ namespace OlivesAdministration.Repositories
             #region Doctors
 
             // Filter doctor by place.
-            if (!string.IsNullOrWhiteSpace(filter.City)) doctors = doctors.Where(x => x.City.Contains(filter.City));
+            if (!string.IsNullOrWhiteSpace(filter.City)) doctors = doctors.Where(x => x.Place.City.Contains(filter.City));
             if (!string.IsNullOrWhiteSpace(filter.Country))
-                doctors = doctors.Where(x => x.Country.Contains(filter.Country));
+                doctors = doctors.Where(x => x.Place.Country.Contains(filter.Country));
 
             // Filter by money.
             if (filter.MinMoney != null) doctors = doctors.Where(x => x.Money >= filter.MinMoney);

@@ -66,6 +66,7 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [HttpGet]
         [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> FindPatientAsync([FromUri] int id)
         {

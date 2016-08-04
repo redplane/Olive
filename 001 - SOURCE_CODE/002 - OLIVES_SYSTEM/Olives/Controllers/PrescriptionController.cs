@@ -220,16 +220,18 @@ namespace Olives.Controllers
                 #region Prescription initialization
 
                 var prescription = new Prescription();
+                prescription.Creator = medicalRecord.Creator;
                 prescription.Owner = medicalRecord.Owner;
                 prescription.MedicalRecordId = medicalRecord.Id;
                 prescription.From = info.From;
+                prescription.Name = info.Name;
                 prescription.To = info.To;
-                if (info.Medicines != null)
-                    prescription.Medicine = JsonConvert.SerializeObject(info.Medicines);
-
                 prescription.Note = info.Note;
                 prescription.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
+                if (info.Medicines != null)
+                    prescription.Medicine = JsonConvert.SerializeObject(info.Medicines);
+                
                 // Initialize prescription to database.
                 prescription = await _repositoryPrescription.InitializePrescriptionAsync(prescription);
 

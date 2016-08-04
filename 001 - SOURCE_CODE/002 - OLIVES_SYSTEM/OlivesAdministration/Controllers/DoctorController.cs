@@ -81,14 +81,14 @@ namespace OlivesAdministration.Controllers
                         account.Doctor.Rank,
                         Specialty = new
                         {
-                            Id = account.Doctor.SpecialtyId,
-                            Name = account.Doctor.SpecialtyName
+                            account.Doctor.Specialty.Id,
+                            account.Doctor.Specialty.Name
                         },
                         Place = new
                         {
-                            Id = account.Doctor.PlaceId,
-                            account.Doctor.City,
-                            account.Doctor.Country
+                            account.Doctor.Place.Id,
+                            account.Doctor.Place.City,
+                            account.Doctor.Place.Country
                         },
                         account.Doctor.Voters,
                         account.Doctor.Money,
@@ -162,14 +162,14 @@ namespace OlivesAdministration.Controllers
                         x.Rank,
                         Specialty = new
                         {
-                            Id = x.SpecialtyId,
-                            Name = x.SpecialtyName
+                            x.Specialty.Id,
+                            x.Specialty.Name
                         },
                         Place = new
                         {
-                            Id = x.PlaceId,
-                            x.City,
-                            x.Country
+                            x.Place.Id,
+                            x.Place.City,
+                            x.Place.Country
                         },
                         x.Voters,
                         x.Money,

@@ -34,7 +34,7 @@ namespace Olives.Controllers
         ///     Initialize an instance of AccountController with Dependency injections.
         /// </summary>
         /// <param name="repositoryAccountExtended"></param>
-        /// <param name="repositoryActivationCode"></param>
+        /// <param name="repositoryRelation"></param>
         /// <param name="repositorySpecialty"></param>
         /// <param name="repositoryPlace"></param>
         /// <param name="log"></param>
@@ -42,13 +42,13 @@ namespace Olives.Controllers
         /// <param name="timeService"></param>
         /// <param name="applicationSetting"></param>
         public DoctorController(IRepositoryAccountExtended repositoryAccountExtended,
-            IRepositoryCode repositoryActivationCode, IRepositorySpecialty repositorySpecialty,
+            IRepositoryRelation repositoryRelation, IRepositorySpecialty repositorySpecialty,
             IRepositoryPlace repositoryPlace,
             ILog log, IEmailService emailService, ITimeService timeService,
             ApplicationSetting applicationSetting)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
-            _repositoryActivationCode = repositoryActivationCode;
+            _repositoryRelation = repositoryRelation;
             _repositorySpecialty = repositorySpecialty;
             _repositoryPlace = repositoryPlace;
             _log = log;
@@ -67,11 +67,14 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] { Role.Patient })]
+        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
         public async Task<HttpResponseMessage> FindDoctorAsync([FromUri] int id)
         {
             #region Result find
 
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            
             // Find the doctor by using id.
             var account = await _repositoryAccountExtended.FindPersonAsync(id, null, null, (byte)Role.Doctor, StatusAccount.Active);
 
@@ -84,7 +87,21 @@ namespace Olives.Controllers
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-            
+
+            #endregion
+
+            #region Relationship validate
+
+            var isRelationshipAvailable = await _repositoryRelation.IsPeopleConnected(requester.Id, id);
+            if (!isRelationshipAvailable)
+            {
+                _log.Error($"There is no relationship between requester [Id: {requester.Id}] and doctor [Id: {id}]");
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
+
             #endregion
 
             #region Result handling
@@ -355,7 +372,7 @@ namespace Olives.Controllers
 
             try
             {
-
+                filter.Status = StatusAccount.Active;
                 var result = await _repositoryAccountExtended.FilterDoctorsAsync(filter);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
@@ -414,9 +431,9 @@ namespace Olives.Controllers
         private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
-        ///     Repository of activation codes.
+        /// Repository which provides functions to access relationship database.
         /// </summary>
-        private readonly IRepositoryCode _repositoryActivationCode;
+        private readonly IRepositoryRelation _repositoryRelation;
 
         /// <summary>
         ///     Repository of specialty.
