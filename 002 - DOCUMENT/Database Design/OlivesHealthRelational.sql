@@ -174,7 +174,6 @@ CREATE TABLE Doctor
 	Rank				FLOAT,
 	SpecialtyId			INT NOT NULL,
 	Voters				INT				NOT NULL,
-	Money				INT				NOT NULL,
 	PlaceId				INT				NOT NULL,
 	
 	FOREIGN KEY (Id) REFERENCES Person(Id),
@@ -186,7 +185,6 @@ CREATE TABLE Doctor
 CREATE TABLE Patient
 (
 	Id					INT NOT NULL PRIMARY KEY,
-	Money				INT		NOT NULL,
 	Weight				FLOAT,
 	Height				FLOAT
 

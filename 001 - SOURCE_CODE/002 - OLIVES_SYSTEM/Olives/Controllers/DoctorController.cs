@@ -405,7 +405,6 @@ namespace Olives.Controllers
                             x.Place.Country
                         },
                         x.Voters,
-                        x.Money,
                         x.Person.Created,
                         x.Person.LastModified
                     }),

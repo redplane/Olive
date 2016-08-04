@@ -8,7 +8,6 @@
         LastModified,
         Birthday,
         Gender,
-        Money,
         Status,
         Rank
     }

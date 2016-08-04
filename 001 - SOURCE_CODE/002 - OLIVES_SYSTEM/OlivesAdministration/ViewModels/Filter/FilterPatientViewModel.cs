@@ -87,21 +87,7 @@ namespace OlivesAdministration.ViewModels.Filter
         [NumericPropertyCompare("MinCreated", Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public long? MaxCreated { get; set; }
-
-        /// <summary>
-        ///     Amount of money user's must be higher than.
-        /// </summary>
-        [NumericPropertyCompare("MaxMoney", Comparision = Comparision.LowerEqual,
-            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
-        public double? MinMoney { get; set; }
-
-        /// <summary>
-        ///     Amount of money user's must be lower than.
-        /// </summary>
-        [NumericPropertyCompare("MinMoney", Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
-        public double? MaxMoney { get; set; }
-
+        
         [NumericPropertyCompare("MaxWeight", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         [Range(Values.MinBodyWeight, Values.MaxBodyWeight, ErrorMessageResourceType = typeof (Language),
@@ -136,12 +122,12 @@ namespace OlivesAdministration.ViewModels.Filter
         /// <summary>
         /// Whether record should be filtered ascending or decending.
         /// </summary>
-        public SortDirection Direction { get; set; }
+        public SortDirection Direction { get; set; } = SortDirection.Ascending;
 
         /// <summary>
         /// Which property should be used for sorting.
         /// </summary>
-        public FilterPatientSort Sort { get; set; }
+        public FilterPatientSort Sort { get; set; } = FilterPatientSort.FirstName;
 
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language),

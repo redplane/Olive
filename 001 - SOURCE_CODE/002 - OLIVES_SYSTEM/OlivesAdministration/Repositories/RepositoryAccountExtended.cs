@@ -82,11 +82,7 @@ namespace OlivesAdministration.Repositories
             if (!string.IsNullOrWhiteSpace(filter.City)) doctors = doctors.Where(x => x.Place.City.Contains(filter.City));
             if (!string.IsNullOrWhiteSpace(filter.Country))
                 doctors = doctors.Where(x => x.Place.Country.Contains(filter.Country));
-
-            // Filter by money.
-            if (filter.MinMoney != null) doctors = doctors.Where(x => x.Money >= filter.MinMoney);
-            if (filter.MaxMoney != null) doctors = doctors.Where(x => x.Money <= filter.MaxMoney);
-
+            
             // Filter by rank.
             if (filter.MinRank != null) doctors = doctors.Where(x => x.Rank >= filter.MinRank);
             if (filter.MaxRank != null) doctors = doctors.Where(x => x.Rank <= filter.MaxRank);
@@ -131,9 +127,6 @@ namespace OlivesAdministration.Repositories
                         case FilterDoctorSort.LastName:
                             doctors = doctors.OrderByDescending(x => x.Person.LastName);
                             break;
-                        case FilterDoctorSort.Money:
-                            doctors = doctors.OrderByDescending(x => x.Money);
-                            break;
                         case FilterDoctorSort.Status:
                             doctors = doctors.OrderByDescending(x => x.Person.Status);
                             break;
@@ -162,9 +155,6 @@ namespace OlivesAdministration.Repositories
                             break;
                         case FilterDoctorSort.LastName:
                             doctors = doctors.OrderBy(x => x.Person.LastName);
-                            break;
-                        case FilterDoctorSort.Money:
-                            doctors = doctors.OrderBy(x => x.Money);
                             break;
                         case FilterDoctorSort.Status:
                             doctors = doctors.OrderBy(x => x.Person.Status);
@@ -240,14 +230,7 @@ namespace OlivesAdministration.Repositories
             // Filter by gender.
             if (filter.Gender != null)
                 patients = patients.Where(x => x.Person.Gender == filter.Gender);
-
-            // Filter by money.
-            if (filter.MinMoney != null)
-                patients = patients.Where(x => x.Money >= filter.MinMoney);
-
-            if (filter.MaxMoney != null)
-                patients = patients.Where(x => x.Money <= filter.MaxMoney);
-
+            
             // Filter by created.
             if (filter.MinCreated != null)
                 patients = patients.Where(x => x.Person.Created >= filter.MinCreated);
@@ -297,9 +280,6 @@ namespace OlivesAdministration.Repositories
                         case FilterPatientSort.Gender:
                             patients = patients.OrderByDescending(x => x.Person.Gender);
                             break;
-                        case FilterPatientSort.Money:
-                            patients = patients.OrderByDescending(x => x.Money);
-                            break;
                         case FilterPatientSort.Status:
                             patients = patients.OrderByDescending(x => x.Person.Status);
                             break;
@@ -325,9 +305,6 @@ namespace OlivesAdministration.Repositories
                             break;
                         case FilterPatientSort.Gender:
                             patients = patients.OrderBy(x => x.Person.Gender);
-                            break;
-                        case FilterPatientSort.Money:
-                            patients = patients.OrderBy(x => x.Money);
                             break;
                         case FilterPatientSort.Status:
                             patients = patients.OrderBy(x => x.Person.Status);

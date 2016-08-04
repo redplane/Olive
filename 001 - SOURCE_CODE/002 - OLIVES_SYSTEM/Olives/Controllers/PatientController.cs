@@ -178,10 +178,9 @@ namespace Olives.Controllers
             person.Role = (byte)Role.Patient;
             person.Status = (byte)StatusAccount.Pending;
 
-            var patient = new Patient();
-            patient.Money = 0;
 
             // Assign personal information to patient.
+            var patient = new Patient();
             person.Patient = patient;
 
             try
@@ -207,8 +206,6 @@ namespace Olives.Controllers
                         patient.Person.Phone,
                         patient.Person.Role,
                         patient.Person.Status,
-                        patient.Person.Photo,
-                        patient.Money,
                         patient.Person.Created
                     }
                 });
@@ -328,7 +325,6 @@ namespace Olives.Controllers
                             InitializeUrl(_applicationSetting.AvatarStorage.Relative, requester.Photo,
                                 Values.StandardImageExtension),
                         requester.Patient.Height,
-                        requester.Patient.Money,
                         requester.Patient.Weight
                     }
                 });

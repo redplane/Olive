@@ -87,21 +87,7 @@ namespace OlivesAdministration.ViewModels.Filter
         [NumericPropertyCompare("MinCreated", Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public long? MaxCreated { get; set; }
-
-        /// <summary>
-        ///     Amount of money user's must be higher than.
-        /// </summary>
-        [NumericPropertyCompare("MaxMoney", Comparision = Comparision.LowerEqual,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
-        public double? MinMoney { get; set; }
-
-        /// <summary>
-        ///     Amount of money user's must be lower than.
-        /// </summary>
-        [NumericPropertyCompare("MinMoney", Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
-        public double? MaxMoney { get; set; }
-
+        
         /// <summary>
         ///     Name of city where doctor lives.
         /// </summary>
@@ -146,7 +132,7 @@ namespace OlivesAdministration.ViewModels.Filter
         /// <summary>
         /// Which property should be used for sorting.
         /// </summary>
-        [InEnumerationsArray(new object[] { FilterDoctorSort.Created, FilterDoctorSort.Birthday, FilterDoctorSort.FirstName, FilterDoctorSort.Gender, FilterDoctorSort.LastModified, FilterDoctorSort.LastName, FilterDoctorSort.Money, FilterDoctorSort.Status }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
+        [InEnumerationsArray(new object[] { FilterDoctorSort.Created, FilterDoctorSort.Birthday, FilterDoctorSort.FirstName, FilterDoctorSort.Gender, FilterDoctorSort.LastModified, FilterDoctorSort.LastName, FilterDoctorSort.Status }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
         public FilterDoctorSort Sort { get; set; } = FilterDoctorSort.FirstName;
 
         /// <summary>

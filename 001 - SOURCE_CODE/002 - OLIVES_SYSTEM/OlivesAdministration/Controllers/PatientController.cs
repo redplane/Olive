@@ -110,7 +110,6 @@ namespace OlivesAdministration.Controllers
                         Photo =
                             InitializeUrl(_applicationSetting.AvatarStorage.Relative, account.Photo,
                                 Values.StandardImageExtension),
-                        account.Patient.Money,
                         account.Patient.Height,
                         account.Patient.Weight
                     }
@@ -178,7 +177,6 @@ namespace OlivesAdministration.Controllers
                     Photo =
                         InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Person.Photo,
                             Values.StandardImageExtension),
-                    x.Money,
                     x.Height,
                     x.Weight
                 }),

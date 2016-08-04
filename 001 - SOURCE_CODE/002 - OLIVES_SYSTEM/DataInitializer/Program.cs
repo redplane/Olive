@@ -130,19 +130,38 @@ namespace DataInitializer
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
-            for (var i = 0; i < max; i++)
+            var countries = new [] {"Vietnam", "Another Vietnam"};
+            var cities = new[]
             {
-                var place = new Place();
+                "An Giang",
+                "Bà Rịa - Vũng Tàu","Bắc Giang","Bắc Kạn","Bạc Liêu","Bắc Ninh","Bến Tre","Bình Định","Bình Dương","Bình Phước","Bình Thuận",
+                "Cà Mau","Cao Bằng","Cần Thơ",
+                "Đắk Lắk","Đắk Nông","Điện Biên","Đồng Nai","Đồng Tháp","Đà Nẵng",
+                "Gia Lai",
+                "Hà Giang","Hà Nam","Hà Tĩnh","Hải Dương","Hậu Giang","Hòa Bình","Hưng Yên","Hải Phòng","Hà Nội",
+                "Khánh Hòa","Kiên Giang","Kon Tum",
+                "Lai Châu","Lâm Đồng","Lạng Sơn","Lào Cai","Long An",
+                "Nam Định","Nghệ An","Ninh Bình","Ninh Thuận",
+                "Phú Thọ","Phú Yên",
+                "Quảng Bình","Quảng Nam","Quảng Ngãi","Quảng Ninh","Quảng Trị",
+                "Sóc Trăng","Sơn La",
+                "Tây Ninh","Thái Bình","Thái Nguyên","Thanh Hóa","Thừa Thiên Huế","Tiền Giang","Trà Vinh","Tuyên Quang",
+                "Vĩnh Long","Vĩnh Phúc","Yên Bái",
+                "TP HCM"
+            };
 
-                for (var j = 0; j < 10; j++)
+            foreach (var country in countries)
+            {
+                foreach (var city in cities)
                 {
-                    place.City = $"City[{j}]";
-                    place.Country = $"Country[{j}]";
+                    var place = new Place();
+                    place.City = city;
+                    place.Country = country;
+
+                    context.Places.Add(place);
                 }
-
-                context.Places.Add(place);
             }
-
+            
             // Save database changes.
             context.SaveChanges();
         }
@@ -193,17 +212,17 @@ namespace DataInitializer
                     person.LastName = $"LastName[{i}]";
                     person.FullName = person.FirstName + " " + person.LastName;
                     person.Gender = 0;
-                    person.Role = (byte) Role.Doctor;
+                    person.Role = (byte)Role.Doctor;
                     person.Created = TimeService.DateTimeUtcToUnix(DateTime.UtcNow);
                     person.Address = "New York, NY, USA";
                     person.Birthday = TimeService.DateTimeUtcToUnix(DateTime.UtcNow);
                     person.Photo = $"{random.Next(1, 4)}";
                     if (i > 25)
-                        person.Status = (byte) StatusAccount.Active;
+                        person.Status = (byte)StatusAccount.Active;
                     else if (i == 25)
-                        person.Status = (byte) StatusAccount.Pending;
+                        person.Status = (byte)StatusAccount.Pending;
                     else
-                        person.Status = (byte) StatusAccount.Inactive;
+                        person.Status = (byte)StatusAccount.Inactive;
 
                     var place = places[random.Next(places.Count)];
 
@@ -257,21 +276,20 @@ namespace DataInitializer
                 person.FullName = person.FirstName + " " + person.LastName;
                 person.Photo = $"{random.Next(1, 4)}";
                 person.Gender = 0;
-                person.Role = (byte) Role.Patient;
+                person.Role = (byte)Role.Patient;
                 person.Created = TimeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                 if (i > 25)
-                    person.Status = (byte) StatusAccount.Active;
+                    person.Status = (byte)StatusAccount.Active;
                 else if (i == 25)
-                    person.Status = (byte) StatusAccount.Pending;
+                    person.Status = (byte)StatusAccount.Pending;
                 else
-                    person.Status = (byte) StatusAccount.Inactive;
+                    person.Status = (byte)StatusAccount.Inactive;
 
                 // Specific information.
                 var patient = new Patient();
                 patient.Height = i;
                 patient.Weight = i;
-                patient.Money = i;
                 patient.Person = person;
 
                 // Initialize or update patient information.
@@ -298,15 +316,15 @@ namespace DataInitializer
                 person.LastName = $"LastName[{i}]";
                 person.FullName = person.FirstName + " " + person.LastName;
                 person.Gender = 0;
-                person.Role = (byte) Role.Admin;
+                person.Role = (byte)Role.Admin;
                 person.Created = TimeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                 if (i > 25)
-                    person.Status = (byte) StatusAccount.Active;
+                    person.Status = (byte)StatusAccount.Active;
                 else if (i == 25)
-                    person.Status = (byte) StatusAccount.Pending;
+                    person.Status = (byte)StatusAccount.Pending;
                 else
-                    person.Status = (byte) StatusAccount.Inactive;
+                    person.Status = (byte)StatusAccount.Inactive;
 
                 context.People.Add(person);
             }
@@ -426,7 +444,7 @@ namespace DataInitializer
 
 
                 }
-                
+
                 #endregion
 
                 #region Medical note
@@ -446,7 +464,7 @@ namespace DataInitializer
 
                 #endregion
             }
-            
+
         }
 
         /// <summary>
@@ -458,10 +476,10 @@ namespace DataInitializer
         private static void InitializeAppointment(Person patient, Person doctor, int max = 60)
         {
             var context = new OlivesHealthEntities();
-            var half = max/2;
-            var quarter = max/4;
-            var secondQuater = quarter*2;
-            var thirdQuater = quarter*3;
+            var half = max / 2;
+            var quarter = max / 4;
+            var secondQuater = quarter * 2;
+            var thirdQuater = quarter * 3;
 
             var toTime = TimeService.DateTimeUtcToUnix(new DateTime(2016, 12, 31).ToUniversalTime());
 
@@ -503,13 +521,13 @@ namespace DataInitializer
                 appointment.Created = epochFromTime;
 
                 if (i <= quarter)
-                    appointment.Status = (byte) StatusAppointment.Cancelled;
+                    appointment.Status = (byte)StatusAppointment.Cancelled;
                 else if (quarter < i && i <= secondQuater)
-                    appointment.Status = (byte) StatusAppointment.Pending;
+                    appointment.Status = (byte)StatusAppointment.Pending;
                 else if (secondQuater < i && i <= thirdQuater)
-                    appointment.Status = (byte) StatusAppointment.Active;
+                    appointment.Status = (byte)StatusAppointment.Active;
                 else
-                    appointment.Status = (byte) StatusAppointment.Done;
+                    appointment.Status = (byte)StatusAppointment.Done;
 
                 context.Appointments.Add(appointment);
 
@@ -565,8 +583,8 @@ namespace DataInitializer
             var unixCurrentTime = TimeService.DateTimeUtcToUnix(unixTime);
 
             var random = new Random();
-            var iMinHeartRate = (int) Values.MinHeartRate;
-            var iMaxHeartRate = (int) Values.MaxHeartRate;
+            var iMinHeartRate = (int)Values.MinHeartRate;
+            var iMaxHeartRate = (int)Values.MaxHeartRate;
 
             for (var i = 0; i < records; i++)
             {
@@ -601,8 +619,8 @@ namespace DataInitializer
 
             // Random number generator.
             var random = new Random();
-            var iMinSugarMol = (int) Values.MinSugarBloodMmol;
-            var iMaxSugarMol = (int) Values.MaxSugarBloodMmol;
+            var iMinSugarMol = (int)Values.MinSugarBloodMmol;
+            var iMaxSugarMol = (int)Values.MaxSugarBloodMmol;
 
             for (var i = 0; i < records; i++)
             {

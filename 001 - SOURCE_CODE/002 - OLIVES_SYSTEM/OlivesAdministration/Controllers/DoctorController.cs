@@ -91,7 +91,6 @@ namespace OlivesAdministration.Controllers
                             account.Doctor.Place.Country
                         },
                         account.Doctor.Voters,
-                        account.Doctor.Money,
                         account.Created,
                         account.LastModified
                     }
@@ -172,7 +171,6 @@ namespace OlivesAdministration.Controllers
                             x.Place.Country
                         },
                         x.Voters,
-                        x.Money,
                         x.Person.Created,
                         x.Person.LastModified
                     }),

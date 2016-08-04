@@ -22,7 +22,6 @@ namespace Shared.Models
         }
     
         public int Id { get; set; }
-        public int Money { get; set; }
         public Nullable<double> Weight { get; set; }
         public Nullable<double> Height { get; set; }
     
