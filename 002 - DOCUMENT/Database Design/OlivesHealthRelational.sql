@@ -140,23 +140,6 @@ CREATE TABLE Appointment
 	FOREIGN KEY (Dater) REFERENCES Person(Id)
 );
 
--- Relation table
-CREATE TABLE Relation
-(
-	Id					INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	Source				INT NOT NULL,
-	SourceFirstName		NVARCHAR(32) NOT NULL,
-	SourceLastName		NVARCHAR(32) NOT NULL,
-	Target				INT NOT NULL,
-	TargetFirstName		NVARCHAR(32) NOT NULL,
-	TargetLastName		NVARCHAR(32) NOT NULL,
-	Created				FLOAT NOT NULL,
-	Status				TINYINT NOT NULL,
-
-	FOREIGN KEY (Source) REFERENCES Person(Id),
-	FOREIGN KEY (Target) REFERENCES Person(Id)			
-);
-
 -- Allergy table.
 CREATE TABLE Allergy
 (
@@ -190,13 +173,10 @@ CREATE TABLE Doctor
 	Id					INT NOT NULL PRIMARY KEY,
 	Rank				FLOAT,
 	SpecialtyId			INT NOT NULL,
-	SpecialtyName		NVARCHAR(32)	NOT NULL,
 	Voters				INT				NOT NULL,
 	Money				INT				NOT NULL,
 	PlaceId				INT				NOT NULL,
-	City				NVARCHAR(64)	NOT NULL,
-	Country				NVARCHAR(64)	NOT NULL,
-
+	
 	FOREIGN KEY (Id) REFERENCES Person(Id),
 	FOREIGN KEY (SpecialtyId) REFERENCES Specialty(Id),
 	FOREIGN KEY (PlaceId) REFERENCES Place(Id)
@@ -212,6 +192,19 @@ CREATE TABLE Patient
 
 	FOREIGN KEY (Id) REFERENCES Person(Id)
 )
+
+-- Relation table
+CREATE TABLE Relation
+(
+	Id					INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	Source				INT NOT NULL,
+	Target				INT NOT NULL,
+	Created				FLOAT NOT NULL,
+	Status				TINYINT NOT NULL,
+
+	FOREIGN KEY (Source) REFERENCES Patient(Id),
+	FOREIGN KEY (Target) REFERENCES Doctor(Id)			
+);
 
 CREATE TABLE MedicalCategory
 (
@@ -322,11 +315,7 @@ CREATE TABLE ExperimentNote
 CREATE TABLE Rating 
 (
 	Maker					INT NOT NULL,
-	MakerFirstName			NVARCHAR(32),
-	MakerLastName			NVARCHAR(32),
 	Target					INT NOT NULL,
-	TargetFirstName			NVARCHAR(32),
-	TargetLastName			NVARCHAR(32),
 	Value					INT NOT NULL,
 	Comment					NVARCHAR(128),
 	Created					FLOAT NOT NULL,
@@ -388,3 +377,4 @@ CREATE TABLE [Message]
 	FOREIGN KEY (Broadcaster) REFERENCES Person(Id),
 	FOREIGN KEY (Recipient) REFERENCES Person(Id)
 )
+
