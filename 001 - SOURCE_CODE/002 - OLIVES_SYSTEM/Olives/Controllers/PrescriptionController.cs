@@ -352,47 +352,70 @@ namespace Olives.Controllers
             {
                 #region Information update
 
+                // This flag is for checking whether information has been updated or not.
+                var informationChanged = false;
+
+                if (!string.IsNullOrWhiteSpace(info.Name))
+                {
+                    prescription.Name = info.Name;
+                    informationChanged = true;
+                }
+
                 if (info.From != null)
+                {
                     prescription.From = info.From.Value;
+                    informationChanged = true;
+                }
 
                 if (info.To != null)
+                {
                     prescription.To = info.To.Value;
+                    informationChanged = true;
+                }
 
                 if (info.Medicines != null)
+                {
                     prescription.Medicine = JsonConvert.SerializeObject(info.Medicines);
+                    informationChanged = true;
+                }
 
                 if (!string.IsNullOrEmpty(info.Note))
+                {
                     prescription.Note = info.Note;
+                    informationChanged = true;
+                }
 
-                // Update last modified time.
-                var unix = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
-                prescription.LastModified = unix;
+                #endregion
 
                 // Initialize prescription to database.
-                prescription = await _repositoryPrescription.InitializePrescriptionAsync(prescription);
+                if (informationChanged)
+                {
+                    // Update last modified time.
+                    var unix = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+                    prescription.LastModified = unix;
+                    prescription = await _repositoryPrescription.InitializePrescriptionAsync(prescription);
+                    
+                    #region Notification broadcast
 
-                #endregion
-                
-                #region Notification broadcast
+                    var recipient = prescription.Owner;
+                    if (requester.Id == prescription.Owner)
+                        recipient = prescription.Creator;
 
-                var recipient = prescription.Owner;
-                if (requester.Id == prescription.Owner)
-                    recipient = prescription.Creator;
-                
-                var notification = new Notification();
-                notification.Type = (byte)NotificationType.Edit;
-                notification.Topic = (byte)NotificationTopic.Prescription;
-                notification.Broadcaster = requester.Id;
-                notification.Recipient = recipient;
-                notification.Record = prescription.Id;
-                notification.Message = string.Format(Language.NotifyPrescriptionModified, requester.FullName);
-                notification.Created = unix;
+                    var notification = new Notification();
+                    notification.Type = (byte) NotificationType.Edit;
+                    notification.Topic = (byte) NotificationTopic.Prescription;
+                    notification.Broadcaster = requester.Id;
+                    notification.Recipient = recipient;
+                    notification.Record = prescription.Id;
+                    notification.Message = string.Format(Language.NotifyPrescriptionModified, requester.FullName);
+                    notification.Created = unix;
 
-                // Broadcast the notification with fault tolerant.
-                await _notificationService.BroadcastNotificationAsync(notification, Hub);
-                
-                #endregion
-                
+                    // Broadcast the notification with fault tolerant.
+                    await _notificationService.BroadcastNotificationAsync(notification, Hub);
+
+                    #endregion
+                }
+
                 #region Result handling
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
