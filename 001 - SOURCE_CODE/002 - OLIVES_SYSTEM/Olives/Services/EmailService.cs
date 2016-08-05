@@ -39,13 +39,14 @@ namespace Olives.Services
 
         public EmailService()
         {
+            EmailTemplatesCollection = new Dictionary<string, EmailModel>();
         }
 
         /// <summary>
         ///     Initialize an instance of Email service with specific configurations.
         /// </summary>
         /// <param name="config"></param>
-        public EmailService(SmtpSetting config)
+        public EmailService(SmtpSetting config) : this()
         {
             _smtpClient = new SmtpClient();
             _smtpClient.Port = config.Port;

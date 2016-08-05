@@ -106,8 +106,9 @@ namespace Olives
             #endregion
 
             #region Services
-            
-            builder.RegisterType<EmailService>().As<IEmailService>().OnActivating(e => e.ReplaceInstance(LoadEmailService(applicationSetting.SmtpSetting))).SingleInstance();
+
+            var emailService = LoadEmailService(applicationSetting.SmtpSetting);
+            builder.RegisterType<EmailService>().As<IEmailService>().OnActivating(e => e.ReplaceInstance(emailService)).SingleInstance();
             builder.RegisterType<FileService>().As<IFileService>().SingleInstance();
             builder.RegisterType<TimeService>().As<ITimeService>();
             builder.RegisterType<NotificationService>().As<INotificationService>().OnActivating(e => e.ReplaceInstance(new NotificationService(repositoryRealtimeConnection)));
