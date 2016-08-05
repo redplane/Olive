@@ -11,7 +11,6 @@ namespace Olives.ViewModels.Edit
         /// <summary>
         ///     Person first name.
         /// </summary>
-        [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "RequireFirstName")]
         [MaxLength(FieldLength.LastNameMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidFirstName")]
         public string FirstName { get; set; }
@@ -19,7 +18,6 @@ namespace Olives.ViewModels.Edit
         /// <summary>
         ///     Person last name.
         /// </summary>
-        [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "RequireLastName")]
         [MaxLength(FieldLength.LastNameMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidLastName")]
         public string LastName { get; set; }

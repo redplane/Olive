@@ -28,97 +28,110 @@ namespace DataInitializer
 
         private static void Main(string[] args)
         {
-            Console.WriteLine("Intialize category");
-            InitializeCategory(MaxRecord);
+            //Console.WriteLine("Intialize category");
+            //InitializeCategory(MaxRecord);
 
-            Console.WriteLine("Initialize places");
-            InitializePlaces(MaxRecord);
+            //Console.WriteLine("Initialize places");
+            //InitializePlaces(MaxRecord);
 
-            Console.WriteLine("Initialize specialty");
-            InitializeSpecialties(MaxRecord);
+            //Console.WriteLine("Initialize specialty");
+            //InitializeSpecialties(MaxRecord);
 
-            Console.WriteLine("Initialize doctors");
-            InitializeDoctor(MaxRecord);
+            //Console.WriteLine("Initialize doctors");
+            //InitializeDoctor(MaxRecord);
 
-            Console.WriteLine("Initialize patients");
-            InitializePatient(MaxRecord);
+            //Console.WriteLine("Initialize patients");
+            //InitializePatient(MaxRecord);
 
-            Console.WriteLine("Initialize admins");
-            InitializeAdmin(MaxRecord);
+            //Console.WriteLine("Initialize admins");
+            //InitializeAdmin(MaxRecord);
 
-            // Find the patient 26.
-            var patient = RepositoryAccount.FindPerson(null, "patient26@gmail.com", null, (byte)Role.Patient, null);
+            //// Find the patient 26.
+            //var patient = RepositoryAccount.FindPerson(null, "patient26@gmail.com", null, (byte)Role.Patient, null);
 
-            // Find the doctor 26.
+            //// Find the doctor 26.
             var doctor = RepositoryAccount.FindPerson(null, "doctor26@gmail.com", null, (byte)Role.Doctor, null);
 
-            // Initialize messages.
-            InitializeMessageAsync(doctor, patient);
+            //// Initialize messages.
+            //InitializeMessageAsync(doctor, patient);
 
-            // Initialize medical records collection.
-            InitializeMedicalRecord(patient, doctor, 2);
+            //// Initialize medical records collection.
+            //InitializeMedicalRecord(patient, doctor, 2);
 
-            // Initialize personal notes.
+            //// Initialize personal notes.
 
-            //Console.WriteLine("Initialize heartbeat notes");
-            InitializeHeartbeatNote(patient.Patient, 90);
+            ////Console.WriteLine("Initialize heartbeat notes");
+            //InitializeHeartbeatNote(patient.Patient, 90);
 
-            //Console.WriteLine("Initialize sugar bloods");
-            InitializeSugarbloodNote(patient.Patient, 90);
+            ////Console.WriteLine("Initialize sugar bloods");
+            //InitializeSugarbloodNote(patient.Patient, 90);
 
-            //Console.WriteLine("Initialize blood pressures");
-            InitializeBloodPressureNote(patient.Patient, 90);
+            ////Console.WriteLine("Initialize blood pressures");
+            //InitializeBloodPressureNote(patient.Patient, 90);
 
-            //Console.WriteLine("Initialize allergy notes");
-            InitializeAllergyNote(patient.Patient, 90);
+            ////Console.WriteLine("Initialize allergy notes");
+            //InitializeAllergyNote(patient.Patient, 90);
 
-            #region Relationship create
+            //#region Relationship create
 
-            for (var i = 26; i < 50; i++)
+            //for (var i = 26; i < 50; i++)
+            //{
+            //    patient = RepositoryAccount.FindPerson(null, $"patient{i}@gmail.com", null, (byte)Role.Patient, null);
+            //    doctor = RepositoryAccount.FindPerson(null, $"doctor{i}@gmail.com", null, (byte)Role.Doctor, null);
+
+            //    if (patient != null)
+            //        Console.WriteLine($"Found {patient.Email} for creating relationship");
+            //    else
+            //    {
+            //        Console.WriteLine($"Cannot find {patient.Email} for creating relationship");
+            //        Console.WriteLine("---");
+            //        continue;
+            //    }
+
+            //    if (doctor != null)
+            //        Console.WriteLine($"Found {doctor.Email} for creating relationship");
+            //    else
+            //    {
+            //        Console.WriteLine($"Cannot find {doctor.Email} for creating relationship");
+            //        Console.WriteLine("---");
+            //        continue;
+            //    }
+
+            //    var relationship = new Relation();
+            //    relationship.Source = patient.Id;
+            //    relationship.Target = doctor.Id;
+            //    relationship.Created = TimeService.DateTimeUtcToUnix(DateTime.UtcNow);
+
+            //    if (i > 40)
+            //        relationship.Status = (byte)StatusRelation.Pending;
+            //    else
+            //        relationship.Status = (byte)StatusRelation.Active;
+
+            //    relationship = RepositoryRelation.InitializeRelationAsync(relationship).Result;
+            //    Console.WriteLine($"Created relationship. Id : {relationship.Id}");
+            //}
+
+            //#endregion
+
+            //#region Appointment create
+
+            //InitializeAppointment(patient, doctor, 50);
+
+            //#endregion
+
+            var context = new OlivesHealthEntities();
+            var unix = TimeService.DateTimeUtcToUnix(DateTime.UtcNow);
+            for (var i = 0; i < 20; i++)
             {
-                patient = RepositoryAccount.FindPerson(null, $"patient{i}@gmail.com", null, (byte)Role.Patient, null);
-                doctor = RepositoryAccount.FindPerson(null, $"doctor{i}@gmail.com", null, (byte)Role.Doctor, null);
+                var diary = new Diary();
+                diary.Owner = doctor.Id;
+                diary.Note = $"This is the note of {i}";
+                diary.Created = unix;
+                diary.LastModified = unix;
 
-                if (patient != null)
-                    Console.WriteLine($"Found {patient.Email} for creating relationship");
-                else
-                {
-                    Console.WriteLine($"Cannot find {patient.Email} for creating relationship");
-                    Console.WriteLine("---");
-                    continue;
-                }
-
-                if (doctor != null)
-                    Console.WriteLine($"Found {doctor.Email} for creating relationship");
-                else
-                {
-                    Console.WriteLine($"Cannot find {doctor.Email} for creating relationship");
-                    Console.WriteLine("---");
-                    continue;
-                }
-
-                var relationship = new Relation();
-                relationship.Source = patient.Id;
-                relationship.Target = doctor.Id;
-                relationship.Created = TimeService.DateTimeUtcToUnix(DateTime.UtcNow);
-
-                if (i > 40)
-                    relationship.Status = (byte)StatusRelation.Pending;
-                else
-                    relationship.Status = (byte)StatusRelation.Active;
-
-                relationship = RepositoryRelation.InitializeRelationAsync(relationship).Result;
-                Console.WriteLine($"Created relationship. Id : {relationship.Id}");
+                context.Diaries.Add(diary);
             }
-
-            #endregion
-
-            #region Appointment create
-
-            InitializeAppointment(patient, doctor, 50);
-
-            #endregion
-
+            context.SaveChanges();
         }
 
         /// <summary>
@@ -193,10 +206,10 @@ namespace DataInitializer
             try
             {
                 var context = new OlivesHealthEntities();
-                var places = context.Places.ToList();
+                var placesCounter = context.Places.Count();
                 var specialty = context.Specialties.FirstOrDefault();
 
-                if (places.Count < 1)
+                if (placesCounter < 1)
                     throw new Exception("No city is available.");
 
                 if (specialty == null)
@@ -208,8 +221,8 @@ namespace DataInitializer
                     var person = new Person();
                     person.Email = $"doctor{i}@gmail.com";
                     person.Password = "doctor199x";
-                    person.FirstName = $"FirstName[{i}]";
-                    person.LastName = $"LastName[{i}]";
+                    person.FirstName = $"DF[{i}]";
+                    person.LastName = $"DL[{i}]";
                     person.FullName = person.FirstName + " " + person.LastName;
                     person.Gender = 0;
                     person.Role = (byte)Role.Doctor;
@@ -223,13 +236,11 @@ namespace DataInitializer
                         person.Status = (byte)StatusAccount.Pending;
                     else
                         person.Status = (byte)StatusAccount.Inactive;
-
-                    var place = places[random.Next(places.Count)];
-
+                    
                     var doctor = new Doctor();
                     doctor.SpecialtyId = 1;
                     doctor.Person = person;
-                    doctor.PlaceId = place.Id;
+                    doctor.PlaceId = placesCounter;
                     doctor.Rank = random.Next(Values.MinDoctorRank, Values.MaxDoctorRank);
                     doctor.Specialty = specialty;
                     context.Doctors.Add(doctor);
@@ -271,8 +282,8 @@ namespace DataInitializer
                 var person = new Person();
                 person.Email = $"patient{i}@gmail.com";
                 person.Password = "patient199x";
-                person.FirstName = $"FirstName[{i}]";
-                person.LastName = $"LastName[{i}]";
+                person.FirstName = $"PF[{i}]";
+                person.LastName = $"PL[{i}]";
                 person.FullName = person.FirstName + " " + person.LastName;
                 person.Photo = $"{random.Next(1, 4)}";
                 person.Gender = 0;
@@ -312,8 +323,8 @@ namespace DataInitializer
                 var person = new Person();
                 person.Email = $"admin{i}@gmail.com";
                 person.Password = "admin199x";
-                person.FirstName = $"FirstName[{i}]";
-                person.LastName = $"LastName[{i}]";
+                person.FirstName = $"AF[{i}]";
+                person.LastName = $"AL[{i}]";
                 person.FullName = person.FirstName + " " + person.LastName;
                 person.Gender = 0;
                 person.Role = (byte)Role.Admin;

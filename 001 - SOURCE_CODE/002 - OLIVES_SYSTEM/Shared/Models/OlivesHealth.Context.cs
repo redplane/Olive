@@ -30,6 +30,7 @@ namespace Shared.Models
         public virtual DbSet<Allergy> Allergies { get; set; }
         public virtual DbSet<Appointment> Appointments { get; set; }
         public virtual DbSet<BloodPressure> BloodPressures { get; set; }
+        public virtual DbSet<Diary> Diaries { get; set; }
         public virtual DbSet<Doctor> Doctors { get; set; }
         public virtual DbSet<ExperimentNote> ExperimentNotes { get; set; }
         public virtual DbSet<Heartbeat> Heartbeats { get; set; }

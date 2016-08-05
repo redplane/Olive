@@ -148,6 +148,9 @@
     <Compile Include="Models\BloodPressure.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Diary.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Doctor.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>

@@ -215,7 +215,7 @@ namespace Olives.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpDelete]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> DeletePrescriptionImage([FromUri] int id)
         {
             // Retrieve information of person who sent request.

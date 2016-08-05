@@ -34,25 +34,21 @@ namespace Olives.Controllers
         ///     Initialize an instance of AccountController with Dependency injections.
         /// </summary>
         /// <param name="repositoryAccountExtended"></param>
-        /// <param name="repositoryRelation"></param>
         /// <param name="repositorySpecialty"></param>
         /// <param name="repositoryPlace"></param>
         /// <param name="log"></param>
-        /// <param name="emailService"></param>
         /// <param name="timeService"></param>
         /// <param name="applicationSetting"></param>
         public DoctorController(IRepositoryAccountExtended repositoryAccountExtended,
-            IRepositoryRelation repositoryRelation, IRepositorySpecialty repositorySpecialty,
+            IRepositorySpecialty repositorySpecialty,
             IRepositoryPlace repositoryPlace,
-            ILog log, IEmailService emailService, ITimeService timeService,
+            ILog log, ITimeService timeService,
             ApplicationSetting applicationSetting)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
-            _repositoryRelation = repositoryRelation;
             _repositorySpecialty = repositorySpecialty;
             _repositoryPlace = repositoryPlace;
             _log = log;
-            _emailService = emailService;
             _timeService = timeService;
             _applicationSetting = applicationSetting;
         }
@@ -92,16 +88,18 @@ namespace Olives.Controllers
 
             #region Relationship validate
 
-            var isRelationshipAvailable = await _repositoryRelation.IsPeopleConnected(requester.Id, id);
-            if (!isRelationshipAvailable)
+            if (requester.Role == (byte) Role.Doctor)
             {
-                _log.Error($"There is no relationship between requester [Id: {requester.Id}] and doctor [Id: {id}]");
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                if (requester.Id != id)
                 {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
+                    _log.Error($"Requester [Id: {requester.Id}] cannot see another doctor information");
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
+                }
             }
-
+            
             #endregion
 
             #region Result handling
@@ -428,12 +426,7 @@ namespace Olives.Controllers
         ///     Repository of accounts
         /// </summary>
         private readonly IRepositoryAccountExtended _repositoryAccountExtended;
-
-        /// <summary>
-        /// Repository which provides functions to access relationship database.
-        /// </summary>
-        private readonly IRepositoryRelation _repositoryRelation;
-
+        
         /// <summary>
         ///     Repository of specialty.
         /// </summary>
@@ -448,12 +441,7 @@ namespace Olives.Controllers
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-
-        /// <summary>
-        ///     Service which is used for sending emails.
-        /// </summary>
-        private readonly IEmailService _emailService;
-
+        
         /// <summary>
         ///     Property which contains settings of application which had been deserialized from json file.
         /// </summary>
