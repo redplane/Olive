@@ -2,6 +2,7 @@
 -- DROP TABLES
 ---------------------------------------------------------------------------------------------------
 DROP TABLE RealTimeConnection;
+DROP TABLE Diary;
 DROP TABLE MedicalImage;
 DROP TABLE ExperimentNote;
 DROP TABLE MedicalNote;
@@ -203,6 +204,18 @@ CREATE TABLE Relation
 	FOREIGN KEY (Source) REFERENCES Patient(Id),
 	FOREIGN KEY (Target) REFERENCES Doctor(Id)			
 );
+
+CREATE TABLE Diary
+(
+	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	Owner					INT NOT NULL,
+	Time					FLOAT NOT NULL,
+	Note					NVARCHAR(512),
+	Created					FLOAT NOT NULL,
+	LastModified			FLOAT
+
+	FOREIGN KEY (Owner) REFERENCES Doctor(Id)
+)
 
 CREATE TABLE MedicalCategory
 (
