@@ -49,6 +49,85 @@ namespace Shared.Repositories
         }
 
         /// <summary>
+        /// Delete medical record asynchronously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<int> DeleteMedicalRecordAsync(int id)
+        {
+            var context = new OlivesHealthEntities();
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    #region Experiment note delete
+
+                    IQueryable<ExperimentNote> experimentNotes = context.ExperimentNotes;
+                    experimentNotes = experimentNotes.Where(x => x.MedicalRecordId == id);
+                    context.ExperimentNotes.RemoveRange(experimentNotes);
+
+                    #endregion
+
+                    #region Medical note delete
+
+                    IQueryable<MedicalNote> medicalNotes = context.MedicalNotes;
+                    medicalNotes = medicalNotes.Where(x => x.MedicalRecordId == id);
+                    context.MedicalNotes.RemoveRange(medicalNotes);
+
+                    #endregion
+
+                    #region Medical image
+
+                    IQueryable<MedicalImage> medicalImages = context.MedicalImages;
+                    medicalImages = medicalImages.Where(x => x.MedicalRecordId == id);
+                    await medicalImages.ForEachAsync(x =>
+                    {
+                        var junkFile = new JunkFile();
+                        junkFile.FullPath = x.FullPath;
+                        context.JunkFiles.Add(junkFile);
+                    });
+                    context.MedicalImages.RemoveRange(medicalImages);
+
+                    #endregion
+
+                    #region Prescription
+
+                    IQueryable<Prescription> prescriptions = context.Prescriptions;
+                    prescriptions = prescriptions.Where(x => x.MedicalRecordId == id);
+                    await prescriptions.ForEachAsync(prescription =>
+                    {
+                        IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
+                        prescriptionImages = prescriptionImages.Where(x => x.PrescriptionId == prescription.Id);
+                        prescriptionImages.ForEachAsync(prescriptionImage =>
+                        {
+                            var junkFile = new JunkFile();
+                            junkFile.FullPath = prescriptionImage.FullPath;
+                        });
+
+                        context.PrescriptionImages.RemoveRange(prescriptionImages);
+                    });
+
+                    context.Prescriptions.RemoveRange(prescriptions);
+
+                    #endregion
+
+                    // Save changes asynchronously.
+                    var records = await context.SaveChangesAsync();
+                    
+                    // Begin the transaction.
+                    transaction.Commit();
+
+                    return records;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
         ///     Filter medical records by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>

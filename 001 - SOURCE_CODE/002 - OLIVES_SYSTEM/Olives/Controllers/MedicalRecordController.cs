@@ -398,6 +398,62 @@ namespace Olives.Controllers
         }
 
         /// <summary>
+        /// Delete the medical record asynchronously by using id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [OlivesAuthorize(new[] { Role.Patient })]
+        public async Task<HttpResponseMessage> Delete([FromUri] int id)
+        {
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Find the medical record.
+            var medicalRecord = await _repositoryMedical.FindMedicalRecordAsync(id);
+
+            // No medical record is found.
+            if (medicalRecord == null)
+            {
+                _log.Error($"There is no medical record [Id: {id}] is found in database");
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
+
+            // Requester doesn't own the medical record.
+            if (requester.Id != medicalRecord.Owner)
+            {
+                _log.Error($"Requester [Id: {requester.Id}] is not the owner of medical record [Id: {medicalRecord.Id}]");
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
+
+            try
+            {
+                var records = await _repositoryMedical.DeleteMedicalRecordAsync(id);
+                if (records < 1)
+                {
+                    _log.Error($"There is no medical record [Id: {id}] is found in database");
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception.Message, exception);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+        }
+
+        /// <summary>
         ///     Filter medical record by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>

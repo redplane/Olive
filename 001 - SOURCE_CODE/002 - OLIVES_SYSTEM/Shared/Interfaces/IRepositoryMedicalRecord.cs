@@ -8,6 +8,13 @@ namespace Shared.Interfaces
     public interface IRepositoryMedicalRecord
     {
         /// <summary>
+        /// Delete the medical record asynchronously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<int> DeleteMedicalRecordAsync(int id);
+
+        /// <summary>
         ///     Initialize / edit a medical record asynchronously.
         /// </summary>
         /// <param name="medicalRecord"></param>
