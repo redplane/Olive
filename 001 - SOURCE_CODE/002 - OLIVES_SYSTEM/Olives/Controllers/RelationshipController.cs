@@ -127,7 +127,7 @@ namespace Olives.Controllers
         [Route("api/relationship/confirm")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
-        public async Task<HttpResponseMessage> ConfirmDeleteRelationship([FromBody] int id)
+        public async Task<HttpResponseMessage> DecideRelationshipAsync([FromBody] ConfirmRelationshipViewModel confirmation)
         {
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
@@ -135,12 +135,13 @@ namespace Olives.Controllers
             // Find the relationship by using id.
             var relationship =
                 await
-                    _repositoryRelation.FindRelationshipAsync(id, requester.Id, RoleRelationship.Target,
+                    _repositoryRelation.FindRelationshipAsync(confirmation.Id, requester.Id, RoleRelationship.Target,
                         (byte) StatusRelation.Pending);
 
             // No relationship has been returned.
             if (relationship == null)
             {
+                _log.Error($"There is no relationship [Id: {confirmation.Id}] targeted to Requester [Id: {requester.Id}]");
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
                     Error = $"{Language.WarnRelationNotFound}"

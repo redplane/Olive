@@ -135,7 +135,7 @@ namespace Olives.Controllers
         /// <param name="initializer"></param>
         /// <returns></returns>
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Doctor})]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> InitializeMedicalNoteAsync(
             [FromBody] InitializeMedicalNoteViewModel initializer)
         {
@@ -183,7 +183,7 @@ namespace Olives.Controllers
             #region Owner & relationship validation
 
             // Requester doesn't take part in the medical record.
-            if (requester.Id != medicalRecord.Creator)
+            if (requester.Id != medicalRecord.Creator && requester.Id != medicalRecord.Owner)
             {
                 _log.Error($"Requester [Id: {requester.Id}] is not the creator of medical record [Id: {medicalRecord.Id}]");
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
