@@ -273,7 +273,7 @@ namespace Olives.Controllers
         /// <param name="modifier"></param>
         /// <returns></returns>
         [HttpPut]
-        [OlivesAuthorize(new[] {Role.Doctor})]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> ModifyMedicalNote([FromUri] int id,
             [FromBody] EditMedicalNoteViewModel modifier)
         {

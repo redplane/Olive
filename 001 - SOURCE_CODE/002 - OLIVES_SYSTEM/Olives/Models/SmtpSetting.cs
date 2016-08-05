@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
+using Olives.Models.Emails;
 
 namespace Olives.Models
 {
@@ -50,34 +52,36 @@ namespace Olives.Models
         /// <summary>
         ///     Whether SSL connection is enabled.
         /// </summary>
-        [JsonProperty("enableSSL")]
         public bool EnableSsl { get; set; }
 
         /// <summary>
         ///     How much time connection has to wait before being cancelled.
         /// </summary>
-        [JsonProperty("timeout")]
         public int Timeout { get; set; }
 
         /// <summary>
         ///     Email which used for sending messages
         /// </summary>
-        [JsonProperty("email")]
         public string Email { get; set; }
 
         /// <summary>
         ///     Password of email.
         /// </summary>
-        [JsonProperty("password")]
         public string Password { get; set; }
-
-        [JsonProperty("emailTemplates")]
-        public EmailTemplate[] EmailTemplates { get; set; }
-
-        [JsonProperty("from")]
+        
+        /// <summary>
+        /// Email configurations.
+        /// </summary>
+        public Dictionary<string,EmailSetting> EmailSettings { get; set; }
+        
+        /// <summary>
+        /// The address which email is sent from.
+        /// </summary>
         public string From { get; set; }
-
-        [JsonProperty("displayName")]
+        
+        /// <summary>
+        /// The name displayed in email.
+        /// </summary>
         public string DisplayName { get; set; }
 
         #endregion

@@ -469,11 +469,18 @@ namespace Olives.Controllers
             var url = Url.Link("Default",
                 new { controller = "Service", action = "Verify", code = activationToken.Code });
 
+            // Data which will be bound to email.
+            var data = new
+            {
+                firstName = account.FirstName,
+                lastName = account.LastName,
+                url,
+                expired = activationToken.Expired.ToLocalTime()
+            };
+
             // Write an email to user to notify him/her to activate account.
             await
-                _emailService.InitializeTokenEmail(account.Email, Language.OliveActivationCodeEmailTitle,
-                    account.FirstName,
-                    account.LastName, activationToken, url, EmailType.Activation);
+                _emailService.InitializeEmail(new [] { account.Email}, OlivesValues.TemplateEmailActivationCode, data);
         }
 
         #endregion

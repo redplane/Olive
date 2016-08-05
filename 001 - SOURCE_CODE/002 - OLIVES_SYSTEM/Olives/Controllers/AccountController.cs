@@ -225,10 +225,18 @@ namespace Olives.Controllers
                 var url = Url.Link("Default",
                     new { controller = "Service", action = "FindPassword" });
 
+                // Data which will be bound to email template.
+                var data = new
+                {
+                    firstName = result.FirstName,
+                    lastName = result.LastName,
+                    url,
+                    findPasswordToken.Expired
+                };
+
                 // Send the activation code email.
                 await
-                    _emailService.InitializeTokenEmail(info.Email, Language.OliveForgotPasswordEmailTitle,
-                        result.FirstName, result.LastName, findPasswordToken, url, EmailType.FindPassword);
+                    _emailService.InitializeEmail(new [] {info.Email}, OlivesValues.TemplateEmailFindPassword, data);
 
                 // Tell doctor to wait for admin confirmation.
                 return Request.CreateResponse(HttpStatusCode.OK);

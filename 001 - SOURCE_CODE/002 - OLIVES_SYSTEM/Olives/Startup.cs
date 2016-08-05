@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using Olives.Attributes;
 using Olives.Interfaces;
 using Olives.Models;
+using Olives.Models.Emails;
 using Olives.Module;
 using Olives.Repositories;
 using Olives.Services;
@@ -105,34 +106,12 @@ namespace Olives
             #endregion
 
             #region Services
-
-            // Email service.
-            var emailService = new EmailService(applicationSetting.SmtpSetting);
-
-            // Load email templates.
-            if (applicationSetting.SmtpSetting.EmailTemplates != null &&
-                applicationSetting.SmtpSetting.EmailTemplates.Length > 0)
-            {
-                foreach (var email in applicationSetting.SmtpSetting.EmailTemplates)
-                {
-                    var path = HttpContext.Current.Server.MapPath($"~/{email.Path}");
-                    emailService.LoadEmailTemplate(email.Name, path, email.Core);
-                }
-            }
-
-            builder.RegisterType<EmailService>().As<IEmailService>().OnActivating(e => e.ReplaceInstance(emailService)).SingleInstance();
-
-            // File service.
+            
+            builder.RegisterType<EmailService>().As<IEmailService>().OnActivating(e => e.ReplaceInstance(LoadEmailService(applicationSetting.SmtpSetting))).SingleInstance();
             builder.RegisterType<FileService>().As<IFileService>().SingleInstance();
-
-            // Time service.
             builder.RegisterType<TimeService>().As<ITimeService>();
-
-            // Notification service.
-            var notificationService = new NotificationService(repositoryRealtimeConnection);
-            builder.RegisterType<NotificationService>()
-                .As<INotificationService>()
-                .OnActivating(e => e.ReplaceInstance(notificationService));
+            builder.RegisterType<NotificationService>().As<INotificationService>().OnActivating(e => e.ReplaceInstance(new NotificationService(repositoryRealtimeConnection)));
+            
             #endregion
 
             #region Attributes
@@ -215,12 +194,12 @@ namespace Olives
             #region Prescription storage folder
 
             // Invalid private storage folder.
-            var fullPrescriptionImagePath = HttpContext.Current.Server.MapPath(applicationSetting.PrescriptionStorage.Relative);
+            var fullPrescriptionImagePath = HttpContext.Current.Server.MapPath(applicationSetting.PrescriptionImageStorage.Relative);
             if (!Directory.Exists(fullPrescriptionImagePath))
                 Directory.CreateDirectory(fullPrescriptionImagePath);
 
             // Update application private storage folder.
-            applicationSetting.PrescriptionStorage.Absolute = fullPrescriptionImagePath;
+            applicationSetting.PrescriptionImageStorage.Absolute = fullPrescriptionImagePath;
 
             #endregion
 
@@ -231,5 +210,40 @@ namespace Olives
             return applicationSetting;
         }
 
+        /// <summary>
+        /// Load email settings and bind to email service froom json file.
+        /// </summary>
+        /// <param name="smtpSetting"></param>
+        /// <returns></returns>
+        private IEmailService LoadEmailService(SmtpSetting smtpSetting)
+        {
+            // Retrieve the smtp setting
+            var emailSettings = smtpSetting.EmailSettings;
+            
+            // No email setting is available in system.
+            if (emailSettings == null)
+                throw new Exception("No email has been configured in system");
+
+            // Initialize an instance of email service.
+            var emailService = new EmailService(smtpSetting);
+
+            foreach (var key in emailSettings.Keys)
+            {
+                // Retrieve the email setting in the list.
+                var emailSetting = emailSettings[key];
+
+                // Email is not configured.
+                if (emailSetting == null)
+                    throw new Exception($"{key} isn't configured.");
+                
+                // Match the relative path to absolute path.
+                var absolutePath = HttpContext.Current.Server.MapPath(emailSetting.File);
+                var emailModel = new EmailModel(emailSetting.Subject, File.ReadAllText(absolutePath), emailSetting.IsHtml);
+                emailService.EmailTemplatesCollection.Add(key, emailModel);
+            }
+
+            return emailService;
+        }
     }
+
 }

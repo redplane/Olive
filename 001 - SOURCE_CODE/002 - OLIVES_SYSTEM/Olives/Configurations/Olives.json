@@ -1,39 +1,33 @@
 {
-  "smtpSetting": {
-    "host": "smtp.gmail.com",
-    "port": 587,
-    "enableSSL": true,
-    "timeout": 30000,
-    "email": "oliveshealth@gmail.com",
-    "password": "Redplane1",
-    "from": "noreply@oliveshealth.com",
-    "displayName": "Olives Health",
-    "emailTemplates": [
-      {
-        "name": "Activation",
-        "path": "Emails/Activation.html",
-        "core": {
-          "isHtml": true,
-          "subject": "Activation code"
-        }
+  "SmtpSetting": {
+    "Host": "smtp.gmail.com",
+    "Port": 587,
+    "EnableSsl": true,
+    "Timeout": 30000,
+    "Email": "oliveshealth@gmail.com",
+    "Password": "Redplane1",
+    "From": "noreply@oliveshealth.com",
+    "DisplayName": "Olives Health",
+    "EmailSettings": {
+      "Activation": {
+        "Subject": "Email activate instruction",
+        "File": "~/Emails/Activation.html",
+        "IsHtml": true
       },
-      {
-        "name": "FindPassword",
-        "path": "Emails/FindPassword.html",
-        "core": {
-          "isHtml": true,
-          "subject": "Activation code"
-        }
+      "FindPassword": {
+        "Subject": "Forgot password instruction",
+        "File": "~/Emails/FindPassword.html",
+        "IsHtml": true
       }
-    ]
+    }
   },
-  "avatarStorage": {
+  "AvatarStorage": {
     "relative": "~/Resources/Avatar"
   },
-  "medicalImageStorage": {
+  "MedicalImageStorage": {
     "relative": "~/App_Data/MedicalImage"
   },
-  "prescriptionImageStorage": {
+  "PrescriptionImageStorage": {
     "relative": "~/App_Data/PrescriptionImage"
   }
 }

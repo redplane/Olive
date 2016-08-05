@@ -134,7 +134,7 @@ namespace Olives.Controllers
                 var fileName = Guid.NewGuid().ToString("N");
 
                 // Full path construction.
-                var fullPath = Path.Combine(_applicationSetting.PrescriptionStorage.Absolute,
+                var fullPath = Path.Combine(_applicationSetting.PrescriptionImageStorage.Absolute,
                     $"{fileName}.{Values.StandardImageExtension}");
 
                 // Save the image first.
