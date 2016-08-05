@@ -122,7 +122,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Confirm a pending relation.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="confirmation"></param>
         /// <returns></returns>
         [Route("api/relationship/confirm")]
         [HttpPost]

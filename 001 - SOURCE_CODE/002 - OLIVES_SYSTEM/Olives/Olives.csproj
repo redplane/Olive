@@ -323,6 +323,7 @@
     <Compile Include="ViewModels\Filter\FilterDoctorViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPatientViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterRelatedPeopleViewModel.cs" />
+    <Compile Include="ViewModels\Initialize\ConfirmRelationshipViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAddictionViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAllergyViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAppointmentViewModel.cs" />
