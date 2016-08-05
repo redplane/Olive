@@ -20,6 +20,6 @@
         /// <summary>
         ///     Invalid phone number.
         /// </summary>
-        public const string Phone = @"^([0-9]){0,15}$";
+        public const string Phone = @"^[0-9 +()]*";
     }
 }

@@ -291,6 +291,9 @@ namespace Olives.Controllers
             if (editor.Birthday != null)
                 requester.Birthday = editor.Birthday;
 
+            if (requester.Doctor == null)
+                requester.Doctor = new Doctor();
+
             // Update person full name.
             requester.FullName = $"{requester.FirstName} {requester.LastName}";
 
@@ -309,7 +312,7 @@ namespace Olives.Controllers
                 // Respond information to client.
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
-                    User = new
+                    Doctor = new
                     {
                         requester.Id,
                         requester.Email,

@@ -310,7 +310,12 @@ namespace Olives.Repositories
                 {
                     // Add or update information base on the primary key.
                     context.People.AddOrUpdate(info);
-                    
+
+                    if (info.Role == (byte)Role.Patient)
+                        context.Patients.AddOrUpdate(info.Patient);
+                    if (info.Role == (byte)Role.Doctor)
+                        context.Doctors.AddOrUpdate(info.Doctor);
+
                     #region Appointment update
 
                     var appointments = context.Appointments.Where(x => x.Maker == id || x.Dater == id);
