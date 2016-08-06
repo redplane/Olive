@@ -12,6 +12,7 @@ using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
+using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -407,6 +408,46 @@ namespace Olives.Controllers
             }
 
             #endregion
+        }
+
+        /// <summary>
+        /// Delete a medical note asynchronously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [OlivesAuthorize(new [] {Role.Patient})]
+        public async Task<HttpResponseMessage> DeleteMedicalNoteAsync([FromUri] int id)
+        {
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Filter initialization.
+            var filter = new FilterMedicalNoteViewModel();
+            filter.Id = id;
+            filter.Requester = requester.Id;
+            filter.Mode = RecordFilterMode.RequesterIsOwner;
+
+            try
+            {
+                var records = await _repositoryMedicalNote.DeleteMedicalNoteAsync(filter);
+                if (records < 1)
+                {
+                    _log.Error($"There is no medical note [Id: {id}]");
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception.Message, exception);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+            
         }
 
         /// <summary>

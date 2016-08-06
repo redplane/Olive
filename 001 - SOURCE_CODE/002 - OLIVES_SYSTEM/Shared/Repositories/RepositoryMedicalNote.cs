@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -58,54 +59,7 @@ namespace Shared.Repositories
 
             // By default, take all record by searching creator id.
             IQueryable<MedicalNote> medicalNotes = context.MedicalNotes;
-
-            // Medical record is defined.
-            if (filter.MedicalRecord != null)
-                medicalNotes = medicalNotes.Where(x => x.MedicalRecordId == filter.MedicalRecord);
-
-            // Base on the mode of image filter to decide the role of requester.
-            if (filter.Mode == RecordFilterMode.RequesterIsOwner)
-            {
-                medicalNotes = medicalNotes.Where(x => x.Owner == filter.Requester);
-                if (filter.Partner != null)
-                    medicalNotes = medicalNotes.Where(x => x.Creator == filter.Partner.Value);
-            }
-            else if (filter.Mode == RecordFilterMode.RequesterIsCreator)
-            {
-                medicalNotes = medicalNotes.Where(x => x.Creator == filter.Requester);
-                if (filter.Partner != null)
-                    medicalNotes = medicalNotes.Where(x => x.Owner == filter.Partner);
-            }
-            else
-            {
-                if (filter.Partner == null)
-                    medicalNotes =
-                        medicalNotes.Where(x => x.Creator == filter.Requester || x.Owner == filter.Requester);
-                else
-                    medicalNotes =
-                        medicalNotes.Where(
-                            x =>
-                                (x.Creator == filter.Requester && x.Owner == filter.Partner.Value) ||
-                                (x.Creator == filter.Partner.Value && x.Owner == filter.Requester));
-            }
-
-            // Note is specified.
-            if (filter.Note != null)
-                medicalNotes = medicalNotes.Where(x => x.Note.Contains(filter.Note));
-
-            // Time is specified.
-            if (filter.MinTime != null) medicalNotes = medicalNotes.Where(x => x.Time >= filter.MinTime);
-            if (filter.MaxTime != null) medicalNotes = medicalNotes.Where(x => x.Time <= filter.MaxTime);
-
-            // Created is defined.
-            if (filter.MinCreated != null) medicalNotes = medicalNotes.Where(x => x.Created >= filter.MinCreated);
-            if (filter.MaxCreated != null) medicalNotes = medicalNotes.Where(x => x.Created <= filter.MaxCreated);
-
-            // Last modified is defined.
-            if (filter.MinLastModified != null)
-                medicalNotes = medicalNotes.Where(x => x.LastModified >= filter.MinLastModified);
-            if (filter.MaxLastModified != null)
-                medicalNotes = medicalNotes.Where(x => x.LastModified <= filter.MaxLastModified);
+            medicalNotes = FilterMedicalNotes(medicalNotes, filter);
 
             // Result sort.
             switch (filter.Direction)
@@ -164,6 +118,85 @@ namespace Shared.Repositories
                 .ToListAsync();
 
             return response;
+        }
+
+        /// <summary>
+        /// Filter medical notes by using specific conditions.
+        /// </summary>
+        /// <param name="medicalNotes"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        private IQueryable<MedicalNote> FilterMedicalNotes(IQueryable<MedicalNote> medicalNotes,
+            FilterMedicalNoteViewModel filter)
+        {
+
+            // Medical record is defined.
+            if (filter.MedicalRecord != null)
+                medicalNotes = medicalNotes.Where(x => x.MedicalRecordId == filter.MedicalRecord);
+
+            // Base on the mode of image filter to decide the role of requester.
+            if (filter.Mode == RecordFilterMode.RequesterIsOwner)
+            {
+                medicalNotes = medicalNotes.Where(x => x.Owner == filter.Requester);
+                if (filter.Partner != null)
+                    medicalNotes = medicalNotes.Where(x => x.Creator == filter.Partner.Value);
+            }
+            else if (filter.Mode == RecordFilterMode.RequesterIsCreator)
+            {
+                medicalNotes = medicalNotes.Where(x => x.Creator == filter.Requester);
+                if (filter.Partner != null)
+                    medicalNotes = medicalNotes.Where(x => x.Owner == filter.Partner);
+            }
+            else
+            {
+                if (filter.Partner == null)
+                    medicalNotes =
+                        medicalNotes.Where(x => x.Creator == filter.Requester || x.Owner == filter.Requester);
+                else
+                    medicalNotes =
+                        medicalNotes.Where(
+                            x =>
+                                (x.Creator == filter.Requester && x.Owner == filter.Partner.Value) ||
+                                (x.Creator == filter.Partner.Value && x.Owner == filter.Requester));
+            }
+
+            // Note is specified.
+            if (filter.Note != null)
+                medicalNotes = medicalNotes.Where(x => x.Note.Contains(filter.Note));
+
+            // Time is specified.
+            if (filter.MinTime != null) medicalNotes = medicalNotes.Where(x => x.Time >= filter.MinTime);
+            if (filter.MaxTime != null) medicalNotes = medicalNotes.Where(x => x.Time <= filter.MaxTime);
+
+            // Created is defined.
+            if (filter.MinCreated != null) medicalNotes = medicalNotes.Where(x => x.Created >= filter.MinCreated);
+            if (filter.MaxCreated != null) medicalNotes = medicalNotes.Where(x => x.Created <= filter.MaxCreated);
+
+            // Last modified is defined.
+            if (filter.MinLastModified != null)
+                medicalNotes = medicalNotes.Where(x => x.LastModified >= filter.MinLastModified);
+            if (filter.MaxLastModified != null)
+                medicalNotes = medicalNotes.Where(x => x.LastModified <= filter.MaxLastModified);
+
+            return medicalNotes;
+        }
+
+        /// <summary>
+        /// Delete medical note by using specific conditions.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public async Task<int> DeleteMedicalNoteAsync(FilterMedicalNoteViewModel filter)
+        {
+            var context = new OlivesHealthEntities();
+            IQueryable<MedicalNote> medicalNotes = context.MedicalNotes;
+            medicalNotes = FilterMedicalNotes(medicalNotes, filter);
+            
+            // Remove records.
+            context.MedicalNotes.RemoveRange(medicalNotes);
+            var records = await context.SaveChangesAsync();
+
+            return records;
         }
     }
 }

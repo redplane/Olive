@@ -11,6 +11,11 @@ namespace Shared.ViewModels.Filter
     public class FilterMedicalNoteViewModel : IPagination
     {
         /// <summary>
+        /// Id of medical note.
+        /// </summary>
+        public int? Id { get; set; }
+
+        /// <summary>
         ///     Id of medical record.
         /// </summary>
         public int? MedicalRecord { get; set; }

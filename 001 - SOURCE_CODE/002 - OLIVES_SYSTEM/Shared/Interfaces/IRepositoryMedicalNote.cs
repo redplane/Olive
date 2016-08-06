@@ -27,5 +27,12 @@ namespace Shared.Interfaces
         /// <param name="filter"></param>
         /// <returns></returns>
         Task<ResponseMedicalNoteFilter> FilterMedicalNotesAsync(FilterMedicalNoteViewModel filter);
+
+        /// <summary>
+        /// Delete medical notes by using filter.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        Task<int> DeleteMedicalNoteAsync(FilterMedicalNoteViewModel filter);
     }
 }
