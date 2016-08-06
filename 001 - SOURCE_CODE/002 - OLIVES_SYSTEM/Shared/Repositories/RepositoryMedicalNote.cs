@@ -129,6 +129,9 @@ namespace Shared.Repositories
         private IQueryable<MedicalNote> FilterMedicalNotes(IQueryable<MedicalNote> medicalNotes,
             FilterMedicalNoteViewModel filter)
         {
+            // Id is defined.
+            if (filter.Id != null)
+                medicalNotes = medicalNotes.Where(x => x.Id == filter.Id.Value);
 
             // Medical record is defined.
             if (filter.MedicalRecord != null)
