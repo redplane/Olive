@@ -50,6 +50,53 @@ namespace Olives.Controllers
         #region Methods
 
         /// <summary>
+        /// Find medical experiment asynchronously by using id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<HttpResponseMessage> FindMedicalExperimentAsync([FromUri] int id)
+        {
+            // Find the medical experiment first.
+            var experimentNote = await _repositoryExperimentNote.FindExperimentNoteAsync(id);
+            if (experimentNote == null)
+            {
+                _log.Error($"There is no medical experiment [Id: {id}] in database");
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
+
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Requester doesn't take part in medical experiment.
+            if (experimentNote.Owner != requester.Id && experimentNote.Creator != requester.Id)
+            {
+                _log.Error($"Requester [Id: {requester.Id}] isn't either creator or owner");
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                Note = new
+                {
+                    experimentNote.Id,
+                    MedicalRecord = experimentNote.MedicalRecordId,
+                    experimentNote.Owner,
+                    experimentNote.Name,
+                    experimentNote.Info,
+                    experimentNote.Created,
+                    experimentNote.LastModified
+                }
+            });
+        }
+
+        /// <summary>
         ///     Initialize a medical experiment note with extra information.
         /// </summary>
         /// <param name="initializer"></param>
