@@ -104,8 +104,20 @@ namespace Olives.Controllers
                 MedicalRecord = new
                 {
                     medicalRecord.Id,
-                    medicalRecord.Owner,
-                    medicalRecord.Creator,
+                    Creator = new
+                    {
+                        medicalRecord.Person.Id,
+                        medicalRecord.Person.FirstName,
+                        medicalRecord.Person.LastName,
+                        medicalRecord.Person.Role
+                    },
+                    Owner = new
+                    {
+                        medicalRecord.Person1.Id,
+                        medicalRecord.Person1.FirstName,
+                        medicalRecord.Person1.LastName,
+                        medicalRecord.Person1.Role
+                    },
                     Category = new
                     {
                         medicalRecord.MedicalCategory.Id,
@@ -376,6 +388,20 @@ namespace Olives.Controllers
                     {
                         result.Id,
                         result.Info,
+                        Creator = new
+                        {
+                            medicalRecord.Person.Id,
+                            medicalRecord.Person.FirstName,
+                            medicalRecord.Person.LastName,
+                            medicalRecord.Person.Role
+                        },
+                        Owner = new
+                        {
+                            medicalRecord.Person1.Id,
+                            medicalRecord.Person1.FirstName,
+                            medicalRecord.Person1.LastName,
+                            medicalRecord.Person1.Role
+                        },
                         Category = new
                         {
                             result.MedicalCategory.Id,
@@ -500,8 +526,19 @@ namespace Olives.Controllers
                     MedicalRecords = results.MedicalRecords.Select(x => new
                     {
                         x.Id,
-                        x.Owner,
-                        x.Creator,
+                        Creator = new {
+                            x.Person.Id,
+                            x.Person.FirstName,
+                            x.Person.LastName,
+                            x.Person.Role
+                        },
+                        Owner = new
+                        {
+                            x.Person1.Id,
+                            x.Person1.FirstName,
+                            x.Person1.LastName,
+                            x.Person1.Role
+                        },
                         Category = new
                         {
                             x.MedicalCategory.Id,

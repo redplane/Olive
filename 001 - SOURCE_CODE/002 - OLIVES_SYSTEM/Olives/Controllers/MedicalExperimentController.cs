@@ -13,6 +13,7 @@ using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
+using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -388,8 +389,13 @@ namespace Olives.Controllers
                 // Retrieve information of person who sent request.
                 var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
+                // Filter initialization.
+                var filter = new FilterExperimentNoteViewModel();
+                filter.Id = experiment;
+                filter.Requester = requester.Id;
+                filter.Mode = RecordFilterMode.RequesterIsOwner;
                 // Remove note and retrieve the response.
-                var records = await _repositoryExperimentNote.DeleteExperimentNotesAsync(experiment, requester.Id);
+                var records = await _repositoryExperimentNote.DeleteExperimentNotesAsync(filter);
 
                 // No record has been removed.
                 if (records < 1)

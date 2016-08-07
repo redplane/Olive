@@ -35,7 +35,7 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<MedicalNote> InitializeMedicalNoteAsync(MedicalNote medicalNote)
         {
-            // Database context initialization.
+            // Database context initialization.draw
             var context = new OlivesHealthEntities();
 
             // Initialize/update medical notes.

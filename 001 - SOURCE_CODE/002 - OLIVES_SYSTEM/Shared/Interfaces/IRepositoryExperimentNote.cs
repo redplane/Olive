@@ -24,10 +24,9 @@ namespace Shared.Interfaces
         /// <summary>
         ///     Delete experiment record or its infos only.
         /// </summary>
-        /// <param name="experimentId"></param>
-        /// <param name="owner"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        Task<int> DeleteExperimentNotesAsync(int experimentId, int? owner);
+        Task<int> DeleteExperimentNotesAsync(FilterExperimentNoteViewModel filter);
 
         /// <summary>
         ///     Filter experiment note asynchronously by using specific conditions

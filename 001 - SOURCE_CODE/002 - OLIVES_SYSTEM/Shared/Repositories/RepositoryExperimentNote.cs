@@ -64,42 +64,16 @@ namespace Shared.Repositories
         /// <summary>
         ///     Delete experiment or its infos.
         /// </summary>
-        /// <param name="experimentId"></param>
-        /// <param name="owner"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<int> DeleteExperimentNotesAsync(int experimentId, int? owner)
+        public async Task<int> DeleteExperimentNotesAsync(FilterExperimentNoteViewModel filter)
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
-
-            using (var transaction = context.Database.BeginTransaction())
-            {
-                try
-                {
-                    // By default, take all experiments.
-                    IQueryable<ExperimentNote> experiments = context.ExperimentNotes;
-                    experiments = experiments.Where(x => x.Id == experimentId);
-
-                    // Owner is specified.
-                    if (owner != null)
-                        experiments = experiments.Where(x => x.Owner == owner.Value);
-
-                    // Retrieve all experiment infos.
-                    context.ExperimentNotes.RemoveRange(experiments);
-
-                    // Save changes and calculate the number of affected record.
-                    var records = await context.SaveChangesAsync();
-                    transaction.Commit();
-
-                    return records;
-                }
-                catch
-                {
-                    // As the exception happens, transaction should rollback.
-                    transaction.Rollback();
-                    throw;
-                }
-            }
+            IQueryable<ExperimentNote> experimentNotes = context.ExperimentNotes;
+            context.ExperimentNotes.RemoveRange(experimentNotes);
+            var records = await context.SaveChangesAsync();
+            return records;
         }
 
         /// <summary>
@@ -113,51 +87,8 @@ namespace Shared.Repositories
             var context = new OlivesHealthEntities();
 
             // By default, take all experiment notes.
-            IQueryable<ExperimentNote> experiments = context.ExperimentNotes;
-
-            // Filter by medical record id.
-            if (filter.MedicalRecord != null)
-                experiments = experiments.Where(x => x.Id == filter.MedicalRecord);
-
-            // Base on the mode of image filter to decide the role of requester.
-            if (filter.Mode == RecordFilterMode.RequesterIsOwner)
-            {
-                experiments = experiments.Where(x => x.Owner == filter.Requester);
-                if (filter.Partner != null)
-                    experiments = experiments.Where(x => x.Creator == filter.Partner.Value);
-            }
-            else if (filter.Mode == RecordFilterMode.RequesterIsCreator)
-            {
-                experiments = experiments.Where(x => x.Creator == filter.Requester);
-                if (filter.Partner != null)
-                    experiments = experiments.Where(x => x.Owner == filter.Partner);
-            }
-            else
-            {
-                if (filter.Partner == null)
-                    experiments =
-                        experiments.Where(x => x.Creator == filter.Requester || x.Owner == filter.Requester);
-                else
-                    experiments =
-                        experiments.Where(
-                            x =>
-                                (x.Creator == filter.Requester && x.Owner == filter.Partner.Value) ||
-                                (x.Creator == filter.Partner.Value && x.Owner == filter.Requester));
-            }
-
-            // Filter by medical record name.
-            if (!string.IsNullOrWhiteSpace(filter.Name))
-                experiments = experiments.Where(x => x.Name.Contains(filter.Name));
-
-            // Created is defined.
-            if (filter.MinCreated != null) experiments = experiments.Where(x => x.Created >= filter.MinCreated.Value);
-            if (filter.MaxCreated != null) experiments = experiments.Where(x => x.Created <= filter.MaxCreated.Value);
-
-            // Last modified is defined.
-            if (filter.MinLastModified != null)
-                experiments = experiments.Where(x => x.LastModified >= filter.MinLastModified);
-            if (filter.MaxLastModified != null)
-                experiments = experiments.Where(x => x.LastModified <= filter.MaxLastModified);
+            IQueryable<ExperimentNote> experimentNotes = context.ExperimentNotes;
+            experimentNotes = FilterExperimentNotes(experimentNotes, filter);
 
             switch (filter.Direction)
             {
@@ -165,13 +96,13 @@ namespace Shared.Repositories
                     switch (filter.Sort)
                     {
                         case ExperimentFilterSort.Created:
-                            experiments = experiments.OrderBy(x => x.Created);
+                            experimentNotes = experimentNotes.OrderBy(x => x.Created);
                             break;
                         case ExperimentFilterSort.LastModified:
-                            experiments = experiments.OrderBy(x => x.LastModified);
+                            experimentNotes = experimentNotes.OrderBy(x => x.LastModified);
                             break;
                         default:
-                            experiments = experiments.OrderBy(x => x.Name);
+                            experimentNotes = experimentNotes.OrderBy(x => x.Name);
                             break;
                     }
                     break;
@@ -179,13 +110,13 @@ namespace Shared.Repositories
                     switch (filter.Sort)
                     {
                         case ExperimentFilterSort.Created:
-                            experiments = experiments.OrderByDescending(x => x.Created);
+                            experimentNotes = experimentNotes.OrderByDescending(x => x.Created);
                             break;
                         case ExperimentFilterSort.LastModified:
-                            experiments = experiments.OrderByDescending(x => x.LastModified);
+                            experimentNotes = experimentNotes.OrderByDescending(x => x.LastModified);
                             break;
                         default:
-                            experiments = experiments.OrderByDescending(x => x.Name);
+                            experimentNotes = experimentNotes.OrderByDescending(x => x.Name);
                             break;
                     }
                     break;
@@ -193,19 +124,78 @@ namespace Shared.Repositories
             
             // Response initialization.
             var response = new ResponseExperimentNoteFilter();
-            response.Total = await experiments.CountAsync();
+            response.Total = await experimentNotes.CountAsync();
 
             // Record is defined, pagination must be done.
             if (filter.Records != null)
             {
-                experiments = experiments.Skip(filter.Page*filter.Records.Value)
+                experimentNotes = experimentNotes.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
             // Take the records.
-            response.ExperimentNotes = await experiments.ToListAsync();
+            response.ExperimentNotes = await experimentNotes.ToListAsync();
 
             return response;
+        }
+
+        /// <summary>
+        /// Filter experiment notes by using conditions.
+        /// </summary>
+        /// <param name="experimentNotes"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public IQueryable<ExperimentNote> FilterExperimentNotes(IQueryable<ExperimentNote> experimentNotes, FilterExperimentNoteViewModel filter)
+        {
+            // Id is specified
+            if (filter.Id != null)
+                experimentNotes = experimentNotes.Where(x => x.Id == filter.Id.Value);
+
+            // Filter by medical record id.
+            if (filter.MedicalRecord != null)
+                experimentNotes = experimentNotes.Where(x => x.MedicalRecordId == filter.MedicalRecord);
+
+            // Base on the mode of image filter to decide the role of requester.
+            if (filter.Mode == RecordFilterMode.RequesterIsOwner)
+            {
+                experimentNotes = experimentNotes.Where(x => x.Owner == filter.Requester);
+                if (filter.Partner != null)
+                    experimentNotes = experimentNotes.Where(x => x.Creator == filter.Partner.Value);
+            }
+            else if (filter.Mode == RecordFilterMode.RequesterIsCreator)
+            {
+                experimentNotes = experimentNotes.Where(x => x.Creator == filter.Requester);
+                if (filter.Partner != null)
+                    experimentNotes = experimentNotes.Where(x => x.Owner == filter.Partner);
+            }
+            else
+            {
+                if (filter.Partner == null)
+                    experimentNotes =
+                        experimentNotes.Where(x => x.Creator == filter.Requester || x.Owner == filter.Requester);
+                else
+                    experimentNotes =
+                        experimentNotes.Where(
+                            x =>
+                                (x.Creator == filter.Requester && x.Owner == filter.Partner.Value) ||
+                                (x.Creator == filter.Partner.Value && x.Owner == filter.Requester));
+            }
+
+            // Filter by medical record name.
+            if (!string.IsNullOrWhiteSpace(filter.Name))
+                experimentNotes = experimentNotes.Where(x => x.Name.Contains(filter.Name));
+
+            // Created is defined.
+            if (filter.MinCreated != null) experimentNotes = experimentNotes.Where(x => x.Created >= filter.MinCreated.Value);
+            if (filter.MaxCreated != null) experimentNotes = experimentNotes.Where(x => x.Created <= filter.MaxCreated.Value);
+
+            // Last modified is defined.
+            if (filter.MinLastModified != null)
+                experimentNotes = experimentNotes.Where(x => x.LastModified >= filter.MinLastModified);
+            if (filter.MaxLastModified != null)
+                experimentNotes = experimentNotes.Where(x => x.LastModified <= filter.MaxLastModified);
+
+            return experimentNotes;
         }
     }
 }
