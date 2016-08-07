@@ -16,7 +16,6 @@ using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
-    [Route("api/notification/filter")]
     [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
     public class NotificationController : ApiParentController
     {
@@ -44,6 +43,7 @@ namespace Olives.Controllers
         /// <param name="filter"></param>
         /// <returns></returns>
         [HttpPost]
+        [Route("api/notification/filter")]
         public async Task<HttpResponseMessage> FilterAppointmentNotificationAsync(
             [FromBody] FilterNotificationViewModel filter)
         {

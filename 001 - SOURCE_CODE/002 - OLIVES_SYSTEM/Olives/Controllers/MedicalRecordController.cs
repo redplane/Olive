@@ -352,7 +352,10 @@ namespace Olives.Controllers
                 // Time needs updating.
                 if (info.Time != null)
                     medicalRecord.Time = info.Time.Value;
-                
+
+                if (info.Category != null)
+                    medicalRecord.Category = info.Category.Value;
+
                 // Update the last time
                 medicalRecord.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
@@ -402,11 +405,7 @@ namespace Olives.Controllers
                             medicalRecord.Person1.LastName,
                             medicalRecord.Person1.Role
                         },
-                        Category = new
-                        {
-                            result.MedicalCategory.Id,
-                            result.MedicalCategory.Name
-                        },
+                        Category = new {},
                         result.Time,
                         result.Created,
                         result.LastModified

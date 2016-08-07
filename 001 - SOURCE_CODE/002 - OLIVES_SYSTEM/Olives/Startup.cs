@@ -123,8 +123,7 @@ namespace Olives
 
             builder.RegisterType<MedicalCategoryValidateAttribute>().PropertiesAutowired();
             builder.RegisterType<PlaceValidateAttribute>().PropertiesAutowired();
-            builder.RegisterType<ImageMaxSizeValidateAttribute>().PropertiesAutowired();
-
+            
             #endregion
 
             

@@ -245,8 +245,6 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Attributes\AccountValidateAttribute.cs" />
     <Compile Include="Attributes\HubAuthorizeAttribute .cs" />
-    <Compile Include="Attributes\ImageMinSizeValidateAttribute.cs" />
-    <Compile Include="Attributes\ImageMaxSizeValidateAttribute.cs" />
     <Compile Include="Attributes\PlaceValidateAttribute.cs" />
     <Compile Include="Attributes\MedicalCategoryValidateAttribute.cs" />
     <Compile Include="Attributes\MedicineListLengthValidateAttribute.cs" />

@@ -24,7 +24,7 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         /// Whether the partner is the message broadcaster or message receiver.
         /// </summary>
-        public RecordFilterMode Mode { get; set; }
+        public RecordFilterMode? Mode { get; set; }
 
         /// <summary>
         /// Time after which message was created.
@@ -44,11 +44,13 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         /// Whether records should be sorted ascendingly or decendingly.
         /// </summary>
+        [InEnumerationsArray(new object[] { SortDirection.Ascending, SortDirection.Decending }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
         public SortDirection Direction { get; set; } = SortDirection.Decending;
 
         /// <summary>
         /// Which property should be used for sorting.
         /// </summary>
+        [InEnumerationsArray(new object[] {MessageFilterSort.Created, MessageFilterSort.Seen}, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
         public MessageFilterSort Sort { get; set; } = MessageFilterSort.Created;
 
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,

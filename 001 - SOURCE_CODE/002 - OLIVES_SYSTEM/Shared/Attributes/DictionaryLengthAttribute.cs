@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -33,11 +34,11 @@ namespace Shared.Attributes
                 return ValidationResult.Success;
 
             // Value is not a Dictionary<string, string>.
-            if (!(value is Dictionary<string, string>))
+            if (!(value is IDictionary))
                 throw new Exception($"{validationContext} must be an instance of Dictionary<string, string>");
 
             // Cast the value to Dictionary<string, string>()
-            var dict = (Dictionary<string, string>) value;
+            var dict = (IDictionary) value;
 
             // Key length is defined.
             if (dict.Keys.Count > _length)

@@ -38,16 +38,34 @@ namespace Shared.Attributes
             if (!(value is IDictionary))
                 throw new Exception($"{validationContext} must be an instance of Dictionary<string, string>");
 
-            // Cast the value to Dictionary<string, string>()
-            var dict = (Dictionary<string, object>) value;
-
-            // Key length is defined.
-            if (_keyLength > 0)
+            if (value is Dictionary<string, string>)
             {
-                // Find the invalid key.
-                var invalidKey = dict.Keys.FirstOrDefault(x => x.Length > _keyLength);
-                if (invalidKey != null)
-                    return new ValidationResult(FormatErrorMessage(invalidKey));
+                // Cast the value to Dictionary<string, string>()
+                var dict = (Dictionary<string, string>) value;
+
+                // Key length is defined.
+                if (_keyLength > 0)
+                {
+                    // Find the invalid key.
+                    var invalidKey = dict.Keys.FirstOrDefault(x => x.Length > _keyLength);
+                    if (invalidKey != null)
+                        return new ValidationResult(FormatErrorMessage(invalidKey));
+                }
+            }
+
+            if (value is Dictionary<string, double>)
+            {
+                // Cast the value to Dictionary<string, string>()
+                var dict = (Dictionary<string, double>)value;
+
+                // Key length is defined.
+                if (_keyLength > 0)
+                {
+                    // Find the invalid key.
+                    var invalidKey = dict.Keys.FirstOrDefault(x => x.Length > _keyLength);
+                    if (invalidKey != null)
+                        return new ValidationResult(FormatErrorMessage(invalidKey));
+                }
             }
 
             return ValidationResult.Success;

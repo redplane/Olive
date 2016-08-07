@@ -20,6 +20,9 @@ namespace Shared.ViewModels.Filter
         /// </summary>
         public int Requester { get; set; }
 
+        /// <summary>
+        /// Filter mode.
+        /// </summary>
         public RecordFilterMode? Mode { get; set; }
 
         /// <summary>
@@ -37,6 +40,9 @@ namespace Shared.ViewModels.Filter
         /// </summary>
         public NotificationTopic? Topic { get; set; }
         
+        /// <summary>
+        /// Id of record.
+        /// </summary>
         public int? Record { get; set; }
 
         /// <summary>
