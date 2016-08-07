@@ -21,13 +21,9 @@
       }
     }
   },
-  "AvatarStorage": {
-    "relative": "~/Resources/Avatar"
-  },
-  "MedicalImageStorage": {
-    "relative": "~/App_Data/MedicalImage"
-  },
-  "PrescriptionImageStorage": {
-    "relative": "~/App_Data/PrescriptionImage"
+  "Storage": {
+    "Avatar": "~/Resources/Avatar",
+    "MedicalImage": "~/App_Data/MedicalImage",
+    "PrescriptionImage": "~/App_Data/PrescriptionImage"
   }
 }

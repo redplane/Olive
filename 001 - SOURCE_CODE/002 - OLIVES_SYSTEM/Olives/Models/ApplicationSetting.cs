@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using Shared.Models;
+﻿using System.Collections.Generic;
 
 namespace Olives.Models
 {
@@ -11,18 +10,8 @@ namespace Olives.Models
         public SmtpSetting SmtpSetting { get; set; }
 
         /// <summary>
-        ///     Folder where avatar files should be stored.
+        /// List of storage with their relative paths.
         /// </summary>
-        public PathService AvatarStorage { get; set; }
-
-        /// <summary>
-        ///     Folder where private files should be stored.
-        /// </summary>
-        public PathService MedicalImageStorage { get; set; }
-
-        /// <summary>
-        /// Folder where prescription images are stored.
-        /// </summary>
-        public PathService PrescriptionImageStorage { get; set; }
+        public Dictionary<string, string> Storage { get; set; } 
     }
 }

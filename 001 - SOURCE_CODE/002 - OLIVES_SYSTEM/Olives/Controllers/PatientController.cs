@@ -9,6 +9,7 @@ using System.Web.Http;
 using log4net;
 using Olives.Attributes;
 using Olives.Constants;
+using Olives.Enumerations;
 using Olives.Interfaces;
 using Olives.Models;
 using Olives.ViewModels;
@@ -36,6 +37,7 @@ namespace Olives.Controllers
         /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositoryCode"></param>
         /// <param name="repositoryRelation"></param>
+        /// <param name="repositoryStorage"></param>
         /// <param name="timeService"></param>
         /// <param name="emailService"></param>
         /// <param name="log"></param>
@@ -43,6 +45,7 @@ namespace Olives.Controllers
         public PatientController(
             IRepositoryAccountExtended repositoryAccountExtended, IRepositoryCode repositoryCode,
             IRepositoryRelation repositoryRelation,
+            IRepositoryStorage repositoryStorage,
             ITimeService timeService, IEmailService emailService,
             ILog log,
             ApplicationSetting applicationSetting)
@@ -50,6 +53,7 @@ namespace Olives.Controllers
             _repositoryAccountExtended = repositoryAccountExtended;
             _repositoryCode = repositoryCode;
             _repositoryRelation = repositoryRelation;
+            _repositoryStorage = repositoryStorage;
             _log = log;
             _timeService = timeService;
             _emailService = emailService;
@@ -107,6 +111,9 @@ namespace Olives.Controllers
 
                 #endregion
 
+                // Find the avatar storage.
+                var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     Patient = new
@@ -122,7 +129,7 @@ namespace Olives.Controllers
                         account.Status,
                         account.Address,
                         Photo =
-                            InitializeUrl(_applicationSetting.AvatarStorage.Relative, account.Photo,
+                            InitializeUrl(storageAvatar.Relative, account.Photo,
                                 Values.StandardImageExtension),
                         account.Patient.Height,
                         account.Patient.Weight
@@ -304,6 +311,9 @@ namespace Olives.Controllers
                 // Update the patient.
                 requester = await _repositoryAccountExtended.EditPersonProfileAsync(requester.Id, requester);
 
+                // Find the avatar storage.
+                var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     User = new
@@ -322,7 +332,7 @@ namespace Olives.Controllers
                         requester.Status,
                         requester.Address,
                         Photo =
-                            InitializeUrl(_applicationSetting.AvatarStorage.Relative, requester.Photo,
+                            InitializeUrl(storageAvatar.Relative, requester.Photo,
                                 Values.StandardImageExtension),
                         requester.Patient.Height,
                         requester.Patient.Weight
@@ -369,6 +379,9 @@ namespace Olives.Controllers
             // Call the filter function.
             var result = await _repositoryAccountExtended.FilterPatientsAsync(filter);
 
+            // Find the avatar storage.
+            var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
+            
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 Patients = result.Patients.Select(x => new
@@ -380,7 +393,7 @@ namespace Olives.Controllers
                     x.Person.Birthday,
                     x.Person.Phone,
                     Photo =
-                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Person.Photo,
+                        InitializeUrl(storageAvatar.Relative, x.Person.Photo,
                             Values.StandardImageExtension),
                     x.Person.Address,
                     x.Height,
@@ -496,6 +509,11 @@ namespace Olives.Controllers
         /// Repository which provides functions to relationship database.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
+
+        /// <summary>
+        /// Repository which provides functions to storage setting.
+        /// </summary>
+        private readonly IRepositoryStorage _repositoryStorage;
 
         /// <summary>
         ///     Instance of module which is used for logging.

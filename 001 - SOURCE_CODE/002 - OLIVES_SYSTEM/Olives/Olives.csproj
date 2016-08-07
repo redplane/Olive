@@ -282,6 +282,7 @@
     <Compile Include="Enumerations\Filter\DiaryFilterSort.cs" />
     <Compile Include="Enumerations\Filter\FilterDoctorSort.cs" />
     <Compile Include="Enumerations\Filter\PatientFilterSort.cs" />
+    <Compile Include="Enumerations\Storage.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -291,6 +292,7 @@
     <Compile Include="Interfaces\INotificationService.cs" />
     <Compile Include="Interfaces\IRepositoryAccountExtended.cs" />
     <Compile Include="Interfaces\IRepositoryDiary.cs" />
+    <Compile Include="Interfaces\IRepositoryStorage.cs" />
     <Compile Include="Models\ApplicationSetting.cs" />
     <Compile Include="Models\Emails\EmailSetting.cs" />
     <Compile Include="Models\Emails\EmailModel.cs" />
@@ -299,6 +301,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\RepositoryAccountExtended.cs" />
     <Compile Include="Repositories\RepositoryDiary.cs" />
+    <Compile Include="Repositories\RepositoryStorage.cs" />
     <Compile Include="Services\EmailService.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\NotificationService.cs" />

@@ -17,6 +17,7 @@ using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels.Filter;
 using Olives.Controllers;
+using Olives.Enumerations;
 using Olives.ViewModels.Initialize;
 
 namespace Olives.Controllers
@@ -31,6 +32,7 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="repositoryMedicalRecord"></param>
         /// <param name="repositoryMedicalImage"></param>
+        /// <param name="repositoryStorage"></param>
         /// <param name="timeService"></param>
         /// <param name="log"></param>
         /// <param name="fileService"></param>
@@ -38,11 +40,13 @@ namespace Olives.Controllers
         /// <param name="applicationSetting"></param>
         public MedicalImageController(
             IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryMedicalImage repositoryMedicalImage,
+            IRepositoryStorage repositoryStorage,
             ITimeService timeService, INotificationService notificationService,
             ILog log, IFileService fileService, ApplicationSetting applicationSetting)
         {
             _repositoryMedicalRecord = repositoryMedicalRecord;
             _repositoryMedicalImage = repositoryMedicalImage;
+            _repositoryStorage = repositoryStorage;
             _log = log;
             _timeService = timeService;
             _notificationService = notificationService;
@@ -123,6 +127,9 @@ namespace Olives.Controllers
                 // Use GUID to randomize image file name.
                 var imageName = Guid.NewGuid().ToString("N");
 
+                // Find the medical image storage.
+                var storageMedicalImage = _repositoryStorage.FindStorage(Storage.MedicalImage);
+
                 // Initialize an instance of medical image.
                 var medicalImage = new MedicalImage();
                 medicalImage.Creator = requester.Id;
@@ -130,7 +137,7 @@ namespace Olives.Controllers
                 medicalImage.MedicalRecordId = medicalRecord.Id;
                 medicalImage.Image = imageName;
                 medicalImage.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
-                medicalImage.FullPath = Path.Combine(_applicationSetting.MedicalImageStorage.Absolute,
+                medicalImage.FullPath = Path.Combine(storageMedicalImage.Absolute,
                     $"{imageName}.{Values.StandardImageExtension}");
 
                 // Save the image first.
@@ -317,7 +324,12 @@ namespace Olives.Controllers
         ///     Repository of medical image.
         /// </summary>
         private readonly IRepositoryMedicalImage _repositoryMedicalImage;
-        
+
+        /// <summary>
+        /// Repository of storage.
+        /// </summary>
+        private readonly IRepositoryStorage _repositoryStorage;
+
         /// <summary>
         ///     Service which provides functions to access time calculation.
         /// </summary>

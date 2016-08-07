@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
+using Olives.Enumerations;
+using Olives.Interfaces;
 using Olives.Models;
 using Olives.ViewModels.Filter;
 using Olives.ViewModels.Initialize;
@@ -27,16 +29,20 @@ namespace Olives.Controllers
         ///     Initialize an instance of AccountController with Dependency injections.
         /// </summary>
         /// <param name="repositoryRelation"></param>
+        /// <param name="repositoryStorage"></param>
         /// <param name="timeService"></param>
         /// <param name="applicationSetting"></param>
         /// <param name="log"></param>
         public RelationshipController(
             IRepositoryRelation repositoryRelation,
+            IRepositoryStorage repositoryStorage,
             ITimeService timeService,
             ApplicationSetting applicationSetting,
             ILog log)
         {
             _repositoryRelation = repositoryRelation;
+            _repositoryStorage = repositoryStorage;
+
             _timeService = timeService;
             _applicationSetting = applicationSetting;
             _log = log;
@@ -231,6 +237,9 @@ namespace Olives.Controllers
                     _repositoryRelation.FilterRelatedDoctorAsync(requester.Id, filter.Status, filter.Page,
                         filter.Records);
 
+            // Find the avatar storage.
+            var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
+
             // Throw the list back to client.
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -249,7 +258,7 @@ namespace Olives.Controllers
                         x.Doctor.Rank,
                         x.Doctor.Person.Address,
                         Photo =
-                            InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Doctor.Person.Photo,
+                            InitializeUrl(storageAvatar.Relative, x.Doctor.Person.Photo,
                                 Values.StandardImageExtension)
                     },
                     Status = x.RelationshipStatus,
@@ -300,6 +309,9 @@ namespace Olives.Controllers
                 await
                     _repositoryRelation.FilterRelationshipAsync(filter);
 
+            // Find the storage of avatar.
+            var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
+
             // Throw the list back to client.
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -311,14 +323,14 @@ namespace Olives.Controllers
                         Id = x.Source,
                         x.Patient.Person.FirstName,
                         x.Patient.Person.LastName,
-                        Photo = InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Patient.Person.Photo, Values.StandardImageExtension)
+                        Photo = InitializeUrl(storageAvatar.Relative, x.Patient.Person.Photo, Values.StandardImageExtension)
                     },
                     Target = new
                     {
                         Id = x.Target,
                         x.Doctor.Person.FirstName,
                         x.Doctor.Person.LastName,
-                        Photo = InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Doctor.Person.Photo, Values.StandardImageExtension)
+                        Photo = InitializeUrl(storageAvatar.Relative, x.Doctor.Person.Photo, Values.StandardImageExtension)
                     },
                     x.Created,
                     x.Status
@@ -337,6 +349,11 @@ namespace Olives.Controllers
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
+
+        /// <summary>
+        /// Repository of storage.
+        /// </summary>
+        private readonly IRepositoryStorage _repositoryStorage;
 
         /// <summary>
         ///     Instance stores application settings.

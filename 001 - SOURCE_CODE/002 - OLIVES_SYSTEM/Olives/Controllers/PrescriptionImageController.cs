@@ -18,6 +18,7 @@ using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels.Filter;
 using Olives.Controllers;
+using Olives.Enumerations;
 
 namespace Olives.Controllers
 {
@@ -31,6 +32,7 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="repositoryPrescription"></param>
         /// <param name="repositoryPrescriptionImage"></param>
+        /// <param name="repositoryStorage"></param>
         /// <param name="log"></param>
         /// <param name="fileService"></param>
         /// <param name="timeService"></param>
@@ -38,17 +40,17 @@ namespace Olives.Controllers
         /// <param name="applicationSetting"></param>
         public PrescriptionImageController(
             IRepositoryPrescription repositoryPrescription, IRepositoryPrescriptionImage repositoryPrescriptionImage,
+            IRepositoryStorage repositoryStorage,
             ILog log, 
-            IFileService fileService, ITimeService timeService, INotificationService notificationService,
-            ApplicationSetting applicationSetting)
+            IFileService fileService, ITimeService timeService, INotificationService notificationService)
         {
             _repositoryPrescription = repositoryPrescription;
             _repositoryPrescriptionImage = repositoryPrescriptionImage;
+            _repositoryStorage = repositoryStorage;
             _log = log;
             _fileService = fileService;
             _timeService = timeService;
             _notificationService = notificationService;
-            _applicationSetting = applicationSetting;
         }
 
         #endregion
@@ -133,8 +135,11 @@ namespace Olives.Controllers
                 // Generate file name and save the file first.
                 var fileName = Guid.NewGuid().ToString("N");
 
+                // Find the storage of prescription image.
+                var storagePrescriptionImage = _repositoryStorage.FindStorage(Storage.PrescriptionImage);
+
                 // Full path construction.
-                var fullPath = Path.Combine(_applicationSetting.PrescriptionImageStorage.Absolute,
+                var fullPath = Path.Combine(storagePrescriptionImage.Absolute,
                     $"{fileName}.{Values.StandardImageExtension}");
 
                 // Save the image first.
@@ -345,7 +350,12 @@ namespace Olives.Controllers
         ///     Repository of prescriptions.
         /// </summary>
         private readonly IRepositoryPrescription _repositoryPrescription;
-        
+
+        /// <summary>
+        /// Storage of prescription image.
+        /// </summary>
+        private readonly IRepositoryStorage _repositoryStorage;
+
         /// <summary>
         ///     Service which provides functions to access time calculation.
         /// </summary>
@@ -360,12 +370,7 @@ namespace Olives.Controllers
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-
-        /// <summary>
-        ///     Application setting.
-        /// </summary>
-        private readonly ApplicationSetting _applicationSetting;
-
+        
         /// <summary>
         ///     Service which provides functions to handle file operations.
         /// </summary>

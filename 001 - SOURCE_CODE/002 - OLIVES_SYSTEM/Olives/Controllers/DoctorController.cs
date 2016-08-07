@@ -9,6 +9,7 @@ using System.Web.Http;
 using log4net;
 using Olives.Attributes;
 using Olives.Constants;
+using Olives.Enumerations;
 using Olives.Interfaces;
 using Olives.Models;
 using Olives.ViewModels;
@@ -36,21 +37,24 @@ namespace Olives.Controllers
         /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositorySpecialty"></param>
         /// <param name="repositoryPlace"></param>
+        /// <param name="repositoryStorage"></param>
         /// <param name="log"></param>
         /// <param name="timeService"></param>
         /// <param name="applicationSetting"></param>
         public DoctorController(IRepositoryAccountExtended repositoryAccountExtended,
             IRepositorySpecialty repositorySpecialty,
             IRepositoryPlace repositoryPlace,
+            IRepositoryStorage repositoryStorage,
             ILog log, ITimeService timeService,
             ApplicationSetting applicationSetting)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
             _repositorySpecialty = repositorySpecialty;
             _repositoryPlace = repositoryPlace;
+            _repositoryStorage = repositoryStorage;
             _log = log;
             _timeService = timeService;
-            _applicationSetting = applicationSetting;
+
         }
 
         #endregion
@@ -104,6 +108,7 @@ namespace Olives.Controllers
 
             #region Result handling
 
+            var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 Doctor = new
@@ -118,7 +123,7 @@ namespace Olives.Controllers
                     account.Phone,
                     account.Role,
                     Photo =
-                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, account.Photo,
+                        InitializeUrl(storageAvatar.Relative, account.Photo,
                             Values.StandardImageExtension),
                     Specialty = new
                     {
@@ -309,6 +314,9 @@ namespace Olives.Controllers
                 // Save account.
                 requester = await _repositoryAccountExtended.EditPersonProfileAsync(requester.Id, requester);
 
+                // Find the storage of avatar.
+                var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
+
                 // Respond information to client.
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -328,7 +336,7 @@ namespace Olives.Controllers
                         requester.Status,
                         requester.Address,
                         Photo =
-                            InitializeUrl(_applicationSetting.AvatarStorage.Relative, requester.Photo,
+                            InitializeUrl(storageAvatar.Relative, requester.Photo,
                                 Values.StandardImageExtension)
                     }
                 });
@@ -376,6 +384,9 @@ namespace Olives.Controllers
                 filter.Status = StatusAccount.Active;
                 var result = await _repositoryAccountExtended.FilterDoctorsAsync(filter);
 
+                // Find the storage of avatar.
+                var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     Doctors = result.Doctors.Select(x => new
@@ -391,7 +402,7 @@ namespace Olives.Controllers
                         x.Person.Phone,
                         x.Person.Role,
                         Photo =
-                            InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Person.Photo,
+                            InitializeUrl(storageAvatar.Relative, x.Person.Photo,
                                 Values.StandardImageExtension),
                         x.Rank,
                         Specialty = new
@@ -441,15 +452,15 @@ namespace Olives.Controllers
         private readonly IRepositoryPlace _repositoryPlace;
 
         /// <summary>
+        /// Repository of storages.
+        /// </summary>
+        private readonly IRepositoryStorage _repositoryStorage;
+
+        /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
         
-        /// <summary>
-        ///     Property which contains settings of application which had been deserialized from json file.
-        /// </summary>
-        private readonly ApplicationSetting _applicationSetting;
-
         /// <summary>
         ///     Service which provides function to access time calculation.
         /// </summary>

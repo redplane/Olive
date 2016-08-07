@@ -86,10 +86,19 @@ namespace Olives
             builder.RegisterType<RepositoryAppointment>().As<IRepositoryAppointment>().SingleInstance();
             builder.RegisterType<RepositoryRating>().As<IRepositoryRating>().SingleInstance();
             builder.RegisterType<RepositoryNotification>().As<IRepositoryNotification>().SingleInstance();
-            var repositoryRealtimeConnection = new RepositoryRealTimeConnection();
-            builder.RegisterType<RepositoryRealTimeConnection>().As<IRepositoryRealTimeConnection>().OnActivating(e => e.ReplaceInstance(repositoryRealtimeConnection)).SingleInstance();
             builder.RegisterType<RepositoryBloodPressure>().As<IRepositoryBloodPressure>().SingleInstance();
             builder.RegisterType<RepositoryMessage>().As<IRepositoryMessage>().SingleInstance();
+            builder.RegisterType<RepositoryDiary>().As<IRepositoryDiary>().SingleInstance();
+
+            var repositoryRealtimeConnection = new RepositoryRealTimeConnection();
+            builder.RegisterType<RepositoryRealTimeConnection>().As<IRepositoryRealTimeConnection>().OnActivating(e => e.ReplaceInstance(repositoryRealtimeConnection)).SingleInstance();
+
+            var repositoryStorage = new RepositoryStorage(HttpContext.Current);
+            foreach (var key in applicationSetting.Storage.Keys)
+                repositoryStorage.InitializeStorage(key, applicationSetting.Storage[key]);
+            builder.RegisterType<RepositoryStorage>()
+                .As<IRepositoryStorage>()
+                .OnActivating(e => e.ReplaceInstance(repositoryStorage)).SingleInstance();
 
             #region Medical repositories
 
@@ -125,9 +134,7 @@ namespace Olives
             builder.RegisterType<PlaceValidateAttribute>().PropertiesAutowired();
             
             #endregion
-
             
-
             // Web api dependency registration.
             builder.RegisterWebApiFilterProvider(GlobalConfiguration.Configuration);
 
@@ -167,42 +174,7 @@ namespace Olives
 
             var info = File.ReadAllText(applicationConfigFile);
             applicationSetting = JsonConvert.DeserializeObject<ApplicationSetting>(info);
-
-            #region Avatar storage folder
-
-            var fullPublicStoragePath = HttpContext.Current.Server.MapPath(applicationSetting.AvatarStorage.Relative);
-            if (!Directory.Exists(fullPublicStoragePath))
-                Directory.CreateDirectory(fullPublicStoragePath);
-
-            // Update application public storage.
-            applicationSetting.AvatarStorage.Absolute = fullPublicStoragePath;
-
-            #endregion
-
-            #region Medical image storage folder
-
-            // Invalid private storage folder.
-            var fullMedicalImageStoragePath = HttpContext.Current.Server.MapPath(applicationSetting.MedicalImageStorage.Relative);
-            if (!Directory.Exists(fullMedicalImageStoragePath))
-                Directory.CreateDirectory(fullMedicalImageStoragePath);
-
-            // Update application private storage folder.
-            applicationSetting.MedicalImageStorage.Absolute = fullMedicalImageStoragePath;
-
-            #endregion
-
-            #region Prescription storage folder
-
-            // Invalid private storage folder.
-            var fullPrescriptionImagePath = HttpContext.Current.Server.MapPath(applicationSetting.PrescriptionImageStorage.Relative);
-            if (!Directory.Exists(fullPrescriptionImagePath))
-                Directory.CreateDirectory(fullPrescriptionImagePath);
-
-            // Update application private storage folder.
-            applicationSetting.PrescriptionImageStorage.Absolute = fullPrescriptionImagePath;
-
-            #endregion
-
+            
             // Stmp setting is invalid
             if (applicationSetting.SmtpSetting == null || !applicationSetting.SmtpSetting.IsValid())
                 throw new NotImplementedException("Email configuration hasn't been configured.");

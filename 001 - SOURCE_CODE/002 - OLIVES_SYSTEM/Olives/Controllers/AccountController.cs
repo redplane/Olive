@@ -9,6 +9,7 @@ using System.Web.Http;
 using log4net;
 using Olives.Attributes;
 using Olives.Constants;
+using Olives.Enumerations;
 using Olives.Interfaces;
 using Olives.Models;
 using Olives.ViewModels;
@@ -33,22 +34,18 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositoryActivationCode"></param>
-        /// <param name="repositorySpecialty"></param>
-        /// <param name="repositoryPlace"></param>
+        /// <param name="repositoryStorage"></param>
         /// <param name="log"></param>
         /// <param name="emailService"></param>
-        /// <param name="timeService"></param>
-        /// <param name="applicationSetting"></param>
         public AccountController(
-            IRepositoryAccountExtended repositoryAccountExtended, IRepositoryCode repositoryActivationCode,
-            ILog log, IEmailService emailService,
-            ApplicationSetting applicationSetting)
+            IRepositoryAccountExtended repositoryAccountExtended, IRepositoryCode repositoryActivationCode, IRepositoryStorage repositoryStorage,
+            ILog log, IEmailService emailService)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
             _repositoryActivationCode = repositoryActivationCode;
+            _repositoryStorage = repositoryStorage;
             _log = log;
             _emailService = emailService;
-            _applicationSetting = applicationSetting;
         }
 
         #endregion
@@ -90,11 +87,14 @@ namespace Olives.Controllers
                 // Retrieve information of person who sent request.
                 var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
+                // Retrieve avatar storage setting.
+                var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
+                
                 // As the requester has existed image before, use that name, otherwise generate a new one.
                 if (!string.IsNullOrEmpty(requester.Photo))
                 {
                     // Update the image full path.
-                    var fullPath = Path.Combine(_applicationSetting.AvatarStorage.Absolute,
+                    var fullPath = Path.Combine(storageAvatar.Absolute,
                         $"{requester.Photo}.{Values.StandardImageExtension}");
 
                     // Save the image to physical disk.
@@ -108,7 +108,7 @@ namespace Olives.Controllers
                     var imageName = Guid.NewGuid().ToString("N");
 
                     // Take the full path.
-                    var fullPath = Path.Combine(_applicationSetting.AvatarStorage.Absolute,
+                    var fullPath = Path.Combine(storageAvatar.Absolute,
                         $"{imageName}.{Values.StandardImageExtension}");
 
                     // Save the avatar file to disk.
@@ -147,7 +147,7 @@ namespace Olives.Controllers
                         requester.Status,
                         requester.Address,
                         Photo =
-                            InitializeUrl(_applicationSetting.AvatarStorage.Relative, requester.Photo,
+                            InitializeUrl(storageAvatar.Relative, requester.Photo,
                                 Values.StandardImageExtension)
                     }
                 });
@@ -360,7 +360,9 @@ namespace Olives.Controllers
             }
 
             #endregion
-            
+
+            #region Login validation
+                   
             // Pass parameter to login function. 
             var account = await _repositoryAccountExtended.FindPersonAsync(null, loginViewModel.Email, loginViewModel.Password, null, null);
             
@@ -415,7 +417,10 @@ namespace Olives.Controllers
                     Error = $"{Language.WarnDisabledAccount}"
                 });
             }
-            _log.Info($"{loginViewModel.Email} has logged in successfully");
+
+            #endregion
+
+            var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 User = new
@@ -434,7 +439,7 @@ namespace Olives.Controllers
                     account.Status,
                     account.Address,
                     Photo =
-                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, account.Photo,
+                        InitializeUrl(storageAvatar.Relative, account.Photo,
                             Values.StandardImageExtension)
                 }
             });
@@ -443,6 +448,11 @@ namespace Olives.Controllers
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Repository which provides functions to access storage database.
+        /// </summary>
+        private readonly IRepositoryStorage _repositoryStorage;
 
         /// <summary>
         ///     Repository of accounts
@@ -463,11 +473,6 @@ namespace Olives.Controllers
         ///     Service which is used for sending emails.
         /// </summary>
         private readonly IEmailService _emailService;
-
-        /// <summary>
-        ///     Property which contains settings of application which had been deserialized from json file.
-        /// </summary>
-        private readonly ApplicationSetting _applicationSetting;
         
         #endregion
     }

@@ -19,7 +19,7 @@ using Shared.Resources;
 namespace Olives.Controllers
 {
     [Route("api/diary")]
-    [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+    [OlivesAuthorize(new[] {Role.Doctor})]
     public class DiaryController : ApiParentController
     {
         #region Constructors
