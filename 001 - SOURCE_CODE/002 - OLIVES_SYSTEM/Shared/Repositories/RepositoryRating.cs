@@ -13,6 +13,23 @@ namespace Shared.Repositories
 {
     public class RepositoryRating : IRepositoryRating
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructor
+
+        public RepositoryRating(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         ///     Initialize or update rating asynchronously.
         /// </summary>
@@ -21,9 +38,7 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<Rating> InitializeRatingAsync(Rating rating, int rated)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
+            var context = _dataContext.Context;
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
@@ -68,10 +83,8 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<ResponseRatingFilter> FilterRatingAsync(FilterRatingViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all records.
+            var context = _dataContext.Context;
             IQueryable<Rating> ratings = context.Ratings;
 
             // Base on the mode of image filter to decide the role of requester.
@@ -135,7 +148,7 @@ namespace Shared.Repositories
                     }
                     break;
             }
-            
+
             // Response initialization.
             var response = new ResponseRatingFilter();
 
@@ -155,5 +168,7 @@ namespace Shared.Repositories
 
             return response;
         }
+
+        #endregion
     }
 }

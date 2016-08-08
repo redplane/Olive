@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using Shared.Enumerations;
@@ -13,17 +12,32 @@ namespace Shared.Repositories
 {
     public class RepositoryMessage : IRepositoryMessage
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructor
+
+        public RepositoryMessage(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
-        /// Send a message asychronously.
+        ///     Send a message asychronously.
         /// </summary>
         /// <param name="initializer"></param>
         /// <returns></returns>
         public async Task<Message> BroadcastMessageAsync(Message initializer)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // Initialize a message to database.
+            var context = _dataContext.Context;
             context.Messages.Add(initializer);
 
             // Save changes.
@@ -31,18 +45,16 @@ namespace Shared.Repositories
 
             return initializer;
         }
-        
+
         /// <summary>
-        /// Filter messages by using specific conditions asynchronously.
+        ///     Filter messages by using specific conditions asynchronously.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
         public async Task<ResponseMessageFilter> FilterMessagesAsync(FilterMessageViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-            
             // By default, take all the messages.
+            var context = _dataContext.Context;
             IQueryable<Message> messages = context.Messages;
 
             // Base on the mode of image filter to decide the role of requester.
@@ -85,7 +97,7 @@ namespace Shared.Repositories
                 case SortDirection.Decending:
                     switch (filter.Sort)
                     {
-                            case MessageFilterSort.Created:
+                        case MessageFilterSort.Created:
                             messages = messages.OrderByDescending(x => x.Created);
                             break;
                         default:
@@ -120,16 +132,16 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Find a message by using id.
+        ///     Find a message by using id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<Message> FindMessageAsync(int id)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
+            var context = _dataContext.Context;
             return await context.Messages.FirstOrDefaultAsync(x => x.Id == id);
         }
+
+        #endregion
     }
 }

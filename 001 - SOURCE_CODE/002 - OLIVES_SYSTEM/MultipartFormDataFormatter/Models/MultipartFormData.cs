@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 
 namespace MultipartFormDataMediaFormatter.Models
@@ -31,7 +30,7 @@ namespace MultipartFormDataMediaFormatter.Models
         ///     List of primitive fields.
         /// </summary>
         public List<PrimitiveModel> Fields;
-        
+
         #endregion
 
         #region Methods
@@ -64,7 +63,7 @@ namespace MultipartFormDataMediaFormatter.Models
         {
             Files.Add(new FileModel {Name = name, Value = value});
         }
-        
+
         /// <summary>
         ///     Parse data and retrieve primitive data.
         /// </summary>
@@ -101,7 +100,7 @@ namespace MultipartFormDataMediaFormatter.Models
             value = null;
             return false;
         }
-        
+
         #endregion
     }
 }

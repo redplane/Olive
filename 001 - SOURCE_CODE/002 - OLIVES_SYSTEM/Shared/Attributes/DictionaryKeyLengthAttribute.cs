@@ -56,7 +56,7 @@ namespace Shared.Attributes
             if (value is Dictionary<string, double>)
             {
                 // Cast the value to Dictionary<string, string>()
-                var dict = (Dictionary<string, double>)value;
+                var dict = (Dictionary<string, double>) value;
 
                 // Key length is defined.
                 if (_keyLength > 0)

@@ -6,7 +6,7 @@ namespace Shared.Services
     public class TimeService : ITimeService
     {
         /// <summary>
-        /// Calculate the unix time from UTC DateTime.
+        ///     Calculate the unix time from UTC DateTime.
         /// </summary>
         /// <param name="dateTime"></param>
         /// <returns></returns>
@@ -16,7 +16,7 @@ namespace Shared.Services
         }
 
         /// <summary>
-        /// Convert unix time to UTC time.
+        ///     Convert unix time to UTC time.
         /// </summary>
         /// <param name="unixTime"></param>
         /// <returns></returns>

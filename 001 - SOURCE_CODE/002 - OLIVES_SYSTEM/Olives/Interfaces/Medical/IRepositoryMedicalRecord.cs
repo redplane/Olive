@@ -8,7 +8,7 @@ namespace Olives.Interfaces.Medical
     public interface IRepositoryMedicalRecord
     {
         /// <summary>
-        /// Delete the medical record asynchronously.
+        ///     Delete the medical record asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>

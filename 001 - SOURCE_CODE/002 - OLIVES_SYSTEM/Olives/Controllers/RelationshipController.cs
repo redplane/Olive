@@ -133,7 +133,8 @@ namespace Olives.Controllers
         [Route("api/relationship/confirm")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
-        public async Task<HttpResponseMessage> DecideRelationshipAsync([FromBody] ConfirmRelationshipViewModel confirmation)
+        public async Task<HttpResponseMessage> DecideRelationshipAsync(
+            [FromBody] ConfirmRelationshipViewModel confirmation)
         {
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
@@ -147,7 +148,8 @@ namespace Olives.Controllers
             // No relationship has been returned.
             if (relationship == null)
             {
-                _log.Error($"There is no relationship [Id: {confirmation.Id}] targeted to Requester [Id: {requester.Id}]");
+                _log.Error(
+                    $"There is no relationship [Id: {confirmation.Id}] targeted to Requester [Id: {requester.Id}]");
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
                     Error = $"{Language.WarnRelationNotFound}"
@@ -323,14 +325,16 @@ namespace Olives.Controllers
                         Id = x.Source,
                         x.Patient.Person.FirstName,
                         x.Patient.Person.LastName,
-                        Photo = InitializeUrl(storageAvatar.Relative, x.Patient.Person.Photo, Values.StandardImageExtension)
+                        Photo =
+                            InitializeUrl(storageAvatar.Relative, x.Patient.Person.Photo, Values.StandardImageExtension)
                     },
                     Target = new
                     {
                         Id = x.Target,
                         x.Doctor.Person.FirstName,
                         x.Doctor.Person.LastName,
-                        Photo = InitializeUrl(storageAvatar.Relative, x.Doctor.Person.Photo, Values.StandardImageExtension)
+                        Photo =
+                            InitializeUrl(storageAvatar.Relative, x.Doctor.Person.Photo, Values.StandardImageExtension)
                     },
                     x.Created,
                     x.Status
@@ -351,7 +355,7 @@ namespace Olives.Controllers
         private readonly IRepositoryRelation _repositoryRelation;
 
         /// <summary>
-        /// Repository of storage.
+        ///     Repository of storage.
         /// </summary>
         private readonly IRepositoryStorage _repositoryStorage;
 

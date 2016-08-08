@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 using OlivesAdministration.Enumerations;
@@ -9,6 +7,7 @@ using OlivesAdministration.Interfaces;
 using OlivesAdministration.ViewModels.Filter;
 using OlivesAdministration.ViewModels.Statistic;
 using Shared.Enumerations;
+using Shared.Interfaces;
 using Shared.Models;
 using Shared.Repositories;
 using Shared.ViewModels.Response;
@@ -17,8 +16,25 @@ namespace OlivesAdministration.Repositories
 {
     public class RepositoryAccountExtended : RepositoryAccount, IRepositoryAccountExtended
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructors
+
+        public RepositoryAccountExtended(IOliveDataContext dataContext) : base(dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
-        /// Filter doctors by using specific conditions asynchronously.
+        ///     Filter doctors by using specific conditions asynchronously.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -26,10 +42,8 @@ namespace OlivesAdministration.Repositories
         {
             #region Data initialization
 
-            // Database connection context initialization.
-            var context = new OlivesHealthEntities();
-            
             // By default, take all doctors.
+            var context = _dataContext.Context;
             IQueryable<Doctor> doctors = context.Doctors;
 
             #endregion
@@ -72,17 +86,18 @@ namespace OlivesAdministration.Repositories
 
             // Filter by status.
             if (filter.Status != null)
-                doctors = doctors.Where(x => x.Person.Status == (byte)filter.Status);
+                doctors = doctors.Where(x => x.Person.Status == (byte) filter.Status);
 
             #endregion
 
             #region Doctors
 
             // Filter doctor by place.
-            if (!string.IsNullOrWhiteSpace(filter.City)) doctors = doctors.Where(x => x.Place.City.Contains(filter.City));
+            if (!string.IsNullOrWhiteSpace(filter.City))
+                doctors = doctors.Where(x => x.Place.City.Contains(filter.City));
             if (!string.IsNullOrWhiteSpace(filter.Country))
                 doctors = doctors.Where(x => x.Place.Country.Contains(filter.Country));
-            
+
             // Filter by rank.
             if (filter.MinRank != null) doctors = doctors.Where(x => x.Rank >= filter.MinRank);
             if (filter.MaxRank != null) doctors = doctors.Where(x => x.Rank <= filter.MaxRank);
@@ -173,7 +188,7 @@ namespace OlivesAdministration.Repositories
             // Record is defined.
             if (filter.Records != null)
             {
-                doctors = doctors.Skip(filter.Page * filter.Records.Value)
+                doctors = doctors.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
@@ -192,12 +207,10 @@ namespace OlivesAdministration.Repositories
         {
             #region Record filter
 
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // Response initialization.
             var response = new ResponsePatientFilter();
 
+            var context = _dataContext.Context;
             // By default, take all patients.
             IQueryable<Patient> patients = context.Patients;
 
@@ -230,7 +243,7 @@ namespace OlivesAdministration.Repositories
             // Filter by gender.
             if (filter.Gender != null)
                 patients = patients.Where(x => x.Person.Gender == filter.Gender);
-            
+
             // Filter by created.
             if (filter.MinCreated != null)
                 patients = patients.Where(x => x.Person.Created >= filter.MinCreated);
@@ -320,7 +333,7 @@ namespace OlivesAdministration.Repositories
             // Record is specified.
             if (filter.Records != null)
             {
-                patients = patients.Skip(filter.Page * filter.Records.Value)
+                patients = patients.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
@@ -330,20 +343,20 @@ namespace OlivesAdministration.Repositories
 
             #endregion
         }
-        
+
         /// <summary>
         ///     Summary person by using role.
         /// </summary>
         /// <returns></returns>
         public async Task<IList<StatusSummaryViewModel>> SummarizePersonRoleAsync(byte? role)
         {
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
             IQueryable<Person> result = context.People;
 
             if (role != null)
                 result = result.Where(x => x.Role == role);
 
-            var filteredResult = result.GroupBy(x => new { x.Role, x.Status })
+            var filteredResult = result.GroupBy(x => new {x.Role, x.Status})
                 .OrderBy(x => x.Key)
                 .Select(x => new StatusSummaryViewModel
                 {
@@ -354,6 +367,7 @@ namespace OlivesAdministration.Repositories
 
             return await filteredResult.ToListAsync();
         }
-        
+
+        #endregion
     }
 }

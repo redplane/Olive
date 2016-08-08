@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using log4net;
 using Olives.Interfaces;
-using Shared.Interfaces;
 using Shared.Resources;
 
 namespace Olives.Controllers
@@ -19,13 +18,13 @@ namespace Olives.Controllers
         ///     Repository which provides functions to access account database.
         /// </summary>
         private readonly IRepositoryAccountExtended _repositoryAccountExtended;
-        
+
         #region Constructors
 
         /// <summary>
         ///     Initialize an instance of AccountVerifyController with given information.
         /// </summary>
-        public ServiceController(IRepositoryAccountExtended repositoryAccountExtended, 
+        public ServiceController(IRepositoryAccountExtended repositoryAccountExtended,
             ILog log)
         {
             _repositoryAccountExtended = repositoryAccountExtended;

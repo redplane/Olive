@@ -83,7 +83,8 @@ namespace Olives.Controllers
                 var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Check the relationship between requester and the rated.
-                var isRelationshipAvailable = await _repositoryRelation.IsPeopleConnected(requester.Id, initializer.Target);
+                var isRelationshipAvailable =
+                    await _repositoryRelation.IsPeopleConnected(requester.Id, initializer.Target);
 
                 // No relationship has been found.
                 if (!isRelationshipAvailable)
@@ -121,7 +122,7 @@ namespace Olives.Controllers
                 }
 
                 #endregion
-                
+
                 #region Result initialization
 
                 var rating = new Rating();

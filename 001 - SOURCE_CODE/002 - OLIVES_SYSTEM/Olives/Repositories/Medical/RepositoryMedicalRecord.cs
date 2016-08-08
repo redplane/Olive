@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Olives.Interfaces.Medical;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
+using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
@@ -13,6 +14,23 @@ namespace Olives.Repositories.Medical
 {
     public class RepositoryMedicalRecord : IRepositoryMedicalRecord
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructors
+
+        public RepositoryMedicalRecord(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         ///     Initialize / edit a medical record asynchronously.
         /// </summary>
@@ -20,10 +38,8 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<MedicalRecord> InitializeMedicalRecordAsync(MedicalRecord info)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // Add or update the record.
+            var context = _dataContext.Context;
             context.MedicalRecords.AddOrUpdate(info);
 
             // Save the record asynchronously.
@@ -38,10 +54,8 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<MedicalRecord> FindMedicalRecordAsync(int id)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all record.
+            var context = _dataContext.Context;
             IQueryable<MedicalRecord> results = context.MedicalRecords;
 
             // Find the record by using id.
@@ -49,13 +63,13 @@ namespace Olives.Repositories.Medical
         }
 
         /// <summary>
-        /// Delete medical record asynchronously.
+        ///     Delete medical record asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<int> DeleteMedicalRecordAsync(int id)
         {
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
@@ -113,7 +127,7 @@ namespace Olives.Repositories.Medical
 
                     // Save changes asynchronously.
                     var records = await context.SaveChangesAsync();
-                    
+
                     // Begin the transaction.
                     transaction.Commit();
 
@@ -134,10 +148,8 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<ResponseMedicalRecordFilter> FilterMedicalRecordAsync(FilterMedicalRecordViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all records.
+            var context = _dataContext.Context;
             IQueryable<MedicalRecord> medicalRecords = context.MedicalRecords;
 
             // Base on the mode of image filter to decide the role of requester.
@@ -241,12 +253,12 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<MedicalImage> InitializeMedicalImageAsync(MedicalImage info)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
+            var context = _dataContext.Context;
             context.MedicalImages.AddOrUpdate(info);
             await context.SaveChangesAsync();
             return info;
         }
+
+        #endregion
     }
 }

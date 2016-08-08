@@ -10,6 +10,6 @@ namespace Olives.Interfaces
         /// <param name="destinations"></param>
         /// <param name="templateName"></param>
         /// <param name="data"></param>
-        Task<bool> InitializeEmail(string [] destinations, string templateName, object data);
+        Task<bool> InitializeEmail(string[] destinations, string templateName, object data);
     }
 }

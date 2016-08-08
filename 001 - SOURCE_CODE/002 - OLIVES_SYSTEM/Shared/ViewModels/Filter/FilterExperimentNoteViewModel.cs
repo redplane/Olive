@@ -11,7 +11,7 @@ namespace Shared.ViewModels.Filter
     public class FilterExperimentNoteViewModel : IPagination
     {
         /// <summary>
-        /// Id of experiment note.
+        ///     Id of experiment note.
         /// </summary>
         public int? Id { get; set; }
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
-using Olives.Interfaces.Medical;
 using Shared.Interfaces;
 
 namespace Olives.Attributes

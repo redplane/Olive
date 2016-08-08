@@ -18,7 +18,7 @@ using Shared.ViewModels.Filter;
 namespace Olives.Controllers
 {
     [Route("api/message")]
-    [OlivesAuthorize(new [] {Role.Doctor, Role.Patient})]
+    [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
     public class MessageController : ApiParentControllerHub<NotificationHub>
     {
         #region Constructors
@@ -47,7 +47,7 @@ namespace Olives.Controllers
         #region Methods
 
         /// <summary>
-        /// Find a message by using id asynchronously.
+        ///     Find a message by using id asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -58,7 +58,7 @@ namespace Olives.Controllers
             var message = await _repositoryMessage.FindMessageAsync(id);
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // The requester didn't take part in the message broadcasting.
             if (!(message.Broadcaster == requester.Id || message.Recipient == requester.Id))
@@ -86,7 +86,7 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        /// Initialize a message from broadcaster and recipient.
+        ///     Initialize a message from broadcaster and recipient.
         /// </summary>
         /// <param name="initializer"></param>
         /// <returns></returns>
@@ -130,7 +130,8 @@ namespace Olives.Controllers
 
             if (!isRelationshipAvailable)
             {
-                _log.Error($"There is no relationship between requester [Id: {requester.Id}] and recipient [Id: {initializer.Recipient}]");
+                _log.Error(
+                    $"There is no relationship between requester [Id: {requester.Id}] and recipient [Id: {initializer.Recipient}]");
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
                     Error = $"{Language.WarnHasNoRelationship}"
@@ -140,7 +141,7 @@ namespace Olives.Controllers
             #endregion
 
             #region Record initialization & handling
-            
+
             var message = new Message();
             message.Broadcaster = requester.Id;
             message.Recipient = initializer.Recipient;
@@ -151,17 +152,18 @@ namespace Olives.Controllers
             try
             {
                 await _repositoryMessage.BroadcastMessageAsync(message);
-                
+
                 #region Message notification
 
                 // As the notification is created successfully. Notification should be sent.
                 var connectionIndexes =
                     await
-                        _repositoryRealTimeConnection.FindRealTimeConnectionIndexesAsync(initializer.Recipient, null, null);
+                        _repositoryRealTimeConnection.FindRealTimeConnectionIndexesAsync(initializer.Recipient, null,
+                            null);
 
                 // Send notification to all connection indexes which have been found.
                 Hub.Clients.Clients(connectionIndexes)
-                    .notifyMessage(new 
+                    .notifyMessage(new
                     {
                         message = message.Id,
                         broadcaster = requester.Id,
@@ -171,7 +173,7 @@ namespace Olives.Controllers
                     });
 
                 #endregion
-                
+
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     Message = new
@@ -200,7 +202,7 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        /// Filter messages list by using specific conditions.
+        ///     Filter messages list by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -224,13 +226,13 @@ namespace Olives.Controllers
             #endregion
 
             #region Filter & result handling
-            
+
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Update the information of filter.
             filter.Requester = requester.Id;
-            
+
             // Do filter.
             var result = await _repositoryMessage.FilterMessagesAsync(filter);
 
@@ -266,12 +268,12 @@ namespace Olives.Controllers
         private readonly IRepositoryRealTimeConnection _repositoryRealTimeConnection;
 
         /// <summary>
-        /// Repository which provides function to access message database.
+        ///     Repository which provides function to access message database.
         /// </summary>
         private readonly IRepositoryMessage _repositoryMessage;
 
         /// <summary>
-        /// Service which provides functions to access time calculation.
+        ///     Service which provides functions to access time calculation.
         /// </summary>
         private readonly ITimeService _timeService;
 

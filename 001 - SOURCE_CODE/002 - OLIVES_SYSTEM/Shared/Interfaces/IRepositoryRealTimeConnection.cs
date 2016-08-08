@@ -15,14 +15,6 @@ namespace Shared.Interfaces
         Task<RealTimeConnection> InitializeRealTimeConnectionInfoAsync(RealTimeConnection initializer);
 
         /// <summary>
-        ///     Find real time connection information asynchronously.
-        /// </summary>
-        /// <param name="owner"></param>
-        /// <param name="connectionId"></param>
-        /// <returns></returns>
-        Task<IEnumerable<RealTimeConnection>> FindRealTimeConnectionInfoAsync(int? owner, string connectionId);
-
-        /// <summary>
         ///     Find the real time connection indexes by using specific conditions.
         /// </summary>
         /// <param name="owner"></param>

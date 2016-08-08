@@ -8,21 +8,21 @@ using Shared.Resources;
 
 namespace OlivesAdministration.ViewModels.Filter
 {
-    public class FilterPatientViewModel :IPagination
+    public class FilterPatientViewModel : IPagination
     {
         /// <summary>
         ///     Email address which is used for registration or for contacting.
         /// </summary>
-        [RegexMatch(Regexes.EmailFilter, ErrorMessageResourceType = typeof(Language),
+        [RegexMatch(Regexes.EmailFilter, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidEmailFormat")]
-        [MaxLength(FieldLength.EmailMaxLength, ErrorMessageResourceType = typeof(Language),
+        [MaxLength(FieldLength.EmailMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidEmailMaximumLength")]
         public string Email { get; set; }
 
         /// <summary>
         ///     Phone number which is used for contacting.
         /// </summary>
-        [RegexMatch(Regexes.Phone, ErrorMessageResourceType = typeof(Language),
+        [RegexMatch(Regexes.Phone, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidPhone")]
         public string Phone { get; set; }
 
@@ -30,24 +30,24 @@ namespace OlivesAdministration.ViewModels.Filter
         ///     Time after which account was modified.
         /// </summary>
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MaxLastModified", Comparision = Comparision.LowerEqual,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         public long? MinLastModified { get; set; }
 
         /// <summary>
         ///     Time before which account had been modified.
         /// </summary>
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MinLastModified", Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public long? MaxLastModified { get; set; }
 
         /// <summary>
         ///     Person name.
         /// </summary>
-        [MaxLength(FieldLength.FullNameMaxLength, ErrorMessageResourceType = typeof(Language),
+        [MaxLength(FieldLength.FullNameMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Name { get; set; }
 
@@ -55,39 +55,39 @@ namespace OlivesAdministration.ViewModels.Filter
         ///     Date after that person was born
         /// </summary>
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MaxBirthday", Comparision = Comparision.LowerEqual,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         public long? MinBirthday { get; set; }
 
         /// <summary>
         ///     Date before which that person had been born
         /// </summary>
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MinBirthday", Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public long? MaxBirthday { get; set; }
 
         /// <summary>
         ///     Gender of person
         /// </summary>
-        [InEnumerationsArray(new object[] { Shared.Enumerations.Gender.Female, Shared.Enumerations.Gender.Male },
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "InvalidGender")]
+        [InEnumerationsArray(new object[] {Shared.Enumerations.Gender.Female, Shared.Enumerations.Gender.Male},
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "InvalidGender")]
         public int? Gender { get; set; }
 
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MaxCreated", Comparision = Comparision.LowerEqual,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         public long? MinCreated { get; set; }
 
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MinCreated", Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public long? MaxCreated { get; set; }
-        
+
         [NumericPropertyCompare("MaxWeight", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         [Range(Values.MinBodyWeight, Values.MaxBodyWeight, ErrorMessageResourceType = typeof (Language),
@@ -115,17 +115,17 @@ namespace OlivesAdministration.ViewModels.Filter
         /// <summary>
         ///     Current status of patient account.
         /// </summary>
-        [InEnumerationsArray(new object[] { StatusAccount.Active, StatusAccount.Inactive, StatusAccount.Pending },
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
+        [InEnumerationsArray(new object[] {StatusAccount.Active, StatusAccount.Inactive, StatusAccount.Pending},
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
         public int? Status { get; set; }
 
         /// <summary>
-        /// Whether record should be filtered ascending or decending.
+        ///     Whether record should be filtered ascending or decending.
         /// </summary>
         public SortDirection Direction { get; set; } = SortDirection.Ascending;
 
         /// <summary>
-        /// Which property should be used for sorting.
+        ///     Which property should be used for sorting.
         /// </summary>
         public FilterPatientSort Sort { get; set; } = FilterPatientSort.FirstName;
 

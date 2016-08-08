@@ -109,6 +109,7 @@
     <Compile Include="Enumerations\StatusAppointment.cs" />
     <Compile Include="Enumerations\Comparision.cs" />
     <Compile Include="Helpers\CodeGeneratorHelper.cs" />
+    <Compile Include="Interfaces\IOliveDataContext.cs" />
     <Compile Include="Interfaces\IPagination.cs" />
     <Compile Include="Interfaces\IRepositoryAccount.cs" />
     <Compile Include="Interfaces\IRepositoryCode.cs" />
@@ -219,6 +220,7 @@
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\OliveDataContext.cs" />
     <Compile Include="Repositories\RepositoryMedicalCategory.cs" />
     <Compile Include="Repositories\RepositoryMessage.cs" />
     <Compile Include="Repositories\RepositoryNotification.cs" />

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
-using Olives.Interfaces.Medical;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Resources;

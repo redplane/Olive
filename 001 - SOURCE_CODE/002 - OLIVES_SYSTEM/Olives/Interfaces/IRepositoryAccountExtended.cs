@@ -6,22 +6,22 @@ using Shared.ViewModels.Response;
 
 namespace Olives.Interfaces
 {
-    public interface IRepositoryAccountExtended: IRepositoryAccount
+    public interface IRepositoryAccountExtended : IRepositoryAccount
     {
         /// <summary>
-        /// Filter patients by using specific conditions asynchronously.
+        ///     Filter patients by using specific conditions asynchronously.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
         Task<ResponsePatientFilter> FilterPatientsAsync(FilterPatientViewModel filter);
 
         /// <summary>
-        /// Filter doctor asynchronously with specific conditions.
+        ///     Filter doctor asynchronously with specific conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
         Task<ResponseDoctorFilter> FilterDoctorsAsync(FilterDoctorViewModel filter);
-        
+
         /// <summary>
         ///     Edit a person by using id.
         /// </summary>

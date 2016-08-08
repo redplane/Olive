@@ -5,17 +5,17 @@
         #region Properties
 
         /// <summary>
-        /// Email subject
+        ///     Email subject
         /// </summary>
         public string Subject { get; set; }
 
         /// <summary>
-        /// File which contains email content.
+        ///     File which contains email content.
         /// </summary>
         public string File { get; set; }
-        
+
         /// <summary>
-        /// Whether email is written in html.
+        ///     Whether email is written in html.
         /// </summary>
         public bool IsHtml { get; set; }
 

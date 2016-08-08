@@ -5,14 +5,14 @@ namespace Olives.Interfaces
     public interface IRepositoryStorage
     {
         /// <summary>
-        /// Initialize a storage with name-relative path.
+        ///     Initialize a storage with name-relative path.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="relativePath"></param>
         void InitializeStorage(string name, string relativePath);
 
         /// <summary>
-        /// Find storage by using name.
+        ///     Find storage by using name.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>

@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
+using Olives.Enumerations;
 using Olives.Hubs;
 using Olives.Interfaces;
-using Olives.Models;
+using Olives.Interfaces.Medical;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
@@ -18,9 +19,6 @@ using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels.Filter;
-using Olives.Controllers;
-using Olives.Enumerations;
-using Olives.Interfaces.Medical;
 
 namespace Olives.Controllers
 {
@@ -42,7 +40,7 @@ namespace Olives.Controllers
         public PrescriptionImageController(
             IRepositoryPrescription repositoryPrescription, IRepositoryPrescriptionImage repositoryPrescriptionImage,
             IRepositoryStorage repositoryStorage,
-            ILog log, 
+            ILog log,
             IFileService fileService, ITimeService timeService, INotificationService notificationService)
         {
             _repositoryPrescription = repositoryPrescription;
@@ -118,7 +116,8 @@ namespace Olives.Controllers
 
             if (requester.Id != prescription.Owner && requester.Id != prescription.Creator)
             {
-                _log.Error($"Requester [Id: {requester.Id}] is not either creator or owner of Prescription [Id: {prescription.Id}]");
+                _log.Error(
+                    $"Requester [Id: {requester.Id}] is not either creator or owner of Prescription [Id: {prescription.Id}]");
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
                     Error = $"{Language.WarnRequesterNotInRecord}"
@@ -165,7 +164,7 @@ namespace Olives.Controllers
                 prescriptionImage = await _repositoryPrescriptionImage.InitializePrescriptionImage(prescriptionImage);
 
                 #endregion
-                
+
                 #region Notification broadcast
 
                 if (prescriptionImage.Creator != prescriptionImage.Owner)
@@ -175,8 +174,8 @@ namespace Olives.Controllers
                         recipient = prescriptionImage.Creator;
 
                     var notification = new Notification();
-                    notification.Type = (byte)NotificationType.Create;
-                    notification.Topic = (byte)NotificationTopic.PrescriptionImage;
+                    notification.Type = (byte) NotificationType.Create;
+                    notification.Topic = (byte) NotificationTopic.PrescriptionImage;
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
                     notification.Record = prescriptionImage.Id;
@@ -188,7 +187,7 @@ namespace Olives.Controllers
                 }
 
                 #endregion
-                
+
                 #region Result handling
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
@@ -343,7 +342,7 @@ namespace Olives.Controllers
         #endregion
 
         #region Properties
-        
+
         /// <summary>
         ///     Repository of prescription images.
         /// </summary>
@@ -355,7 +354,7 @@ namespace Olives.Controllers
         private readonly IRepositoryPrescription _repositoryPrescription;
 
         /// <summary>
-        /// Storage of prescription image.
+        ///     Storage of prescription image.
         /// </summary>
         private readonly IRepositoryStorage _repositoryStorage;
 
@@ -365,7 +364,7 @@ namespace Olives.Controllers
         private readonly ITimeService _timeService;
 
         /// <summary>
-        /// Service which provides functions for accessing notification.
+        ///     Service which provides functions for accessing notification.
         /// </summary>
         private readonly INotificationService _notificationService;
 
@@ -373,7 +372,7 @@ namespace Olives.Controllers
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-        
+
         /// <summary>
         ///     Service which provides functions to handle file operations.
         /// </summary>

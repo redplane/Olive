@@ -16,7 +16,7 @@ using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
-    [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+    [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
     public class NotificationController : ApiParentController
     {
         #region Constructor

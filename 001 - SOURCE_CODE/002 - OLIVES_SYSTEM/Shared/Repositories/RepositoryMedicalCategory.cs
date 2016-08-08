@@ -14,6 +14,23 @@ namespace Shared.Repositories
 {
     public class RepositoryMedicalCategory : IRepositoryMedicalCategory
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructor
+
+        public RepositoryMedicalCategory(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         ///     Find medical category asynchronously.
         /// </summary>
@@ -23,10 +40,8 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<MedicalCategory> FindMedicalCategoryAsync(int? id, string name, StringComparison? comparison)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all record.
+            var context = _dataContext.Context;
             IQueryable<MedicalCategory> medicalCategories = context.MedicalCategories;
 
             // Id is defined.
@@ -50,10 +65,8 @@ namespace Shared.Repositories
         /// <returns></returns>
         public MedicalCategory FindMedicalCategory(int? id, string name, StringComparison? comparision)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all record.
+            var context = _dataContext.Context;
             IQueryable<MedicalCategory> medicalCategories = context.MedicalCategories;
 
             // Id is defined.
@@ -75,10 +88,8 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<MedicalCategory> InitializeMedicalCategoryAsync(MedicalCategory initializer)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // Initialize or update data.
+            var context = _dataContext.Context;
             context.MedicalCategories.AddOrUpdate(initializer);
 
             // Save changes.
@@ -94,8 +105,7 @@ namespace Shared.Repositories
         public async Task<ResponseMedicalCategoryFilter> FilterMedicalCategoryAsync(
             FilterMedicalCategoryViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // By default, take all categories.
             IQueryable<MedicalCategory> categories = context.MedicalCategories;
@@ -164,5 +174,7 @@ namespace Shared.Repositories
 
             return response;
         }
+
+        #endregion
     }
 }

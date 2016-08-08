@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Olives.Interfaces.PersonalNote;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
+using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
@@ -13,6 +14,23 @@ namespace Olives.Repositories.PersonalNote
 {
     public class RepositoryAddiction : IRepositoryAddiction
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructors
+
+        public RepositoryAddiction(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         ///     Delete an addiction asynchronously.
         /// </summary>
@@ -20,12 +38,10 @@ namespace Olives.Repositories.PersonalNote
         /// <returns></returns>
         public async Task<int> DeleteAddictionAsync(FilterAddictionViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
+            var context = _dataContext.Context;
             IQueryable<Addiction> addictions = context.Addictions;
             addictions = FilterAddictionsAsync(addictions, filter);
-            
+
             // Delete and retrieve the affected records.
             context.Addictions.RemoveRange(addictions);
 
@@ -42,10 +58,8 @@ namespace Olives.Repositories.PersonalNote
         /// <returns></returns>
         public async Task<ResponseAddictionFilter> FilterAddictionsAsync(FilterAddictionViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all records from database.
+            var context = _dataContext.Context;
             IQueryable<Addiction> addictions = context.Addictions;
             addictions = FilterAddictionsAsync(addictions, filter);
 
@@ -96,12 +110,13 @@ namespace Olives.Repositories.PersonalNote
         }
 
         /// <summary>
-        /// Filter the addictions by using specific conditions.
+        ///     Filter the addictions by using specific conditions.
         /// </summary>
         /// <param name="addictions"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        private IQueryable<Addiction> FilterAddictionsAsync(IQueryable<Addiction> addictions, FilterAddictionViewModel filter)
+        private IQueryable<Addiction> FilterAddictionsAsync(IQueryable<Addiction> addictions,
+            FilterAddictionViewModel filter)
         {
             // Id is specified.
             if (filter.Id != null)
@@ -139,10 +154,8 @@ namespace Olives.Repositories.PersonalNote
         /// <returns></returns>
         public async Task<Addiction> FindAddictionAsync(int id)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // Find the first matched addiction with id.
+            var context = _dataContext.Context;
             var result = await context.Addictions.FirstOrDefaultAsync(x => x.Id == id);
             return result;
         }
@@ -154,13 +167,14 @@ namespace Olives.Repositories.PersonalNote
         /// <returns></returns>
         public async Task<Addiction> InitializeAddictionAsync(Addiction info)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // Insert the source record to database.
+            var context = _dataContext.Context;
+
             context.Addictions.AddOrUpdate(info);
             await context.SaveChangesAsync();
             return info;
         }
+
+        #endregion
     }
 }

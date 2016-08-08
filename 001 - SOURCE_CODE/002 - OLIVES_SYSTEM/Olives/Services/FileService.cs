@@ -8,7 +8,7 @@ namespace Olives.Services
     public class FileService : IFileService
     {
         /// <summary>
-        /// Convert a stream of bytes to Image instance.
+        ///     Convert a stream of bytes to Image instance.
         /// </summary>
         /// <param name="byteStream"></param>
         /// <returns></returns>

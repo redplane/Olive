@@ -66,8 +66,8 @@ namespace Olives.Controllers
                 #region Record find
 
                 // Retrieve information of person who sent request.
-                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-                
+                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
                 // Find the medical record by using id.
                 var medicalNote = await _repositoryMedicalNote.FindMedicalNoteAsync(id);
 
@@ -88,11 +88,13 @@ namespace Olives.Controllers
 
                 #region Relationship check
 
-                var isRelationshipAvailable = await _repositoryRelation.IsPeopleConnected(requester.Id, medicalNote.Owner);
+                var isRelationshipAvailable =
+                    await _repositoryRelation.IsPeopleConnected(requester.Id, medicalNote.Owner);
                 if (!isRelationshipAvailable)
                 {
                     // Logging.
-                    _log.Error($"There is no relationship between requester [Id: {requester.Id}] and owner [Id: {medicalNote.Owner}]");
+                    _log.Error(
+                        $"There is no relationship between requester [Id: {requester.Id}] and owner [Id: {medicalNote.Owner}]");
 
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {
@@ -187,7 +189,8 @@ namespace Olives.Controllers
             // Requester doesn't take part in the medical record.
             if (requester.Id != medicalRecord.Creator && requester.Id != medicalRecord.Owner)
             {
-                _log.Error($"Requester [Id: {requester.Id}] is not the creator of medical record [Id: {medicalRecord.Id}]");
+                _log.Error(
+                    $"Requester [Id: {requester.Id}] is not the creator of medical record [Id: {medicalRecord.Id}]");
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
                     Error = $"{Language.WarnRequesterNotInRecord}"
@@ -225,8 +228,8 @@ namespace Olives.Controllers
                         recipient = medicalNote.Creator;
 
                     var notification = new Notification();
-                    notification.Type = (byte)NotificationType.Create;
-                    notification.Topic = (byte)NotificationTopic.MedicalNote;
+                    notification.Type = (byte) NotificationType.Create;
+                    notification.Topic = (byte) NotificationTopic.MedicalNote;
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
                     notification.Record = medicalNote.Id;
@@ -282,7 +285,7 @@ namespace Olives.Controllers
             #region Parameters validation
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Model hasn't been initialized.
             if (modifier == null)
@@ -321,7 +324,7 @@ namespace Olives.Controllers
             #endregion
 
             #region Relationship check
-            
+
             // No relationship is found.
             if (requester.Id != medicalNote.Owner && requester.Id != medicalNote.Creator)
             {
@@ -367,8 +370,8 @@ namespace Olives.Controllers
                         recipient = medicalNote.Creator;
 
                     var notification = new Notification();
-                    notification.Type = (byte)NotificationType.Create;
-                    notification.Topic = (byte)NotificationTopic.MedicalNote;
+                    notification.Type = (byte) NotificationType.Create;
+                    notification.Topic = (byte) NotificationTopic.MedicalNote;
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
                     notification.Record = medicalNote.Id;
@@ -412,16 +415,16 @@ namespace Olives.Controllers
         }
 
         /// <summary>
-        /// Delete a medical note asynchronously.
+        ///     Delete a medical note asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
-        [OlivesAuthorize(new [] {Role.Patient})]
+        [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> DeleteMedicalNoteAsync([FromUri] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Filter initialization.
             var filter = new FilterMedicalNoteViewModel();
@@ -448,7 +451,6 @@ namespace Olives.Controllers
                 _log.Error(exception.Message, exception);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
-            
         }
 
         /// <summary>
@@ -464,7 +466,7 @@ namespace Olives.Controllers
             #region Parameters validation
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
 
             // Model hasn't been initialized.
@@ -524,7 +526,7 @@ namespace Olives.Controllers
         #endregion
 
         #region Properties
-        
+
         /// <summary>
         ///     Repository of medical notes
         /// </summary>
@@ -546,7 +548,7 @@ namespace Olives.Controllers
         private readonly ITimeService _timeService;
 
         /// <summary>
-        /// Service which provides functions to access notification broadcast functions.
+        ///     Service which provides functions to access notification broadcast functions.
         /// </summary>
         private readonly INotificationService _notificationService;
 

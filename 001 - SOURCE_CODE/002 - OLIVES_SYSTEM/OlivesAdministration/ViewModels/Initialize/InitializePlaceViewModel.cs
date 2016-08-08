@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Shared.Attributes;
 using Shared.Constants;
-using Shared.Enumerations;
 using Shared.Resources;
 
 namespace OlivesAdministration.ViewModels.Initialize
@@ -20,11 +18,10 @@ namespace OlivesAdministration.ViewModels.Initialize
         /// <summary>
         ///     Name of country where this city belongs to.
         /// </summary>
-        [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof(Language),
+        [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsRequired")]
-        [StringLength(FieldLength.CityNameMaxLength, ErrorMessageResourceType = typeof(Language),
+        [StringLength(FieldLength.CityNameMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Country { get; set; }
-
     }
 }

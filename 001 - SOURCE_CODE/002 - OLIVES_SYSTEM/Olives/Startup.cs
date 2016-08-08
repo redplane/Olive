@@ -4,13 +4,14 @@ using System.IO;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
-using Autofac.Integration.SignalR;
 using Autofac;
 using Autofac.Integration.Mvc;
+using Autofac.Integration.SignalR;
 using Autofac.Integration.WebApi;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Newtonsoft.Json;
+using Olives;
 using Olives.Attributes;
 using Olives.Interfaces;
 using Olives.Interfaces.Medical;
@@ -22,18 +23,20 @@ using Olives.Repositories;
 using Olives.Repositories.Medical;
 using Olives.Repositories.PersonalNote;
 using Olives.Services;
+using Owin;
 using Shared.Interfaces;
 using Shared.Repositories;
-using Owin;
 using Shared.Services;
+using AutofacDependencyResolver = Autofac.Integration.Mvc.AutofacDependencyResolver;
 
-[assembly: OwinStartup(typeof(Olives.Startup))]
+[assembly: OwinStartup(typeof (Startup))]
+
 namespace Olives
 {
     public class Startup
     {
         /// <summary>
-        /// Configuration function of OWIN Startup.
+        ///     Configuration function of OWIN Startup.
         /// </summary>
         /// <param name="app"></param>
         public void Configuration(IAppBuilder app)
@@ -47,11 +50,11 @@ namespace Olives
 
             //// ...or you can register individual controlllers manually.
             //builder.RegisterType<AdminController>().InstancePerRequest();
-            builder.RegisterApiControllers(typeof(Startup).Assembly);
-            builder.RegisterControllers(typeof(Startup).Assembly);
+            builder.RegisterApiControllers(typeof (Startup).Assembly);
+            builder.RegisterControllers(typeof (Startup).Assembly);
 
             // Register your SignalR hubs.
-            builder.RegisterHubs(typeof(Startup).Assembly);
+            builder.RegisterHubs(typeof (Startup).Assembly);
 
             #endregion
 
@@ -77,25 +80,27 @@ namespace Olives
 
             #region Repositories
 
+            builder.RegisterType<OliveDataContext>().As<IOliveDataContext>().SingleInstance();
+
             // Repository account registration.
             builder.RegisterType<RepositoryAccountExtended>().As<IRepositoryAccountExtended>().SingleInstance();
             builder.RegisterType<RepositoryRelation>().As<IRepositoryRelation>().SingleInstance();
             builder.RegisterType<RepositorySpecialty>().As<IRepositorySpecialty>().SingleInstance();
+
             builder.RegisterType<RepositoryHeartbeat>().As<IRepositoryHeartbeat>().SingleInstance();
             builder.RegisterType<RepositoryAllergy>().As<IRepositoryAllergy>().SingleInstance();
-            builder.RegisterType<RepositoryCode>().As<IRepositoryCode>().SingleInstance();
-            builder.RegisterType<RepositoryPlace>().As<IRepositoryPlace>().SingleInstance();
             builder.RegisterType<RepositoryAddiction>().As<IRepositoryAddiction>().SingleInstance();
             builder.RegisterType<RepositoryBloodSugar>().As<IRepositoryBloodSugar>().SingleInstance();
+            builder.RegisterType<RepositoryBloodPressure>().As<IRepositoryBloodPressure>().SingleInstance();
+            builder.RegisterType<RepositoryDiary>().As<IRepositoryDiary>().SingleInstance();
+
+            builder.RegisterType<RepositoryCode>().As<IRepositoryCode>().SingleInstance();
+            builder.RegisterType<RepositoryPlace>().As<IRepositoryPlace>().SingleInstance();
             builder.RegisterType<RepositoryAppointment>().As<IRepositoryAppointment>().SingleInstance();
             builder.RegisterType<RepositoryRating>().As<IRepositoryRating>().SingleInstance();
             builder.RegisterType<RepositoryNotification>().As<IRepositoryNotification>().SingleInstance();
-            builder.RegisterType<RepositoryBloodPressure>().As<IRepositoryBloodPressure>().SingleInstance();
             builder.RegisterType<RepositoryMessage>().As<IRepositoryMessage>().SingleInstance();
-            builder.RegisterType<RepositoryDiary>().As<IRepositoryDiary>().SingleInstance();
-
-            var repositoryRealtimeConnection = new RepositoryRealTimeConnection();
-            builder.RegisterType<RepositoryRealTimeConnection>().As<IRepositoryRealTimeConnection>().OnActivating(e => e.ReplaceInstance(repositoryRealtimeConnection)).SingleInstance();
+            builder.RegisterType<RepositoryRealTimeConnection>().As<IRepositoryRealTimeConnection>().SingleInstance();
 
             var repositoryStorage = new RepositoryStorage(HttpContext.Current);
             foreach (var key in applicationSetting.Storage.Keys)
@@ -121,11 +126,14 @@ namespace Olives
             #region Services
 
             var emailService = LoadEmailService(applicationSetting.SmtpSetting);
-            builder.RegisterType<EmailService>().As<IEmailService>().OnActivating(e => e.ReplaceInstance(emailService)).SingleInstance();
+            builder.RegisterType<EmailService>()
+                .As<IEmailService>()
+                .OnActivating(e => e.ReplaceInstance(emailService))
+                .SingleInstance();
             builder.RegisterType<FileService>().As<IFileService>().SingleInstance();
-            builder.RegisterType<TimeService>().As<ITimeService>();
-            builder.RegisterType<NotificationService>().As<INotificationService>().OnActivating(e => e.ReplaceInstance(new NotificationService(repositoryRealtimeConnection)));
-            
+            builder.RegisterType<TimeService>().As<ITimeService>().SingleInstance();
+            builder.RegisterType<NotificationService>().As<INotificationService>().SingleInstance();
+
             #endregion
 
             #region Attributes
@@ -136,19 +144,20 @@ namespace Olives
 
             builder.RegisterType<MedicalCategoryValidateAttribute>().PropertiesAutowired();
             builder.RegisterType<PlaceValidateAttribute>().PropertiesAutowired();
-            
+
             #endregion
-            
+
             // Web api dependency registration.
             builder.RegisterWebApiFilterProvider(GlobalConfiguration.Configuration);
 
             // Container build.
             var container = builder.Build();
             GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
-            DependencyResolver.SetResolver(new Autofac.Integration.Mvc.AutofacDependencyResolver(container));
+            DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
             GlobalHost.DependencyResolver = new Autofac.Integration.SignalR.AutofacDependencyResolver(container);
 
             // When application starts up. Remove all real time connection created before.
+            var repositoryRealtimeConnection = DependencyResolver.Current.GetService<IRepositoryRealTimeConnection>();
             repositoryRealtimeConnection.DeleteRealTimeConnectionInfoAsync(null, null, null).Wait();
 
             // Map all signalr hubs.
@@ -178,7 +187,7 @@ namespace Olives
 
             var info = File.ReadAllText(applicationConfigFile);
             applicationSetting = JsonConvert.DeserializeObject<ApplicationSetting>(info);
-            
+
             // Stmp setting is invalid
             if (applicationSetting.SmtpSetting == null || !applicationSetting.SmtpSetting.IsValid())
                 throw new NotImplementedException("Email configuration hasn't been configured.");
@@ -187,7 +196,7 @@ namespace Olives
         }
 
         /// <summary>
-        /// Load email settings and bind to email service froom json file.
+        ///     Load email settings and bind to email service froom json file.
         /// </summary>
         /// <param name="smtpSetting"></param>
         /// <returns></returns>
@@ -195,7 +204,7 @@ namespace Olives
         {
             // Retrieve the smtp setting
             var emailSettings = smtpSetting.EmailSettings;
-            
+
             // No email setting is available in system.
             if (emailSettings == null)
                 throw new Exception("No email has been configured in system");
@@ -211,15 +220,15 @@ namespace Olives
                 // Email is not configured.
                 if (emailSetting == null)
                     throw new Exception($"{key} isn't configured.");
-                
+
                 // Match the relative path to absolute path.
                 var absolutePath = HttpContext.Current.Server.MapPath(emailSetting.File);
-                var emailModel = new EmailModel(emailSetting.Subject, File.ReadAllText(absolutePath), emailSetting.IsHtml);
+                var emailModel = new EmailModel(emailSetting.Subject, File.ReadAllText(absolutePath),
+                    emailSetting.IsHtml);
                 emailService.EmailTemplatesCollection.Add(key, emailModel);
             }
 
             return emailService;
         }
     }
-
 }

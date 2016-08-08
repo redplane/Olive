@@ -13,6 +13,23 @@ namespace Shared.Repositories
 {
     public class RepositoryRelation : IRepositoryRelation
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructors
+
+        public RepositoryRelation(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         ///     Initialize a relationship to database.
         /// </summary>
@@ -20,8 +37,7 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<Relation> InitializeRelationAsync(Relation relation)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // Save relation to database.
             context.Relations.Add(relation);
@@ -41,13 +57,10 @@ namespace Shared.Repositories
         public async Task<Relation> FindRelationshipAsync(int id, int? person, RoleRelationship? role,
             StatusRelation? status)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // Query result.
             IQueryable<Relation> relationships = context.Relations;
-
-            #region Query
 
             // Filter relationship by using id.
             relationships = relationships.Where(x => x.Id == id);
@@ -68,8 +81,6 @@ namespace Shared.Repositories
             if (status != null)
                 relationships = relationships.Where(x => x.Status == (byte) status);
 
-            #endregion
-
             return await relationships.FirstOrDefaultAsync();
         }
 
@@ -82,13 +93,13 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<IList<Relation>> FindRelationshipAsync(int firstPerson, int secondPerson, byte? status = null)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // Find the participation of people in relationships.
             var results = context.Relations.Where(
                 x =>
-                    (x.Source == firstPerson && x.Target == secondPerson) || (x.Source == secondPerson && x.Target == firstPerson));
+                    (x.Source == firstPerson && x.Target == secondPerson) ||
+                    (x.Source == secondPerson && x.Target == firstPerson));
 
             // Find the status which matches with the status we wanna find.
             results = results.Where(x => x.Status == status);
@@ -104,8 +115,7 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<IList<Relation>> FindRelationParticipation(int id, int person, byte? status)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // By default, take all relationship.
             IQueryable<Relation> results = context.Relations;
@@ -131,8 +141,7 @@ namespace Shared.Repositories
         public async Task<int> DeleteRelationAsync(int id, int? requester, RoleRelationship? role,
             StatusRelation? status)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // By default, take all relationships.
             IQueryable<Relation> relationships = context.Relations;
@@ -167,8 +176,7 @@ namespace Shared.Repositories
         /// <param name="filter"></param>
         public async Task<ResponseRelationshipFilter> FilterRelationshipAsync(FilterRelationshipViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // By default, take all relationship.
             IQueryable<Relation> relationships = context.Relations;
@@ -228,8 +236,7 @@ namespace Shared.Repositories
         public async Task<ResponseRelatedDoctorFilter> FilterRelatedDoctorAsync(int requester, StatusRelation? status,
             int page, int? records)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // By default, take all relationship.
             IQueryable<Relation> relationships = context.Relations;
@@ -280,8 +287,7 @@ namespace Shared.Repositories
             if (firstPerson == secondPerson)
                 return true;
 
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // Take all people.
             IQueryable<Person> people = context.People;
@@ -310,5 +316,7 @@ namespace Shared.Repositories
                         (x.Source == firstPerson && x.Target == secondPerson) ||
                         (x.Source == secondPerson && x.Target == firstPerson));
         }
+
+        #endregion
     }
 }

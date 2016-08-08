@@ -52,12 +52,12 @@ namespace Olives.Controllers
         #region Methods
 
         /// <summary>
-        /// Find medical experiment asynchronously by using id.
+        ///     Find medical experiment asynchronously by using id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new [] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> FindMedicalExperimentAsync([FromUri] int id)
         {
             // Find the medical experiment first.
@@ -72,7 +72,7 @@ namespace Olives.Controllers
             }
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Requester doesn't take part in medical experiment.
             if (experimentNote.Owner != requester.Id && experimentNote.Creator != requester.Id)
@@ -112,7 +112,7 @@ namespace Olives.Controllers
             #region Parameters validation
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
 
             // Initializer hasn't been initialized.
@@ -149,7 +149,7 @@ namespace Olives.Controllers
             #endregion
 
             #region Relationship validation
-            
+
             // No relationship is found
             if (requester.Id != medicalRecord.Owner && requester.Id != medicalRecord.Creator)
             {
@@ -163,7 +163,7 @@ namespace Olives.Controllers
                     Error = $"{Language.WarnRequesterNotInRecord}"
                 });
             }
-            
+
             #endregion
 
             #region Record initialization
@@ -194,8 +194,8 @@ namespace Olives.Controllers
                         recipient = note.Creator;
 
                     var notification = new Notification();
-                    notification.Type = (byte)NotificationType.Create;
-                    notification.Topic = (byte)NotificationTopic.ExperimentNote;
+                    notification.Type = (byte) NotificationType.Create;
+                    notification.Topic = (byte) NotificationTopic.ExperimentNote;
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
                     notification.Record = note.Id;
@@ -222,6 +222,7 @@ namespace Olives.Controllers
                         note.Created
                     }
                 });
+
                 #endregion
             }
             catch (Exception exception)
@@ -299,7 +300,7 @@ namespace Olives.Controllers
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-            
+
             #endregion
 
             #region Result handling
@@ -333,8 +334,8 @@ namespace Olives.Controllers
                         recipient = experimentNote.Creator;
 
                     var notification = new Notification();
-                    notification.Type = (byte)NotificationType.Edit;
-                    notification.Topic = (byte)NotificationTopic.ExperimentNote;
+                    notification.Type = (byte) NotificationType.Edit;
+                    notification.Topic = (byte) NotificationTopic.ExperimentNote;
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
                     notification.Record = experimentNote.Id;
@@ -362,8 +363,8 @@ namespace Olives.Controllers
                         experimentNote.LastModified
                     }
                 });
-                #endregion
 
+                #endregion
             }
             catch (Exception exception)
             {
@@ -511,7 +512,7 @@ namespace Olives.Controllers
         private readonly IRepositoryExperimentNote _repositoryExperimentNote;
 
         /// <summary>
-        /// Notification service which provides functions to access notification broadcast functionalities.
+        ///     Notification service which provides functions to access notification broadcast functionalities.
         /// </summary>
         private readonly INotificationService _notificationService;
 

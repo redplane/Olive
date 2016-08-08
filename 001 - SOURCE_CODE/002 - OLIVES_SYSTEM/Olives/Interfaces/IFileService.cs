@@ -12,7 +12,7 @@ namespace Olives.Interfaces
         string EncodeFileBase64(string fullPath);
 
         /// <summary>
-        /// Convert a stream of bytes to image instance.
+        ///     Convert a stream of bytes to image instance.
         /// </summary>
         /// <param name="byteStream"></param>
         /// <returns></returns>

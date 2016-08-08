@@ -68,19 +68,19 @@ namespace Olives.Models
         ///     Password of email.
         /// </summary>
         public string Password { get; set; }
-        
+
         /// <summary>
-        /// Email configurations.
+        ///     Email configurations.
         /// </summary>
-        public Dictionary<string,EmailSetting> EmailSettings { get; set; }
-        
+        public Dictionary<string, EmailSetting> EmailSettings { get; set; }
+
         /// <summary>
-        /// The address which email is sent from.
+        ///     The address which email is sent from.
         /// </summary>
         public string From { get; set; }
-        
+
         /// <summary>
-        /// The name displayed in email.
+        ///     The name displayed in email.
         /// </summary>
         public string DisplayName { get; set; }
 

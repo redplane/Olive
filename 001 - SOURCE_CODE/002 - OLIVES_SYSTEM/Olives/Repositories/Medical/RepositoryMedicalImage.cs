@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Olives.Interfaces.Medical;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
+using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
@@ -13,6 +14,23 @@ namespace Olives.Repositories.Medical
 {
     public class RepositoryMedicalImage : IRepositoryMedicalImage
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructors
+
+        public RepositoryMedicalImage(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         ///     Find medical images by using id and owner
         /// </summary>
@@ -20,10 +38,8 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<ResponseMedicalImageFilter> FilterMedicalImageAsync(FilterMedicalImageViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all records.
+            var context = _dataContext.Context;
             IQueryable<MedicalImage> medicalImages = context.MedicalImages;
 
             // Filter by medical record id.
@@ -91,9 +107,7 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<int> DeleteMedicalImageAsync(int id, int? owner)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
+            var context = _dataContext.Context;
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
@@ -147,9 +161,7 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<MedicalImage> InitializeMedicalImageAsync(MedicalImage info)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
+            var context = _dataContext.Context;
             context.MedicalImages.AddOrUpdate(info);
             await context.SaveChangesAsync();
             return info;
@@ -162,10 +174,8 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<ResponseMedicalRecordFilter> FilterMedicalRecordAsync(FilterMedicalRecordViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all records.
+            var context = _dataContext.Context;
             IQueryable<MedicalRecord> medicalRecords = context.MedicalRecords;
 
             // Base on the mode of image filter to decide the role of requester.
@@ -261,5 +271,7 @@ namespace Olives.Repositories.Medical
 
             return response;
         }
+
+        #endregion
     }
 }

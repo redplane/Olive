@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Olives.Interfaces.Medical;
 using Shared.Enumerations.Filter;
+using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
@@ -12,6 +13,23 @@ namespace Olives.Repositories.Medical
 {
     public class RepositoryPrescriptionImage : IRepositoryPrescriptionImage
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructors
+
+        public RepositoryPrescriptionImage(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         ///     Find the prescription image asynchronously by using id.
         /// </summary>
@@ -19,9 +37,7 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<PrescriptionImage> FindPrescriptionImageAsync(int id)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
+            var context = _dataContext.Context;
             // Find the prescription image by using id.
             var prescriptionImage = await context.PrescriptionImages.FirstOrDefaultAsync(x => x.Id == id);
             return prescriptionImage;
@@ -34,9 +50,7 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<PrescriptionImage> InitializePrescriptionImage(PrescriptionImage prescriptionImage)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
+            var context = _dataContext.Context;
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
@@ -63,9 +77,7 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<int> DeletePrescriptionImageAsync(int id, int? owner)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
+            var context = _dataContext.Context;
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
@@ -119,9 +131,7 @@ namespace Olives.Repositories.Medical
         public async Task<ResponsePrescriptionImageFilter> FilterPrescriptionImageAsync(
             FilterPrescriptionImageViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
+            var context = _dataContext.Context;
             // By default, take all result.
             IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
 
@@ -169,5 +179,7 @@ namespace Olives.Repositories.Medical
 
             return response;
         }
+
+        #endregion
     }
 }

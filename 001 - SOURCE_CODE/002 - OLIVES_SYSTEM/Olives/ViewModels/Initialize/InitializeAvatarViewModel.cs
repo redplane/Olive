@@ -11,7 +11,8 @@ namespace Olives.ViewModels.Initialize
         ///     File which is used for being user's avatar.
         /// </summary>
         [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueIsRequired")]
-        [HttpFileImageValidate(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
+        [HttpFileImageValidate(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueIsInvalid"
+            )]
         public HttpFileModel Avatar { get; set; }
     }
 }

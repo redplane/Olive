@@ -8,19 +8,18 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
+using Olives.Enumerations;
 using Olives.Hubs;
 using Olives.Interfaces;
+using Olives.Interfaces.Medical;
 using Olives.Models;
+using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels.Filter;
-using Olives.Controllers;
-using Olives.Enumerations;
-using Olives.Interfaces.Medical;
-using Olives.ViewModels.Initialize;
 
 namespace Olives.Controllers
 {
@@ -111,7 +110,8 @@ namespace Olives.Controllers
             // Requester doesn't take part in medical record.
             if (requester.Id != medicalRecord.Owner && requester.Id != medicalRecord.Creator)
             {
-                _log.Error($"Requester [Id: {requester.Id}] isn't either medical record creator [Id: {medicalRecord.Creator}] and medical record owner [Id: {medicalRecord.Owner}]");
+                _log.Error(
+                    $"Requester [Id: {requester.Id}] isn't either medical record creator [Id: {medicalRecord.Creator}] and medical record owner [Id: {medicalRecord.Owner}]");
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
                     Error = $"{Language.WarnRequesterNotInRecord}"
@@ -153,7 +153,7 @@ namespace Olives.Controllers
                 medicalImage = await _repositoryMedicalImage.InitializeMedicalImageAsync(medicalImage);
 
                 #endregion
-                
+
                 #region Notification broadcast
 
                 if (medicalImage.Creator != medicalImage.Owner)
@@ -176,7 +176,7 @@ namespace Olives.Controllers
                 }
 
                 #endregion
-                
+
                 #region Result handling
 
                 // Tell the client about the result of upload.
@@ -319,7 +319,7 @@ namespace Olives.Controllers
         #endregion
 
         #region Properties
-        
+
         /// <summary>
         ///     Repository of medical record
         /// </summary>
@@ -331,7 +331,7 @@ namespace Olives.Controllers
         private readonly IRepositoryMedicalImage _repositoryMedicalImage;
 
         /// <summary>
-        /// Repository of storage.
+        ///     Repository of storage.
         /// </summary>
         private readonly IRepositoryStorage _repositoryStorage;
 
@@ -341,7 +341,7 @@ namespace Olives.Controllers
         private readonly ITimeService _timeService;
 
         /// <summary>
-        /// Service which provides functions to access notification broadcast.
+        ///     Service which provides functions to access notification broadcast.
         /// </summary>
         private readonly INotificationService _notificationService;
 

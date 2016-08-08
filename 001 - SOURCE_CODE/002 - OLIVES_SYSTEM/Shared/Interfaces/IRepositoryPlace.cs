@@ -40,21 +40,6 @@ namespace Shared.Interfaces
         Task<Place> InitializePlaceAsync(Place place);
 
         /// <summary>
-        ///     Modify a place by using id asynchronously.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="place"></param>
-        /// <returns></returns>
-        Task<Place> ModifyPlaceAsync(int id, Place place);
-
-        /// <summary>
-        ///     Delete place by using id.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<int> DeletePlaceAsync(int id);
-
-        /// <summary>
         ///     Filter places by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>

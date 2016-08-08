@@ -9,7 +9,7 @@ namespace MultipartFormDataMediaFormatter.Attributes
         #region Properties
 
         /// <summary>
-        /// Allowed content length of the file.
+        ///     Allowed content length of the file.
         /// </summary>
         private readonly uint _contentLength;
 
@@ -25,7 +25,7 @@ namespace MultipartFormDataMediaFormatter.Attributes
         {
             _contentLength = bytes;
         }
-        
+
         #endregion
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace MultipartFormDataMediaFormatter.Attributes
             // Invalid value.
             if (value == null)
                 return ValidationResult.Success;
-            
+
             if (!(value is HttpFileModel))
                 throw new Exception("Object my be an instance of HttpFileModel");
 

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 
@@ -13,6 +12,21 @@ namespace Shared.Repositories
 {
     public class RepositoryCode : IRepositoryCode
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Properties
+
+        public RepositoryCode(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
         /// <summary>
         ///     Initialize an allergy with given information.
         /// </summary>
@@ -21,9 +35,8 @@ namespace Shared.Repositories
         /// <param name="created"></param>
         public async Task<AccountCode> InitializeAccountCodeAsync(int owner, TypeAccountCode type, DateTime created)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-            
+            var context = _dataContext.Context;
+
             var accountCode = new AccountCode();
             accountCode.Code = Guid.NewGuid().ToString();
             accountCode.Expired = DateTime.UtcNow.AddHours(Values.ActivationCodeHourDuration);
@@ -48,13 +61,11 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<AccountCode> FindAccountCodeAsync(int? owner, byte? type, string code)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // No filter is specified.
             if (owner == null && string.IsNullOrWhiteSpace(code))
                 return null;
 
+            var context = _dataContext.Context;
 
             // By default, retrieve all results.
             IQueryable<AccountCode> results = context.AccountCodes;
@@ -88,8 +99,7 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async void DeleteActivationCode(AccountCode activationCode)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // Remove the specific result.
             context.AccountCodes.Remove(activationCode);
@@ -105,8 +115,7 @@ namespace Shared.Repositories
         /// <param name="password"></param>
         public async Task<int> InitializeNewAccountPassword(AccountCode token, string password)
         {
-            // Database initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             using (var transaction = context.Database.BeginTransaction())
             {

@@ -1,34 +1,17 @@
 ﻿using System;
-using System.Security.Principal;
-using System.Web.Profile;
 using log4net;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using Olives.Interfaces;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Interfaces;
 
 namespace Olives.Attributes
 {
     public class HubAuthorizeAttribute : AuthorizeAttribute
     {
-        #region Properties
-
         /// <summary>
-        /// Repository which provides functions to access account databases.
-        /// </summary>
-        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
-
-        /// <summary>
-        /// Logger instance.
-        /// </summary>
-        private readonly ILog _log;
-        
-        #endregion
-
-        /// <summary>
-        /// Initialize an instance with default settings.
+        ///     Initialize an instance with default settings.
         /// </summary>
         public HubAuthorizeAttribute()
         {
@@ -38,7 +21,7 @@ namespace Olives.Attributes
         }
 
         /// <summary>
-        /// This function is for content-negotiation.
+        ///     This function is for content-negotiation.
         /// </summary>
         /// <param name="hubDescriptor"></param>
         /// <param name="request"></param>
@@ -48,7 +31,7 @@ namespace Olives.Attributes
             // Retrieve information from request.
             var email = request.QueryString[Values.KeySignalrEmail];
             var password = request.QueryString[Values.KeySignalrPassword];
-            
+
             try
             {
                 // Find the account.
@@ -60,7 +43,7 @@ namespace Olives.Attributes
 
                 // Save the account information.
                 request.Environment[Values.KeySignalrClient] = account;
-                   
+
                 return true;
             }
             catch (Exception exception)
@@ -71,21 +54,22 @@ namespace Olives.Attributes
                 return false;
             }
         }
-        
+
         /// <summary>
-        /// This function is for identity check.
+        ///     This function is for identity check.
         /// </summary>
         /// <param name="hubIncomingInvokerContext"></param>
         /// <param name="appliesToMethod"></param>
         /// <returns></returns>
-        public override bool AuthorizeHubMethodInvocation(IHubIncomingInvokerContext hubIncomingInvokerContext, bool appliesToMethod)
+        public override bool AuthorizeHubMethodInvocation(IHubIncomingInvokerContext hubIncomingInvokerContext,
+            bool appliesToMethod)
         {
             var hubRequest = hubIncomingInvokerContext.Hub.Context.Request;
-            
+
             // Retrieve information from request.
             var email = hubRequest.QueryString[Values.KeySignalrEmail];
             var password = hubRequest.QueryString[Values.KeySignalrPassword];
-            
+
             try
             {
                 // Find the account.
@@ -96,7 +80,7 @@ namespace Olives.Attributes
 
                 // Save the account information.
                 hubRequest.Environment[Values.KeySignalrClient] = account;
-                
+
                 return true;
             }
             catch (Exception exception)
@@ -107,5 +91,19 @@ namespace Olives.Attributes
                 return false;
             }
         }
+
+        #region Properties
+
+        /// <summary>
+        ///     Repository which provides functions to access account databases.
+        /// </summary>
+        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
+
+        /// <summary>
+        ///     Logger instance.
+        /// </summary>
+        private readonly ILog _log;
+
+        #endregion
     }
 }

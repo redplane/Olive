@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,17 +13,32 @@ namespace Shared.Repositories
 {
     public class RepositoryNotification : IRepositoryNotification
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Properties
+
+        public RepositoryNotification(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
-        /// Filter notifications by using specific conditions asynchronously.
+        ///     Filter notifications by using specific conditions asynchronously.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
         public async Task<ResponseNotificationFilter> FilterNotificationsAsync(FilterNotificationViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all notification
+            var context = _dataContext.Context;
             IQueryable<Notification> notifications = context.Notifications;
 
             // Filter by requester mode.
@@ -57,11 +71,11 @@ namespace Shared.Repositories
 
             // Notification type filter.
             if (filter.Type != null)
-                notifications = notifications.Where(x => x.Type == (byte)filter.Type.Value);
+                notifications = notifications.Where(x => x.Type == (byte) filter.Type.Value);
 
             // Notification topic filter.
             if (filter.Topic != null)
-                notifications = notifications.Where(x => x.Topic == (byte)filter.Topic.Value);
+                notifications = notifications.Where(x => x.Topic == (byte) filter.Topic.Value);
 
             // Record is specified.
             if (filter.Record != null)
@@ -130,28 +144,25 @@ namespace Shared.Repositories
         }
 
         /// <summary>
-        /// Find a notification by using id asynchronously.
+        ///     Find a notification by using id asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<Notification> FindNotificationAsync(int id)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // Find the first notification with the matched id.
+            var context = _dataContext.Context;
             return await context.Notifications.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         /// <summary>
-        /// Initialize / update notification asynchronously.
+        ///     Initialize / update notification asynchronously.
         /// </summary>
         /// <param name="notification"></param>
         /// <returns></returns>
         public async Task<Notification> InitializeNotificationAsync(Notification notification)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // Save or update data.
             context.Notifications.AddOrUpdate(notification);
@@ -161,5 +172,7 @@ namespace Shared.Repositories
 
             return notification;
         }
+
+        #endregion
     }
 }

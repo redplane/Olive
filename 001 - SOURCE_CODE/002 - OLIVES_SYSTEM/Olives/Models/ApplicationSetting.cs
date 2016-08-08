@@ -10,8 +10,8 @@ namespace Olives.Models
         public SmtpSetting SmtpSetting { get; set; }
 
         /// <summary>
-        /// List of storage with their relative paths.
+        ///     List of storage with their relative paths.
         /// </summary>
-        public Dictionary<string, string> Storage { get; set; } 
+        public Dictionary<string, string> Storage { get; set; }
     }
 }

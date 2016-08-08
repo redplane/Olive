@@ -8,7 +8,6 @@ using OlivesAdministration.Interfaces;
 using OlivesAdministration.Models;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Interfaces;
 using Shared.Resources;
 using Shared.ViewModels;
 
@@ -24,7 +23,8 @@ namespace OlivesAdministration.Controllers
         /// <param name="repositoryAccountExtended"></param>
         /// <param name="applicationSetting"></param>
         /// <param name="log"></param>
-        public AdminController(IRepositoryAccountExtended repositoryAccountExtended, ApplicationSetting applicationSetting, ILog log)
+        public AdminController(IRepositoryAccountExtended repositoryAccountExtended,
+            ApplicationSetting applicationSetting, ILog log)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
             _applicationSetting = applicationSetting;
@@ -53,7 +53,7 @@ namespace OlivesAdministration.Controllers
                 loginViewModel = new LoginViewModel();
                 Validate(loginViewModel);
             }
-            
+
             // Invalid model state.
             if (!ModelState.IsValid)
             {
@@ -71,7 +71,7 @@ namespace OlivesAdministration.Controllers
                 var admin =
                     await
                         _repositoryAccountExtended.FindPersonAsync(null, loginViewModel.Email, loginViewModel.Password,
-                            (byte)Role.Admin, StatusAccount.Active);
+                            (byte) Role.Admin, StatusAccount.Active);
 
                 // If no result return, that means no account.
                 if (admin == null)
@@ -111,7 +111,7 @@ namespace OlivesAdministration.Controllers
                 _log.Error(exception.Message, exception);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
-            
+
             #endregion
         }
 
@@ -130,10 +130,9 @@ namespace OlivesAdministration.Controllers
         private readonly ApplicationSetting _applicationSetting;
 
         /// <summary>
-        /// Instance for logging.
+        ///     Instance for logging.
         /// </summary>
         private readonly ILog _log;
-
 
         #endregion
     }

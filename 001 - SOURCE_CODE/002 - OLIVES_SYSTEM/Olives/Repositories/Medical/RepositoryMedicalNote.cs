@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Olives.Interfaces.Medical;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
+using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
@@ -13,6 +14,23 @@ namespace Olives.Repositories.Medical
 {
     public class RepositoryMedicalNote : IRepositoryMedicalNote
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructor
+
+        public RepositoryMedicalNote(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         ///     Find the medical note by using id.
         /// </summary>
@@ -20,10 +38,8 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<MedicalNote> FindMedicalNoteAsync(int id)
         {
-            // Database context initialization
-            var context = new OlivesHealthEntities();
-
             // Find the medical note by using id.
+            var context = _dataContext.Context;
             return await context.MedicalNotes.FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -34,10 +50,8 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<MedicalNote> InitializeMedicalNoteAsync(MedicalNote medicalNote)
         {
-            // Database context initialization.draw
-            var context = new OlivesHealthEntities();
-
             // Initialize/update medical notes.
+            var context = _dataContext.Context;
             context.MedicalNotes.AddOrUpdate(medicalNote);
 
             // Save changes.
@@ -53,10 +67,8 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<ResponseMedicalNoteFilter> FilterMedicalNotesAsync(FilterMedicalNoteViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all record by searching creator id.
+            var context = _dataContext.Context;
             IQueryable<MedicalNote> medicalNotes = context.MedicalNotes;
             medicalNotes = FilterMedicalNotes(medicalNotes, filter);
 
@@ -120,7 +132,7 @@ namespace Olives.Repositories.Medical
         }
 
         /// <summary>
-        /// Filter medical notes by using specific conditions.
+        ///     Filter medical notes by using specific conditions.
         /// </summary>
         /// <param name="medicalNotes"></param>
         /// <param name="filter"></param>
@@ -184,21 +196,23 @@ namespace Olives.Repositories.Medical
         }
 
         /// <summary>
-        /// Delete medical note by using specific conditions.
+        ///     Delete medical note by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
         public async Task<int> DeleteMedicalNoteAsync(FilterMedicalNoteViewModel filter)
         {
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
             IQueryable<MedicalNote> medicalNotes = context.MedicalNotes;
             medicalNotes = FilterMedicalNotes(medicalNotes, filter);
-            
+
             // Remove records.
             context.MedicalNotes.RemoveRange(medicalNotes);
             var records = await context.SaveChangesAsync();
 
             return records;
         }
+
+        #endregion
     }
 }

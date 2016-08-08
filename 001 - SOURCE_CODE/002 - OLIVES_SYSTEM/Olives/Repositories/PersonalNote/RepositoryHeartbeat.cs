@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Olives.Interfaces.PersonalNote;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
+using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
@@ -13,6 +14,21 @@ namespace Olives.Repositories.PersonalNote
 {
     public class RepositoryHeartbeat : IRepositoryHeartbeat
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructors
+
+        public RepositoryHeartbeat(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
         /// <summary>
         ///     Initialize heartbeat note to database.
         /// </summary>
@@ -20,10 +36,8 @@ namespace Olives.Repositories.PersonalNote
         /// <returns></returns>
         public async Task<Heartbeat> InitializeHeartbeatNoteAsync(Heartbeat info)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // Add allergy to database context.
+            var context = _dataContext.Context;
             context.Heartbeats.AddOrUpdate(info);
 
             // Submit allergy.
@@ -39,9 +53,7 @@ namespace Olives.Repositories.PersonalNote
         /// <returns></returns>
         public async Task<Heartbeat> FindHeartbeatAsync(int id)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
+            var context = _dataContext.Context;
             // Find heartbeat note by using id.
             return await context.Heartbeats.FirstOrDefaultAsync(x => x.Id == id);
         }
@@ -53,8 +65,7 @@ namespace Olives.Repositories.PersonalNote
         /// <returns></returns>
         public async Task<int> DeleteHeartbeatNoteAsync(FilterHeatbeatViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // By default, take all information.
             IQueryable<Heartbeat> heartbeats = context.Heartbeats;
@@ -98,7 +109,6 @@ namespace Olives.Repositories.PersonalNote
             context.Heartbeats.RemoveRange(heartbeats);
             var records = await context.SaveChangesAsync();
             return records;
-            
         }
 
         /// <summary>
@@ -108,8 +118,7 @@ namespace Olives.Repositories.PersonalNote
         /// <returns></returns>
         public async Task<ResponseHeartbeatFilter> FilterHeartbeatAsync(FilterHeatbeatViewModel filter)
         {
-            // Data context initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // By default, take all information.
             IQueryable<Heartbeat> heartbeats = context.Heartbeats;
@@ -167,7 +176,7 @@ namespace Olives.Repositories.PersonalNote
         }
 
         /// <summary>
-        /// Filter heartbeats by using specific conditions.
+        ///     Filter heartbeats by using specific conditions.
         /// </summary>
         /// <param name="heartbeats"></param>
         /// <param name="filter"></param>
@@ -211,6 +220,6 @@ namespace Olives.Repositories.PersonalNote
                 heartbeats = heartbeats.Where(x => x.Note.Contains(filter.Note));
 
             return heartbeats;
-        } 
+        }
     }
 }

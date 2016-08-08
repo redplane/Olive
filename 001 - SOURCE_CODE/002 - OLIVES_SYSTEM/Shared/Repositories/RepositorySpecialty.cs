@@ -11,6 +11,23 @@ namespace Shared.Repositories
 {
     public class RepositorySpecialty : IRepositorySpecialty
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructors
+
+        public RepositorySpecialty(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         ///     Find the specialty by using specific id.
         /// </summary>
@@ -18,10 +35,8 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<Specialty> FindSpecialtyAsync(int id)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // Find the specialty by using id.
+            var context = _dataContext.Context;
             IQueryable<Specialty> specialties = context.Specialties;
             return await specialties.FirstOrDefaultAsync(x => x.Id == id);
         }
@@ -36,10 +51,8 @@ namespace Shared.Repositories
             // Response initialization.
             var response = new ResponseSpecialtyFilter();
 
-            // Initialize database connection context.
-            var context = new OlivesHealthEntities();
-
             // Filtered results initialization.
+            var context = _dataContext.Context;
             IQueryable<Specialty> results = context.Specialties;
 
             // Specialty name has been specified.
@@ -73,5 +86,7 @@ namespace Shared.Repositories
             response.Specialties = await results.ToListAsync();
             return response;
         }
+
+        #endregion
     }
 }

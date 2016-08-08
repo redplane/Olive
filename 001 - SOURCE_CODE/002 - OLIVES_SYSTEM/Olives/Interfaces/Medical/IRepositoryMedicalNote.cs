@@ -29,7 +29,7 @@ namespace Olives.Interfaces.Medical
         Task<ResponseMedicalNoteFilter> FilterMedicalNotesAsync(FilterMedicalNoteViewModel filter);
 
         /// <summary>
-        /// Delete medical notes by using filter.
+        ///     Delete medical notes by using filter.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>

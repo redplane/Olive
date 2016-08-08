@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Olives.Interfaces.PersonalNote;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
+using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
@@ -13,6 +14,23 @@ namespace Olives.Repositories.PersonalNote
 {
     public class RepositoryAllergy : IRepositoryAllergy
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructors
+
+        public RepositoryAllergy(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         ///     Filter allergy by using specific conditions asynchronously.
         /// </summary>
@@ -20,13 +38,11 @@ namespace Olives.Repositories.PersonalNote
         /// <returns></returns>
         public async Task<ResponseAllergyFilter> FilterAllergyAsync(FilterAllergyViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all records.
+            var context = _dataContext.Context;
             IQueryable<Allergy> allergies = context.Allergies;
             allergies = FilterAllergiesAsync(allergies, filter);
-            
+
             // Result sorting.
             switch (filter.Direction)
             {
@@ -72,7 +88,7 @@ namespace Olives.Repositories.PersonalNote
         }
 
         /// <summary>
-        /// Filter allergies by using specific conditions.
+        ///     Filter allergies by using specific conditions.
         /// </summary>
         /// <param name="allergies"></param>
         /// <param name="filter"></param>
@@ -112,7 +128,7 @@ namespace Olives.Repositories.PersonalNote
                 allergies = allergies.Where(x => x.LastModified != null && x.LastModified >= filter.MaxLastModified);
 
             return allergies;
-        } 
+        }
 
         /// <summary>
         ///     Initialize allergy to database.
@@ -121,8 +137,7 @@ namespace Olives.Repositories.PersonalNote
         /// <returns></returns>
         public async Task<Allergy> InitializeAllergyAsync(Allergy info)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // Add allergy to database context.
             context.Allergies.AddOrUpdate(info);
@@ -140,9 +155,7 @@ namespace Olives.Repositories.PersonalNote
         /// <returns></returns>
         public async Task<Allergy> FindAllergyAsync(int id)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
+            var context = _dataContext.Context;
             return await context.Allergies.FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -153,12 +166,10 @@ namespace Olives.Repositories.PersonalNote
         /// <returns></returns>
         public async Task<int> DeleteAllergyAsync(FilterAllergyViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all records.
+            var context = _dataContext.Context;
             IQueryable<Allergy> allergies = context.Allergies;
-            
+
             // Do filter.
             allergies = FilterAllergiesAsync(allergies, filter);
 
@@ -170,5 +181,7 @@ namespace Olives.Repositories.PersonalNote
 
             return records;
         }
+
+        #endregion
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using MultipartFormDataMediaFormatter.Infrastructure.Extensions;
@@ -97,7 +96,7 @@ namespace MultipartFormDataMediaFormatter.Analyzers
 
                 return true;
             }
-            
+
             // The property is not an instance of file.
             string value;
             if (!_formData.TryGetValue(propertyName, out value))

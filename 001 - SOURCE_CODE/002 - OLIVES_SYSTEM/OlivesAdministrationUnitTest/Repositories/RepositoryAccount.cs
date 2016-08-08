@@ -1,199 +1,111 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management.Instrumentation;
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace OlivesAdministration.Test.Repositories
 {
     public class RepositoryAccount : IRepositoryAccount
     {
-        #region Constructor
+        #region Forgery data
+        
+        public IList<Person> People { get; set; }
+        
+        public IList<Doctor> Doctors { get; set; }
+        
+        public IList<Patient> Patients { get; set; }
 
-        /// <summary>
-        ///     Initialize an instance of account with default settings.
-        /// </summary>
-        public RepositoryAccount()
-        {
-            // Initialize a list of account into system.
-            People = new List<Person>();
-
-            // Initialize a list of doctors into system.
-            Doctors = new List<Doctor>();
-        }
-
+        public IList<AccountCode> Code { get; set; }
+         
         #endregion
 
-        public Task<Person> EditPersonProfileAsync(int id, Person info)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Person> EditPersonStatusAsync(int id, byte status)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<ResponseDoctorFilter> FilterDoctorAsync(FilterDoctorViewModel filter)
-        {
-            IEnumerable<Person> people = new List<Person>(People);
-            IEnumerable<Doctor> doctors = new List<Doctor>(Doctors);
-            IEnumerable<Specialty> specialties = new List<Specialty>(Specialties);
-
-                // Take all people from database.
-            people = people.Where(x => x.Role == (byte)Role.Doctor);
-            
-            #region People filter
-
-            // Filter doctor by using email.
-            if (!string.IsNullOrEmpty(filter.Email))
-                people = people.Where(x => x.Email.Contains(filter.Email));
-
-            // Filter doctor by using phone number.
-            if (!string.IsNullOrEmpty(filter.Phone))
-                people = people.Where(x => x.Phone.Contains(filter.Phone));
-
-            // Filter by using full name.
-            if (!string.IsNullOrEmpty(filter.Name))
-                people = people.Where(x => x.FullName.Contains(filter.Name));
-
-            // Filter by using birthday.
-            if (filter.MinBirthday != null)
-                people = people.Where(x => x.Birthday >= filter.MinBirthday);
-
-            if (filter.MaxBirthday != null)
-                people = people.Where(x => x.Birthday <= filter.MaxBirthday);
-
-            // Filter by gender.
-            if (filter.Gender != null)
-                people = people.Where(x => x.Gender == filter.Gender);
-
-            // Filter by last modified.
-            if (filter.MinLastModified != null)
-                people = people.Where(x => x.LastModified >= filter.MinLastModified);
-            if (filter.MaxLastModified != null)
-                people = people.Where(x => x.LastModified <= filter.MaxLastModified);
-
-            // Filter by created.
-            if (filter.MinCreated != null)
-                people = people.Where(x => x.Created >= filter.MinCreated);
-            if (filter.MaxCreated != null)
-                people = people.Where(x => x.Created <= filter.MaxCreated);
-
-            // Filter by status.
-            if (filter.Status != null)
-                people = people.Where(x => x.Status == filter.Status);
-
-            #endregion
-
-            #region Doctors
-
-            // Filter doctor by place.
-            if (!string.IsNullOrWhiteSpace(filter.City)) doctors = doctors.Where(x => x.City.Contains(filter.City));
-            if (!string.IsNullOrWhiteSpace(filter.Country))
-                doctors = doctors.Where(x => x.Country.Contains(filter.Country));
-
-            // Filter by money.
-            if (filter.MinMoney != null) doctors = doctors.Where(x => x.Money >= filter.MinMoney);
-            if (filter.MaxMoney != null) doctors = doctors.Where(x => x.Money <= filter.MaxMoney);
-
-            // Filter by rank.
-            if (filter.MinRank != null) doctors = doctors.Where(x => x.Rank >= filter.MinRank);
-            if (filter.MaxRank != null) doctors = doctors.Where(x => x.Rank <= filter.MaxRank);
-
-            // Filter by id of specialty.
-            if (filter.Specialty != null) doctors = doctors.Where(x => x.SpecialtyId == filter.Specialty);
-
-            #endregion
-
-            #region Specialties
-            
-            // Specialty has been specified.
-            if (filter.Specialty != null)
-                specialties = specialties.Where(x => x.Id == filter.Specialty);
-
-            #endregion
-
-            // Join the tables first.
-            var results = from p in people
-                          join d in doctors on p.Id equals d.Id
-                          join s in specialties on d.SpecialtyId equals s.Id
-                          select d;
-
-            // Response initialization.
-            var responseFilter = new ResponseDoctorFilter();
-
-            // Total matched result.
-            responseFilter.Total = results.Count();
-
-            // Sort by status.
-            results = results.OrderBy(x => x.Person.Status);
-
-            // Record is defined.
-            if (filter.Records != null)
-            {
-                results = results.Skip(filter.Page * filter.Records.Value)
-                    .Take(filter.Records.Value);
-            }
-
-            responseFilter.Doctors = results.ToList();
-
-            return responseFilter;
-        }
-
-        public async Task<Doctor> FindDoctorAsync(int id, StatusAccount? status)
-        {
-            IEnumerable<Doctor> doctors = new List<Doctor>(Doctors);
-
-            // Find doctors by using id.
-            doctors = doctors.Where(x => x.Id == id);
-
-            // Status is defined.
-            if (status != null)
-                doctors = doctors.Where(x => x.Person.Status == (byte) status);
-
-            return doctors.FirstOrDefault();
-        }
-
-        public Task<Patient> FindPatientAsync(int id, byte? status)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Person FindPerson(int? id, string email, string password, byte? role, StatusAccount? status)
-        {
-            throw new NotImplementedException();
-        }
+        #region Patient
 
         /// <summary>
-        ///     Find a person with specific conditions asynchronously.
+        ///     Find and activate patient's account and remove the activation code.
         /// </summary>
         /// <param name="code"></param>
         /// <returns></returns>
-        public Task<Person> FindPersonAsync(string code)
+        public async Task<bool> InitializePatientActivation(string code)
         {
-            throw new NotImplementedException();
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var results = from p in context.People
+                        join c in
+                            context.AccountCodes.Where(
+                                x => x.Code.Equals(code) && x.Type == (byte) TypeAccountCode.Activation) on p.Id equals
+                            c.Owner
+                        select new
+                        {
+                            Person = p,
+                            Code = c
+                        };
+
+                    // Retrieve the total matched result.
+                    var resultsCount = await results.CountAsync();
+
+                    // No result has been returned.
+                    if (resultsCount < 1)
+                        throw new InstanceNotFoundException($"Couldn't find person whose code is : {code}");
+
+                    // Not only one result has been returned.
+                    if (resultsCount > 1)
+                        throw new Exception($"There are too many people whose code is : {code}");
+
+                    // Retrieve the first queried result.
+                    var result = await results.FirstOrDefaultAsync();
+                    if (result == null)
+                        throw new InstanceNotFoundException($"Couldn't find person whose code is : {code}");
+
+                    // Update the person status and remove the activation code.
+                    var person = result.Person;
+                    var activationCode = result.Code;
+                    person.Status = (byte) StatusAccount.Active;
+                    context.People.AddOrUpdate(person);
+                    context.AccountCodes.Remove(activationCode);
+                    await context.SaveChangesAsync();
+                    // Commit the transaction.
+                    transaction.Commit();
+                    return true;
+                }
+                catch
+                {
+                    // Something happens, roll the transaction back.
+                    transaction.Rollback();
+                    throw;
+                }
+            }
         }
 
+        #endregion
+        
+        #region Shared
+
         /// <summary>
-        ///     Find a person with specific conditions asynchronously.
+        ///     Find person by using email, password and role.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="email"></param>
-        /// <param name="password"></param>
-        /// <param name="role"></param>
+        /// <param name="id">Id of person</param>
+        /// <param name="email">Email which is used for filtering.</param>
+        /// <param name="password">Password of account.</param>
+        /// <param name="role">As role is specified. Find account by role.</param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public async Task<Person> FindPersonAsync(int? id, string email, string password, byte? role,
-            StatusAccount? status)
+        public Person FindPerson(int? id, string email, string password, byte? role, StatusAccount? status)
         {
+            // Database context intialize.
+            var context = new OlivesHealthEntities();
+
             // By default, take all people in database.
-            IEnumerable<Person> result = new List<Person>(People);
+            IQueryable<Person> result = context.People;
 
             // Id is specified.
             if (id != null)
@@ -211,59 +123,74 @@ namespace OlivesAdministration.Test.Repositories
             if (role != null)
                 result = result.Where(x => x.Role == role);
 
-            // Status is specified.
             if (status != null)
-                result = result.Where(x => x.Status == (byte) status);
+                result = result.Where(x => x.Status == (byte) status.Value);
 
             return result.FirstOrDefault();
         }
 
-        public Task<bool> InitializePatientActivation(string code)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Person> InitializePersonAsync(Person info)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IList<Person>> LoginAsync(LoginViewModel info)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IList<StatusSummaryViewModel>> SummarizePersonRoleAsync(byte? role)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ResponsePatientFilter> FilterPatientAsync(FilterPatientViewModel filter, Person requester = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ResponsePatientFilter> FilterPatientAsync(FilterPatientViewModel filter)
-        {
-            throw new NotImplementedException();
-        }
-
-        #region Properties
-
         /// <summary>
-        ///     List of account in system.
+        ///     Find person by using email, password and role.
         /// </summary>
-        public List<Person> People { get; set; }
+        /// <param name="id">Id of person</param>
+        /// <param name="email">Email which is used for filtering.</param>
+        /// <param name="password">Password of account.</param>
+        /// <param name="role">As role is specified. Find account by role.</param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public async Task<Person> FindPersonAsync(int? id, string email, string password, byte? role,
+            StatusAccount? status)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
 
-        /// <summary>
-        ///     List of doctors in system.
-        /// </summary>
-        public List<Doctor> Doctors { get; set; }
+            // By default, take all people in database.
+            IQueryable<Person> result = context.People;
+
+            // Id is specified.
+            if (id != null)
+                result = result.Where(x => x.Id == id);
+
+            // Email is specified.
+            if (!string.IsNullOrEmpty(email))
+                result = result.Where(x => x.Email.Equals(email));
+
+            // Password is specified.
+            if (!string.IsNullOrEmpty(password))
+                result = result.Where(x => x.Password.Equals(password));
+
+            // Role is specified.
+            if (role != null)
+                result = result.Where(x => x.Role == role);
+
+            // Status has been specified.
+            if (status != null)
+            {
+                var castedStatus = (byte) status;
+                result = result.Where(x => x.Status == castedStatus);
+            }
+
+            return await result.FirstOrDefaultAsync();
+        }
         
         /// <summary>
-        /// List of specialties.
+        ///     Initialize or update person information asynchronously.
         /// </summary>
-        public List<Specialty> Specialties { get; set; } 
+        /// <param name="info"></param>
+        /// <returns></returns>
+        public async Task<Person> InitializePersonAsync(Person info)
+        {
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
+
+            // Add or update information base on the primary key.
+            context.People.AddOrUpdate(info);
+
+            // Save change to database.
+            await context.SaveChangesAsync();
+
+            return info;
+        }
 
         #endregion
     }

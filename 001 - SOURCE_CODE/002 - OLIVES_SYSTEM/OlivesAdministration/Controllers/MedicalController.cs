@@ -8,7 +8,6 @@ using log4net;
 using OlivesAdministration.Attributes;
 using OlivesAdministration.ViewModels.Initialize;
 using Shared.Enumerations;
-using Shared.Helpers;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -16,37 +15,19 @@ using Shared.ViewModels.Filter;
 
 namespace OlivesAdministration.Controllers
 {
-    [OlivesAuthorize(new[] { Role.Admin })]
+    [OlivesAuthorize(new[] {Role.Admin})]
     public class MedicalController : ApiParentController
     {
-        #region Properties
-
-        /// <summary>
-        /// Repository of account.
-        /// </summary>
-        private readonly IRepositoryMedicalCategory _repositoryMedicalCategory;
-
-        /// <summary>
-        /// Service which provides function to access time calculation.
-        /// </summary>
-        private readonly ITimeService _timeService;
-
-        /// <summary>
-        /// Instance for logger.
-        /// </summary>
-        private readonly ILog _log;
-
-        #endregion
-
         #region Constructors
 
         /// <summary>
-        /// Initialize an instance of MedicalController with dependencies.
+        ///     Initialize an instance of MedicalController with dependencies.
         /// </summary>
         /// <param name="repositoryMedicalCategory"></param>
         /// <param name="timeService"></param>
         /// <param name="log"></param>
-        public MedicalController(IRepositoryMedicalCategory repositoryMedicalCategory, ITimeService timeService, ILog log)
+        public MedicalController(IRepositoryMedicalCategory repositoryMedicalCategory, ITimeService timeService,
+            ILog log)
         {
             _repositoryMedicalCategory = repositoryMedicalCategory;
             _timeService = timeService;
@@ -55,16 +36,36 @@ namespace OlivesAdministration.Controllers
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        ///     Repository of account.
+        /// </summary>
+        private readonly IRepositoryMedicalCategory _repositoryMedicalCategory;
+
+        /// <summary>
+        ///     Service which provides function to access time calculation.
+        /// </summary>
+        private readonly ITimeService _timeService;
+
+        /// <summary>
+        ///     Instance for logger.
+        /// </summary>
+        private readonly ILog _log;
+
+        #endregion
+
         #region Methods
 
         /// <summary>
-        /// Initialize a medical category asynchronously.
+        ///     Initialize a medical category asynchronously.
         /// </summary>
         /// <param name="initializer"></param>
         /// <returns></returns>
         [Route("api/medical/category")]
         [HttpGet]
-        public async Task<HttpResponseMessage> InitializeMedicalCategory([FromBody] InitializeMedicalCategoryViewModel initializer)
+        public async Task<HttpResponseMessage> InitializeMedicalCategory(
+            [FromBody] InitializeMedicalCategoryViewModel initializer)
         {
             #region Request parameters validation
 
@@ -128,7 +129,7 @@ namespace OlivesAdministration.Controllers
         }
 
         /// <summary>
-        /// Modify a medical category asynchronously.
+        ///     Modify a medical category asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="modifier"></param>
@@ -144,7 +145,7 @@ namespace OlivesAdministration.Controllers
                 modifier = new InitializeMedicalCategoryViewModel();
                 Validate(modifier);
             }
-            
+
             // Request parameters are invalid.
             if (!ModelState.IsValid)
             {
@@ -155,7 +156,7 @@ namespace OlivesAdministration.Controllers
 
             // Medical category.
             var medicalCategory = await _repositoryMedicalCategory.FindMedicalCategoryAsync(id, null, null);
-            
+
             // Medical category is invalid.
             if (medicalCategory == null)
             {
@@ -205,13 +206,13 @@ namespace OlivesAdministration.Controllers
         }
 
         /// <summary>
-        /// Filter medical categories asynchronously.
+        ///     Filter medical categories asynchronously.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
         [Route("api/medical/category/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> FilterCategories([FromBody] FilterMedicalCategoryViewModel filter)
         {
             // Filter hasn't been initialized before.
@@ -245,7 +246,7 @@ namespace OlivesAdministration.Controllers
                 result.Total
             });
         }
-        
+
         #endregion
     }
 }

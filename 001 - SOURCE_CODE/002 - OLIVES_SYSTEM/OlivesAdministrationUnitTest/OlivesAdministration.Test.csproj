@@ -77,8 +77,7 @@
     <Compile Include="Controllers\PlaceController\FindPlace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\RepositoryAccount.cs" />
-    <Compile Include="Repositories\RepositoryMedicalCategory.cs" />
-    <Compile Include="Repositories\RepositoryPlace.cs" />
+    <Compile Include="Repositories\RepositoryAccountExtended.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OlivesAdministration\OlivesAdministration.csproj">

@@ -32,8 +32,9 @@ namespace Olives.Controllers
         /// <param name="log"></param>
         /// <param name="timeService"></param>
         /// <param name="notificationService"></param>
-        public AppointmentController(IRepositoryAccountExtended repositoryAccountExtended, IRepositoryAppointment repositoryAppointment, IRepositoryRelation repositoryRelation,
-            ILog log, 
+        public AppointmentController(IRepositoryAccountExtended repositoryAccountExtended,
+            IRepositoryAppointment repositoryAppointment, IRepositoryRelation repositoryRelation,
+            ILog log,
             ITimeService timeService, INotificationService notificationService)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
@@ -181,7 +182,8 @@ namespace Olives.Controllers
                 var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Find the dater by using id.
-                var dater = await _repositoryAccountExtended.FindPersonAsync(info.Dater, null, null, null, StatusAccount.Active);
+                var dater =
+                    await _repositoryAccountExtended.FindPersonAsync(info.Dater, null, null, null, StatusAccount.Active);
 
                 // No information has been found.
                 if (dater == null)
@@ -383,13 +385,13 @@ namespace Olives.Controllers
             #endregion
 
             #region Notification initialization
-            
+
             // Who should receive the notification.
             var recipient = requester.Id == appointment.Maker ? appointment.Dater : appointment.Maker;
-            
+
             var notification = new Notification();
-            notification.Type = (byte)NotificationType.Edit;
-            notification.Topic = (byte)NotificationTopic.Appointment;
+            notification.Type = (byte) NotificationType.Edit;
+            notification.Topic = (byte) NotificationTopic.Appointment;
             notification.Broadcaster = requester.Id;
             notification.Recipient = recipient;
             notification.Record = appointment.Id;
@@ -399,7 +401,7 @@ namespace Olives.Controllers
 
             // Broadcast the notification with fault tolerant.
             await _notificationService.BroadcastNotificationAsync(notification, Hub);
-            
+
             #endregion
 
             #region Result handling
@@ -531,7 +533,7 @@ namespace Olives.Controllers
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
-        
+
         private readonly ITimeService _timeService;
 
         /// <summary>

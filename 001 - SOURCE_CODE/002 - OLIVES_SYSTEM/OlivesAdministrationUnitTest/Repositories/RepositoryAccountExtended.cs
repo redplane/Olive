@@ -1,40 +1,20 @@
-﻿using System;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Olives.Enumerations.Filter;
-using Olives.Interfaces;
-using Olives.ViewModels.Filter;
+using OlivesAdministration.Enumerations;
+using OlivesAdministration.Interfaces;
+using OlivesAdministration.ViewModels.Filter;
+using OlivesAdministration.ViewModels.Statistic;
 using Shared.Enumerations;
-using Shared.Interfaces;
 using Shared.Models;
-using Shared.Repositories;
 using Shared.ViewModels.Response;
 
-namespace Olives.Repositories
+namespace OlivesAdministration.Test.Repositories
 {
     public class RepositoryAccountExtended : RepositoryAccount, IRepositoryAccountExtended
     {
-        #region Properties
-
-        private readonly IOliveDataContext _dataContext;
-
-        #endregion
-
-        #region Constructors
-
-        public RepositoryAccountExtended(IOliveDataContext dataContext) : base(dataContext)
-        {
-            _dataContext = dataContext;
-        }
-
-        #endregion
-
-        #region Methods
-
         /// <summary>
-        ///     Filter doctor asynchronously with specific conditions.
+        /// Filter doctors by using specific conditions asynchronously.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -42,8 +22,9 @@ namespace Olives.Repositories
         {
             #region Data initialization
 
-            var context = _dataContext.Context;
-
+            // Database connection context initialization.
+            var context = new OlivesHealthEntities();
+            
             // By default, take all doctors.
             IQueryable<Doctor> doctors = context.Doctors;
 
@@ -73,20 +54,31 @@ namespace Olives.Repositories
             if (filter.Gender != null)
                 doctors = doctors.Where(x => x.Person.Gender == filter.Gender);
 
+            // Filter by last modified.
+            if (filter.MinLastModified != null)
+                doctors = doctors.Where(x => x.Person.LastModified >= filter.MinLastModified);
+            if (filter.MaxLastModified != null)
+                doctors = doctors.Where(x => x.Person.LastModified <= filter.MaxLastModified);
+
+            // Filter by created.
+            if (filter.MinCreated != null)
+                doctors = doctors.Where(x => x.Person.Created >= filter.MinCreated);
+            if (filter.MaxCreated != null)
+                doctors = doctors.Where(x => x.Person.Created <= filter.MaxCreated);
+
             // Filter by status.
             if (filter.Status != null)
-                doctors = doctors.Where(x => x.Person.Status == (byte) filter.Status);
+                doctors = doctors.Where(x => x.Person.Status == (byte)filter.Status);
 
             #endregion
 
             #region Doctors
 
             // Filter doctor by place.
-            if (!string.IsNullOrWhiteSpace(filter.City))
-                doctors = doctors.Where(x => x.Place.City.Contains(filter.City));
+            if (!string.IsNullOrWhiteSpace(filter.City)) doctors = doctors.Where(x => x.Place.City.Contains(filter.City));
             if (!string.IsNullOrWhiteSpace(filter.Country))
                 doctors = doctors.Where(x => x.Place.Country.Contains(filter.Country));
-
+            
             // Filter by rank.
             if (filter.MinRank != null) doctors = doctors.Where(x => x.Rank >= filter.MinRank);
             if (filter.MaxRank != null) doctors = doctors.Where(x => x.Rank <= filter.MaxRank);
@@ -116,14 +108,23 @@ namespace Olives.Repositories
                         case FilterDoctorSort.Birthday:
                             doctors = doctors.OrderByDescending(x => x.Person.Birthday);
                             break;
+                        case FilterDoctorSort.Created:
+                            doctors = doctors.OrderByDescending(x => x.Person.Created);
+                            break;
                         case FilterDoctorSort.FirstName:
                             doctors = doctors.OrderByDescending(x => x.Person.FirstName);
                             break;
                         case FilterDoctorSort.Gender:
                             doctors = doctors.OrderByDescending(x => x.Person.Gender);
                             break;
+                        case FilterDoctorSort.LastModified:
+                            doctors = doctors.OrderByDescending(x => x.Person.LastModified);
+                            break;
                         case FilterDoctorSort.LastName:
                             doctors = doctors.OrderByDescending(x => x.Person.LastName);
+                            break;
+                        case FilterDoctorSort.Status:
+                            doctors = doctors.OrderByDescending(x => x.Person.Status);
                             break;
                         case FilterDoctorSort.Rank:
                             doctors = doctors.OrderByDescending(x => x.Rank);
@@ -136,14 +137,23 @@ namespace Olives.Repositories
                         case FilterDoctorSort.Birthday:
                             doctors = doctors.OrderBy(x => x.Person.Birthday);
                             break;
+                        case FilterDoctorSort.Created:
+                            doctors = doctors.OrderBy(x => x.Person.Created);
+                            break;
                         case FilterDoctorSort.FirstName:
                             doctors = doctors.OrderBy(x => x.Person.FirstName);
                             break;
                         case FilterDoctorSort.Gender:
                             doctors = doctors.OrderBy(x => x.Person.Gender);
                             break;
+                        case FilterDoctorSort.LastModified:
+                            doctors = doctors.OrderBy(x => x.Person.LastModified);
+                            break;
                         case FilterDoctorSort.LastName:
                             doctors = doctors.OrderBy(x => x.Person.LastName);
+                            break;
+                        case FilterDoctorSort.Status:
+                            doctors = doctors.OrderBy(x => x.Person.Status);
                             break;
                         case FilterDoctorSort.Rank:
                             doctors = doctors.OrderBy(x => x.Rank);
@@ -159,38 +169,33 @@ namespace Olives.Repositories
             // Record is defined.
             if (filter.Records != null)
             {
-                doctors = doctors.Skip(filter.Page*filter.Records.Value)
+                doctors = doctors.Skip(filter.Page * filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
-            responseFilter.Doctors = await doctors.ToListAsync();
+            responseFilter.Doctors = doctors;
             return responseFilter;
 
             #endregion
         }
 
         /// <summary>
-        ///     Filter patients by using specific conditions
+        ///     Filter patient by using specific conditions asynchronously.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
         public async Task<ResponsePatientFilter> FilterPatientsAsync(FilterPatientViewModel filter)
         {
-            #region Result filter
+            #region Record filter
 
-            var context = _dataContext.Context;
+            // Database context initialization.
+            var context = new OlivesHealthEntities();
 
             // Response initialization.
             var response = new ResponsePatientFilter();
 
-            // Take all relations which requester takes part in.
-            IQueryable<Relation> relationships = context.Relations;
-            relationships = relationships.Where(x => x.Source == filter.Requester || x.Target == filter.Requester);
-            relationships = relationships.Where(x => x.Status == (byte) StatusRelation.Active);
-
             // By default, take all patients.
             IQueryable<Patient> patients = context.Patients;
-            patients = patients.Where(x => x.Id != filter.Requester);
 
             // Filter doctor by using email.
             if (!string.IsNullOrEmpty(filter.Email))
@@ -199,6 +204,13 @@ namespace Olives.Repositories
             // Filter doctor by using phone number.
             if (!string.IsNullOrEmpty(filter.Phone))
                 patients = patients.Where(x => x.Person.Phone.Contains(filter.Phone));
+
+            // Filter by last modified.
+            if (filter.MinLastModified != null)
+                patients = patients.Where(x => x.Person.LastModified >= filter.MinLastModified);
+
+            if (filter.MaxLastModified != null)
+                patients = patients.Where(x => x.Person.LastModified <= filter.MaxLastModified);
 
             // Filter by using name
             if (!string.IsNullOrEmpty(filter.Name))
@@ -214,70 +226,84 @@ namespace Olives.Repositories
             // Filter by gender.
             if (filter.Gender != null)
                 patients = patients.Where(x => x.Person.Gender == filter.Gender);
+            
+            // Filter by created.
+            if (filter.MinCreated != null)
+                patients = patients.Where(x => x.Person.Created >= filter.MinCreated);
 
-            // Only filter the active patient.
-            patients = patients.Where(x => x.Person.Status == (byte) StatusAccount.Active);
+            if (filter.MaxCreated != null)
+                patients = patients.Where(x => x.Person.Created <= filter.MaxCreated);
 
-            // Relationship connection.
-            patients = from p in patients
-                from r in relationships
-                where
-                    (r.Source == p.Id && r.Target == filter.Requester) ||
-                    (r.Source == filter.Requester && r.Target == p.Id)
-                select p;
+            // Filter by status.
+            if (filter.Status != null)
+                patients = patients.Where(x => x.Person.Status == filter.Status);
+
+            // Filter by height.
+            if (filter.MinHeight != null) patients = patients.Where(x => x.Height >= filter.MinHeight);
+            if (filter.MaxHeight != null) patients = patients.Where(x => x.Height <= filter.MaxHeight);
+
+            // Filter by weight.
+            if (filter.MinWeight != null) patients = patients.Where(x => x.Weight >= filter.MinWeight);
+            if (filter.MaxWeight != null) patients = patients.Where(x => x.Weight <= filter.MaxWeight);
 
             // Caculate the total matched results.
             response.Total = await patients.CountAsync();
 
             #endregion
 
-            #region Result sort
+            #region Result sorting
 
             switch (filter.Direction)
             {
                 case SortDirection.Decending:
                     switch (filter.Sort)
                     {
-                        case PatientFilterSort.Email:
-                            patients = patients.OrderByDescending(x => x.Person.Email);
-                            break;
-                        case PatientFilterSort.Phone:
-                            patients = patients.OrderByDescending(x => x.Person.Phone);
-                            break;
-                        case PatientFilterSort.FirstName:
+                        case FilterPatientSort.FirstName:
                             patients = patients.OrderByDescending(x => x.Person.FirstName);
                             break;
-                        case PatientFilterSort.LastName:
+                        case FilterPatientSort.LastName:
                             patients = patients.OrderByDescending(x => x.Person.LastName);
                             break;
-                        case PatientFilterSort.Birthday:
+                        case FilterPatientSort.Created:
+                            patients = patients.OrderByDescending(x => x.Person.Created);
+                            break;
+                        case FilterPatientSort.LastModified:
+                            patients = patients.OrderByDescending(x => x.Person.LastModified);
+                            break;
+                        case FilterPatientSort.Birthday:
                             patients = patients.OrderByDescending(x => x.Person.Birthday);
                             break;
-                        case PatientFilterSort.Gender:
+                        case FilterPatientSort.Gender:
                             patients = patients.OrderByDescending(x => x.Person.Gender);
+                            break;
+                        case FilterPatientSort.Status:
+                            patients = patients.OrderByDescending(x => x.Person.Status);
                             break;
                     }
                     break;
                 default:
                     switch (filter.Sort)
                     {
-                        case PatientFilterSort.Email:
-                            patients = patients.OrderBy(x => x.Person.Email);
-                            break;
-                        case PatientFilterSort.Phone:
-                            patients = patients.OrderBy(x => x.Person.Phone);
-                            break;
-                        case PatientFilterSort.FirstName:
+                        case FilterPatientSort.FirstName:
                             patients = patients.OrderBy(x => x.Person.FirstName);
                             break;
-                        case PatientFilterSort.LastName:
+                        case FilterPatientSort.LastName:
                             patients = patients.OrderBy(x => x.Person.LastName);
                             break;
-                        case PatientFilterSort.Birthday:
+                        case FilterPatientSort.Created:
+                            patients = patients.OrderBy(x => x.Person.Created);
+                            break;
+                        case FilterPatientSort.LastModified:
+                            patients = patients.OrderBy(x => x.Person.LastModified);
+                            break;
+                        case FilterPatientSort.Birthday:
                             patients = patients.OrderBy(x => x.Person.Birthday);
                             break;
-                        case PatientFilterSort.Gender:
+                        case FilterPatientSort.Gender:
                             patients = patients.OrderBy(x => x.Person.Gender);
+                            break;
+                        case FilterPatientSort.Status:
+                            patients = patients.OrderBy(x => x.Person.Status);
                             break;
                     }
                     break;
@@ -290,82 +316,40 @@ namespace Olives.Repositories
             // Record is specified.
             if (filter.Records != null)
             {
-                patients = patients.Skip(filter.Page*filter.Records.Value)
+                patients = patients.Skip(filter.Page * filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
             // Take the list of filtered patient.
-            response.Patients = await patients
-                .ToListAsync();
-
+            response.Patients = patients;
             return response;
 
             #endregion
         }
-
+        
         /// <summary>
-        ///     Edit person profile asynchronously.
+        ///     Summary person by using role.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="info"></param>
         /// <returns></returns>
-        public async Task<Person> EditPersonProfileAsync(int id, Person info)
+        public async Task<IList<StatusSummaryViewModel>> SummarizePersonRoleAsync(byte? role)
         {
-            // Information hasn't been specified.
-            if (info == null)
-                throw new Exception("Personal information is required.");
+            var context = new OlivesHealthEntities();
+            IQueryable<Person> result = context.People;
 
-            // Keep the id.
-            info.Id = id;
+            if (role != null)
+                result = result.Where(x => x.Role == role);
 
-            var context = _dataContext.Context;
-            using (var transaction = context.Database.BeginTransaction())
-            {
-                try
+            var filteredResult = result.GroupBy(x => new { x.Role, x.Status })
+                .OrderBy(x => x.Key)
+                .Select(x => new StatusSummaryViewModel
                 {
-                    // Add or update information base on the primary key.
-                    context.People.AddOrUpdate(info);
+                    Role = x.Key.Role,
+                    Status = x.Key.Status,
+                    Total = x.Count()
+                });
 
-                    if (info.Role == (byte) Role.Patient)
-                        context.Patients.AddOrUpdate(info.Patient);
-                    if (info.Role == (byte) Role.Doctor)
-                        context.Doctors.AddOrUpdate(info.Doctor);
-
-                    #region Appointment update
-
-                    var appointments = context.Appointments.Where(x => x.Maker == id || x.Dater == id);
-                    foreach (var appointment in appointments)
-                    {
-                        if (appointment.Maker == id)
-                        {
-                            appointment.MakerFirstName = info.FirstName;
-                            appointment.MakerLastName = info.LastName;
-                            continue;
-                        }
-
-                        appointment.DaterFirstName = info.FirstName;
-                        appointment.DaterLastName = info.LastName;
-                    }
-
-                    #endregion
-
-                    // Save change to database.
-                    await context.SaveChangesAsync();
-
-                    // Commit the transaction.
-                    transaction.Commit();
-                    return info;
-                }
-                catch
-                {
-                    // Error happens, transaction will be rolled back and error will be thrown to client.
-                    transaction.Rollback();
-
-                    throw;
-                }
-            }
+            return await filteredResult.ToListAsync();
         }
-
-        #endregion
+        
     }
 }

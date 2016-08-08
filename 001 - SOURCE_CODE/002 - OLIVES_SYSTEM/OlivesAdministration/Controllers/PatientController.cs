@@ -11,9 +11,7 @@ using OlivesAdministration.Models;
 using OlivesAdministration.ViewModels.Filter;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Interfaces;
 using Shared.Resources;
-using Shared.ViewModels.Filter;
 
 namespace OlivesAdministration.Controllers
 {
@@ -28,7 +26,7 @@ namespace OlivesAdministration.Controllers
         /// <param name="repositoryAccountExtended"></param>
         /// <param name="log"></param>
         /// <param name="applicationSetting"></param>
-        public PatientController(IRepositoryAccountExtended repositoryAccountExtended, 
+        public PatientController(IRepositoryAccountExtended repositoryAccountExtended,
             ILog log,
             ApplicationSetting applicationSetting)
         {
@@ -47,7 +45,7 @@ namespace OlivesAdministration.Controllers
         private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
-        /// Instance which provides functions for logging.
+        ///     Instance which provides functions for logging.
         /// </summary>
         private readonly ILog _log;
 

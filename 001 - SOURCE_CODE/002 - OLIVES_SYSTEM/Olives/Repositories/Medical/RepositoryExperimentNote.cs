@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Olives.Interfaces.Medical;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
+using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
@@ -13,6 +14,23 @@ namespace Olives.Repositories.Medical
 {
     public class RepositoryExperimentNote : IRepositoryExperimentNote
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructors
+
+        public RepositoryExperimentNote(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         ///     Find an experiment note asynchronously by using id.
         /// </summary>
@@ -20,10 +38,8 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<ExperimentNote> FindExperimentNoteAsync(int id)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // Take all record first.
+            var context = _dataContext.Context;
             IQueryable<ExperimentNote> experiments = context.ExperimentNotes;
             return await experiments.FirstOrDefaultAsync(x => x.Id == id);
         }
@@ -35,10 +51,8 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<ExperimentNote> InitializeExperimentNote(ExperimentNote note)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // Begin a transaction.
+            var context = _dataContext.Context;
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
@@ -69,7 +83,7 @@ namespace Olives.Repositories.Medical
         public async Task<int> DeleteExperimentNotesAsync(FilterExperimentNoteViewModel filter)
         {
             // Database context initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
             IQueryable<ExperimentNote> experimentNotes = context.ExperimentNotes;
             context.ExperimentNotes.RemoveRange(experimentNotes);
             var records = await context.SaveChangesAsync();
@@ -83,10 +97,8 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<ResponseExperimentNoteFilter> FilterExperimentNotesAsync(FilterExperimentNoteViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all experiment notes.
+            var context = _dataContext.Context;
             IQueryable<ExperimentNote> experimentNotes = context.ExperimentNotes;
             experimentNotes = FilterExperimentNotes(experimentNotes, filter);
 
@@ -121,7 +133,7 @@ namespace Olives.Repositories.Medical
                     }
                     break;
             }
-            
+
             // Response initialization.
             var response = new ResponseExperimentNoteFilter();
             response.Total = await experimentNotes.CountAsync();
@@ -140,12 +152,13 @@ namespace Olives.Repositories.Medical
         }
 
         /// <summary>
-        /// Filter experiment notes by using conditions.
+        ///     Filter experiment notes by using conditions.
         /// </summary>
         /// <param name="experimentNotes"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public IQueryable<ExperimentNote> FilterExperimentNotes(IQueryable<ExperimentNote> experimentNotes, FilterExperimentNoteViewModel filter)
+        public IQueryable<ExperimentNote> FilterExperimentNotes(IQueryable<ExperimentNote> experimentNotes,
+            FilterExperimentNoteViewModel filter)
         {
             // Id is specified
             if (filter.Id != null)
@@ -186,8 +199,10 @@ namespace Olives.Repositories.Medical
                 experimentNotes = experimentNotes.Where(x => x.Name.Contains(filter.Name));
 
             // Created is defined.
-            if (filter.MinCreated != null) experimentNotes = experimentNotes.Where(x => x.Created >= filter.MinCreated.Value);
-            if (filter.MaxCreated != null) experimentNotes = experimentNotes.Where(x => x.Created <= filter.MaxCreated.Value);
+            if (filter.MinCreated != null)
+                experimentNotes = experimentNotes.Where(x => x.Created >= filter.MinCreated.Value);
+            if (filter.MaxCreated != null)
+                experimentNotes = experimentNotes.Where(x => x.Created <= filter.MaxCreated.Value);
 
             // Last modified is defined.
             if (filter.MinLastModified != null)
@@ -197,5 +212,7 @@ namespace Olives.Repositories.Medical
 
             return experimentNotes;
         }
+
+        #endregion
     }
 }

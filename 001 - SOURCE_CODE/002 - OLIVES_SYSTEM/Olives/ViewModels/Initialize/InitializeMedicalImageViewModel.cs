@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Drawing;
 using MultipartFormDataMediaFormatter.Attributes;
 using MultipartFormDataMediaFormatter.Models;
 using Shared.Resources;
@@ -17,7 +16,8 @@ namespace Olives.ViewModels.Initialize
         ///     Image file.
         /// </summary>
         [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueIsRequired")]
-        [HttpFileImageValidate(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
+        [HttpFileImageValidate(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueIsInvalid"
+            )]
         public HttpFileModel File { get; set; }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace MultipartFormDataMediaFormatter.Constants
@@ -7,9 +6,9 @@ namespace MultipartFormDataMediaFormatter.Constants
     public class MediaType
     {
         /// <summary>
-        /// List media type describe file as an image.
+        ///     List media type describe file as an image.
         /// </summary>
-        public static readonly IList<string> Images = new ReadOnlyCollection<string>(new List<string>()
+        public static readonly IList<string> Images = new ReadOnlyCollection<string>(new List<string>
         {
             "image/cgm",
             "image/fits",

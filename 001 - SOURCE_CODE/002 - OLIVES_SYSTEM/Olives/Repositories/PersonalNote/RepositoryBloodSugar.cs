@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Olives.Interfaces.PersonalNote;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
+using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
@@ -13,6 +14,23 @@ namespace Olives.Repositories.PersonalNote
 {
     public class RepositoryBloodSugar : IRepositoryBloodSugar
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructors
+
+        public RepositoryBloodSugar(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         ///     Initialize sugarblood note to database.
         /// </summary>
@@ -20,10 +38,9 @@ namespace Olives.Repositories.PersonalNote
         /// <returns></returns>
         public async Task<SugarBlood> InitializeSugarbloodNoteAsync(SugarBlood info)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // Add allergy to database context.
+            var context = _dataContext.Context;
+
             context.SugarBloods.AddOrUpdate(info);
 
             // Submit allergy.
@@ -39,9 +56,7 @@ namespace Olives.Repositories.PersonalNote
         /// <returns></returns>
         public async Task<SugarBlood> FindBloodSugarAsync(int id)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
+            var context = _dataContext.Context;
             return await context.SugarBloods.FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -52,17 +67,15 @@ namespace Olives.Repositories.PersonalNote
         /// <returns></returns>
         public async Task<ResponseBloodSugarFilter> FilterBloodSugarAsync(FilterBloodSugarViewModel filter)
         {
-            // Data context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all information.
+            var context = _dataContext.Context;
             IQueryable<SugarBlood> bloodSugars = context.SugarBloods;
             bloodSugars = FilterBloodSugars(bloodSugars, filter);
-            
+
             // Initialize response and throw result back.
             var response = new ResponseBloodSugarFilter();
             response.Total = await bloodSugars.CountAsync();
-            
+
             // Sort the result.
             switch (filter.Sort)
             {
@@ -108,7 +121,7 @@ namespace Olives.Repositories.PersonalNote
         }
 
         /// <summary>
-        /// Filter blood sugar notes by using specific conditions.
+        ///     Filter blood sugar notes by using specific conditions.
         /// </summary>
         /// <param name="bloodSugars"></param>
         /// <param name="filter"></param>
@@ -159,10 +172,8 @@ namespace Olives.Repositories.PersonalNote
         /// <param name="filter"></param>
         public async Task<int> DeleteBloodSugarAsync(FilterBloodSugarViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all information.
+            var context = _dataContext.Context;
             IQueryable<SugarBlood> bloodSugars = context.SugarBloods;
             bloodSugars = FilterBloodSugars(bloodSugars, filter);
 
@@ -173,5 +184,7 @@ namespace Olives.Repositories.PersonalNote
             var records = await context.SaveChangesAsync();
             return records;
         }
+
+        #endregion
     }
 }

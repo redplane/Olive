@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Olives.Interfaces.PersonalNote;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
+using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
@@ -13,6 +14,21 @@ namespace Olives.Repositories.PersonalNote
 {
     public class RepositoryBloodPressure : IRepositoryBloodPressure
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructors
+
+        public RepositoryBloodPressure(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
         /// <summary>
         ///     Initialize a blood pressure note to database.
         /// </summary>
@@ -20,10 +36,8 @@ namespace Olives.Repositories.PersonalNote
         /// <returns></returns>
         public async Task<BloodPressure> InitializeBloodPressureNoteAsync(BloodPressure info)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // Add allergy to database context.
+            var context = _dataContext.Context;
             context.BloodPressures.AddOrUpdate(info);
 
             // Submit allergy.
@@ -39,10 +53,8 @@ namespace Olives.Repositories.PersonalNote
         /// <returns></returns>
         public async Task<BloodPressure> FindBloodPressureNoteAsync(int id)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // Find heartbeat note by using id.
+            var context = _dataContext.Context;
             return await context.BloodPressures.FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -55,10 +67,8 @@ namespace Olives.Repositories.PersonalNote
         {
             #region Record filter
 
-            // Data context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all information.
+            var context = _dataContext.Context;
             IQueryable<BloodPressure> bloodPressures = context.BloodPressures;
             bloodPressures = FilterBloodPressuresAsync(bloodPressures, filter);
 
@@ -83,10 +93,8 @@ namespace Olives.Repositories.PersonalNote
         /// <returns></returns>
         public async Task<ResponseBloodPressureFilter> FilterBloodPressureNoteAsync(FilterBloodPressureViewModel filter)
         {
-            // Data context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all information.
+            var context = _dataContext.Context;
             IQueryable<BloodPressure> bloodPressures = context.BloodPressures;
             bloodPressures = FilterBloodPressuresAsync(bloodPressures, filter);
 
@@ -142,7 +150,7 @@ namespace Olives.Repositories.PersonalNote
         }
 
         /// <summary>
-        /// Filter blood pressure notes by using specific conditions.
+        ///     Filter blood pressure notes by using specific conditions.
         /// </summary>
         /// <param name="bloodPressures"></param>
         /// <param name="filter"></param>
@@ -194,6 +202,6 @@ namespace Olives.Repositories.PersonalNote
                 bloodPressures = bloodPressures.Where(x => x.Note.Contains(filter.Note));
 
             return bloodPressures;
-        } 
+        }
     }
 }

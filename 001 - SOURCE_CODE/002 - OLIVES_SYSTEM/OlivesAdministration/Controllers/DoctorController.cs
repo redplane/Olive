@@ -26,7 +26,8 @@ namespace OlivesAdministration.Controllers
         /// <param name="repositoryAccountExtended"></param>
         /// <param name="log"></param>
         /// <param name="applicationSetting"></param>
-        public DoctorController(IRepositoryAccountExtended repositoryAccountExtended, ILog log, ApplicationSetting applicationSetting)
+        public DoctorController(IRepositoryAccountExtended repositoryAccountExtended, ILog log,
+            ApplicationSetting applicationSetting)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
             _applicationSetting = applicationSetting;
@@ -48,7 +49,7 @@ namespace OlivesAdministration.Controllers
             try
             {
                 // Retrieve filtered result asynchronously.
-                var account = await _repositoryAccountExtended.FindPersonAsync(id, null, null, (byte)Role.Doctor, null);
+                var account = await _repositoryAccountExtended.FindPersonAsync(id, null, null, (byte) Role.Doctor, null);
 
                 // No result has been found.
                 if (account == null)
@@ -60,7 +61,7 @@ namespace OlivesAdministration.Controllers
                         Error = $"{Language.WarnRecordNotFound}"
                     });
                 }
-                
+
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     Doctor = new
@@ -194,7 +195,7 @@ namespace OlivesAdministration.Controllers
         private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
-        /// Instance for logging management.
+        ///     Instance for logging management.
         /// </summary>
         private readonly ILog _log;
 

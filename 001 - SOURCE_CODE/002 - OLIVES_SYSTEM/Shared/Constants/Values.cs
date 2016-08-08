@@ -78,12 +78,12 @@
         public const int ActivationCodeHourDuration = 24;
 
         /// <summary>
-        /// Maximum characters allowed in message content.
+        ///     Maximum characters allowed in message content.
         /// </summary>
         public const int MaxMessageContentLength = 512;
 
         /// <summary>
-        /// Maximum length of account code.
+        ///     Maximum length of account code.
         /// </summary>
         public const int MaxAccountCodeLength = 36;
 
@@ -108,7 +108,7 @@
         ///     Maximum value that systolic can be assigned.
         /// </summary>
         public const int MaxSystolic = 250;
-        
+
         /// <summary>
         ///     Extension of image which will be used for storing on server.
         /// </summary>

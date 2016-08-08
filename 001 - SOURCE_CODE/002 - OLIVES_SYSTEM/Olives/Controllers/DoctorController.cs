@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -8,11 +6,9 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
-using Olives.Constants;
 using Olives.Enumerations;
 using Olives.Interfaces;
 using Olives.Models;
-using Olives.ViewModels;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Filter;
 using Olives.ViewModels.Initialize;
@@ -21,8 +17,6 @@ using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
-using Shared.ViewModels;
-using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
@@ -54,7 +48,6 @@ namespace Olives.Controllers
             _repositoryStorage = repositoryStorage;
             _log = log;
             _timeService = timeService;
-
         }
 
         #endregion
@@ -67,16 +60,18 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
+        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
         public async Task<HttpResponseMessage> FindDoctorAsync([FromUri] int id)
         {
             #region Result find
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
             // Find the doctor by using id.
-            var account = await _repositoryAccountExtended.FindPersonAsync(id, null, null, (byte)Role.Doctor, StatusAccount.Active);
+            var account =
+                await
+                    _repositoryAccountExtended.FindPersonAsync(id, null, null, (byte) Role.Doctor, StatusAccount.Active);
 
             // Doctor is not found.
             if (account == null)
@@ -103,7 +98,7 @@ namespace Olives.Controllers
                     });
                 }
             }
-            
+
             #endregion
 
             #region Result handling
@@ -143,7 +138,7 @@ namespace Olives.Controllers
 
             #endregion
         }
-        
+
         /// <summary>
         ///     Sign up as a doctor asynchronously.
         /// </summary>
@@ -210,17 +205,17 @@ namespace Olives.Controllers
             person.LastName = initializer.LastName;
             person.FullName = person.FirstName + " " + person.LastName;
             person.Birthday = initializer.Birthday;
-            person.Gender = (byte)initializer.Gender;
+            person.Gender = (byte) initializer.Gender;
             person.Email = initializer.Email;
             person.Password = initializer.Password;
             person.Phone = initializer.Phone;
             person.Address = initializer.Address;
             person.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
-            person.Role = (byte)Role.Doctor;
-            person.Status = (byte)StatusAccount.Pending;
+            person.Role = (byte) Role.Doctor;
+            person.Status = (byte) StatusAccount.Pending;
             doctor.SpecialtyId = specialty.Id;
             doctor.PlaceId = place.Id;
-            
+
             // Assign personal information to patient.
             person.Doctor = doctor;
 
@@ -240,14 +235,14 @@ namespace Olives.Controllers
 
             #endregion
         }
-        
+
         /// <summary>
         ///     Edit doctor profile.
         /// </summary>
         /// <param name="editor"></param>
         /// <returns></returns>
         [HttpPut]
-        [OlivesAuthorize(new[] { Role.Doctor })]
+        [OlivesAuthorize(new[] {Role.Doctor})]
         public async Task<HttpResponseMessage> EditDoctorAsync([FromBody] EditDoctorProfileViewModel editor)
         {
             // Filter hasn't been initialized. Initialize it and do validation.
@@ -266,7 +261,7 @@ namespace Olives.Controllers
             }
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Address is defined.
             if (!string.IsNullOrWhiteSpace(editor.Address))
@@ -290,7 +285,7 @@ namespace Olives.Controllers
 
             // Gender is defined.
             if (editor.Gender != null)
-                requester.Gender = (byte)editor.Gender;
+                requester.Gender = (byte) editor.Gender;
 
             // Birthday is defined.
             if (editor.Birthday != null)
@@ -308,7 +303,7 @@ namespace Olives.Controllers
             // Place is defined.
             if (editor.Place != null)
                 requester.Doctor.PlaceId = editor.Place.Value;
-            
+
             try
             {
                 // Save account.
@@ -349,7 +344,7 @@ namespace Olives.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
         }
-        
+
         /// <summary>
         ///     Filter and respond a list of doctors to client.
         /// </summary>
@@ -357,7 +352,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/doctor/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> FilterDoctorAsync([FromBody] FilterDoctorViewModel filter)
         {
             #region Request parameters validation
@@ -431,7 +426,7 @@ namespace Olives.Controllers
 
             #endregion
         }
-        
+
         #endregion
 
         #region Properties
@@ -440,7 +435,7 @@ namespace Olives.Controllers
         ///     Repository of accounts
         /// </summary>
         private readonly IRepositoryAccountExtended _repositoryAccountExtended;
-        
+
         /// <summary>
         ///     Repository of specialty.
         /// </summary>
@@ -452,7 +447,7 @@ namespace Olives.Controllers
         private readonly IRepositoryPlace _repositoryPlace;
 
         /// <summary>
-        /// Repository of storages.
+        ///     Repository of storages.
         /// </summary>
         private readonly IRepositoryStorage _repositoryStorage;
 
@@ -460,7 +455,7 @@ namespace Olives.Controllers
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-        
+
         /// <summary>
         ///     Service which provides function to access time calculation.
         /// </summary>

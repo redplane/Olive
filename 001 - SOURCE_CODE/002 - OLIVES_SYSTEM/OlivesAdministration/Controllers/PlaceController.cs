@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using OlivesAdministration.Attributes;
-using OlivesAdministration.ViewModels;
 using OlivesAdministration.ViewModels.Edit;
 using OlivesAdministration.ViewModels.Initialize;
 using Shared.Enumerations;
@@ -51,9 +50,9 @@ namespace OlivesAdministration.Controllers
         #endregion
 
         #region Methods
-        
+
         /// <summary>
-        /// Find a place by using id asynchronously.
+        ///     Find a place by using id asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -99,11 +98,10 @@ namespace OlivesAdministration.Controllers
                     Error = $"{Language.WarnInternalServerError}"
                 });
             }
-
         }
 
         /// <summary>
-        /// Initialize a place asynchronously.
+        ///     Initialize a place asynchronously.
         /// </summary>
         /// <param name="initializer"></param>
         /// <returns></returns>
@@ -192,7 +190,7 @@ namespace OlivesAdministration.Controllers
         }
 
         /// <summary>
-        /// Modify a place asynchronously.
+        ///     Modify a place asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="editor"></param>
@@ -217,7 +215,7 @@ namespace OlivesAdministration.Controllers
 
             // Find the place by id.
             var place = await _repositoryPlace.FindPlaceAsync(id, null, null, null, null);
-            
+
             // Place is invalid.
             if (place == null)
             {
@@ -254,7 +252,7 @@ namespace OlivesAdministration.Controllers
             try
             {
                 // Modify place information.
-                place = await _repositoryPlace.ModifyPlaceAsync(place.Id, place);
+                place = await _repositoryPlace.InitializePlaceAsync(place);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -279,7 +277,7 @@ namespace OlivesAdministration.Controllers
         }
 
         /// <summary>
-        /// Filter place by using specific conditions.
+        ///     Filter place by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>

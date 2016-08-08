@@ -2,50 +2,77 @@
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
+using Olives.Enumerations.Filter;
 using Olives.Interfaces.PersonalNote;
 using Olives.ViewModels.Filter;
 using Olives.ViewModels.Response;
+using Shared.Enumerations;
+using Shared.Interfaces;
 using Shared.Models;
 
 namespace Olives.Repositories.PersonalNote
 {
     public class RepositoryDiary : IRepositoryDiary
     {
+        #region Properties
+
         /// <summary>
-        /// Delete diaries by using conditions asynchronously.
+        ///     Context which provides functions to access database.
+        /// </summary>
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        ///     Initialize an instance of repository with database context setting.
+        /// </summary>
+        /// <param name="dataContext"></param>
+        public RepositoryDiary(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        ///     Delete diaries by using conditions asynchronously.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
         public async Task<int> DeleteDiaryAsync(FilterDiaryViewModel filter)
-        { 
-            var context = new OlivesHealthEntities();
+        {
+            var context = _dataContext.Context;
             IQueryable<Diary> diaries = context.Diaries;
             diaries = FilterDiaries(diaries, filter);
 
             context.Diaries.RemoveRange(diaries);
             return await context.SaveChangesAsync();
         }
-        
+
         /// <summary>
-        /// Filter diaries by using specific conditions asychronously.
+        ///     Filter diaries by using specific conditions asychronously.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
         public async Task<ResponseDiaryFilter> FilterDiariesAsync(FilterDiaryViewModel filter)
         {
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
             IQueryable<Diary> diaries = context.Diaries;
             diaries = FilterDiaries(diaries, filter);
 
             switch (filter.Direction)
             {
-                case Shared.Enumerations.SortDirection.Decending:
-                    switch(filter.Sort)
+                case SortDirection.Decending:
+                    switch (filter.Sort)
                     {
-                        case Enumerations.Filter.DiaryFilterSort.Created:
+                        case DiaryFilterSort.Created:
                             diaries = diaries.OrderByDescending(x => x.Created);
                             break;
-                        case Enumerations.Filter.DiaryFilterSort.LastModified:
+                        case DiaryFilterSort.LastModified:
                             diaries = diaries.OrderByDescending(x => x.LastModified);
                             break;
                         default:
@@ -56,10 +83,10 @@ namespace Olives.Repositories.PersonalNote
                 default:
                     switch (filter.Sort)
                     {
-                        case Enumerations.Filter.DiaryFilterSort.Created:
+                        case DiaryFilterSort.Created:
                             diaries = diaries.OrderBy(x => x.Created);
                             break;
-                        case Enumerations.Filter.DiaryFilterSort.LastModified:
+                        case DiaryFilterSort.LastModified:
                             diaries = diaries.OrderBy(x => x.LastModified);
                             break;
                         default:
@@ -74,33 +101,32 @@ namespace Olives.Repositories.PersonalNote
 
             // Pagination is defined
             if (filter.Records != null)
-                diaries = diaries.Skip(filter.Page * filter.Records.Value)
+                diaries = diaries.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
 
             response.Diaries = diaries;
             return response;
-            
         }
 
         /// <summary>
-        /// Find a diary by using specific id asynchronously.
+        ///     Find a diary by using specific id asynchronously.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public async Task<Diary> FindDiaryAsync(int id)
         {
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
             return await context.Diaries.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         /// <summary>
-        /// Initialize / update a diary.
+        ///     Initialize / update a diary.
         /// </summary>
         /// <param name="initializer"></param>
         /// <returns></returns>
         public async Task<Diary> InitializeDiaryAsync(Diary initializer)
         {
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
             context.Diaries.AddOrUpdate(initializer);
 
             await context.SaveChangesAsync();
@@ -134,6 +160,8 @@ namespace Olives.Repositories.PersonalNote
             if (filter.MaxLastModified != null) diaries = diaries.Where(x => x.LastModified <= filter.MaxLastModified);
 
             return diaries;
-        } 
+        }
+
+        #endregion
     }
 }

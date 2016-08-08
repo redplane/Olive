@@ -50,13 +50,13 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
             #region Result find
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Retrieve the results list.
             var bloodSugar = await _repositorySugarblood.FindBloodSugarAsync(id);
@@ -85,7 +85,8 @@ namespace Olives.Controllers
             if (!isRelationshipAvailable)
             {
                 // Log the error.
-                _log.Error($"There is no relationship between requester [Id: {requester.Id}] and blood sugar owner [Id: {bloodSugar.Owner}]");
+                _log.Error(
+                    $"There is no relationship between requester [Id: {requester.Id}] and blood sugar owner [Id: {bloodSugar.Owner}]");
 
                 // Tell front-end, no record has been found.
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -97,7 +98,7 @@ namespace Olives.Controllers
             #endregion
 
             #region Result handling
-            
+
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 BloodSugar = new
@@ -121,7 +122,7 @@ namespace Olives.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> Post([FromBody] InitializeBloodSugarViewModel info)
         {
             #region Request parameters validation
@@ -145,7 +146,7 @@ namespace Olives.Controllers
             #region Record initialization & handling
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Only filter and receive the first result.
             var bloodSugar = new SugarBlood();
@@ -180,7 +181,7 @@ namespace Olives.Controllers
         /// <param name="modifier"></param>
         /// <returns></returns>
         [HttpPut]
-        [OlivesAuthorize(new[] { Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] EditBloodSugarViewModel modifier)
         {
             #region ModelState result
@@ -204,11 +205,11 @@ namespace Olives.Controllers
             #region Record find
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find allergy by using allergy id and owner id.
             var bloodSugar = await _repositorySugarblood.FindBloodSugarAsync(id);
-            
+
             if (bloodSugar == null)
             {
                 // Log the error.
@@ -242,7 +243,7 @@ namespace Olives.Controllers
 
             if (modifier.Value != null)
                 bloodSugar.Value = modifier.Value.Value;
-            
+
             if (!string.IsNullOrWhiteSpace(bloodSugar.Note))
                 bloodSugar.Note = modifier.Note;
 
@@ -273,13 +274,13 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
-        [OlivesAuthorize(new[] { Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> Delete([FromUri] int id)
         {
             try
             {
                 // Retrieve information of person who sent request.
-                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Filter initialization.
                 var filter = new FilterBloodSugarViewModel();
@@ -321,7 +322,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/bloodsugar/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterBloodSugarViewModel filter)
         {
             #region ModelState result
@@ -345,7 +346,7 @@ namespace Olives.Controllers
             #region Relationship validation
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Owner is not specified. That means the requester wants to see his/her records.
             if (filter.Owner == null)
@@ -355,7 +356,8 @@ namespace Olives.Controllers
             var isRelationshipAvailable = await _repositoryRelation.IsPeopleConnected(filter.Owner.Value, requester.Id);
             if (!isRelationshipAvailable)
             {
-                _log.Error($"There is no relationship between requester [Id: {requester.Id}] and blood sugar owner [Id: {filter.Owner}]");
+                _log.Error(
+                    $"There is no relationship between requester [Id: {requester.Id}] and blood sugar owner [Id: {filter.Owner}]");
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -370,7 +372,7 @@ namespace Olives.Controllers
 
             // Retrieve the results list.
             var result = await _repositorySugarblood.FilterBloodSugarAsync(filter);
-            
+
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 BloodSugars = result.Sugarbloods.Select(x => new
@@ -399,7 +401,7 @@ namespace Olives.Controllers
         private readonly IRepositoryBloodSugar _repositorySugarblood;
 
         /// <summary>
-        /// Repository of relationship.
+        ///     Repository of relationship.
         /// </summary>
         private readonly IRepositoryRelation _repositoryRelation;
 

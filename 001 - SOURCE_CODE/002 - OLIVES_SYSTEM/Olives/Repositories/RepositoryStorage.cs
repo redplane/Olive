@@ -10,12 +10,12 @@ namespace Olives.Repositories
         #region Properties
 
         /// <summary>
-        /// List of storage which have been configured in configuration file.
+        ///     List of storage which have been configured in configuration file.
         /// </summary>
         private readonly Dictionary<string, StorageModel> _storage;
 
         /// <summary>
-        /// Service http context.
+        ///     Service http context.
         /// </summary>
         private readonly HttpContext _httpContext;
 
@@ -25,10 +25,10 @@ namespace Olives.Repositories
 
         public RepositoryStorage()
         {
-            
         }
+
         /// <summary>
-        /// Initialize an instance with default settings.
+        ///     Initialize an instance with default settings.
         /// </summary>
         /// <param name="httpContext"></param>
         public RepositoryStorage(HttpContext httpContext)
@@ -42,7 +42,7 @@ namespace Olives.Repositories
         #region Methods
 
         /// <summary>
-        /// Find the storage by using name from the configured list.
+        ///     Find the storage by using name from the configured list.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -56,7 +56,7 @@ namespace Olives.Repositories
         }
 
         /// <summary>
-        /// Configure a storage with relative path.
+        ///     Configure a storage with relative path.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="relativePath"></param>
@@ -66,10 +66,10 @@ namespace Olives.Repositories
             var configuration = new StorageModel();
             configuration.Relative = relativePath;
             configuration.Absolute = _httpContext.Server.MapPath(relativePath);
-            
+
             // Storage hasn't been configured before.
             if (!_storage.ContainsKey(name))
-            {    
+            {
                 _storage.Add(name, configuration);
                 return;
             }

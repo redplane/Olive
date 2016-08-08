@@ -14,10 +14,22 @@ namespace Shared.Repositories
 {
     public class RepositoryPlace : IRepositoryPlace
     {
-        public Task<int> DeletePlaceAsync(int id)
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructor
+
+        public RepositoryPlace(IOliveDataContext dataContext)
         {
-            throw new NotImplementedException();
+            _dataContext = dataContext;
         }
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// </summary>
@@ -25,10 +37,8 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<ResponsePlaceFilter> FilterPlacesAsync(FilterPlaceViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all records.
+            var context = _dataContext.Context;
             IQueryable<Place> places = context.Places;
 
             // City is defined.
@@ -101,12 +111,11 @@ namespace Shared.Repositories
         /// <param name="country"></param>
         /// <param name="countryComparison"></param>
         /// <returns></returns>
-        public Place FindPlace(int? id, string city, StringComparison? cityComparision, string country, StringComparison? countryComparison)
+        public Place FindPlace(int? id, string city, StringComparison? cityComparision, string country,
+            StringComparison? countryComparison)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all places.
+            var context = _dataContext.Context;
             IQueryable<Place> places = context.Places;
 
             // Id is specified.
@@ -137,10 +146,8 @@ namespace Shared.Repositories
         public async Task<Place> FindPlaceAsync(int? id, string city, StringComparison? cityComparision, string country,
             StringComparison? countryComparison)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all places.
+            var context = _dataContext.Context;
             IQueryable<Place> places = context.Places;
 
             // Id is specified.
@@ -166,8 +173,7 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<Place> InitializePlaceAsync(Place place)
         {
-            // Database context initialiazation.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // Initialize/update place to database.
             context.Places.AddOrUpdate(place);
@@ -178,9 +184,6 @@ namespace Shared.Repositories
             return place;
         }
 
-        public Task<Place> ModifyPlaceAsync(int id, Place place)
-        {
-            throw new NotImplementedException();
-        }
+        #endregion
     }
 }

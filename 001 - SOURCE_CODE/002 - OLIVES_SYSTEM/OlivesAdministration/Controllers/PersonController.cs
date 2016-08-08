@@ -17,20 +17,6 @@ namespace OlivesAdministration.Controllers
     [Route("api/person")]
     public class PersonController : ApiParentController
     {
-        #region Properties
-
-        /// <summary>
-        ///     Repository account DI
-        /// </summary>
-        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
-
-        /// <summary>
-        /// Instance of log.
-        /// </summary>
-        private readonly ILog _log;
-
-        #endregion
-
         #region Constructors
 
         /// <summary>
@@ -43,6 +29,20 @@ namespace OlivesAdministration.Controllers
             _repositoryAccountExtended = repositoryAccountExtended;
             _log = log;
         }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        ///     Repository account DI
+        /// </summary>
+        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
+
+        /// <summary>
+        ///     Instance of log.
+        /// </summary>
+        private readonly ILog _log;
 
         #endregion
 
@@ -99,8 +99,8 @@ namespace OlivesAdministration.Controllers
                 }
 
                 // Change account status and retrieve the process result.
-                person.Status = (byte)modifier.Status;
-                
+                person.Status = (byte) modifier.Status;
+
                 // Save changes to database.
                 await _repositoryAccountExtended.InitializePersonAsync(person);
                 return Request.CreateResponse(HttpStatusCode.OK);

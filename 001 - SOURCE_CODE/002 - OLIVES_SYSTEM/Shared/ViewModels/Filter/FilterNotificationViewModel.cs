@@ -21,7 +21,7 @@ namespace Shared.ViewModels.Filter
         public int Requester { get; set; }
 
         /// <summary>
-        /// Filter mode.
+        ///     Filter mode.
         /// </summary>
         public RecordFilterMode? Mode { get; set; }
 
@@ -31,17 +31,17 @@ namespace Shared.ViewModels.Filter
         public int? Partner { get; set; }
 
         /// <summary>
-        /// Notification type.
+        ///     Notification type.
         /// </summary>
         public NotificationType? Type { get; set; }
-        
+
         /// <summary>
-        /// Topic of notification.
+        ///     Topic of notification.
         /// </summary>
         public NotificationTopic? Topic { get; set; }
-        
+
         /// <summary>
-        /// Id of record.
+        ///     Id of record.
         /// </summary>
         public int? Record { get; set; }
 
@@ -65,10 +65,15 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         ///     Which property should be used for sorting.
         /// </summary>
-        [InEnumerationsArray(new object[] { NotificationFilterSort.Created, NotificationFilterSort.IsSeen, NotificationFilterSort.Topic, NotificationFilterSort.Type },
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
+        [InEnumerationsArray(
+            new object[]
+            {
+                NotificationFilterSort.Created, NotificationFilterSort.IsSeen, NotificationFilterSort.Topic,
+                NotificationFilterSort.Type
+            },
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
         public NotificationFilterSort Sort { get; set; } = NotificationFilterSort.Created;
-        
+
         /// <summary>
         ///     Whether record should be sorted ascendingly or decendingly.
         /// </summary>

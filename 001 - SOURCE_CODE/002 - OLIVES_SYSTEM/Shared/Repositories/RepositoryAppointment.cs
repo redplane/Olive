@@ -2,7 +2,6 @@
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
-using Shared.Enumerations;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
@@ -13,6 +12,23 @@ namespace Shared.Repositories
 {
     public class RepositoryAppointment : IRepositoryAppointment
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructor
+
+        public RepositoryAppointment(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         ///     Initialize an appointment and save to database.
         /// </summary>
@@ -20,8 +36,7 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<Appointment> InitializeAppointment(Appointment info)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // Begin a transaction.
             using (var transaction = context.Database.BeginTransaction())
@@ -57,10 +72,8 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<ResponseAppointmentFilter> FilterAppointmentAsync(FilterAppointmentViewModel filter)
         {
-            // Data context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all records.
+            var context = _dataContext.Context;
             IQueryable<Appointment> results = context.Appointments;
 
             // Id of appointment is defined.
@@ -156,10 +169,8 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<Appointment> FindAppointmentAsync(int id)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all appointment.
+            var context = _dataContext.Context;
             IQueryable<Appointment> appointments = context.Appointments;
 
             // Find appointment by querying id.
@@ -167,5 +178,7 @@ namespace Shared.Repositories
 
             return await appointments.FirstOrDefaultAsync();
         }
+
+        #endregion
     }
 }

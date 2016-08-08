@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Olives.Interfaces.Medical;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
+using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
@@ -13,6 +14,23 @@ namespace Olives.Repositories.Medical
 {
     public class RepositoryPrescription : IRepositoryPrescription
     {
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructors
+
+        public RepositoryPrescription(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         ///     Find the prescription asynchronously.
         /// </summary>
@@ -21,10 +39,8 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<Prescription> FindPrescriptionAsync(int id, int? owner)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // Take all prescriptions.
+            var context = _dataContext.Context;
             IQueryable<Prescription> prescriptions = context.Prescriptions;
 
             // Find the prescription.
@@ -44,9 +60,7 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<Prescription> InitializePrescriptionAsync(Prescription prescription)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
+            var context = _dataContext.Context;
             // Initialize or update prescription.
             context.Prescriptions.AddOrUpdate(prescription);
 
@@ -64,8 +78,7 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<int> DeletePrescriptionAsync(int id, int? owner)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // Begin a transaction.
             using (var transaction = context.Database.BeginTransaction())
@@ -137,10 +150,8 @@ namespace Olives.Repositories.Medical
         public async Task<ResponsePrescriptionFilterViewModel> FilterPrescriptionAsync(
             FilterPrescriptionViewModel filter)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
             // By default, take all prescriptions.
+            var context = _dataContext.Context;
             IQueryable<Prescription> prescriptions = context.Prescriptions;
 
             // Medical record is defined.
@@ -227,5 +238,7 @@ namespace Olives.Repositories.Medical
 
             return response;
         }
+
+        #endregion
     }
 }

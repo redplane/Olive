@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
@@ -8,15 +7,31 @@ using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Shared.Repositories
 {
     public class RepositoryAccount : IRepositoryAccount
     {
+        #region Properties
+
+        /// <summary>
+        ///     Context which provides functions to access database.
+        /// </summary>
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructor
+
+        public RepositoryAccount(IOliveDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
+        #endregion
+
         #region Patient
+
         /// <summary>
         ///     Find and activate patient's account and remove the activation code.
         /// </summary>
@@ -24,9 +39,7 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<bool> InitializePatientActivation(string code)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
-
+            var context = _dataContext.Context;
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
@@ -79,7 +92,7 @@ namespace Shared.Repositories
         }
 
         #endregion
-        
+
         #region Shared
 
         /// <summary>
@@ -93,8 +106,7 @@ namespace Shared.Repositories
         /// <returns></returns>
         public Person FindPerson(int? id, string email, string password, byte? role, StatusAccount? status)
         {
-            // Database context intialize.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // By default, take all people in database.
             IQueryable<Person> result = context.People;
@@ -133,8 +145,7 @@ namespace Shared.Repositories
         public async Task<Person> FindPersonAsync(int? id, string email, string password, byte? role,
             StatusAccount? status)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // By default, take all people in database.
             IQueryable<Person> result = context.People;
@@ -164,7 +175,7 @@ namespace Shared.Repositories
 
             return await result.FirstOrDefaultAsync();
         }
-        
+
         /// <summary>
         ///     Initialize or update person information asynchronously.
         /// </summary>
@@ -172,8 +183,7 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<Person> InitializePersonAsync(Person info)
         {
-            // Database context initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // Add or update information base on the primary key.
             context.People.AddOrUpdate(info);

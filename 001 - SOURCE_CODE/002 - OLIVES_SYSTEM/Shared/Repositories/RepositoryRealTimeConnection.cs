@@ -10,16 +10,22 @@ namespace Shared.Repositories
 {
     public class RepositoryRealTimeConnection : IRepositoryRealTimeConnection
     {
-        /// <summary>
-        ///     Find the real time connection by using account index and connection index.
-        /// </summary>
-        /// <param name="owner"></param>
-        /// <param name="connectionId"></param>
-        /// <returns></returns>
-        public Task<IEnumerable<RealTimeConnection>> FindRealTimeConnectionInfoAsync(int? owner, string connectionId)
+        #region Properties
+
+        private readonly IOliveDataContext _dataContext;
+
+        #endregion
+
+        #region Constructor
+
+        public RepositoryRealTimeConnection(IOliveDataContext dataContext)
         {
-            throw new NotImplementedException();
+            _dataContext = dataContext;
         }
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         ///     Find the real time connection indexes by using specific conditions.
@@ -31,8 +37,7 @@ namespace Shared.Repositories
         public async Task<IList<string>> FindRealTimeConnectionIndexesAsync(int? owner, string connectionIndex,
             StringComparison? connectionIndexComparison)
         {
-            // Database connection initialize.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // By default, take all records.
             IQueryable<RealTimeConnection> realTimeConnections = context.RealTimeConnections;
@@ -60,8 +65,7 @@ namespace Shared.Repositories
         /// <returns></returns>
         public async Task<RealTimeConnection> InitializeRealTimeConnectionInfoAsync(RealTimeConnection initializer)
         {
-            // Database connection initialization.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // Add or update real time connection information.
             context.RealTimeConnections.Add(initializer);
@@ -82,8 +86,7 @@ namespace Shared.Repositories
         public async Task<int> DeleteRealTimeConnectionInfoAsync(int? owner, string connectionIndex,
             StringComparison? connectionIndexComparison)
         {
-            // Database connection initialize.
-            var context = new OlivesHealthEntities();
+            var context = _dataContext.Context;
 
             // By default, take all records.
             IQueryable<RealTimeConnection> realTimeConnections = context.RealTimeConnections;
@@ -108,5 +111,7 @@ namespace Shared.Repositories
 
             return records;
         }
+
+        #endregion
     }
 }
