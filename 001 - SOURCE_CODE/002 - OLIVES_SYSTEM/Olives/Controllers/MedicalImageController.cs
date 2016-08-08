@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -18,6 +19,7 @@ using Shared.Resources;
 using Shared.ViewModels.Filter;
 using Olives.Controllers;
 using Olives.Enumerations;
+using Olives.Interfaces.Medical;
 using Olives.ViewModels.Initialize;
 
 namespace Olives.Controllers
@@ -140,8 +142,11 @@ namespace Olives.Controllers
                 medicalImage.FullPath = Path.Combine(storageMedicalImage.Absolute,
                     $"{imageName}.{Values.StandardImageExtension}");
 
+                // Convert bytestream to image file.
+                var medicalImageFile = _fileService.ConvertBytesToImage(info.File.Buffer);
+
                 // Save the image first.
-                info.File.Save(medicalImage.FullPath);
+                medicalImageFile.Save(medicalImage.FullPath, ImageFormat.Png);
 
                 // Update image full path.
                 // Save the medical record to database.

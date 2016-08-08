@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Drawing;
+using MultipartFormDataMediaFormatter.Attributes;
+using MultipartFormDataMediaFormatter.Models;
 using Shared.Resources;
 
 namespace Olives.ViewModels.Initialize
@@ -10,6 +11,7 @@ namespace Olives.ViewModels.Initialize
         ///     File which is used for being user's avatar.
         /// </summary>
         [Required(ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueIsRequired")]
-        public Image Avatar { get; set; }
+        [HttpFileImageValidate(ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
+        public HttpFileModel Avatar { get; set; }
     }
 }

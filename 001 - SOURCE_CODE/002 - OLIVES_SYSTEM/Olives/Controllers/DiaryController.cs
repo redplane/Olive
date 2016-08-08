@@ -7,6 +7,7 @@ using System.Web.Http;
 using log4net;
 using Olives.Attributes;
 using Olives.Interfaces;
+using Olives.Interfaces.PersonalNote;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Filter;
 using Olives.ViewModels.Initialize;
@@ -157,6 +158,7 @@ namespace Olives.Controllers
                 var diary = new Diary();
                 diary.Note = initializer.Note;
                 diary.Owner = requester.Id;
+                diary.Time = initializer.Time;
                 diary.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                 // Insert a new allergy to database.

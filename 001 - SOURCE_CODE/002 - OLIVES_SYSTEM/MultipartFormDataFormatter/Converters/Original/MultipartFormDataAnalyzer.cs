@@ -45,23 +45,7 @@ namespace MultipartFormDataMediaFormatter.Converters.Original
 
                         continue;
                     }
-
-                    if (param.Value is HttpImageModel)
-                    {
-                        var httpImage = (HttpImageModel) param.Value;
-
-                        // Add just the first part of this param, since we will write the file data directly to the Stream
-                        var header =
-                            $"--{boundary}\r\nContent-Disposition: form-data; name=\"{param.Key}\"; filename=\"{httpImage.Name ?? param.Key}\"\r\nContent-Type: {httpImage.MediaType ?? "application/octet-stream"}\r\n\r\n";
-
-                        formDataStream.Write(encoding.GetBytes(header), 0, encoding.GetByteCount(header));
-
-                        // Write the file data directly to the Stream, rather than serializing it to a string.
-                        formDataStream.Write(httpImage.Buffer, 0, httpImage.Buffer.Length);
-
-                        continue;
-                    }
-
+                    
                     var objString = "";
                     if (param.Value != null)
                     {
@@ -156,8 +140,6 @@ namespace MultipartFormDataMediaFormatter.Converters.Original
                 formFile.Fields.Select(field => new KeyValuePair<string, object>(field.Name, field.Value)));
             propertiesList.AddRange(
                 formFile.Files.Select(field => new KeyValuePair<string, object>(field.Name, field.Value)));
-            propertiesList.AddRange(
-                formFile.Images.Select(field => new KeyValuePair<string, object>(field.Name, field.Value)));
         }
     }
 }

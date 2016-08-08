@@ -90,6 +90,7 @@ namespace Olives.Controllers
                     {
                         x.Id,
                         x.Type,
+                        x.Topic,
                         x.Broadcaster,
                         x.Recipient,
                         x.Record,
@@ -175,6 +176,7 @@ namespace Olives.Controllers
                     {
                         notification.Id,
                         notification.Type,
+                        notification.Topic,
                         notification.Broadcaster,
                         notification.Recipient,
                         notification.Record,

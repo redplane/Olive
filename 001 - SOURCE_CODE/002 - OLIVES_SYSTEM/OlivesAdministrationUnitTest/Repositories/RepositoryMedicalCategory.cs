@@ -21,9 +21,7 @@ namespace OlivesAdministration.Test.Repositories
         public List<MedicalCategory> MedicalCategories { get; set; }
 
         #endregion
-
-        #region Methods
-
+        
         /// <summary>
         ///     Find medical category asynchronously.
         /// </summary>
@@ -34,7 +32,7 @@ namespace OlivesAdministration.Test.Repositories
         public async Task<MedicalCategory> FindMedicalCategoryAsync(int? id, string name, StringComparison? comparison)
         {
             // By default, take all record.
-            IEnumerable<MedicalCategory> medicalCategories = new List<MedicalCategory>(MedicalCategories);
+            IQueryable<MedicalCategory> medicalCategories = new EnumerableQuery<MedicalCategory>(MedicalCategories);
 
             // Id is defined.
             if (id != null)
@@ -49,6 +47,30 @@ namespace OlivesAdministration.Test.Repositories
         }
 
         /// <summary>
+        ///     Find medical category synchronously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="comparision"></param>
+        /// <returns></returns>
+        public MedicalCategory FindMedicalCategory(int? id, string name, StringComparison? comparision)
+        {
+            // By default, take all record.
+            IQueryable<MedicalCategory> medicalCategories = new EnumerableQuery<MedicalCategory>(MedicalCategories);
+
+            // Id is defined.
+            if (id != null)
+                medicalCategories = medicalCategories.Where(x => x.Id == id);
+
+            // Name is defined.
+            if (name != null)
+                medicalCategories =
+                    medicalCategories.Where(x => x.Name.Equals(name, comparision ?? StringComparison.Ordinal));
+
+            return medicalCategories.FirstOrDefault();
+        }
+
+        /// <summary>
         ///     Initialize medical category.
         /// </summary>
         /// <param name="initializer"></param>
@@ -56,16 +78,19 @@ namespace OlivesAdministration.Test.Repositories
         public async Task<MedicalCategory> InitializeMedicalCategoryAsync(MedicalCategory initializer)
         {
             // Database context initialization.
-            var medicalCategory = MedicalCategories.FirstOrDefault(x => x.Id == initializer.Id);
-            if (medicalCategory == null)
+            IQueryable<MedicalCategory> medicalCategories = new EnumerableQuery<MedicalCategory>(MedicalCategories);
+
+            if (initializer.Id == 0)
             {
                 initializer.Id = MedicalCategories.Count;
                 MedicalCategories.Add(initializer);
                 return initializer;
             }
 
-            var index = MedicalCategories.IndexOf(medicalCategory);
+            var index = MedicalCategories.IndexOf(initializer);
             MedicalCategories[index] = initializer;
+
+            // Save changes.
             return initializer;
         }
 
@@ -78,7 +103,7 @@ namespace OlivesAdministration.Test.Repositories
             FilterMedicalCategoryViewModel filter)
         {
             // By default, take all categories.
-            IEnumerable<MedicalCategory> categories = new List<MedicalCategory>(MedicalCategories);
+            IQueryable<MedicalCategory> categories = new EnumerableQuery<MedicalCategory>(MedicalCategories);
 
             // Name is defined.
             if (filter.Name != null)
@@ -135,15 +160,14 @@ namespace OlivesAdministration.Test.Repositories
             // Record is defined.
             if (filter.Records != null)
             {
-                categories = categories.Skip(filter.Page*filter.Records.Value)
+                categories = categories.Skip(filter.Page * filter.Records.Value)
                     .Take(filter.Records.Value);
             }
             // Do pagination.
-            response.MedicalCategories = categories.ToList();
+            response.MedicalCategories = categories
+                .ToList();
 
             return response;
         }
-
-        #endregion
     }
 }

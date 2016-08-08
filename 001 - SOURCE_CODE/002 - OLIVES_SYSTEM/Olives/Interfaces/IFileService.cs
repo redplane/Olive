@@ -1,4 +1,6 @@
-﻿namespace Olives.Interfaces
+﻿using System.Drawing;
+
+namespace Olives.Interfaces
 {
     public interface IFileService
     {
@@ -8,5 +10,12 @@
         /// <param name="fullPath"></param>
         /// <returns></returns>
         string EncodeFileBase64(string fullPath);
+
+        /// <summary>
+        /// Convert a stream of bytes to image instance.
+        /// </summary>
+        /// <param name="byteStream"></param>
+        /// <returns></returns>
+        Image ConvertBytesToImage(byte[] byteStream);
     }
 }

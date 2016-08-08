@@ -97,20 +97,7 @@ namespace MultipartFormDataMediaFormatter.Analyzers
 
                 return true;
             }
-
-            // The type is HttpFile.
-            if (type == typeof (Image))
-            {
-                Image image;
-                if (!_formData.TryGetValue(propertyName, out image))
-                    return false;
-
-                // The result parameter will be the HttpFile instance.
-                propertyValue = image;
-
-                return true;
-            }
-
+            
             // The property is not an instance of file.
             string value;
             if (!_formData.TryGetValue(propertyName, out value))

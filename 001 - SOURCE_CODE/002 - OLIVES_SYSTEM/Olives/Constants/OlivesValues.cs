@@ -7,6 +7,10 @@
         /// </summary>
         public const int MaxDiaryLength = 512;
 
+        /// <summary>
+        /// Maximum size of avatar
+        /// </summary>
+        public const int MaxAvatarSize = 2048;
 
         #region Email templates
 

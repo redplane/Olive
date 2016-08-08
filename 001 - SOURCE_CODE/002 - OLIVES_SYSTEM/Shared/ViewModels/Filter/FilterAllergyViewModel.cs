@@ -18,7 +18,6 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         ///     Id of record owner.
         /// </summary>
-        [NumericCompare(1, ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueIsInvalid")]
         public int? Owner { get; set; }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -19,6 +20,7 @@ using Shared.Resources;
 using Shared.ViewModels.Filter;
 using Olives.Controllers;
 using Olives.Enumerations;
+using Olives.Interfaces.Medical;
 
 namespace Olives.Controllers
 {
@@ -37,7 +39,6 @@ namespace Olives.Controllers
         /// <param name="fileService"></param>
         /// <param name="timeService"></param>
         /// <param name="notificationService"></param>
-        /// <param name="applicationSetting"></param>
         public PrescriptionImageController(
             IRepositoryPrescription repositoryPrescription, IRepositoryPrescriptionImage repositoryPrescriptionImage,
             IRepositoryStorage repositoryStorage,
@@ -142,8 +143,10 @@ namespace Olives.Controllers
                 var fullPath = Path.Combine(storagePrescriptionImage.Absolute,
                     $"{fileName}.{Values.StandardImageExtension}");
 
+                // Convert by stream to image.
+                var prescriptionImageFile = _fileService.ConvertBytesToImage(initializer.Image.Buffer);
                 // Save the image first.
-                initializer.Image.Save(fullPath);
+                prescriptionImageFile.Save(fullPath, ImageFormat.Png);
 
                 #endregion
 

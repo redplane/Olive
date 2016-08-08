@@ -4,6 +4,8 @@ using System.Data.Entity.Migrations;
 using System.Data.Entity.Validation;
 using System.Linq;
 using Newtonsoft.Json;
+using Olives.Interfaces.Medical;
+using Olives.Repositories.Medical;
 using Olives.ViewModels;
 using Shared.Constants;
 using Shared.Enumerations;

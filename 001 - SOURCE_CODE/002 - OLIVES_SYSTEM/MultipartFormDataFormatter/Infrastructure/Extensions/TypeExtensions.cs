@@ -59,7 +59,6 @@ namespace MultipartFormDataMediaFormatter.Infrastructure.Extensions
             return type != typeof (object)
                    && Type.GetTypeCode(type) == TypeCode.Object
                    && type != typeof (HttpFileModel)
-                   && type != typeof (HttpImageModel)
                    && type != typeof (Guid)
                    && type.GetInterface(typeof (IEnumerable).Name) == null;
         }

@@ -18,6 +18,7 @@ using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels.Filter;
 using Olives.Controllers;
+using Olives.Interfaces.Medical;
 
 namespace Olives.Controllers
 {

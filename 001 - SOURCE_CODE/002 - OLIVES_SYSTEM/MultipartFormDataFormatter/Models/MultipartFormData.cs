@@ -16,7 +16,6 @@ namespace MultipartFormDataMediaFormatter.Models
         {
             Files = new List<FileModel>();
             Fields = new List<PrimitiveModel>();
-            Images = new List<HttpImageModel>();
         }
 
         #endregion
@@ -32,12 +31,7 @@ namespace MultipartFormDataMediaFormatter.Models
         ///     List of primitive fields.
         /// </summary>
         public List<PrimitiveModel> Fields;
-
-        /// <summary>
-        ///     List of images.
-        /// </summary>
-        public List<HttpImageModel> Images { get; set; }
-
+        
         #endregion
 
         #region Methods
@@ -70,17 +64,7 @@ namespace MultipartFormDataMediaFormatter.Models
         {
             Files.Add(new FileModel {Name = name, Value = value});
         }
-
-        /// <summary>
-        ///     Add image to list.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        public void Add(HttpImageModel value)
-        {
-            Images.Add(value);
-        }
-
+        
         /// <summary>
         ///     Parse data and retrieve primitive data.
         /// </summary>
@@ -117,26 +101,7 @@ namespace MultipartFormDataMediaFormatter.Models
             value = null;
             return false;
         }
-
-        /// <summary>
-        ///     Parse data and return HttpFile data.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public bool TryGetValue(string name, out Image value)
-        {
-            var field =
-                Images.FirstOrDefault(m => string.Equals(m.Name, name, StringComparison.CurrentCultureIgnoreCase));
-            if (field != null)
-            {
-                value = field.Value;
-                return true;
-            }
-            value = null;
-            return false;
-        }
-
+        
         #endregion
     }
 }

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using MultipartFormDataMediaFormatter.Converters.Original;
-using MultipartFormDataMediaFormatter.Helpers;
 using MultipartFormDataMediaFormatter.Models;
 
 namespace MultipartFormDataMediaFormatter.Converters
@@ -56,36 +55,7 @@ namespace MultipartFormDataMediaFormatter.Converters
                 {
                     var buffer = ReadAllBytes(stream);
                     if (buffer.Length > 0)
-                    {
-                        // Parameter is the image.
-                        if (ConstantHelper.Instance.ImageMediaTypes.Any(x => x.Equals(mediaType)))
-                        {
-                            try
-                            {
-                                using (var memoryStream = new MemoryStream(buffer))
-                                {
-                                    memoryStream.Seek(0, SeekOrigin.Begin);
-                                    var image = Image.FromStream(memoryStream);
-
-                                    var httpImage = new HttpImageModel();
-                                    httpImage.Name = name;
-                                    httpImage.Value = image;
-                                    httpImage.Buffer = buffer;
-                                    httpImage.MediaType = mediaType;
-
-                                    formFile.Add(httpImage);
-                                }
-                            }
-                            catch
-                            {
-                                // Suppress error as image analyzation is failed.
-                            }
-
-                            continue;
-                        }
-
                         formFile.Add(name, new HttpFileModel(fileName, mediaType, buffer));
-                    }
                 }
             }
 

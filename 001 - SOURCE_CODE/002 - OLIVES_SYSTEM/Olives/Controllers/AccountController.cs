@@ -37,15 +37,18 @@ namespace Olives.Controllers
         /// <param name="repositoryStorage"></param>
         /// <param name="log"></param>
         /// <param name="emailService"></param>
+        /// <param name="fileService"></param>
         public AccountController(
             IRepositoryAccountExtended repositoryAccountExtended, IRepositoryCode repositoryActivationCode, IRepositoryStorage repositoryStorage,
-            ILog log, IEmailService emailService)
+            ILog log, 
+            IEmailService emailService, IFileService fileService)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
             _repositoryActivationCode = repositoryActivationCode;
             _repositoryStorage = repositoryStorage;
             _log = log;
             _emailService = emailService;
+            _fileService = fileService;
         }
 
         #endregion
@@ -90,6 +93,9 @@ namespace Olives.Controllers
                 // Retrieve avatar storage setting.
                 var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
                 
+                // Convert by stream to image.
+                var imageAvatar = _fileService.ConvertBytesToImage(info.Avatar.Buffer);
+
                 // As the requester has existed image before, use that name, otherwise generate a new one.
                 if (!string.IsNullOrEmpty(requester.Photo))
                 {
@@ -98,7 +104,7 @@ namespace Olives.Controllers
                         $"{requester.Photo}.{Values.StandardImageExtension}");
 
                     // Save the image to physical disk.
-                    info.Avatar.Save(fullPath, ImageFormat.Png);
+                    imageAvatar.Save(fullPath, ImageFormat.Png);
 
                     _log.Info($"{requester.Email} has updated avatar successfuly.");
                 }
@@ -112,7 +118,7 @@ namespace Olives.Controllers
                         $"{imageName}.{Values.StandardImageExtension}");
 
                     // Save the avatar file to disk.
-                    info.Avatar.Save(fullPath);
+                    imageAvatar.Save(fullPath, ImageFormat.Png);
 
                     // Log the information.
                     _log.Info($"{requester.Email} has uploaded avatar successfuly.");
@@ -126,8 +132,7 @@ namespace Olives.Controllers
                     // Log the information.
                     _log.Info($"{requester.Email} has saved avatar successfully");
                 }
-
-
+                
                 // Everything is successful. Tell client the result.
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -158,10 +163,7 @@ namespace Olives.Controllers
                 _log.Error(exception.Message, exception);
 
                 // Tell the client the server has some error occured, please try again.
-                return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                {
-                    Error = $"{Language.WarnInternalServerError}"
-                });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
             #endregion
         }
@@ -473,7 +475,12 @@ namespace Olives.Controllers
         ///     Service which is used for sending emails.
         /// </summary>
         private readonly IEmailService _emailService;
-        
+
+        /// <summary>
+        /// Service which is used for processing file.
+        /// </summary>
+        private readonly IFileService _fileService;
+
         #endregion
     }
 }

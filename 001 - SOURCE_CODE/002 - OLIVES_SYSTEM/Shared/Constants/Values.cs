@@ -108,12 +108,7 @@
         ///     Maximum value that systolic can be assigned.
         /// </summary>
         public const int MaxSystolic = 250;
-
-        /// <summary>
-        ///     Number of pixel which height and width are allowed to be.
-        /// </summary>
-        public const int MaxImageSize = 256;
-
+        
         /// <summary>
         ///     Extension of image which will be used for storing on server.
         /// </summary>

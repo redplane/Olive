@@ -8,6 +8,7 @@ using log4net;
 using Olives.Attributes;
 using Olives.Hubs;
 using Olives.Interfaces;
+using Olives.Interfaces.Medical;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
