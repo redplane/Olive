@@ -182,13 +182,17 @@
     <Content Include="Configurations\Olives.json" />
     <None Include="Properties\PublishProfiles\olivesadministrator - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\olivesadministrator - Web Deploy.pubxml" />
+    <Content Include="Scripts\app.fe27ebd6d7e9a8712e0f.js" />
     <Content Include="Scripts\app.js" />
+    <Content Include="Scripts\app.fe27ebd6d7e9a8712e0f.js.map" />
     <None Include="Scripts\jquery-2.2.4.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-2.2.4.js" />
     <Content Include="Scripts\jquery-2.2.4.min.js" />
+    <Content Include="Scripts\polyfills.fe27ebd6d7e9a8712e0f.js" />
     <Content Include="Scripts\polyfills.js" />
+    <Content Include="Scripts\vendor.fe27ebd6d7e9a8712e0f.js" />
     <Content Include="Scripts\vendor.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -232,6 +236,8 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Web.config" />
     <Content Include="Scripts\jquery-2.2.4.min.map" />
+    <Content Include="Scripts\polyfills.fe27ebd6d7e9a8712e0f.js.map" />
+    <Content Include="Scripts\vendor.fe27ebd6d7e9a8712e0f.js.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

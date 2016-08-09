@@ -71,6 +71,7 @@ namespace OlivesAdministration
 
             #region Repositories
 
+            builder.RegisterType<OliveDataContext>().As<IOliveDataContext>().SingleInstance();
             builder.RegisterType<RepositoryAccountExtended>().As<IRepositoryAccountExtended>().SingleInstance();
             builder.RegisterType<RepositoryPlace>().As<IRepositoryPlace>().SingleInstance();
             builder.RegisterType<RepositoryMedicalCategory>().As<IRepositoryMedicalCategory>().SingleInstance();
