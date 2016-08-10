@@ -16,7 +16,7 @@ using Shared.ViewModels.Filter;
 namespace OlivesAdministration.Controllers
 {
     [OlivesAuthorize(new[] {Role.Admin})]
-    public class MedicalController : ApiParentController
+    public class MedicalCategoryController : ApiParentController
     {
         #region Constructors
 
@@ -26,7 +26,7 @@ namespace OlivesAdministration.Controllers
         /// <param name="repositoryMedicalCategory"></param>
         /// <param name="timeService"></param>
         /// <param name="log"></param>
-        public MedicalController(IRepositoryMedicalCategory repositoryMedicalCategory, ITimeService timeService,
+        public MedicalCategoryController(IRepositoryMedicalCategory repositoryMedicalCategory, ITimeService timeService,
             ILog log)
         {
             _repositoryMedicalCategory = repositoryMedicalCategory;

@@ -140,11 +140,10 @@ namespace OlivesAdministration.Test.Helpers
         /// <summary>
         ///     Initialize a number of admin.
         /// </summary>
-        /// <param name="oliveDataContext"></param>
+        /// <param name="olivesHealthEntities"></param>
         /// <param name="max"></param>
-        public async Task InitializeAdmin(IOliveDataContext oliveDataContext, int max)
+        public async Task InitializeAdmin(OlivesHealthEntities olivesHealthEntities, int max)
         {
-            var context = new OlivesHealthEntities();
             for (var i = 0; i < max; i++)
             {
                 // General information.
@@ -165,10 +164,10 @@ namespace OlivesAdministration.Test.Helpers
                 else
                     person.Status = (byte)StatusAccount.Inactive;
 
-                context.People.Add(person);
+                olivesHealthEntities.People.Add(person);
             }
 
-            await context.SaveChangesAsync();
+            await olivesHealthEntities.SaveChangesAsync();
         }
 
 
@@ -223,6 +222,27 @@ namespace OlivesAdministration.Test.Helpers
 
             await olivesHealthEntities.SaveChangesAsync();
 
+        }
+
+        /// <summary>
+        /// Initialize a number of medical categories.
+        /// </summary>
+        /// <param name="olivesHealthEntities"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        public async Task InitializeMedicalCategories(OlivesHealthEntities olivesHealthEntities, int max)
+        {
+            // Initialize a list of categories.
+            for (var i = 0; i < max; i++)
+            {
+                var category = new MedicalCategory();
+                category.Created = 1;
+                category.Name = $"{i}";
+                olivesHealthEntities.MedicalCategories.Add(category);
+            }
+
+            // Save change asynchronously.
+            await olivesHealthEntities.SaveChangesAsync();
         }
 
         #endregion

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Shared.Constants;
 using Shared.Resources;
 
 namespace OlivesAdministration.ViewModels.Initialize
@@ -7,7 +8,7 @@ namespace OlivesAdministration.ViewModels.Initialize
     {
         [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsRequired")]
-        [StringLength(32, ErrorMessageResourceType = typeof (Language),
+        [StringLength(Values.MaxMedicalCategoryNameLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Name { get; set; }
     }

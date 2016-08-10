@@ -1,158 +1,140 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net;
 using System.Threading.Tasks;
-using System.Web.Http;
 using log4net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OlivesAdministration.Test.Repositories;
+using OlivesAdministration.Interfaces;
+using OlivesAdministration.Repositories;
+using OlivesAdministration.Test.Helpers;
 using OlivesAdministration.ViewModels.Initialize;
+using Shared.Constants;
+using Shared.Enumerations;
+using Shared.Interfaces;
 using Shared.Models;
+using Shared.Repositories;
+using Shared.Services;
 
 namespace OlivesAdministration.Test.Controllers.MedicalController
 {
     [TestClass]
     public class InitializeMedicalCategory
     {
-        #region Constructor
+        #region Initialization sector
+
+        private OlivesAdministration.Controllers.MedicalCategoryController _medicalController;
+        private IRepositoryMedicalCategory _repositoryMedicalCategory;
+        private ITimeService _timeService;
+        private ILog _log;
 
         /// <summary>
-        ///     Initialize an instance of Login with default settings.
+        /// Initialize context.
         /// </summary>
-        public InitializeMedicalCategory()
+        private void InitializeContext()
         {
-            // Initialize RepositoryAccount.
-            _repositoryMedicalCategory = new RepositoryMedicalCategory();
+            // Data context initialiation.
+            var oliveDataContext = new Repositories.OliveDataContext();
+            
+            // Initialize time service.
+            _timeService = new TimeService();
 
-            // Initialize fake log instance.
-            var log = LogManager.GetLogger(typeof (InitializeMedicalCategory));
+            // Repositories initialization.
+            _repositoryMedicalCategory = new RepositoryMedicalCategory(oliveDataContext);
+            
+            _log = LogManager.GetLogger(typeof(InitializeMedicalCategory));
+            _medicalController = new OlivesAdministration.Controllers.MedicalCategoryController(_repositoryMedicalCategory, _timeService, _log);
+            EnvironmentHelper.Instance.InitializeController(_medicalController);
+        }
 
-            // Initialize a fake controller.
-            _medicalController = new OlivesAdministration.Controllers.MedicalController(_repositoryMedicalCategory, log);
-
-            // Override HttpRequest to do testing.
-            var configuration = new HttpConfiguration();
-            var request = new HttpRequestMessage();
-            _medicalController.Request = request;
-            _medicalController.Request.Properties["MS_HttpConfiguration"] = configuration;
+        /// <summary>
+        /// Initialize function context.
+        /// </summary>
+        /// <param name="dataContext"></param>
+        private void InitializeContext(IOliveDataContext dataContext)
+        {
+            _repositoryMedicalCategory = new RepositoryMedicalCategory(dataContext);
+            _log = LogManager.GetLogger(typeof(InitializeMedicalCategory));
+            _medicalController = new OlivesAdministration.Controllers.MedicalCategoryController(_repositoryMedicalCategory, _timeService, _log);
+            EnvironmentHelper.Instance.InitializeController(_medicalController);
         }
 
         #endregion
 
-        #region Properties
+        #region Tests
 
         /// <summary>
-        ///     Medical controller.
-        /// </summary>
-        private readonly OlivesAdministration.Controllers.MedicalController _medicalController;
-
-        /// <summary>
-        ///     Repository medical which simulates function of RepositoryMedical to test controller.
-        /// </summary>
-        private readonly RepositoryMedicalCategory _repositoryMedicalCategory;
-        
-        #endregion
-        
-        #region Methods
-
-        /// <summary>
-        /// Description : This test shows that bad request is thrown when input paramters are invalid.
-        /// Condition : Request parameters are invalid.
-        /// Action : No parameter is sent to function.
+        /// Category name shouldn't be blank
         /// </summary>
         /// <returns></returns>
         [TestMethod]
-        public async Task InitializationThrowsBadRequest()
+        public async Task MedicalCategoryNameIsBlank()
         {
-            var response = await _medicalController.InitializeMedicalCategory(null);
-            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
-        }
-        
-        /// <summary>
-        /// Description : This test shows that conflict error (409) is thrown when user tries to initialize existed record into database.
-        /// Condition : Data exists in database.
-        /// Action: Initialize a duplicated record.
-        /// </summary>
-        /// <returns></returns>
-        [TestMethod]
-        public async Task InitializationIsConflict()
-        {
-            // Clear the forgery database.
-            _repositoryMedicalCategory.MedicalCategories = new List<MedicalCategory>();
-
-            // Initialize the first record.
-            var medicalCategory = new MedicalCategory();
-            medicalCategory.Id = 1;
-            medicalCategory.Name = "mc1";
-            _repositoryMedicalCategory.MedicalCategories.Add(medicalCategory);
-
-            // Initialize the second record whose name is the same as the first one's.
+            InitializeContext();
             var initializer = new InitializeMedicalCategoryViewModel();
-            initializer.Name = "mc1";
+            initializer.Name = null;
 
-            var response = await _medicalController.InitializeMedicalCategory(initializer);
-            Assert.AreEqual(response.StatusCode, HttpStatusCode.Conflict);
+            _medicalController.Validate(initializer);
+            var result = await _medicalController.InitializeMedicalCategory(initializer);
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+
         }
 
         /// <summary>
-        /// Description: This test shows that the data initialization is successful.
-        /// Condition : Data doesn't exist in database.
-        /// Action : Add a new data.
+        /// Medical category maximum length exceeded.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
-        public async Task InitializationIsSuccessful()
+        public async Task MedicalCategoryNameMaxLengthExceeded()
         {
-            // Clear the forgery database.
-            _repositoryMedicalCategory.MedicalCategories = new List<MedicalCategory>();
-
-            // Initialize the first record.
-            var medicalCategory = new MedicalCategory();
-            medicalCategory.Name = "mc1";
-            _repositoryMedicalCategory.MedicalCategories.Add(medicalCategory);
-
-            // Initialize the second record whose name is different from the first one.
+            InitializeContext();
             var initializer = new InitializeMedicalCategoryViewModel();
-            initializer.Name = "mc2";
+            initializer.Name = "";
 
-            // Status check.
-            var response = await _medicalController.InitializeMedicalCategory(initializer);
-            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+            for (var i = 0; i < Values.MaxMedicalCategoryNameLength + 10; i++)
+                initializer.Name += "a";
+
+            _medicalController.Validate(initializer);
+            var result = await _medicalController.InitializeMedicalCategory(initializer);
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+
         }
 
         /// <summary>
-        /// Description: This test shows that the data initialization is successful. Records number should be increased by one.
-        /// Condition : Data doesn't exist in database.
-        /// Action : Add a new data.
+        /// Initialize medical category which is already in server.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
-        public async Task InitializationSuccessfulDataCounter()
+        public async Task MedicalCategoryDuplicated()
         {
-            // Clear the forgery database.
-            _repositoryMedicalCategory.MedicalCategories = new List<MedicalCategory>();
+            var dataContext = new Repositories.OliveDataContext();
+            await EnvironmentHelper.Instance.InitializeMedicalCategories(dataContext.Context, 10);
+
+            InitializeContext(dataContext);
+            var initializer = new InitializeMedicalCategoryViewModel();
+            initializer.Name = "1";
+
+            _medicalController.Validate(initializer);
+            var result = await _medicalController.InitializeMedicalCategory(initializer);
+
+            Assert.AreEqual(HttpStatusCode.Conflict, result.StatusCode);
+        }
+
+        /// <summary>
+        /// No duplicate result is found, insertion is successful.
+        /// </summary>
+        /// <returns></returns>
+        public async Task MedicalCategoryInitializedSuccessfully()
+        {
+            var dataContext = new Repositories.OliveDataContext();
             
-            // Initialize the first record.
-            var medicalCategory = new MedicalCategory();
-            medicalCategory.Id = 1;
-            medicalCategory.Name = "mc1";
-            _repositoryMedicalCategory.MedicalCategories.Add(medicalCategory);
-
-            // Count the original data records number in database. 
-            var original = _repositoryMedicalCategory.MedicalCategories.Count;
-
-            // Initialize the second record.
+            InitializeContext(dataContext);
             var initializer = new InitializeMedicalCategoryViewModel();
-            initializer.Name = "mc2";
-            
-            // Initialize the second record.
-            await _medicalController.InitializeMedicalCategory(initializer);
+            initializer.Name = "1";
 
-            // Count the number of records of modified list.
-            var modified = _repositoryMedicalCategory.MedicalCategories.Count;
+            _medicalController.Validate(initializer);
+            var result = await _medicalController.InitializeMedicalCategory(initializer);
 
-            // Compare the 2 number.
-            Assert.IsTrue(original == modified - 1);
+            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
         }
 
         #endregion

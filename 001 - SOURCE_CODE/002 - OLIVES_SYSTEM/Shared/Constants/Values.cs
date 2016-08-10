@@ -23,6 +23,11 @@
         public const int MinBodyWeight = 1;
 
         /// <summary>
+        /// Maximum length of medical category name.
+        /// </summary>
+        public const int MaxMedicalCategoryNameLength = 32;
+
+        /// <summary>
         ///     Maximum body weight
         /// </summary>
         public const int MaxBodyWeight = 500;
