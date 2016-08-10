@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Web;
-using Olives.Interfaces;
+using Shared.Interfaces;
 using Shared.Models;
 
-namespace Olives.Repositories
+namespace Shared.Repositories
 {
     public class RepositoryStorage : IRepositoryStorage
     {

@@ -1,20 +1,12 @@
-﻿using Newtonsoft.Json;
-using Shared.Models;
+﻿using System.Collections.Generic;
 
 namespace OlivesAdministration.Models
 {
     public class ApplicationSetting
     {
         /// <summary>
-        ///     Folder where avatar files should be stored.
+        ///     List of storage with their relative paths.
         /// </summary>
-        [JsonProperty("avatarStorage")]
-        public PathService AvatarStorage { get; set; }
-
-        /// <summary>
-        ///     Folder where private files should be stored.
-        /// </summary>
-        [JsonProperty("privateStorage")]
-        public PathService PrivateStorage { get; set; }
+        public Dictionary<string, string> Storage { get; set; }
     }
 }

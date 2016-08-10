@@ -1,4 +1,4 @@
-﻿namespace Olives.Enumerations
+﻿namespace Olives.Constants
 {
     public class Storage
     {

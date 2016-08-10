@@ -4,10 +4,12 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
+using OlivesAdministration.Constants;
 using OlivesAdministration.Interfaces;
 using OlivesAdministration.Models;
 using Shared.Constants;
 using Shared.Enumerations;
+using Shared.Interfaces;
 using Shared.Resources;
 using Shared.ViewModels;
 
@@ -21,13 +23,14 @@ namespace OlivesAdministration.Controllers
         ///     Initialize an instance of AdminController.
         /// </summary>
         /// <param name="repositoryAccountExtended"></param>
-        /// <param name="applicationSetting"></param>
+        /// <param name="repositoryStorage"></param>
         /// <param name="log"></param>
-        public AdminController(IRepositoryAccountExtended repositoryAccountExtended,
-            ApplicationSetting applicationSetting, ILog log)
+        public AdminController(
+            IRepositoryAccountExtended repositoryAccountExtended, IRepositoryStorage repositoryStorage,
+            ILog log)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
-            _applicationSetting = applicationSetting;
+            _repositoryStorage = repositoryStorage;
             _log = log;
         }
 
@@ -83,6 +86,8 @@ namespace OlivesAdministration.Controllers
                     });
                 }
 
+                var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     User = new
@@ -100,7 +105,7 @@ namespace OlivesAdministration.Controllers
                         admin.Role,
                         admin.Status,
                         Photo =
-                            InitializeUrl(_applicationSetting.AvatarStorage.Relative, admin.Photo,
+                            InitializeUrl(storageAvatar.Relative, admin.Photo,
                                 Values.StandardImageExtension),
                         admin.LastModified
                     }
@@ -125,10 +130,10 @@ namespace OlivesAdministration.Controllers
         private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
-        ///     Application setting.
+        /// Repository storage.
         /// </summary>
-        private readonly ApplicationSetting _applicationSetting;
-
+        private readonly IRepositoryStorage _repositoryStorage;
+        
         /// <summary>
         ///     Instance for logging.
         /// </summary>

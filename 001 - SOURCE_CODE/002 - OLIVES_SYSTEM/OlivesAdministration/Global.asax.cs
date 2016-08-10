@@ -46,20 +46,6 @@ namespace OlivesAdministration
             var info = File.ReadAllText(applicationConfigFile);
             applicationSetting = JsonConvert.DeserializeObject<ApplicationSetting>(info);
 
-            // Invalid avatar storage folder.
-            var fullPublicStoragePath = Server.MapPath(applicationSetting.AvatarStorage.Relative);
-            if (!Directory.Exists(fullPublicStoragePath))
-                Directory.CreateDirectory(fullPublicStoragePath);
-            // Update application public storage.
-            applicationSetting.AvatarStorage.Absolute = fullPublicStoragePath;
-
-            // Invalid private storage folder.
-            var fullPrivateStoragePath = Server.MapPath(applicationSetting.PrivateStorage.Relative);
-            if (!Directory.Exists(fullPrivateStoragePath))
-                Directory.CreateDirectory(fullPrivateStoragePath);
-            // Update application private storage folder.
-            applicationSetting.PrivateStorage.Absolute = fullPrivateStoragePath;
-
             #endregion
 
             #region IoC registration
@@ -75,6 +61,13 @@ namespace OlivesAdministration
             builder.RegisterType<RepositoryAccountExtended>().As<IRepositoryAccountExtended>().SingleInstance();
             builder.RegisterType<RepositoryPlace>().As<IRepositoryPlace>().SingleInstance();
             builder.RegisterType<RepositoryMedicalCategory>().As<IRepositoryMedicalCategory>().SingleInstance();
+
+            var repositoryStorage = new RepositoryStorage(HttpContext.Current);
+            foreach (var key in applicationSetting.Storage.Keys)
+                repositoryStorage.InitializeStorage(key, applicationSetting.Storage[key]);
+            builder.RegisterType<RepositoryStorage>()
+                .As<IRepositoryStorage>()
+                .OnActivating(e => e.ReplaceInstance(repositoryStorage)).SingleInstance();
 
             #endregion
 

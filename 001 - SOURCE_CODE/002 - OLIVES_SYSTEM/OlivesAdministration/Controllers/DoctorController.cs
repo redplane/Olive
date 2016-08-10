@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using OlivesAdministration.Attributes;
+using OlivesAdministration.Constants;
 using OlivesAdministration.Interfaces;
 using OlivesAdministration.Models;
 using OlivesAdministration.ViewModels.Filter;
 using Shared.Constants;
 using Shared.Enumerations;
+using Shared.Interfaces;
 using Shared.Resources;
 
 namespace OlivesAdministration.Controllers
@@ -24,13 +26,14 @@ namespace OlivesAdministration.Controllers
         ///     Initialize an instance of DoctorController
         /// </summary>
         /// <param name="repositoryAccountExtended"></param>
+        /// <param name="repositoryStorage"></param>
         /// <param name="log"></param>
-        /// <param name="applicationSetting"></param>
-        public DoctorController(IRepositoryAccountExtended repositoryAccountExtended, ILog log,
-            ApplicationSetting applicationSetting)
+        public DoctorController(
+            IRepositoryAccountExtended repositoryAccountExtended, IRepositoryStorage repositoryStorage,
+            ILog log)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
-            _applicationSetting = applicationSetting;
+            _repositoryStorage = repositoryStorage;
             _log = log;
         }
 
@@ -43,13 +46,13 @@ namespace OlivesAdministration.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] {Role.Admin})]
+        [OlivesAuthorize(new[] { Role.Admin })]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
             try
             {
                 // Retrieve filtered result asynchronously.
-                var account = await _repositoryAccountExtended.FindPersonAsync(id, null, null, (byte) Role.Doctor, null);
+                var account = await _repositoryAccountExtended.FindPersonAsync(id, null, null, (byte)Role.Doctor, null);
 
                 // No result has been found.
                 if (account == null)
@@ -61,6 +64,8 @@ namespace OlivesAdministration.Controllers
                         Error = $"{Language.WarnRecordNotFound}"
                     });
                 }
+
+                var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -77,7 +82,7 @@ namespace OlivesAdministration.Controllers
                         account.Phone,
                         account.Role,
                         Photo =
-                            InitializeUrl(_applicationSetting.AvatarStorage.Relative, account.Photo,
+                            InitializeUrl(storageAvatar.Relative, account.Photo,
                                 Values.StandardImageExtension),
                         account.Doctor.Rank,
                         Specialty = new
@@ -113,7 +118,7 @@ namespace OlivesAdministration.Controllers
         /// <returns></returns>
         [Route("api/doctor/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Admin})]
+        [OlivesAuthorize(new[] { Role.Admin })]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterDoctorViewModel filter)
         {
             #region Request parameters validation
@@ -142,6 +147,8 @@ namespace OlivesAdministration.Controllers
                 // Retrieve result from server.
                 var result = await _repositoryAccountExtended.FilterDoctorsAsync(filter);
 
+                var storage = _repositoryStorage.FindStorage(Storage.Avatar);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     Doctors = result.Doctors.Select(x => new
@@ -157,7 +164,7 @@ namespace OlivesAdministration.Controllers
                         x.Person.Phone,
                         x.Person.Role,
                         Photo =
-                            InitializeUrl(_applicationSetting.AvatarStorage.Absolute, x.Person.Photo,
+                            InitializeUrl(storage.Relative, x.Person.Photo,
                                 Values.StandardImageExtension),
                         x.Rank,
                         Specialty = new
@@ -195,15 +202,15 @@ namespace OlivesAdministration.Controllers
         private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
+        /// Repository of storage.
+        /// </summary>
+        private readonly IRepositoryStorage _repositoryStorage;
+
+        /// <summary>
         ///     Instance for logging management.
         /// </summary>
         private readonly ILog _log;
-
-        /// <summary>
-        ///     Class stores application settings information.
-        /// </summary>
-        private readonly ApplicationSetting _applicationSetting;
-
+        
         #endregion
     }
 }

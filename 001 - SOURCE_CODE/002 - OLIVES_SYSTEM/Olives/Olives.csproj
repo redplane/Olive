@@ -282,7 +282,7 @@
     <Compile Include="Enumerations\Filter\DiaryFilterSort.cs" />
     <Compile Include="Enumerations\Filter\FilterDoctorSort.cs" />
     <Compile Include="Enumerations\Filter\PatientFilterSort.cs" />
-    <Compile Include="Enumerations\Storage.cs" />
+    <Compile Include="Constants\Storage.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -298,7 +298,6 @@
     <Compile Include="Interfaces\Medical\IRepositoryPrescription.cs" />
     <Compile Include="Interfaces\Medical\IRepositoryPrescriptionImage.cs" />
     <Compile Include="Interfaces\PersonalNote\IRepositoryDiary.cs" />
-    <Compile Include="Interfaces\IRepositoryStorage.cs" />
     <Compile Include="Interfaces\PersonalNote\IRepositoryAddiction.cs" />
     <Compile Include="Interfaces\PersonalNote\IRepositoryAllergy.cs" />
     <Compile Include="Interfaces\PersonalNote\IRepositoryBloodPressure.cs" />
@@ -323,7 +322,6 @@
     <Compile Include="Repositories\PersonalNote\RepositoryHeartbeat.cs" />
     <Compile Include="Repositories\RepositoryAccountExtended.cs" />
     <Compile Include="Repositories\PersonalNote\RepositoryDiary.cs" />
-    <Compile Include="Repositories\RepositoryStorage.cs" />
     <Compile Include="Services\EmailService.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\NotificationService.cs" />
@@ -411,7 +409,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>2101</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

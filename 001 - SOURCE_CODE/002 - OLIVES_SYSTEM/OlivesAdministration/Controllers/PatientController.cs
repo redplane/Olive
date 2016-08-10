@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using OlivesAdministration.Attributes;
+using OlivesAdministration.Constants;
 using OlivesAdministration.Interfaces;
 using OlivesAdministration.Models;
 using OlivesAdministration.ViewModels.Filter;
 using Shared.Constants;
 using Shared.Enumerations;
+using Shared.Interfaces;
 using Shared.Resources;
 
 namespace OlivesAdministration.Controllers
@@ -24,15 +26,15 @@ namespace OlivesAdministration.Controllers
         ///     Initialize an instance of AdminController.
         /// </summary>
         /// <param name="repositoryAccountExtended"></param>
+        /// <param name="repositoryStorage"></param>
         /// <param name="log"></param>
-        /// <param name="applicationSetting"></param>
-        public PatientController(IRepositoryAccountExtended repositoryAccountExtended,
-            ILog log,
-            ApplicationSetting applicationSetting)
+        public PatientController(
+            IRepositoryAccountExtended repositoryAccountExtended, IRepositoryStorage repositoryStorage,
+            ILog log)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
+            _repositoryStorage = repositoryStorage;
             _log = log;
-            _applicationSetting = applicationSetting;
         }
 
         #endregion
@@ -45,15 +47,15 @@ namespace OlivesAdministration.Controllers
         private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
+        /// Repository of storage.
+        /// </summary>
+        private readonly IRepositoryStorage _repositoryStorage;
+
+        /// <summary>
         ///     Instance which provides functions for logging.
         /// </summary>
         private readonly ILog _log;
-
-        /// <summary>
-        ///     Class stores application settings.
-        /// </summary>
-        private readonly ApplicationSetting _applicationSetting;
-
+        
         #endregion
 
         #region Methods
@@ -87,6 +89,8 @@ namespace OlivesAdministration.Controllers
                     });
                 }
 
+                var storage = _repositoryStorage.FindStorage(Storage.Avatar);
+
                 // Respond to client.
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -106,7 +110,7 @@ namespace OlivesAdministration.Controllers
                         account.Status,
                         account.Address,
                         Photo =
-                            InitializeUrl(_applicationSetting.AvatarStorage.Relative, account.Photo,
+                            InitializeUrl(storage.Relative, account.Photo,
                                 Values.StandardImageExtension),
                         account.Patient.Height,
                         account.Patient.Weight
@@ -155,6 +159,8 @@ namespace OlivesAdministration.Controllers
             // Filter patient by using specific conditions.
             var result = await _repositoryAccountExtended.FilterPatientsAsync(filter);
 
+            var storage = _repositoryStorage.FindStorage(Storage.Avatar);
+
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 Patients = result.Patients.Select(x => new
@@ -173,7 +179,7 @@ namespace OlivesAdministration.Controllers
                     x.Person.Status,
                     x.Person.Address,
                     Photo =
-                        InitializeUrl(_applicationSetting.AvatarStorage.Relative, x.Person.Photo,
+                        InitializeUrl(storage.Relative, x.Person.Photo,
                             Values.StandardImageExtension),
                     x.Height,
                     x.Weight
