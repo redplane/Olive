@@ -1,256 +1,257 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System;
+using System.Data.Entity.Infrastructure;
+using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Effort;
+using Effort.DataLoaders;
 using log4net;
+using log4net.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OlivesAdministration.Models;
+using OlivesAdministration.Interfaces;
+using OlivesAdministration.Repositories;
 using OlivesAdministration.Test.Repositories;
 using Shared.Enumerations;
+using Shared.Interfaces;
 using Shared.Models;
+using Shared.Repositories;
+using Shared.Services;
 using Shared.ViewModels;
+using System.Web;
+using System.Web.SessionState;
+using OlivesAdministration.Test.Helpers;
 
 namespace OlivesAdministration.Test.Controllers.AdminController
 {
     [TestClass]
     public class Login
     {
-        #region Constructor
+        #region Initialization sector
 
-        /// <summary>
-        ///     Initialize an instance of Login with default settings.
-        /// </summary>
-        public Login()
-        {
-            // Initialize RepositoryAccount.
-            _repositoryAccount = new RepositoryAccount();
-
-            // Initialize fake log instance.
-            var log = LogManager.GetLogger(typeof (Login));
-
-            // Initialize fake application setting instance.
-            var applicationSetting = new ApplicationSetting();
-
-            // Initialize a fake controller.
-            _adminController = new OlivesAdministration.Controllers.AdminController(_repositoryAccount,
-                applicationSetting, log);
-
-            // Override HttpRequest to do testing.
-            var configuration = new HttpConfiguration();
-            var request = new HttpRequestMessage();
-            _adminController.Request = request;
-            _adminController.Request.Properties["MS_HttpConfiguration"] = configuration;
-        }
+        private OlivesAdministration.Controllers.AdminController _adminController;
+        private IRepositoryAccountExtended _repositoryAccountExtended;
+        private IRepositoryStorage _repositoryStorage;
+        private ILog _log;
 
         #endregion
 
-        #region Properties
+        #region Initialization
 
         /// <summary>
-        ///     Admin controller.
+        /// Initialize context.
         /// </summary>
-        private readonly OlivesAdministration.Controllers.AdminController _adminController;
+        private void InitializeContext()
+        {
+            // Data context initialiation.
+            var oliveDataContext = new Repositories.OliveDataContext();
+
+            // Repositories initialization.
+            _repositoryAccountExtended = new RepositoryAccountExtended(oliveDataContext);
+            _repositoryStorage = new RepositoryStorage();
+            _repositoryStorage.InitializeStorage("Avatar", "Avatar");
+
+            _log = LogManager.GetLogger(typeof(Login));
+            _adminController = new OlivesAdministration.Controllers.AdminController(_repositoryAccountExtended, _repositoryStorage, _log);
+            EnvironmentHelper.Instance.InitializeController(_adminController);
+        }
 
         /// <summary>
-        ///     Repository account which simulates function of RepositoryAccount to test controller.
+        /// Initialize function context.
         /// </summary>
-        private readonly RepositoryAccount _repositoryAccount;
+        /// <param name="dataContext"></param>
+        private void InitializeContext(IOliveDataContext dataContext)
+        {
+            _repositoryAccountExtended = new RepositoryAccountExtended(dataContext);
+            _repositoryStorage = new RepositoryStorage(EnvironmentHelper.Instance.ForgeHttpContext());
+            _repositoryStorage.InitializeStorage("Avatar", "Avatar");
+            _log = LogManager.GetLogger(typeof(Login));
+            _adminController = new OlivesAdministration.Controllers.AdminController(_repositoryAccountExtended, _repositoryStorage, _log);
+            EnvironmentHelper.Instance.InitializeController(_adminController);
+        }
 
+        /// <summary>
+        /// Initialize function context
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        private async Task InitializeAdminAccounts(OlivesHealthEntities context)
+        {
+            for (var i = 0; i < 3; i++)
+            {
+                // General information.
+                var person = new Person();
+                person.Email = $"admin{i}@gmail.com";
+                person.Password = "admin199x";
+                person.FirstName = $"AF[{i}]";
+                person.LastName = $"AL[{i}]";
+                person.FullName = person.FirstName + " " + person.LastName;
+                person.Gender = 0;
+                person.Role = (byte)Role.Admin;
+                person.Created = 1;
+
+                if (i == 0)
+                    person.Status = (byte)StatusAccount.Active;
+                else if (i == 1)
+                    person.Status = (byte)StatusAccount.Pending;
+                else if (i == 2)
+                    person.Status = (byte)StatusAccount.Inactive;
+
+                context.People.Add(person);
+            }
+
+            await context.SaveChangesAsync();
+        }
+        
         #endregion
-
-        #region Methods
-
-        /// <summary>
-        ///     Login throws bad request because submited information isn't initialized.
-        /// </summary>
-        [TestMethod]
-        public async Task BadRequest()
-        {
-            // Call the login function and retrieve the responded message.
-            var response = await _adminController.Login(null);
-
-            // Compare the responded status with the HttpStatusCode.BadRequest.
-            // If they're equal, function runs correctly.
-            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
-        }
+        
+        #region Tests
 
         /// <summary>
-        ///     Login is failed due to invalid information.
-        ///     Status: Deactive
+        /// No information has been input to login board.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
-        public async Task InvalidLoginInformation()
+        public async Task BlankLoginInformaion()
         {
-            // Forging a deactivated account.
-            var account = new Person();
-            account.Id = 1;
-            account.Email = "deactivated@gmail.com";
-            account.Password = "password199x";
-            account.Role = (byte) Role.Admin;
-            account.Status = (byte) StatusAccount.Inactive;
+            // Initialize test environment.
+            InitializeContext();
 
-            // Add the fake person to list.
-            _repositoryAccount.People = new List<Person>();
-            _repositoryAccount.People.Clear();
-            _repositoryAccount.People.Add(account);
-
-            // Initialize login request parameters.
             var loginViewModel = new LoginViewModel();
-            loginViewModel.Email = account.Email;
-            loginViewModel.Password = account.Password;
+            _adminController.Validate(loginViewModel);
+            var result = await _adminController.Login(loginViewModel);
 
-            // Call the login function.
-            // Response will be 404 because no valid account is found.
-            var response = await _adminController.Login(loginViewModel);
-            Debug.WriteLine(response);
-
-            // Compare the result thrown back.
-            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
-
         /// <summary>
-        ///     Login is failed due to invalid information.
+        /// Email is correct but password is missing.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
-        public async Task BlankEmail()
+        public async Task PasswordIsMissing()
         {
-            // Forging a deactivated account.
-            var account = new Person();
-            account.Id = 1;
-            account.Email = "";
-            account.Password = "password199x";
-            account.Role = (byte) Role.Admin;
-            account.Status = (byte) StatusAccount.Inactive;
+            // Initialize test environment.
+            InitializeContext();
 
-            // Add the fake person to list.
-            _repositoryAccount.People = new List<Person>();
-            _repositoryAccount.People.Clear();
-            _repositoryAccount.People.Add(account);
-
-            // Initialize login request parameters.
             var loginViewModel = new LoginViewModel();
-            loginViewModel.Email = null;
-            loginViewModel.Password = account.Password;
+            loginViewModel.Email = "admin26@gmail.com";
 
             _adminController.Validate(loginViewModel);
-            // Call the login function.
-            // Response will be NotFound because no valid account is found.
-            // In Reality, the respond might be diffrent.
-            var response = await _adminController.Login(loginViewModel);
-            Debug.WriteLine(response);
+            var result = await _adminController.Login(loginViewModel);
 
-            // Compare the result thrown back.
-            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
         /// <summary>
-        ///     Login is failed due to invalid information.
+        /// Password is filled but email is not.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
-        public async Task StatusOK()
+        public async Task EmailIsMissing()
         {
-            // Forging a deactivated account.
-            var account = new Person();
-            account.Id = 1;
-            account.Email = "admin@admin.admin";
-            account.Password = "password199x";
-            account.Role = (byte) Role.Admin;
-            account.Status = (byte) StatusAccount.Inactive;
+            // Initialize test environment.
+            InitializeContext();
 
-            // Add the fake person to list.
-            _repositoryAccount.People = new List<Person>();
-            _repositoryAccount.People.Clear();
-            _repositoryAccount.People.Add(account);
-
-            // Initialize login request parameters.
             var loginViewModel = new LoginViewModel();
-            loginViewModel.Email = account.Email;
-            loginViewModel.Password = account.Password;
+            loginViewModel.Password = "admin199x";
 
-            // Call the login function.
-            // Response will be NotFound because no valid account is found.
-            // In Reality, the respond might be diffrent.
-            var response = await _adminController.Login(loginViewModel);
-            Debug.WriteLine(response);
+            _adminController.Validate(loginViewModel);
+            var result = await _adminController.Login(loginViewModel);
 
-            // Compare the result thrown back.
-            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
         /// <summary>
-        ///     Login is failed due to account is a patient.
-        ///     Status: Deactive
+        /// All information is filled, but wrong
         /// </summary>
         /// <returns></returns>
         [TestMethod]
-        public async Task AccountIsNotAdmin()
+        public async Task EmailIsInvalid()
         {
-            // Forging a deactivated account.
-            var account = new Person();
-            account.Id = 1;
-            account.Email = "deactivated@gmail.com";
-            account.Password = "password199x";
-            account.Role = (byte)Role.Patient;
-            account.Status = (byte)StatusAccount.Inactive;
+            var dataContext = new OlivesAdministration.Test.Repositories.OliveDataContext();
+            InitializeContext(dataContext);
+            await InitializeAdminAccounts(dataContext.Context);
 
-            // Add the fake person to list.
-            _repositoryAccount.People = new List<Person>();
-            _repositoryAccount.People.Add(account);
-
-            // Initialize login request parameters.
             var loginViewModel = new LoginViewModel();
-            loginViewModel.Email = account.Email;
-            loginViewModel.Password = account.Password;
+            loginViewModel.Email = "admin10@gmail.com";
+            loginViewModel.Password = "password";
 
-            // Call the login function.
-            // Response will be 404 because no valid account is found.
-            var response = await _adminController.Login(loginViewModel);
-            Debug.WriteLine(response);
+            var validationResult = await _adminController.Login(loginViewModel);
+            _adminController.Validate(loginViewModel);
 
-            // Compare the result thrown back.
-            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
+            var result = await _adminController.Login(loginViewModel);
+            Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
         }
-
 
         /// <summary>
-        ///     Login is failed due to account is a doctor.
-        ///     Status: Deactive
+        /// Admin account is pending.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
-        public async Task AccountIsDoctor()
+        public async Task AccountIsPending()
         {
-            // Forging a deactivated account.
-            var account = new Person();
-            account.Id = 1;
-            account.Email = "deactivated@gmail.com";
-            account.Password = "password199x";
-            account.Role = (byte)Role.Doctor;
-            account.Status = (byte)StatusAccount.Inactive;
+            var dataContext = new OlivesAdministration.Test.Repositories.OliveDataContext();
+            InitializeContext(dataContext);
+            await InitializeAdminAccounts(dataContext.Context);
 
-            // Add the fake person to list.
-            _repositoryAccount.People = new List<Person>();
-            _repositoryAccount.People.Add(account);
-
-            // Initialize login request parameters.
             var loginViewModel = new LoginViewModel();
-            loginViewModel.Email = account.Email;
-            loginViewModel.Password = account.Password;
+            loginViewModel.Email = "admin1@gmail.com";
+            loginViewModel.Password = "password";
 
-            // Call the login function.
-            // Response will be 404 because no valid account is found.
-            var response = await _adminController.Login(loginViewModel);
-            Debug.WriteLine(response);
+            var validationResult = await _adminController.Login(loginViewModel);
+            _adminController.Validate(loginViewModel);
 
-            // Compare the result thrown back.
-            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
+            var result = await _adminController.Login(loginViewModel);
+            Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
         }
-            #endregion
+
+        /// <summary>
+        /// Account is currently deactivated.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task AccountIsDeactivated()
+        {
+            var dataContext = new OlivesAdministration.Test.Repositories.OliveDataContext();
+            InitializeContext(dataContext);
+            await InitializeAdminAccounts(dataContext.Context);
+
+            var loginViewModel = new LoginViewModel();
+            loginViewModel.Email = "admin2@gmail.com";
+            loginViewModel.Password = "password";
+
+            var validationResult = await _adminController.Login(loginViewModel);
+            _adminController.Validate(loginViewModel);
+
+            var result = await _adminController.Login(loginViewModel);
+            Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
         }
+
+        /// <summary>
+        /// Login is valid because email and password are correct.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task LoginSuccessful()
+        {
+            var dataContext = new OlivesAdministration.Test.Repositories.OliveDataContext();
+            InitializeContext(dataContext);
+            await InitializeAdminAccounts(dataContext.Context);
+
+            var loginViewModel = new LoginViewModel();
+            loginViewModel.Email = "admin0@gmail.com";
+            loginViewModel.Password = "admin199x";
+
+            var validationResult = await _adminController.Login(loginViewModel);
+            _adminController.Validate(loginViewModel);
+
+            var result = await _adminController.Login(loginViewModel);
+            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
+        }
+        
+        #endregion
     }
+}

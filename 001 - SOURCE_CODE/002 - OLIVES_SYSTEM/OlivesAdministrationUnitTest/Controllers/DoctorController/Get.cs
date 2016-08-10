@@ -1,118 +1,151 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net;
 using System.Threading.Tasks;
-using System.Web.Http;
 using log4net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OlivesAdministration.Models;
-using OlivesAdministration.Test.Repositories;
+using OlivesAdministration.Interfaces;
+using OlivesAdministration.Repositories;
+using OlivesAdministration.Test.Helpers;
+using Shared.Enumerations;
+using Shared.Interfaces;
 using Shared.Models;
+using Shared.Repositories;
+using Shared.ViewModels;
 
 namespace OlivesAdministration.Test.Controllers.DoctorController
 {
     [TestClass]
     public class Get
     {
-        #region Constructor
+        #region Initialization sector
+
+        private OlivesAdministration.Controllers.DoctorController _doctorController;
+        private IRepositoryAccountExtended _repositoryAccountExtended;
+        private IRepositoryStorage _repositoryStorage;
+        private ILog _log;
 
         /// <summary>
-        ///     Initialize an instance of Login with default settings.
+        /// Initialize context.
         /// </summary>
-        public Get()
+        private void InitializeContext()
         {
-            // Initialize RepositoryAccount.
-            _repositoryAccount = new RepositoryAccount();
+            // Data context initialiation.
+            var oliveDataContext = new Repositories.OliveDataContext();
 
-            // Initialize fake log instance.
-            var log = LogManager.GetLogger(typeof (Get));
+            // Repositories initialization.
+            _repositoryAccountExtended = new RepositoryAccountExtended(oliveDataContext);
+            _repositoryStorage = new RepositoryStorage();
+            _repositoryStorage.InitializeStorage("Avatar", "Avatar");
 
-            // Initialize fake application setting instance.
-            var applicationSetting = new ApplicationSetting();
+            _log = LogManager.GetLogger(typeof(Get));
+            _doctorController = new OlivesAdministration.Controllers.DoctorController(_repositoryAccountExtended, _repositoryStorage, _log);
+            EnvironmentHelper.Instance.InitializeController(_doctorController);
+        }
 
-            // Initialize a fake controller.
-            _doctorController = new OlivesAdministration.Controllers.DoctorController(_repositoryAccount, log,
-                applicationSetting);
-
-            // Override HttpRequest to do testing.
-            var configuration = new HttpConfiguration();
-            var request = new HttpRequestMessage();
-            _doctorController.Request = request;
-            _doctorController.Request.Properties["MS_HttpConfiguration"] = configuration;
+        /// <summary>
+        /// Initialize function context.
+        /// </summary>
+        /// <param name="dataContext"></param>
+        private void InitializeContext(IOliveDataContext dataContext)
+        {
+            _repositoryAccountExtended = new RepositoryAccountExtended(dataContext);
+            _repositoryStorage = new RepositoryStorage(EnvironmentHelper.Instance.ForgeHttpContext());
+            _repositoryStorage.InitializeStorage("Avatar", "Avatar");
+            _log = LogManager.GetLogger(typeof(Get));
+            _doctorController = new OlivesAdministration.Controllers.DoctorController(_repositoryAccountExtended, _repositoryStorage, _log);
+            EnvironmentHelper.Instance.InitializeController(_doctorController);
         }
 
         #endregion
 
-        #region Properties
+        #region Tests
 
         /// <summary>
-        ///     Admin controller.
-        /// </summary>
-        private readonly OlivesAdministration.Controllers.DoctorController _doctorController;
-
-        /// <summary>
-        ///     Repository account which simulates function of RepositoryAccount to test controller.
-        /// </summary>
-        private readonly RepositoryAccount _repositoryAccount;
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        ///     Condition : Doctor exists in system.
-        ///     Action : Find the doctor with an id which doesn't exist in database.
-        ///     Expected result : Status 404 should be returned.
+        /// Account is not a doctor.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
-        public async Task DoctorNotExist()
+        public async Task AccountIsNotDoctor()
         {
-            var doctor = new Doctor();
-            doctor.Id = 1;
-            doctor.City = "City";
-            doctor.Country = "Country";
-            doctor.Money = 10;
-            doctor.PlaceId = 1;
-            doctor.Rank = 1;
+            #region Account initialization
 
-            // Forging data.
-            _repositoryAccount.Doctors = new List<Doctor>();
-            _repositoryAccount.Doctors.Add(doctor);
+            var dataContext = new Repositories.OliveDataContext();
+            var person = new Person();
+            person.Id = 1;
+            person.Email = $"doctor@gmail.com";
+            person.Password = "doctor199x";
+            person.FirstName = "firstName";
+            person.LastName = "lastName";
+            person.FullName = person.FirstName + " " + person.LastName;
+            person.Gender = 0;
+            person.Role = (byte)Role.Admin;
+            person.Created = 1;
 
-            // Get an invalid doctor.
-            var response = await _doctorController.Get(2);
+            dataContext.Context.People.Add(person);
+            await dataContext.Context.SaveChangesAsync();
 
-            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
+            #endregion
+
+            InitializeContext(dataContext);
+            var result = await _doctorController.Get(1);
+
+            Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
         }
 
         /// <summary>
-        ///     Condition : Doctor exists in system.
-        ///     Action : Find the doctor with the existed doctor id in database.
-        ///     Expected result : Status 200 should be returned.
+        /// Account is not found in database.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
-        public async Task FindValidDoctor()
+        public async Task DoctorIsNotFound()
         {
-            var doctor = new Doctor();
-            doctor.Id = 1;
-            doctor.City = "City";
-            doctor.Country = "Country";
-            doctor.Money = 10;
-            doctor.PlaceId = 1;
-            doctor.Rank = 1;
+            #region Account initialization
 
-            // Forging data.
-            _repositoryAccount.Doctors = new List<Doctor>();
-            _repositoryAccount.Doctors.Add(doctor);
+            var dataContext = new Repositories.OliveDataContext();
+            var person = new Person();
+            person.Id = 1;
+            person.Email = $"doctor@gmail.com";
+            person.Password = "doctor199x";
+            person.FirstName = "firstName";
+            person.LastName = "lastName";
+            person.FullName = person.FirstName + " " + person.LastName;
+            person.Gender = 0;
+            person.Role = (byte)Role.Admin;
+            person.Created = 1;
 
-            // Get an invalid doctor.
-            var response = await _doctorController.Get(1);
+            dataContext.Context.People.Add(person);
+            await dataContext.Context.SaveChangesAsync();
 
-            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+            #endregion
+
+            InitializeContext(dataContext);
+            var result = await _doctorController.Get(2);
+
+            Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
         }
 
+        /// <summary>
+        /// Account is not a doctor.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task DoctorIsInDatabase()
+        {
+            #region Data initialization
+
+            var dataContext = new Repositories.OliveDataContext();
+            await EnvironmentHelper.Instance.InitializeSpecialties(dataContext.Context, 10);
+            await EnvironmentHelper.Instance.InitializePlaces(dataContext.Context, 10);
+            await EnvironmentHelper.Instance.InitializeDoctor(dataContext.Context, 10);
+         
+            InitializeContext(dataContext);   
+            EnvironmentHelper.Instance.InitializeController(_doctorController);
+
+            #endregion
+
+            var result = await _doctorController.Get(3);
+
+            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
+        }
         #endregion
     }
 }

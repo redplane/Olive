@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using System.Web;
 using Shared.Interfaces;
 using Shared.Models;
@@ -25,6 +26,7 @@ namespace Shared.Repositories
 
         public RepositoryStorage()
         {
+            _storage = new Dictionary<string, StorageModel>();
         }
 
         /// <summary>
@@ -62,19 +64,26 @@ namespace Shared.Repositories
         /// <param name="relativePath"></param>
         public void InitializeStorage(string name, string relativePath)
         {
-            // Create configuration first.
-            var configuration = new StorageModel();
-            configuration.Relative = relativePath;
-            configuration.Absolute = _httpContext.Server.MapPath(relativePath);
-
-            // Storage hasn't been configured before.
-            if (!_storage.ContainsKey(name))
+            try
             {
-                _storage.Add(name, configuration);
+                // Create configuration first.
+                var configuration = new StorageModel();
+                configuration.Relative = relativePath;
+                configuration.Absolute = _httpContext.Server.MapPath(relativePath);
+
+                // Storage hasn't been configured before.
+                if (!_storage.ContainsKey(name))
+                {
+                    _storage.Add(name, configuration);
+                    return;
+                }
+
+                _storage[name] = configuration;
+            }
+            catch
+            {
                 return;
             }
-
-            _storage[name] = configuration;
         }
 
         #endregion

@@ -65,14 +65,21 @@ namespace OlivesAdministration.Controllers
         /// <returns></returns>
         protected string InitializeUrl(string path, string file, string extension)
         {
-            // File or path is invalid
-            if (string.IsNullOrWhiteSpace(path) || string.IsNullOrWhiteSpace(file))
-                return null;
+            try
+            {
+                // File or path is invalid
+                if (string.IsNullOrWhiteSpace(path) || string.IsNullOrWhiteSpace(file))
+                    return null;
 
-            if (!string.IsNullOrWhiteSpace(extension))
-                file = $"{file}.{extension}";
-            var fullPath = Path.Combine(path, file);
-            return Url.Content(fullPath);
+                if (!string.IsNullOrWhiteSpace(extension))
+                    file = $"{file}.{extension}";
+                var fullPath = Path.Combine(path, file);
+                return Url.Content(fullPath);
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

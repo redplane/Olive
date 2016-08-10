@@ -33,7 +33,7 @@ namespace OlivesAdministration.ViewModels.Filter
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MaxLastModified", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
-        public long? MinLastModified { get; set; }
+        public double? MinLastModified { get; set; }
 
         /// <summary>
         ///     Time before which account had been modified.
@@ -42,7 +42,7 @@ namespace OlivesAdministration.ViewModels.Filter
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MinLastModified", Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
-        public long? MaxLastModified { get; set; }
+        public double? MaxLastModified { get; set; }
 
         /// <summary>
         ///     Person name.
@@ -58,7 +58,7 @@ namespace OlivesAdministration.ViewModels.Filter
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MaxBirthday", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
-        public long? MinBirthday { get; set; }
+        public double? MinBirthday { get; set; }
 
         /// <summary>
         ///     Date before which that person had been born
@@ -67,7 +67,7 @@ namespace OlivesAdministration.ViewModels.Filter
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MinBirthday", Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
-        public long? MaxBirthday { get; set; }
+        public double? MaxBirthday { get; set; }
 
         /// <summary>
         ///     Gender of person
@@ -80,13 +80,13 @@ namespace OlivesAdministration.ViewModels.Filter
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MaxCreated", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
-        public long? MinCreated { get; set; }
+        public double? MinCreated { get; set; }
 
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MinCreated", Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
-        public long? MaxCreated { get; set; }
+        public double? MaxCreated { get; set; }
 
         /// <summary>
         ///     Name of city where doctor lives.

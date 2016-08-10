@@ -1,356 +1,487 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net;
 using System.Threading.Tasks;
-using System.Web.Http;
 using log4net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OlivesAdministration.Models;
-using OlivesAdministration.Test.Repositories;
+using OlivesAdministration.Enumerations;
+using OlivesAdministration.Interfaces;
+using OlivesAdministration.Repositories;
+using OlivesAdministration.Test.Helpers;
+using OlivesAdministration.ViewModels.Filter;
 using Shared.Constants;
+using Shared.Enumerations;
+using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels.Filter;
+using Shared.Repositories;
+using Shared.ViewModels;
 
 namespace OlivesAdministration.Test.Controllers.DoctorController
 {
     [TestClass]
     public class Filter
     {
-        #region Constructor
+        #region Initialization sector
+
+        private OlivesAdministration.Controllers.DoctorController _doctorController;
+        private IRepositoryAccountExtended _repositoryAccountExtended;
+        private IRepositoryStorage _repositoryStorage;
+        private ILog _log;
 
         /// <summary>
-        ///     Initialize an instance of Login with default settings.
+        /// Initialize context.
         /// </summary>
-        public Filter()
+        private void InitializeContext()
         {
-            // Initialize RepositoryAccount.
-            _repositoryAccount = new RepositoryAccount();
+            // Data context initialiation.
+            var oliveDataContext = new Repositories.OliveDataContext();
 
-            // Initialize fake log instance.
-            var log = LogManager.GetLogger(typeof(Get));
+            // Repositories initialization.
+            _repositoryAccountExtended = new RepositoryAccountExtended(oliveDataContext);
+            _repositoryStorage = new RepositoryStorage();
+            _repositoryStorage.InitializeStorage("Avatar", "Avatar");
 
-            // Initialize fake application setting instance.
-            var applicationSetting = new ApplicationSetting();
+            _log = LogManager.GetLogger(typeof(Get));
+            _doctorController = new OlivesAdministration.Controllers.DoctorController(_repositoryAccountExtended, _repositoryStorage, _log);
+            EnvironmentHelper.Instance.InitializeController(_doctorController);
+        }
 
-            // Initialize a fake controller.
-            _doctorController = new OlivesAdministration.Controllers.DoctorController(_repositoryAccount, log,
-                applicationSetting);
-
-            // Override HttpRequest to do testing.
-            var configuration = new HttpConfiguration();
-            var request = new HttpRequestMessage();
-            _doctorController.Request = request;
-            _doctorController.Request.Properties["MS_HttpConfiguration"] = configuration;
+        /// <summary>
+        /// Initialize function context.
+        /// </summary>
+        /// <param name="dataContext"></param>
+        private void InitializeContext(IOliveDataContext dataContext)
+        {
+            _repositoryAccountExtended = new RepositoryAccountExtended(dataContext);
+            _repositoryStorage = new RepositoryStorage(EnvironmentHelper.Instance.ForgeHttpContext());
+            _repositoryStorage.InitializeStorage("Avatar", "Avatar");
+            _log = LogManager.GetLogger(typeof(Get));
+            _doctorController = new OlivesAdministration.Controllers.DoctorController(_repositoryAccountExtended, _repositoryStorage, _log);
+            EnvironmentHelper.Instance.InitializeController(_doctorController);
         }
 
         #endregion
 
-        #region Properties
+        #region Tests
 
         /// <summary>
-        ///     Admin controller.
-        /// </summary>
-        private readonly OlivesAdministration.Controllers.DoctorController _doctorController;
-
-        /// <summary>
-        ///     Repository account which simulates function of RepositoryAccount to test controller.
-        /// </summary>
-        private readonly RepositoryAccount _repositoryAccount;
-
-        #endregion
-
-        #region Methods
-
-        [TestMethod]
-        public async Task InvalidRequestParameters()
-        {
-            var response = await _doctorController.Filter(null);
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
-        }
-
-        /// <summary>
-        /// Min money must be smaller than or equal to max money.
+        /// Doctor filter isn't initialized.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
-        public async Task MinMoneyGreaterThanMaxMoney()
+        public async Task DoctorFilterIsntInitialized()
         {
-            // Filter initialization.
-            var filter = new FilterDoctorViewModel();
-            filter.MinMoney = 1;
-            filter.MaxMoney = 0;
+            InitializeContext();
+            var result = await _doctorController.Filter(null);
+            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
+        }
 
-            // Do validation to retrieve errors.
+        /// <summary>
+        /// Email contains invalid characters
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task EmailIsInvalidLength()
+        {
+            InitializeContext();
+            var filter = new FilterDoctorViewModel();
+            filter.Email = "";
+            for (var i = 0; i < 100; i++)
+                filter.Email += $"{i}";
             _doctorController.Validate(filter);
-
-            // Do the filter.
-            var response = await _doctorController.Filter(filter);
-
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+            var result = await _doctorController.Filter(filter);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
         /// <summary>
-        /// City name max length should not be exceeded.
+        /// MinLastModified is 1900
+        /// </summary>
+        /// <returns></returns>
+        public async Task InvalidMinLastModified()
+        {
+            InitializeContext();
+            var filter = new FilterDoctorViewModel();
+            filter.MinLastModified = -2209014000000;
+            _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        /// <summary>
+        /// MinLastModified must be smaller or equal than MaxLastModified.
+        /// </summary>
+        /// <returns></returns>
+        public async Task MinLastModifiedGreaterMaxLastModified()
+        {
+            InitializeContext();
+            var filter = new FilterDoctorViewModel();
+            filter.MinLastModified = 0;
+            filter.MaxLastModified = -1;
+
+            _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        /// <summary>
+        /// MaxLastModified is 1900
+        /// </summary>
+        /// <returns></returns>
+        public async Task MaxLastModifiedInvalid()
+        {
+            InitializeContext();
+            var filter = new FilterDoctorViewModel();
+            filter.MaxLastModified = -2209014000000;
+            _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        /// <summary>
+        /// Name length is more than 64
+        /// </summary>
+        /// <returns></returns>
+        public async Task NameMaxLengthExceeded()
+        {
+            InitializeContext();
+            var filter = new FilterDoctorViewModel();
+            filter.Name = "aa";
+            for (var i = 0; i < FieldLength.FullNameMaxLength + 1; i++)
+                filter.Name += "b";
+
+            _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        /// <summary>
+        /// Max birthday is less than 1916.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
-        public async Task CityNameMaxLengthReached()
+        public async Task MinBirthdayLessThan1916()
         {
-            // Filter initialization.
+            InitializeContext();
             var filter = new FilterDoctorViewModel();
-            filter.City = "aaaa";
+            filter.MinBirthday = -2209014000000;
+            _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
 
-            // Enlarge the city name,
-            for (var i = 0; i < FieldLength.CityNameMaxLength; i++)
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        /// <summary>
+        /// Max birthday is less than 1916.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task MaxBirthdayLessThan1916()
+        {
+            InitializeContext();
+            var filter = new FilterDoctorViewModel();
+            filter.MinBirthday = -2209014000000;
+            _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        /// <summary>
+        /// Min birthday is greater than max birthday.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task MinBirthdayGreaterMaxBirthday()
+        {
+            InitializeContext();
+            var filter = new FilterDoctorViewModel();
+            filter.MinBirthday = 0;
+            filter.MaxBirthday = -1;
+            _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        /// <summary>
+        /// Invalid gender.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task InvalidGender()
+        {
+            InitializeContext();
+            var filter = new FilterDoctorViewModel();
+            filter.Gender = -1;
+
+            _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        /// <summary>
+        /// Min created is smaller than the allowed value.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task MinCreatedLessThanMinimum()
+        {
+            InitializeContext();
+            var filter = new FilterDoctorViewModel();
+            filter.MinCreated = -2209014000000;
+
+            _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        /// <summary>
+        /// Max created is smaller than the allowed value.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task MaxCreatedLessThanMinimum()
+        {
+            InitializeContext();
+            var filter = new FilterDoctorViewModel();
+            filter.MaxCreated = -2209014000000;
+
+            _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        /// <summary>
+        /// Min created is larger than min created.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task MinCreatedGreaterMaxCreated()
+        {
+            InitializeContext();
+            var filter = new FilterDoctorViewModel();
+            filter.MaxCreated = 1;
+            filter.MinCreated = 2;
+
+            _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        /// <summary>
+        /// City name max length exceeded.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task CityMaxLengthExceeded()
+        {
+            InitializeContext();
+            var filter = new FilterDoctorViewModel();
+            filter.City = "a";
+            for (var i = 0; i < FieldLength.CityNameMaxLength + 10; i++)
                 filter.City += "a";
 
-            // Validate the property.
             _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
 
-            // Retrieve the response.
-            var response = await _doctorController.Filter(filter);
-
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
         /// <summary>
-        /// Country name max length should not be exceeded.
+        /// Country name max length exceeded.
         /// </summary>
         /// <returns></returns>
-        public async Task CountryNameMaxLengthExceeded()
+        [TestMethod]
+        public async Task CountryMaxLengthExceeded()
         {
-            // Filter initialization.
+            InitializeContext();
             var filter = new FilterDoctorViewModel();
-            filter.Country = "aaaa";
-
-            // Enlarge the country name.
-            for (var i = 0; i < FieldLength.CountryNameMaxLength; i++)
+            filter.Country = "a";
+            for (var i = 0; i < FieldLength.CountryNameMaxLength + 10; i++)
                 filter.Country += "a";
 
-            // Validate the property.
             _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
 
-            // Retrieve the reponse.
-            var response = await _doctorController.Filter(filter);
-
-            // Compare the result and actual result.
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
         /// <summary>
-        /// Specialty index is smaller than 1.
+        /// Specialty is invalid.
         /// </summary>
         /// <returns></returns>
-        public async Task SpecialtyIndexSmallerThanOne()
+        [TestMethod]
+        public async Task InvalidSpecialty()
         {
-            // Filter initialization.
+            InitializeContext();
             var filter = new FilterDoctorViewModel();
             filter.Specialty = 0;
 
-            // Validate the property.
             _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
 
-            // Retrieve the reponse.
-            var response = await _doctorController.Filter(filter);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
 
-            // Compare the result and actual result.
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+
+        /// <summary>
+        /// Min rank is smaller than the allowed value.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task MinRankLessThanMinimum()
+        {
+            InitializeContext();
+            var filter = new FilterDoctorViewModel();
+            filter.MinRank = -1;
+
+            _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
         /// <summary>
-        /// MinRank is greater than MaxRank.
+        /// Max rank is smaller than the allowed value.
         /// </summary>
         /// <returns></returns>
+        [TestMethod]
+        public async Task MaxRankLessThanMinimum()
+        {
+            InitializeContext();
+            var filter = new FilterDoctorViewModel();
+            filter.MaxRank = -1;
+
+            _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        /// <summary>
+        /// Min created is larger than min created.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
         public async Task MinRankGreaterThanMaxRank()
         {
-            // Filter initialization.
+            InitializeContext();
             var filter = new FilterDoctorViewModel();
-            filter.MinRank = 2;
             filter.MaxRank = 1;
+            filter.MinRank = 2;
 
-            // Validate the property.
             _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
 
-            // Retrieve the reponse.
-            var response = await _doctorController.Filter(filter);
-
-            // Compare the result and actual result.
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
         /// <summary>
-        /// MinRank smaller than the allowed minimum.
+        /// Sort direction is invalid.
         /// </summary>
         /// <returns></returns>
-        public async Task MinRankSmallerThanMinimum()
+        [TestMethod]
+        public async Task InvalidSortDirection()
         {
-            // Filter initialization.
+            InitializeContext();
             var filter = new FilterDoctorViewModel();
-            filter.MinRank = 0;
+            filter.Direction = (SortDirection)(-1);
 
-            // Validate the property.
             _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
 
-            // Retrieve the reponse.
-            var response = await _doctorController.Filter(filter);
-
-            // Compare the result and actual result.
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
         /// <summary>
-        /// MinRank larger than the allowed maximum.
+        /// Invalid sort properties
         /// </summary>
         /// <returns></returns>
-        public async Task MinRankLargerThanMaximum()
+        [TestMethod]
+        public async Task InvalidSortedProperty()
         {
-            // Filter initialization.
+            InitializeContext();
             var filter = new FilterDoctorViewModel();
-            filter.MinRank = 6;
+            filter.Sort = (FilterDoctorSort)(-1);
 
-            // Validate the property.
             _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
 
-            // Retrieve the reponse.
-            var response = await _doctorController.Filter(filter);
-
-            // Compare the result and actual result.
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
         }
-
+        
         /// <summary>
-        /// MinRank smaller than the allowed minimum.
+        /// Page index is invalid.
         /// </summary>
         /// <returns></returns>
-        public async Task MaxRankSmallerThanMinimum()
+        public async Task PageIndexIsInvalid()
         {
-            // Filter initialization.
-            var filter = new FilterDoctorViewModel();
-            filter.MaxRank = 0;
-
-            // Validate the property.
-            _doctorController.Validate(filter);
-
-            // Retrieve the reponse.
-            var response = await _doctorController.Filter(filter);
-
-            // Compare the result and actual result.
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
-        }
-
-        /// <summary>
-        /// MinRank larger than the allowed maximum.
-        /// </summary>
-        /// <returns></returns>
-        public async Task MaxRankLargerThanMaximum()
-        {
-            // Filter initialization.
-            var filter = new FilterDoctorViewModel();
-            filter.MaxRank = 6;
-
-            // Validate the property.
-            _doctorController.Validate(filter);
-
-            // Retrieve the reponse.
-            var response = await _doctorController.Filter(filter);
-
-            // Compare the result and actual result.
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
-        }
-
-        /// <summary>
-        /// Page index is smaller than 0.
-        /// </summary>
-        /// <returns></returns>
-        public async Task PageIndexSmallerThanZero()
-        {
-            // Filter initialization.
+            InitializeContext();
             var filter = new FilterDoctorViewModel();
             filter.Page = -1;
 
-            // Do validation.
             _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
 
-            // Retrieve the response.
-            var response = await _doctorController.Filter(filter);
-
-            // Compare the result and actual result.
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
         /// <summary>
-        /// Page record is smaller than 1.
+        /// Record less than one.
         /// </summary>
         /// <returns></returns>
-        public async Task PageRecordSmallerThanOne()
+        public async Task RecordLessThanOne()
         {
-            // Filter initialization.
+            InitializeContext();
             var filter = new FilterDoctorViewModel();
-            filter.Records = FieldLength.RecordMin - 1;
+            filter.Records = 0;
 
-            // Retrieve the response.
-            var response = await _doctorController.Filter(filter);
+            _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
 
-            // Compare the result and actual result.
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
         /// <summary>
-        /// Page record exceeded maximum record.
+        /// Record more than twenty.
         /// </summary>
         /// <returns></returns>
-        public async Task PageRecordExceededMax()
+        public async Task RecordMoreThanTwenty()
         {
-            // Filter initialization.
+            InitializeContext();
             var filter = new FilterDoctorViewModel();
-            filter.Records = FieldLength.RecordMax + 1;
+            filter.Records = 21;
 
-            // Retrieve the response.
-            var response = await _doctorController.Filter(filter);
+            _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(filter);
 
-            // Compare tha result and actual result.
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+        
+        /// <summary>
+        /// Filter doctor successfully.
+        /// </summary>
+        /// <returns></returns>
+        public async Task FilterDoctorSuccessfully()
+        {
+            var dataContext = new OliveDataContext();
+            await EnvironmentHelper.Instance.InitializePlaces(dataContext.Context, 10);
+            await EnvironmentHelper.Instance.InitializeSpecialties(dataContext.Context, 10);
+            await EnvironmentHelper.Instance.InitializeDoctor(dataContext.Context, 10);
+
+            InitializeContext(dataContext);
+
+            var filter = new FilterDoctorViewModel();
+            _doctorController.Validate(filter);
+            var result = await _doctorController.Filter(null);
+            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
         }
 
-        public async Task FilterDoctorSuccessfullyWithPagination()
-        {
-            // Forging database.
-            _repositoryAccount.Doctors = new List<Doctor>();
-            _repositoryAccount.Specialties = new List<Specialty>();
-            _repositoryAccount.People = new List<Person>();
-
-            var maxRecord = 10;
-            for (var i = 0; i < maxRecord; i++)
-            {
-                _repositoryAccount.Doctors.Add(new Doctor()
-                {
-                    City = $"{i}",
-                    Country = $"{i}",
-                    Id = i,
-                    Money = 0,
-                    Rank = 1,
-                    SpecialtyId = i
-                });
-
-                _repositoryAccount.People.Add(new Person()
-                {
-                    Id = i,
-                    Email = $"email{i}@gmail.com",
-                    Password = $"password{i}",
-                    FirstName = $"FirstName[{i}]",
-                    LastName = $"LastName[{i}]"
-                });
-            }
-
-            // Filter initialization.
-            var filter = new FilterDoctorViewModel();
-            filter.Records = 1;
-            filter.Page = 0;
-
-            // Retrieve response from filter.
-            var response = await _doctorController.Filter(filter);
-            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-        }
         #endregion
     }
 }
