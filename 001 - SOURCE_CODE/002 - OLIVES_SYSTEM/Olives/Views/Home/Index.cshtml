@@ -1,15 +1,113 @@
 ﻿<html>
+
 <head>
-    <base href=/>
+    <base href= />
     <title>Olives</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <meta charset=UTF-8>
+    <meta name=viewport content="width=device-width,initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,500i,700" rel="stylesheet">
+    <style>
+        .tt-menu,
+        .tt-open {
+            border: 1px solid #dce0e0;
+            background-color: #fff;
+            border-radius: 2px;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .tt-dataset {
+            background-color: #fff;
+            border-radius: 2px;
+        }
+
+        .tt-suggestion {
+            font-size: 14px;
+            padding: 6px 10px;
+        }
+
+            .tt-suggestion:not(:first-child) {
+                border-top: 1px solid #dce0e0;
+            }
+
+        .tt-hightlight {
+            color: #27ae60;
+        }
+
+        .tt-cursor {
+            background-color: #f5f5f5;
+        }
+
+        .my-gallery {
+            width: 100%;
+            float: left;
+        }
+
+            .my-gallery img {
+                height: 200px;
+                width: auto;
+            }
+
+            .my-gallery figure {
+                display: block;
+                float: left;
+                margin: 0 5px 5px 0;
+                height: 200px;
+                position: relative;
+            }
+
+            .my-gallery figcaption {
+                display: none;
+            }
+
+        .cover-img {
+            background-image: linear-gradient(to bottom, rgba(0, 0, 0, .26), transparent 56px, transparent);
+            opacity: 1;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            position: absolute;
+            display: none;
+        }
+
+        .btn-del-imgatt {
+            font-size: 20px !important;
+            margin: 7px !important;
+            color: #fff !important;
+            opacity: .8 !important;
+            display: block;
+            border: none;
+            outline: 0;
+            z-index: 99999 !important;
+            background-color: transparent;
+        }
+
+        .my-gallery figure:hover .cover-img {
+            display: block;
+        }
+
+        .btn-del-imgatt:hover {
+            opacity: 1 !important;
+        }
+    </style>
+    <script src=https://www.gstatic.com/charts/loader.js></script>
+    <link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css>
+    <link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css>
+    <link href="~/Resources/Frontend/photoswipe.css" rel="stylesheet" />
+    <link href="~/Resources/Frontend/default-skin/default-skin.css" rel="stylesheet" />
+    <script src="~/Resources/Frontend/photoswipe.min.js"></script>
+    <script src="~/Resources/Frontend/photoswipe-ui-default.min.js"></script>
+
+
+    <link href="~/Scripts/vendor.6d5f399581939aadd0fd.css" rel="stylesheet" />
 </head>
-<body>
-<app>Loading...</app>
-<script src="~/Scripts/polyfills.ff33a945a752690309bd.js"></script>
-<script src="~/Scripts/vendor.ff33a945a752690309bd.js"></script>
-<script src="~/Scripts/app.ff33a945a752690309bd.js"></script>
+
+<body id=body>
+    <app>Loading...</app>
+    <script src="~/Scripts/polyfills.6d5f399581939aadd0fd.js"></script>
+    <script src="~/Scripts/vendor.6d5f399581939aadd0fd.js"></script>
+    <script src="~/Scripts/app.6d5f399581939aadd0fd.js"></script>
 </body>
+
 </html>

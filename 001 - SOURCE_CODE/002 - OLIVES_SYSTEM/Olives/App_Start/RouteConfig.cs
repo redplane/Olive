@@ -41,45 +41,45 @@ namespace Olives
                 new {controller = "Home", action = "Index", acid = UrlParameter.Optional});
             routes.MapRoute("PatientMedIndex", "patients/{acid}/medindex",
                 new {controller = "Home", action = "Index", acid = UrlParameter.Optional});
-            routes.MapRoute("PatientDiary", "patients/{acid}/diary",
+            routes.MapRoute("PatientDiary", "doctors/{acid}/diary",
                 new {controller = "Home", action = "Index", acid = UrlParameter.Optional});
-            routes.MapRoute("PatientMedRecords", "patients/{acid}/medrecords",
+
+
+            routes.MapRoute("MedRecords", "medicalrecords",
                 new {controller = "Home", action = "Index", acid = UrlParameter.Optional});
-            routes.MapRoute("PatientPrescriptions", "patients/{acid}/prescriptions",
-                new {controller = "Home", action = "Index", acid = UrlParameter.Optional});
-            routes.MapRoute("PatientMedRecordDetail", "patients/{acid}/medrecords/{mrid}",
-                new {controller = "Home", action = "Index", acid = UrlParameter.Optional, mrid = UrlParameter.Optional});
-            routes.MapRoute("PatientExpNotes", "patients/{acid}/medrecords/{mrid}/expnotes/add",
-                new {controller = "Home", action = "Index", acid = UrlParameter.Optional, mrid = UrlParameter.Optional});
-            routes.MapRoute("PatientExpNoteDetail", "patients/{acid}/medrecords/{mrid}/expnotes/{enid}",
-                new
-                {
-                    controller = "Home",
-                    action = "Index",
-                    acid = UrlParameter.Optional,
-                    mrid = UrlParameter.Optional,
-                    enid = UrlParameter.Optional
-                });
-            routes.MapRoute("PatientPrescriptionAdd", "patients/{acid}/medrecords/{mrid}/prescriptions/add",
-                new {controller = "Home", action = "Index", acid = UrlParameter.Optional, mrid = UrlParameter.Optional});
-            routes.MapRoute("PatientPrescriptionDetail", "patients/{acid}/medrecords/{mrid}/prescriptions/{pid}",
-                new
-                {
-                    controller = "Home",
-                    action = "Index",
-                    acid = UrlParameter.Optional,
-                    mrid = UrlParameter.Optional,
-                    pid = UrlParameter.Optional
-                });
-            routes.MapRoute("PatientPrescriptionEdit", "patients/{acid}/medrecords/{mrid}/prescriptions/{pid}/edit",
-                new
-                {
-                    controller = "Home",
-                    action = "Index",
-                    acid = UrlParameter.Optional,
-                    mrid = UrlParameter.Optional,
-                    pid = UrlParameter.Optional
-                });
+            routes.MapRoute("MedRecordsDetails", "medicalrecords/{mrid}",
+                new { controller = "Home", action = "Index", mrid = UrlParameter.Optional });
+            routes.MapRoute("MedRecordsIndex", "medicalrecords/{mrid}/index",
+                new { controller = "Home", action = "Index", mrid = UrlParameter.Optional });
+            routes.MapRoute("MedRecordsDetailsImage", "medicalrecords/{mrid}/images",
+                new { controller = "Home", action = "Index", mrid = UrlParameter.Optional });
+            routes.MapRoute("MedRecordsDetailsImageUpload", "medicalrecords/{mrid}/images/upload",
+                new { controller = "Home", action = "Index", mrid = UrlParameter.Optional });
+
+            routes.MapRoute("MedRecordsDetailsNotes", "medicalrecords/{mrid}/notes",
+                new { controller = "Home", action = "Index", mrid = UrlParameter.Optional });
+            routes.MapRoute("MedRecordsDetailsNotesAdd", "medicalrecords/{mrid}/notes/add",
+                new { controller = "Home", action = "Index", mrid = UrlParameter.Optional });
+            routes.MapRoute("MedRecordsDetailsNoteEdit", "medicalrecords/{mrid}/notes/edit",
+                new { controller = "Home", action = "Index", mrid = UrlParameter.Optional });
+
+            routes.MapRoute("MedRecordsDetailsExp", "medicalrecords/{mrid}/experiments",
+                new { controller = "Home", action = "Index", mrid = UrlParameter.Optional });
+            routes.MapRoute("MedRecordsDetailsExpAdd", "medicalrecords/{mrid}/experiments/add",
+                new { controller = "Home", action = "Index", mrid = UrlParameter.Optional });
+            routes.MapRoute("MedRecordsDetailsExpEdit", "medicalrecords/{mrid}/experiments/edit",
+                new { controller = "Home", action = "Index", mrid = UrlParameter.Optional });
+
+            routes.MapRoute("MedRecordsDetaisPres", "medicalrecords/{mrid}/prescriptions",
+                new { controller = "Home", action = "Index", mrid = UrlParameter.Optional });
+            routes.MapRoute("MedRecordsDetailsPresAdd", "medicalrecords/{mrid}/prescriptions/add",
+                new { controller = "Home", action = "Index", mrid = UrlParameter.Optional });
+            routes.MapRoute("MedRecordsDetailsPresEdit", "medicalrecords/{mrid}/prescriptions/edit",
+                new { controller = "Home", action = "Index", mrid = UrlParameter.Optional });
+
+
+
+
             routes.MapRoute("DoctorProfile", "doctors/{acid}",
                 new {controller = "Home", action = "Index", acid = UrlParameter.Optional});
             routes.MapRoute("DoctorAppointments", "doctors/{acid}/appointments",
