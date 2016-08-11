@@ -179,11 +179,13 @@ namespace Olives.Repositories.Medical
                     medicalRecords =
                         medicalRecords.Where(x => x.Creator == filter.Requester || x.Owner == filter.Requester);
                 else
+                {
                     medicalRecords =
                         medicalRecords.Where(
                             x =>
                                 (x.Creator == filter.Requester && x.Owner == filter.Partner.Value) ||
                                 (x.Creator == filter.Partner.Value && x.Owner == filter.Requester));
+                }
             }
 
 

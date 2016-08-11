@@ -56,11 +56,13 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            #region Medical record find
 
             // Find the medical record by using id.
             var medicalRecord = await _repositoryMedical.FindMedicalRecordAsync(id);
@@ -78,28 +80,21 @@ namespace Olives.Controllers
                 });
             }
 
-            // Requester doesn't take part in medical record.
-            if (requester.Id != medicalRecord.Owner)
+            #endregion
+
+            #region Relationship validate
+
+            var isRelationshipAvailable = await _repositoryRelation.IsPeopleConnected(requester.Id, medicalRecord.Owner);
+            if (!isRelationshipAvailable)
             {
-                // Find the relationship between the requester and owner.
-                var relationships =
-                    await
-                        _repositoryRelation.FindRelationshipAsync(requester.Id, medicalRecord.Owner,
-                            (byte) StatusRelation.Active);
-
-                if (relationships == null || relationships.Count < 1)
+                _log.Error($"No relationship between requester [Id: {requester.Id}] and owner [Id: {medicalRecord.Owner}] is found.");
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
-                    // Log the error.
-                    _log.Error(
-                        $"There is no relationship between Requester[Id: {requester.Id}] and Medical Record Owner [Id: {medicalRecord.Owner}]");
-
-                    // Tell client no record has been found.
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new
-                    {
-                        Error = $"{Language.WarnRecordNotFound}"
-                    });
-                }
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
             }
+
+            #endregion
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -139,7 +134,7 @@ namespace Olives.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> Post([FromBody] InitializeMedicalRecordViewModel info)
         {
             #region Parameters validate
@@ -161,54 +156,50 @@ namespace Olives.Controllers
 
             #endregion
 
-            #region Owner validate
+            #region Role to creator and owner
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
-            // Owner isn't defined. Owner will be the requester.
-            if (info.Owner == null)
+            // Requester is a doctor, that means he is always the creator.
+            if (requester.Role == (byte)Role.Doctor)
+            {
+                info.Creator = requester.Id;
+
+                // Doctor cannot create a medical record for him/herself.
+                if (info.Owner == null || info.Creator == info.Owner)
+                {
+                    _log.Error($"Doctor [Id: {requester.Id}] cannot create medical record for him/herself");
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                    {
+                        Error = $"{Language.WarnMedicalRecordDoctorToDoctor}"
+                    });
+                }
+            }
+            else
+            {
+                // Patient should be always the owner of medical record.
                 info.Owner = requester.Id;
 
-            // The requester is a doctor.
-            switch ((Role) requester.Role)
-            {
-                case Role.Doctor:
-                    // Doctor cannot create a medical record for him/herself.
-                    if (requester.Id == info.Owner.Value)
-                    {
-                        _log.Error($"Doctor [Id: {requester.Id}] cannot create medical record for him/herself");
-                        return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                        {
-                            Error = $"{Language.WarnMedicalRecordDoctorToDoctor}"
-                        });
-                    }
+                // No creator is specified, that means the patient is creating medical record for himself/herself.
+                if (info.Creator == null)
+                    info.Creator = requester.Id;
+                else
+                {
+                    // The creator doesn't have relationship with the owner.
+                    var rPeopleConnected =
+                        await _repositoryRelation.IsPeopleConnected(info.Creator.Value, info.Owner.Value);
 
-                    // Doctor doesn't have any relationship with patient.
-                    var isRelationshipAvailable =
-                        await _repositoryRelation.IsPeopleConnected(requester.Id, info.Owner.Value);
-                    if (!isRelationshipAvailable)
+                    // Creator and owner doesn't have any relationship.
+                    if (!rPeopleConnected)
                     {
-                        _log.Error(
-                            $"There is no relationship between doctor [Id: {requester.Id}] and owner [Id: {info.Owner}]");
+                        _log.Error($"Creator [Id: {info.Creator.Value}] doesn't have relationship with owner [Id: {info.Owner}]");
                         return Request.CreateResponse(HttpStatusCode.Forbidden, new
                         {
                             Error = $"{Language.WarnHasNoRelationship}"
                         });
                     }
-                    break;
-
-                default:
-                    // Owner and requester is different from each other.
-                    if (requester.Id != info.Owner.Value)
-                    {
-                        _log.Error($"Patient [{requester.Id}] can only create medical record for him/herself.");
-                        return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                        {
-                            Error = $"{Language.WarnRoleIsForbidden}"
-                        });
-                    }
-                    break;
+                }
             }
 
             #endregion
@@ -221,7 +212,7 @@ namespace Olives.Controllers
 
                 // Only filter and receive the first result.
                 var medicalRecord = new MedicalRecord();
-                medicalRecord.Creator = requester.Id;
+                medicalRecord.Creator = info.Creator.Value;
                 medicalRecord.Owner = info.Owner.Value;
                 medicalRecord.Category = info.Category;
                 medicalRecord.Info = JsonConvert.SerializeObject(info.Infos);
@@ -238,8 +229,8 @@ namespace Olives.Controllers
                 if (requester.Id != info.Owner.Value)
                 {
                     var notification = new Notification();
-                    notification.Type = (byte) NotificationType.Create;
-                    notification.Topic = (byte) NotificationTopic.MedicalRecord;
+                    notification.Type = (byte)NotificationType.Create;
+                    notification.Topic = (byte)NotificationTopic.MedicalRecord;
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = medicalRecord.Owner;
                     notification.Record = medicalRecord.Id;
@@ -285,7 +276,7 @@ namespace Olives.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPut]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] EditMedicalRecordViewModel info)
         {
             #region Paramters validation
@@ -310,7 +301,7 @@ namespace Olives.Controllers
             #region Medical record validation.
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find the record first.
             var medicalRecord = await _repositoryMedical.FindMedicalRecordAsync(id);
@@ -374,8 +365,8 @@ namespace Olives.Controllers
                 if (requester.Id != medicalRecord.Owner)
                 {
                     var notification = new Notification();
-                    notification.Type = (byte) NotificationType.Edit;
-                    notification.Topic = (byte) NotificationTopic.MedicalRecord;
+                    notification.Type = (byte)NotificationType.Edit;
+                    notification.Topic = (byte)NotificationTopic.MedicalRecord;
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
                     notification.Record = medicalRecord.Id;
@@ -408,7 +399,7 @@ namespace Olives.Controllers
                             medicalRecord.Person1.LastName,
                             medicalRecord.Person1.Role
                         },
-                        Category = new {},
+                        Category = new { },
                         result.Time,
                         result.Created,
                         result.LastModified
@@ -431,11 +422,11 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
-        [OlivesAuthorize(new[] {Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Patient })]
         public async Task<HttpResponseMessage> Delete([FromUri] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find the medical record.
             var medicalRecord = await _repositoryMedical.FindMedicalRecordAsync(id);
@@ -488,7 +479,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/medical/record/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
+        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
         public async Task<HttpResponseMessage> FilterMedicalRecord([FromBody] FilterMedicalRecordViewModel filter)
         {
             #region Paramters validation
@@ -515,10 +506,29 @@ namespace Olives.Controllers
             try
             {
                 // Retrieve information of person who sent request.
-                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Update the requester.
                 filter.Requester = requester.Id;
+
+                // Partner is specified, and mode is null.
+                // This means doctor wants to see every medical records of patients.
+                if (filter.Partner != null && filter.Mode == null)
+                {
+                    // Check the relationship between the requester and the owner.
+                    var isRelationshipAvailable =
+                        await _repositoryRelation.IsPeopleConnected(filter.Requester, filter.Partner.Value);
+
+                    // No relationship is found.
+                    if (!isRelationshipAvailable)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new
+                        {
+                            MedicalRecords = new object[0],
+                            Total = 0
+                        });
+                    }
+                }
 
                 // Filter medical records.
                 var results = await _repositoryMedical.FilterMedicalRecordAsync(filter);
