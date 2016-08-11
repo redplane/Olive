@@ -179,8 +179,8 @@ namespace Olives.Controllers
                     notification.Topic = (byte) NotificationTopic.PrescriptionImage;
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
-                    notification.Record = prescriptionImage.Id;
-                    notification.Message = string.Format(Language.NotifyPrescriptionImageCreate, requester.FullName);
+                    notification.Record = prescription.Id;
+                    notification.Message = string.Format(Language.NotifyPrescriptionImageCreate, requester.FullName, prescription.Name);
                     notification.Created = prescriptionImage.Created;
 
                     // Broadcast the notification with fault tolerant.

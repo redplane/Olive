@@ -252,7 +252,7 @@ namespace Olives.Controllers
                 notification.Broadcaster = requester.Id;
                 notification.Recipient = recipient;
                 notification.Record = prescription.Id;
-                notification.Message = string.Format(Language.NotifyPrescriptionCreate, requester.FullName);
+                notification.Message = string.Format(Language.NotifyPrescriptionCreate, requester.FullName, prescription.Name);
                 notification.Created = prescription.Created;
 
                 // Broadcast the notification with fault tolerant.

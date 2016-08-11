@@ -475,6 +475,15 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} uploaded an image for medical record.
+        /// </summary>
+        public static string NotifyMedicalImageCreate {
+            get {
+                return ResourceManager.GetString("NotifyMedicalImageCreate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} created a medical note.
         /// </summary>
         public static string NotifyMedicalNoteCreate {
@@ -511,7 +520,7 @@ namespace Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} created a prescription.
+        ///   Looks up a localized string similar to {0} created a prescription named {1}.
         /// </summary>
         public static string NotifyPrescriptionCreate {
             get {
@@ -520,7 +529,7 @@ namespace Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} uploaded a prescription image.
+        ///   Looks up a localized string similar to {0} uploaded an image for prescription {1}.
         /// </summary>
         public static string NotifyPrescriptionImageCreate {
             get {

@@ -169,7 +169,7 @@ namespace Olives.Controllers
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
                     notification.Record = medicalImage.Id;
-                    notification.Message = string.Format(Language.NotifyPrescriptionCreate, requester.FullName);
+                    notification.Message = string.Format(Language.NotifyMedicalImageCreate, requester.FullName);
                     notification.Created = medicalImage.Created;
 
                     // Broadcast the notification with fault tolerant.

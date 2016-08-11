@@ -84,7 +84,9 @@ namespace Olives.Repositories.Medical
         {
             // Database context initialization.
             var context = _dataContext.Context;
+
             IQueryable<ExperimentNote> experimentNotes = context.ExperimentNotes;
+            experimentNotes = FilterExperimentNotes(experimentNotes, filter);
             context.ExperimentNotes.RemoveRange(experimentNotes);
             var records = await context.SaveChangesAsync();
             return records;
@@ -197,6 +199,12 @@ namespace Olives.Repositories.Medical
             // Filter by medical record name.
             if (!string.IsNullOrWhiteSpace(filter.Name))
                 experimentNotes = experimentNotes.Where(x => x.Name.Contains(filter.Name));
+
+            // Time is defined.
+            if (filter.MinTime != null)
+                experimentNotes = experimentNotes.Where(x => x.Time >= filter.MinTime.Value);
+            if (filter.MaxTime != null)
+                experimentNotes = experimentNotes.Where(x => x.Time <= filter.MaxTime.Value);
 
             // Created is defined.
             if (filter.MinCreated != null)

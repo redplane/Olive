@@ -223,18 +223,7 @@
     <Content Include="Resources\Avatar\2.png" />
     <Content Include="Resources\Avatar\3.png" />
     <Content Include="Resources\Avatar\4.png" />
-    <Content Include="Scripts\app.ff33a945a752690309bd.js.map" />
-    <None Include="Scripts\jquery-2.2.4.intellisense.js" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\jquery-2.2.4.js" />
-    <Content Include="Scripts\jquery-2.2.4.min.js" />
-    <Content Include="Scripts\polyfills.ff33a945a752690309bd.js.map" />
-    <Content Include="Scripts\vendor.ff33a945a752690309bd.js.map" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Scripts\app.ff33a945a752690309bd.js" />
-    <Content Include="Scripts\polyfills.ff33a945a752690309bd.js" />
-    <Content Include="Scripts\vendor.ff33a945a752690309bd.js" />
     <Content Include="Views\Account\Index.html" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -379,7 +368,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\web.config" />
     <Content Include="Views\AccountVerify\Index.cshtml" />
-    <Content Include="Scripts\jquery-2.2.4.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -397,7 +385,9 @@
       <Name>Shared</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Scripts\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

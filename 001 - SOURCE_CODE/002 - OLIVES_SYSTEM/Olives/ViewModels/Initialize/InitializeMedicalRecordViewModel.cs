@@ -16,6 +16,11 @@ namespace Olives.ViewModels.Initialize
         public int? Owner { get; set; }
 
         /// <summary>
+        /// Id of the medical record creator.
+        /// </summary>
+        public int? Creator { get; set; }
+
+        /// <summary>
         ///     Id of category.
         /// </summary>
         [MedicalCategoryValidate(ErrorMessageResourceType = typeof (Language),

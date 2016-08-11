@@ -7,10 +7,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System.Data.Common;
-using System.Data.Entity.Core.EntityClient;
-using System.Data.Entity.Core.Objects;
-
 namespace Shared.Models
 {
     using System;
@@ -23,17 +19,7 @@ namespace Shared.Models
             : base("name=OlivesHealthEntities")
         {
         }
-
-        public OlivesHealthEntities(ObjectContext context) : base(context, true)
-        {
-            
-        }
-
-        public OlivesHealthEntities(DbConnection connection) : base(connection, true)
-        {
-            
-        }
-
+    
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();
@@ -65,5 +51,6 @@ namespace Shared.Models
         public virtual DbSet<Relation> Relations { get; set; }
         public virtual DbSet<Specialty> Specialties { get; set; }
         public virtual DbSet<SugarBlood> SugarBloods { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
     }
 }

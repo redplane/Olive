@@ -61,14 +61,10 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
         public async Task<HttpResponseMessage> FindDoctorAsync([FromUri] int id)
         {
             #region Result find
-
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
+            
             // Find the doctor by using id.
             var account =
                 await
@@ -85,23 +81,7 @@ namespace Olives.Controllers
             }
 
             #endregion
-
-            #region Relationship validate
-
-            if (requester.Role == (byte) Role.Doctor)
-            {
-                if (requester.Id != id)
-                {
-                    _log.Error($"Requester [Id: {requester.Id}] cannot see another doctor information");
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new
-                    {
-                        Error = $"{Language.WarnRecordNotFound}"
-                    });
-                }
-            }
-
-            #endregion
-
+            
             #region Result handling
 
             var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
@@ -353,7 +333,6 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/doctor/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> FilterDoctorAsync([FromBody] FilterDoctorViewModel filter)
         {
             #region Request parameters validation

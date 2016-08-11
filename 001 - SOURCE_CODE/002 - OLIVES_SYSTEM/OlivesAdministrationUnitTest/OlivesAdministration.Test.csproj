@@ -94,6 +94,7 @@
     <Compile Include="Controllers\AdminController\Login.cs" />
     <Compile Include="Controllers\DoctorController\Filter.cs" />
     <Compile Include="Controllers\DoctorController\Get.cs" />
+    <Compile Include="Controllers\MedicalController\FilterMedicalCategory.cs" />
     <Compile Include="Controllers\MedicalController\ModifyMedicalCategory.cs" />
     <Compile Include="Controllers\MedicalController\InitializeMedicalCategory.cs" />
     <Compile Include="Helpers\EnvironmentHelper.cs" />

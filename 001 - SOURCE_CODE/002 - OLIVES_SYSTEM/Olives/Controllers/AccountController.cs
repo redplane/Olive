@@ -423,6 +423,33 @@ namespace Olives.Controllers
             #endregion
 
             var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
+
+            if (account.Role == (byte) Role.Doctor)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    User = new
+                    {
+                        account.Id,
+                        account.Email,
+                        account.Password,
+                        account.FirstName,
+                        account.LastName,
+                        account.Birthday,
+                        account.Phone,
+                        account.Gender,
+                        account.Role,
+                        account.Created,
+                        account.LastModified,
+                        account.Status,
+                        account.Address,
+                        Photo =
+                            InitializeUrl(storageAvatar.Relative, account.Photo,
+                                Values.StandardImageExtension)
+                    }
+                });
+            }
+
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 User = new
@@ -441,8 +468,10 @@ namespace Olives.Controllers
                     account.Status,
                     account.Address,
                     Photo =
-                        InitializeUrl(storageAvatar.Relative, account.Photo,
-                            Values.StandardImageExtension)
+                            InitializeUrl(storageAvatar.Relative, account.Photo,
+                                Values.StandardImageExtension),
+                    account.Patient.Weight,
+                    account.Patient.Height
                 }
             });
         }

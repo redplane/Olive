@@ -20,6 +20,7 @@ namespace Shared.Models
         public int Creator { get; set; }
         public string Name { get; set; }
         public string Info { get; set; }
+        public double Time { get; set; }
         public double Created { get; set; }
         public Nullable<double> LastModified { get; set; }
     

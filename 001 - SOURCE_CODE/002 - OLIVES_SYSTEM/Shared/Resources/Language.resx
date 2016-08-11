@@ -499,12 +499,15 @@
     <value>{0} modified a medical note</value>
   </data>
   <data name="NotifyPrescriptionCreate" xml:space="preserve">
-    <value>{0} created a prescription</value>
+    <value>{0} created a prescription named {1}</value>
   </data>
   <data name="NotifyPrescriptionImageCreate" xml:space="preserve">
-    <value>{0} uploaded a prescription image</value>
+    <value>{0} uploaded an image for prescription {1}</value>
   </data>
   <data name="NotifyPrescriptionModified" xml:space="preserve">
     <value>{0} modified a prescription</value>
+  </data>
+  <data name="NotifyMedicalImageCreate" xml:space="preserve">
+    <value>{0} uploaded an image for medical record</value>
   </data>
 </root>

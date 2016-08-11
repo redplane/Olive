@@ -93,6 +93,7 @@ namespace Olives.Controllers
                     experimentNote.Owner,
                     experimentNote.Name,
                     experimentNote.Info,
+                    experimentNote.Time,
                     experimentNote.Created,
                     experimentNote.LastModified
                 }
@@ -171,10 +172,11 @@ namespace Olives.Controllers
             try
             {
                 #region Record initialization
-
+                
                 // Initialize note.
                 var note = new ExperimentNote();
                 note.Info = JsonConvert.SerializeObject(initializer.Infos);
+                note.Time = initializer.Time;
                 note.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
                 note.MedicalRecordId = initializer.MedicalRecord;
                 note.Name = initializer.Name;
@@ -309,19 +311,35 @@ namespace Olives.Controllers
             {
                 #region Record initialization
 
-                // Name is defined/
+                var isDataChanged = false;
+                if (modifier.Time != null)
+                {
+                    modifier.Time = modifier.Time;
+                    isDataChanged = true;
+                }
+
+                // Name is defined
                 if (!string.IsNullOrWhiteSpace(modifier.Name))
+                {
                     experimentNote.Name = modifier.Name;
+                    isDataChanged = true;
+                }
 
                 // Information is specified.
                 if (modifier.Infos != null)
+                {
                     experimentNote.Info = JsonConvert.SerializeObject(modifier.Infos);
+                    isDataChanged = true;
+                }
 
-                // Update the last modified time.
-                experimentNote.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+                if (isDataChanged)
+                {
+                    // Update the last modified time.
+                    experimentNote.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
-                // Update the experiment note.
-                experimentNote = await _repositoryExperimentNote.InitializeExperimentNote(experimentNote);
+                    // Update the experiment note.
+                    experimentNote = await _repositoryExperimentNote.InitializeExperimentNote(experimentNote);
+                }
 
                 #endregion
 
@@ -479,6 +497,7 @@ namespace Olives.Controllers
                         x.Creator,
                         x.Name,
                         x.Info,
+                        x.Time,
                         x.Created,
                         x.LastModified
                     }),

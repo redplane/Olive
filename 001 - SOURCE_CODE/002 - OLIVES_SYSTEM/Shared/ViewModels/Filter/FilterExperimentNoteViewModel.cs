@@ -79,6 +79,22 @@ namespace Shared.ViewModels.Filter
         public double? MaxLastModified { get; set; }
 
         /// <summary>
+        /// Time after which experiment was note about.
+        /// </summary>
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+        [NumericPropertyCompare("MaxTime", Comparision = Comparision.LowerEqual,
+            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+        public double? MinTime { get; set; }
+
+        /// <summary>
+        /// Time before which experiment had been note about.
+        /// </summary>
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+        [NumericPropertyCompare("MinTime", Comparision = Comparision.GreaterEqual,
+            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeGreaterThan")]
+        public double? MaxTime { get; set; }
+
+        /// <summary>
         ///     Which property should be used for sorting.
         /// </summary>
         [InEnumerationsArray(

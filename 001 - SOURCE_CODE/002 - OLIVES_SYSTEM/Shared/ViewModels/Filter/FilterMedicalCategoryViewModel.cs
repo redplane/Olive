@@ -10,6 +10,7 @@ namespace Shared.ViewModels.Filter
 {
     public class FilterMedicalCategoryViewModel : IPagination
     {
+        [StringLength(Values.MaxMedicalCategoryNameLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Name { get; set; }
 
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
