@@ -222,7 +222,7 @@ namespace Olives.Controllers
             if (modifier.Time != null)
                 heartbeat.Time = modifier.Time.Value;
 
-            if (!string.IsNullOrWhiteSpace(modifier.Note))
+            if (!string.IsNullOrEmpty(modifier.Note))
                 heartbeat.Note = modifier.Note;
 
             heartbeat.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);

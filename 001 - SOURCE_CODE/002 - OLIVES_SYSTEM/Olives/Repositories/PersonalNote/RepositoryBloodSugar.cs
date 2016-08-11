@@ -129,6 +129,10 @@ namespace Olives.Repositories.PersonalNote
         private IQueryable<SugarBlood> FilterBloodSugars(IQueryable<SugarBlood> bloodSugars,
             FilterBloodSugarViewModel filter)
         {
+            // Id is specified.
+            if (filter.Id != null)
+                bloodSugars = bloodSugars.Where(x => x.Id == filter.Id);
+
             // Owner has been specified.
             if (filter.Owner != null)
                 bloodSugars = bloodSugars.Where(x => x.Owner == filter.Owner);

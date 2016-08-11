@@ -261,7 +261,7 @@ namespace Olives.Controllers
             if (modifier.Time != null)
                 bloodPressureNote.Time = modifier.Time.Value;
 
-            if (!string.IsNullOrWhiteSpace(modifier.Note))
+            if (!string.IsNullOrEmpty(modifier.Note))
                 bloodPressureNote.Note = modifier.Note;
 
             // Update the last modified time.

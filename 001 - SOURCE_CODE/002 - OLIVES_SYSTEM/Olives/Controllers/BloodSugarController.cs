@@ -244,7 +244,7 @@ namespace Olives.Controllers
             if (modifier.Value != null)
                 bloodSugar.Value = modifier.Value.Value;
 
-            if (!string.IsNullOrWhiteSpace(bloodSugar.Note))
+            if (!string.IsNullOrEmpty(modifier.Note))
                 bloodSugar.Note = modifier.Note;
 
             bloodSugar.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);

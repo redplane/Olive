@@ -246,10 +246,10 @@ namespace Olives.Controllers
             #region Result update & handling
 
             // Update the information.
-            if (!string.IsNullOrWhiteSpace(modifier.Cause))
+            if (!string.IsNullOrEmpty(modifier.Cause))
                 addiction.Cause = modifier.Cause;
 
-            if (!string.IsNullOrWhiteSpace(modifier.Note))
+            if (!string.IsNullOrEmpty(modifier.Note))
                 addiction.Note = modifier.Note;
 
             // Update the last time record was lastly modified.

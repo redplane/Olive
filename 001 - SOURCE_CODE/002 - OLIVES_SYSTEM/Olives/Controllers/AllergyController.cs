@@ -238,13 +238,13 @@ namespace Olives.Controllers
             #region Result handling
 
             // Confirm edit.
-            if (!string.IsNullOrWhiteSpace(modifier.Name))
+            if (!string.IsNullOrEmpty(modifier.Name))
                 allergy.Name = modifier.Name;
 
-            if (!string.IsNullOrWhiteSpace(modifier.Cause))
+            if (!string.IsNullOrEmpty(modifier.Cause))
                 allergy.Cause = modifier.Cause;
 
-            if (!string.IsNullOrWhiteSpace(modifier.Note))
+            if (!string.IsNullOrEmpty(modifier.Note))
                 allergy.Note = modifier.Note;
 
             // Update time when the record was lastly modified.
