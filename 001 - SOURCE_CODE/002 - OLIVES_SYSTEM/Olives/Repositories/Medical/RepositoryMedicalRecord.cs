@@ -125,6 +125,14 @@ namespace Olives.Repositories.Medical
 
                     #endregion
 
+                    #region Medical record
+
+                    IQueryable<MedicalRecord> medicalRecords = context.MedicalRecords;
+                    medicalRecords = medicalRecords.Where(x => x.Id == id);
+                    context.MedicalRecords.RemoveRange(medicalRecords);
+
+                    #endregion
+
                     // Save changes asynchronously.
                     var records = await context.SaveChangesAsync();
 
