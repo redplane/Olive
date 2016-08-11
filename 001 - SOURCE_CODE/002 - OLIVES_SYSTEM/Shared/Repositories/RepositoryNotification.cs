@@ -41,7 +41,9 @@ namespace Shared.Repositories
             var context = _dataContext.Context;
             IQueryable<Notification> notifications = context.Notifications;
 
-            // Filter by requester mode.
+            // Id is specified.
+            if (filter.Id != null)
+                notifications = notifications.Where(x => x.Id == filter.Id);
 
             // Base on the mode of image filter to decide the role of requester.
             if (filter.Mode == RecordFilterMode.RequesterIsOwner)
