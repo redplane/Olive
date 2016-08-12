@@ -212,7 +212,6 @@ namespace OlivesAdministration.Controllers
         /// <returns></returns>
         [Route("api/medical/category/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> FilterCategories([FromBody] FilterMedicalCategoryViewModel filter)
         {
             // Filter hasn't been initialized before.

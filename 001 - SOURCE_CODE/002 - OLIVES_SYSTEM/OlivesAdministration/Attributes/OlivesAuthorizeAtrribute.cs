@@ -2,17 +2,24 @@
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Web.Http;
 using System.Web.Http.Controllers;
+using System.Web.Mvc;
+using OlivesAdministration.Interfaces;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Resources;
+using AuthorizeAttribute = System.Web.Http.AuthorizeAttribute;
 
 namespace OlivesAdministration.Attributes
 {
     public class OlivesAuthorize : AuthorizeAttribute
     {
+        /// <summary>
+        /// Repository of accound with extended functions.
+        /// </summary>
+        public IRepositoryAccountExtended RepositoryAccountExtended { get; set; }
+
         /// <summary>
         ///     Initialize an instance of OlivesAuthorize attribute with allowed roles.
         /// </summary>
@@ -21,11 +28,7 @@ namespace OlivesAdministration.Attributes
         {
             Roles = Array.ConvertAll(roles, x => (int) x);
         }
-
-        /// <summary>
-        ///     Repository of accounts.
-        /// </summary>
-        public IRepositoryAccount AccountsRepository { get; set; }
+        
 
         /// <summary>
         ///     Which roles can access this function.
@@ -65,9 +68,9 @@ namespace OlivesAdministration.Attributes
 
                 return;
             }
-
+            
             // Retrieve person whose properties match conditions.
-            var person = AccountsRepository.FindPerson(null, accountEmail, accountPassword, null, null);
+            var person = RepositoryAccountExtended.FindPerson(null, accountEmail, accountPassword, null, null);
 
             // No person has been found.
             if (person == null)
