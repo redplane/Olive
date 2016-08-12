@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Configuration;
 using System.IO;
+using System.Reflection;
 using System.Web;
 using System.Web.Http;
+using System.Web.Mvc;
 using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.WebApi;
 using Newtonsoft.Json;
 using OlivesAdministration.Attributes;
+using OlivesAdministration.Controllers;
 using OlivesAdministration.Interfaces;
 using OlivesAdministration.Models;
 using OlivesAdministration.Module;
 using OlivesAdministration.Repositories;
 using Shared.Interfaces;
 using Shared.Repositories;
+using Shared.Services;
 
 namespace OlivesAdministration
 {
@@ -61,7 +65,8 @@ namespace OlivesAdministration
             builder.RegisterType<RepositoryAccountExtended>().As<IRepositoryAccountExtended>().SingleInstance();
             builder.RegisterType<RepositoryPlace>().As<IRepositoryPlace>().SingleInstance();
             builder.RegisterType<RepositoryMedicalCategory>().As<IRepositoryMedicalCategory>().SingleInstance();
-
+            builder.RegisterType<TimeService>().As<ITimeService>().SingleInstance();
+            
             var repositoryStorage = new RepositoryStorage(HttpContext.Current);
             foreach (var key in applicationSetting.Storage.Keys)
                 repositoryStorage.InitializeStorage(key, applicationSetting.Storage[key]);
@@ -91,7 +96,6 @@ namespace OlivesAdministration
             builder.RegisterWebApiFilterProvider(GlobalConfiguration.Configuration);
             var container = builder.Build();
             GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
-
             #endregion
         }
     }

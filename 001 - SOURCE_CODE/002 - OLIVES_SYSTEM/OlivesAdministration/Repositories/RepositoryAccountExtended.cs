@@ -192,7 +192,7 @@ namespace OlivesAdministration.Repositories
                     .Take(filter.Records.Value);
             }
 
-            responseFilter.Doctors = doctors;
+            responseFilter.Doctors = await doctors.ToListAsync();
             return responseFilter;
 
             #endregion
@@ -338,7 +338,7 @@ namespace OlivesAdministration.Repositories
             }
 
             // Take the list of filtered patient.
-            response.Patients = patients;
+            response.Patients = await patients.ToListAsync();
             return response;
 
             #endregion
