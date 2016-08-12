@@ -17,6 +17,8 @@ namespace Shared.Models
         public int Id { get; set; }
         public byte Type { get; set; }
         public byte Topic { get; set; }
+        public Nullable<int> Container { get; set; }
+        public Nullable<byte> ContainerType { get; set; }
         public int Broadcaster { get; set; }
         public int Recipient { get; set; }
         public int Record { get; set; }

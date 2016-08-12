@@ -227,6 +227,8 @@ namespace Olives.Controllers
                     var notification = new Notification();
                     notification.Type = (byte)NotificationType.Create;
                     notification.Topic = (byte)NotificationTopic.MedicalRecord;
+                    notification.Container = medicalRecord.Id;
+                    notification.ContainerType = (byte) NotificationTopic.MedicalRecord;
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = medicalRecord.Owner;
                     notification.Record = medicalRecord.Id;
@@ -363,6 +365,8 @@ namespace Olives.Controllers
                     var notification = new Notification();
                     notification.Type = (byte)NotificationType.Edit;
                     notification.Topic = (byte)NotificationTopic.MedicalRecord;
+                    notification.Container = medicalRecord.Id;
+                    notification.ContainerType = (byte)NotificationTopic.MedicalRecord;
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
                     notification.Record = medicalRecord.Id;

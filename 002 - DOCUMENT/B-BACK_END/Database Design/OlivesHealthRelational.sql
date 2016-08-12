@@ -352,6 +352,8 @@ CREATE TABLE Notification
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	Type					TINYINT NOT NULL,
 	Topic					TINYINT NOT NULL,
+	Container				INT,
+	ContainerType			TINYINT,
 	Broadcaster				INT NOT NULL,
 	Recipient				INT NOT NULL,
 	Record					INT NOT NULL,

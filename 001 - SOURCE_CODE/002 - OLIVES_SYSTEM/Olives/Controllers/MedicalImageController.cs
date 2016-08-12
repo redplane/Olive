@@ -165,6 +165,8 @@ namespace Olives.Controllers
                     var notification = new Notification();
                     notification.Type = (byte) NotificationType.Create;
                     notification.Topic = (byte) NotificationTopic.MedicalImage;
+                    notification.Container = medicalRecord.Id;
+                    notification.ContainerType = (byte) NotificationTopic.MedicalRecord;
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
                     notification.Record = medicalImage.Id;

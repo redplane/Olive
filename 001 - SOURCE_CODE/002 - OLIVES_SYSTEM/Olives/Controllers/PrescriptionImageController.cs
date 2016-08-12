@@ -89,12 +89,12 @@ namespace Olives.Controllers
             }
 
             #endregion
-
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
+            
             #region Prescription validation
 
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            
             // Find the medical prescription.
             var prescription = await _repositoryPrescription.FindPrescriptionAsync(initializer.Prescription);
 
@@ -177,6 +177,8 @@ namespace Olives.Controllers
                     var notification = new Notification();
                     notification.Type = (byte) NotificationType.Create;
                     notification.Topic = (byte) NotificationTopic.PrescriptionImage;
+                    notification.Container = prescription.Id;
+                    notification.ContainerType = (byte) NotificationTopic.Prescription;
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
                     notification.Record = prescription.Id;

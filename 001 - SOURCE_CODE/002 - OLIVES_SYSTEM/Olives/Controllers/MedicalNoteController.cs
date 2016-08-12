@@ -135,9 +135,6 @@ namespace Olives.Controllers
         public async Task<HttpResponseMessage> InitializeMedicalNoteAsync(
             [FromBody] InitializeMedicalNoteViewModel initializer)
         {
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
             #region Paramters validation
 
             // Model hasn't been initialized.
@@ -159,6 +156,9 @@ namespace Olives.Controllers
 
             #region Medical record validation
 
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            
             // Find the medical record.
             var medicalRecord = await _repositoryMedicalRecord.FindMedicalRecordAsync(initializer.MedicalRecord);
 
@@ -222,6 +222,8 @@ namespace Olives.Controllers
                     var notification = new Notification();
                     notification.Type = (byte) NotificationType.Create;
                     notification.Topic = (byte) NotificationTopic.MedicalNote;
+                    notification.Container = medicalRecord.Id;
+                    notification.ContainerType = (byte) NotificationTopic.MedicalRecord;
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
                     notification.Record = medicalNote.Id;
@@ -364,6 +366,8 @@ namespace Olives.Controllers
                     var notification = new Notification();
                     notification.Type = (byte) NotificationType.Create;
                     notification.Topic = (byte) NotificationTopic.MedicalNote;
+                    notification.Container = medicalNote.MedicalRecordId;
+                    notification.ContainerType = (byte) NotificationTopic.MedicalRecord;
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
                     notification.Record = medicalNote.Id;

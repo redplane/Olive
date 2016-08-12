@@ -202,21 +202,27 @@ namespace Olives.Controllers
 
                 #region Notification broadcast
 
-                var recipient = prescription.Owner;
-                if (requester.Id == prescription.Owner)
-                    recipient = prescription.Creator;
+                if (prescription.Owner != prescription.Creator)
+                {
+                    var recipient = prescription.Owner;
+                    if (requester.Id == prescription.Owner)
+                        recipient = prescription.Creator;
 
-                var notification = new Notification();
-                notification.Type = (byte) NotificationType.Create;
-                notification.Topic = (byte) NotificationTopic.Prescription;
-                notification.Broadcaster = requester.Id;
-                notification.Recipient = recipient;
-                notification.Record = prescription.Id;
-                notification.Message = string.Format(Language.NotifyPrescriptionCreate, requester.FullName, prescription.Name);
-                notification.Created = prescription.Created;
+                    var notification = new Notification();
+                    notification.Type = (byte) NotificationType.Create;
+                    notification.Topic = (byte) NotificationTopic.Prescription;
+                    notification.Container = medicalRecord.Id;
+                    notification.ContainerType = (byte) NotificationTopic.MedicalRecord;
+                    notification.Broadcaster = requester.Id;
+                    notification.Recipient = recipient;
+                    notification.Record = prescription.Id;
+                    notification.Message = string.Format(Language.NotifyPrescriptionCreate, requester.FullName,
+                        prescription.Name);
+                    notification.Created = prescription.Created;
 
-                // Broadcast the notification with fault tolerant.
-                await _notificationService.BroadcastNotificationAsync(notification, Hub);
+                    // Broadcast the notification with fault tolerant.
+                    await _notificationService.BroadcastNotificationAsync(notification, Hub);
+                }
 
                 #endregion
 
@@ -360,21 +366,26 @@ namespace Olives.Controllers
 
                     #region Notification broadcast
 
-                    var recipient = prescription.Owner;
-                    if (requester.Id == prescription.Owner)
-                        recipient = prescription.Creator;
+                    if (prescription.Owner != prescription.Creator)
+                    {
+                        var recipient = prescription.Owner;
+                        if (requester.Id == prescription.Owner)
+                            recipient = prescription.Creator;
 
-                    var notification = new Notification();
-                    notification.Type = (byte) NotificationType.Edit;
-                    notification.Topic = (byte) NotificationTopic.Prescription;
-                    notification.Broadcaster = requester.Id;
-                    notification.Recipient = recipient;
-                    notification.Record = prescription.Id;
-                    notification.Message = string.Format(Language.NotifyPrescriptionModified, requester.FullName);
-                    notification.Created = unix;
+                        var notification = new Notification();
+                        notification.Type = (byte) NotificationType.Edit;
+                        notification.Topic = (byte) NotificationTopic.Prescription;
+                        notification.Container = prescription.MedicalRecordId;
+                        notification.ContainerType = (byte) NotificationTopic.MedicalRecord;
+                        notification.Broadcaster = requester.Id;
+                        notification.Recipient = recipient;
+                        notification.Record = prescription.Id;
+                        notification.Message = string.Format(Language.NotifyPrescriptionModified, requester.FullName);
+                        notification.Created = unix;
 
-                    // Broadcast the notification with fault tolerant.
-                    await _notificationService.BroadcastNotificationAsync(notification, Hub);
+                        // Broadcast the notification with fault tolerant.
+                        await _notificationService.BroadcastNotificationAsync(notification, Hub);
+                    }
 
                     #endregion
                 }
