@@ -11,7 +11,7 @@ DROP TABLE Prescription;
 DROP TABLE MedicalRecord;
 DROP TABLE MedicalCategory;
 DROP TABLE AccountCode;
-DROP TABLE Allergy;
+DROP TABLE Allergy;Ex
 DROP TABLE Addiction;
 DROP TABLE SugarBlood;
 DROP TABLE BloodPressure;
@@ -315,6 +315,7 @@ CREATE TABLE ExperimentNote
 	Creator					INT NOT NULL,
 	Name					NVARCHAR(32) NOT NULL,
 	Info					NVARCHAR(MAX),
+	Time					FLOAT NOT NULL,
 	Created					FLOAT NOT NULL,
 	LastModified			FLOAT,
 	

@@ -158,6 +158,9 @@ namespace Olives.Repositories.Medical
             // Base on the requester's role to do the exact filter.
             prescriptions = FilterPrescriptionByRequesterRole(prescriptions, filter, context);
 
+            if (filter.Id != null)
+                prescriptions = prescriptions.Where(x => x.Id == filter.Id.Value);
+
             // Medical record is defined.
             if (filter.MedicalRecord != null)
                 prescriptions = prescriptions.Where(x => x.MedicalRecordId == filter.MedicalRecord);

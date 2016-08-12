@@ -253,30 +253,7 @@ namespace Olives.Controllers
 
             #endregion
         }
-
-        [Route("api/message/filter/people")]
-        public async Task<HttpResponseMessage> FilterMessagePeople([FromBody] FilterConversationViewModel filter)
-        {
-            #region Request parameters validation
-
-            if (filter == null)
-            {
-                filter = new FilterConversationViewModel();
-                Validate(filter);
-            }
-
-            if (!ModelState.IsValid)
-                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-
-            #endregion
-
-            #region Filter initialization
-
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            filter.Requester = requester.Id;
-
-            #endregion
-        }
+        
         #endregion
 
         #region Properties

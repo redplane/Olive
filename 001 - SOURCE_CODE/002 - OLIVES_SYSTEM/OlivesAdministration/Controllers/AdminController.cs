@@ -43,7 +43,7 @@ namespace OlivesAdministration.Controllers
 
         #endregion
 
-        #region Login
+        #region Methods
 
         /// <summary>
         ///     This function is for posting login information to service.

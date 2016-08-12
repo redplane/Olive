@@ -317,7 +317,6 @@
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\NotificationService.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="ViewModels\ConversationViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditDiaryViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditMedicalNoteViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditMedicalRecordViewModel.cs" />
@@ -334,7 +333,6 @@
     <Compile Include="ViewModels\Edit\InitializeNewPasswordViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterDiaryViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterDoctorViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterConversationViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMessageViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPatientViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterRelatedPeopleViewModel.cs" />
@@ -363,7 +361,6 @@
     <Compile Include="ViewModels\Initialize\InitializeBloodSugarViewModel.cs" />
     <Compile Include="ViewModels\MedicineInfoViewModel.cs" />
     <Compile Include="ViewModels\RequestActivationCodeViewModel.cs" />
-    <Compile Include="ViewModels\Response\ResponseConversationFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseDiaryFilter.cs" />
   </ItemGroup>
   <ItemGroup>

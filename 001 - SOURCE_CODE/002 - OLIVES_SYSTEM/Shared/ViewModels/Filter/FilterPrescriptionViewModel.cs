@@ -12,6 +12,11 @@ namespace Shared.ViewModels.Filter
     public class FilterPrescriptionViewModel : IPagination
     {
         /// <summary>
+        /// Id of prescription.
+        /// </summary>
+        public int? Id { get; set; }
+
+        /// <summary>
         ///     Medical record which contains prescription.
         /// </summary>
         public int? MedicalRecord { get; set; }

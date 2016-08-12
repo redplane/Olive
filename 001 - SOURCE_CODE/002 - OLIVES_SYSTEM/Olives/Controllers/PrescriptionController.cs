@@ -70,6 +70,7 @@ namespace Olives.Controllers
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
             
             var filter = new FilterPrescriptionViewModel();
+            filter.Id = id;
             filter.Requester = requester;
             
             // Do the filter.
