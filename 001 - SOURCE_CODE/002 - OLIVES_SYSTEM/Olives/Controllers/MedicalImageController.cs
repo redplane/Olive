@@ -9,7 +9,6 @@ using System.Web.Http;
 using log4net;
 using Olives.Attributes;
 using Olives.Constants;
-using Olives.Enumerations;
 using Olives.Hubs;
 using Olives.Interfaces;
 using Olives.Interfaces.Medical;
@@ -256,21 +255,21 @@ namespace Olives.Controllers
         /// <summary>
         ///     Filter medical images by using specific conditions.
         /// </summary>
-        /// <param name="info"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
         [Route("api/medical/image/filter")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> FilterMedicalImage([FromBody] FilterMedicalImageViewModel info)
+        public async Task<HttpResponseMessage> FilterMedicalImage([FromBody] FilterMedicalImageViewModel filter)
         {
             #region Request parameters validation
 
             // Model hasn't been initialized.
-            if (info == null)
+            if (filter == null)
             {
                 // Initialize it and do the validation.
-                info = new FilterMedicalImageViewModel();
-                Validate(info);
+                filter = new FilterMedicalImageViewModel();
+                Validate(filter);
             }
 
             // Invalid model state.
@@ -286,12 +285,12 @@ namespace Olives.Controllers
 
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            info.Requester = requester.Id;
+            filter.Requester = requester;
 
             try
             {
                 // Filter medical images by using specific conditions.
-                var results = await _repositoryMedicalImage.FilterMedicalImageAsync(info);
+                var results = await _repositoryMedicalImage.FilterMedicalImageAsync(filter);
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     MedicalImages = results.MedicalImages.Select(x => new

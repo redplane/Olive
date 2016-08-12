@@ -4,6 +4,7 @@ using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;
+using Shared.Models;
 using Shared.Resources;
 
 namespace Shared.ViewModels.Filter
@@ -18,18 +19,13 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         ///     Who sent the filter request.
         /// </summary>
-        public int Requester { get; set; }
+        public Person Requester { get; set; }
 
         /// <summary>
         ///     Who is included in medical prescription.
         /// </summary>
         public int? Partner { get; set; }
-
-        /// <summary>
-        ///     Filter mode.
-        /// </summary>
-        public RecordFilterMode? Mode { get; set; }
-
+        
         [NumericPropertyCompare("MaxFrom", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,

@@ -302,7 +302,7 @@ namespace Olives.Controllers
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Requester initialization.
-            filter.Requester = requester.Id;
+            filter.Requester = requester;
 
             #endregion
 

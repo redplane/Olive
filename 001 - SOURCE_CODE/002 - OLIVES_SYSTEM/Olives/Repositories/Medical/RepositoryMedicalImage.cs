@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -41,35 +42,7 @@ namespace Olives.Repositories.Medical
             // By default, take all records.
             var context = _dataContext.Context;
             IQueryable<MedicalImage> medicalImages = context.MedicalImages;
-
-            // Filter by medical record id.
-            medicalImages = medicalImages.Where(x => x.MedicalRecordId == filter.MedicalRecord);
-
-            // Base on the mode of image filter to decide the role of requester.
-            if (filter.Mode == RecordFilterMode.RequesterIsOwner)
-            {
-                medicalImages = medicalImages.Where(x => x.Owner == filter.Requester);
-                if (filter.Partner != null)
-                    medicalImages = medicalImages.Where(x => x.Creator == filter.Partner.Value);
-            }
-            else if (filter.Mode == RecordFilterMode.RequesterIsCreator)
-            {
-                medicalImages = medicalImages.Where(x => x.Creator == filter.Requester);
-                if (filter.Partner != null)
-                    medicalImages = medicalImages.Where(x => x.Owner == filter.Partner);
-            }
-            else
-            {
-                if (filter.Partner == null)
-                    medicalImages =
-                        medicalImages.Where(x => x.Creator == filter.Requester || x.Owner == filter.Requester);
-                else
-                    medicalImages =
-                        medicalImages.Where(
-                            x =>
-                                (x.Creator == filter.Requester && x.Owner == filter.Partner.Value) ||
-                                (x.Creator == filter.Partner.Value && x.Owner == filter.Requester));
-            }
+            medicalImages = FilterMedicalImages(medicalImages, filter, context);
 
             switch (filter.Direction)
             {
@@ -167,7 +140,73 @@ namespace Olives.Repositories.Medical
             return info;
         }
 
-        
+        /// <summary>
+        /// Filter medical images by using specific conditions and based on requester role.
+        /// </summary>
+        /// <param name="medicalImages"></param>
+        /// <param name="filter"></param>
+        /// <param name="olivesHealthEntities"></param>
+        /// <returns></returns>
+        private IQueryable<MedicalImage> FilterMedicalImages(IQueryable<MedicalImage> medicalImages,
+            FilterMedicalImageViewModel filter, OlivesHealthEntities olivesHealthEntities)
+        {
+            // Filter image by role.
+            medicalImages = FilterMedicalImagesByRequesterRole(medicalImages, filter, olivesHealthEntities);
+
+            // Filter by medical record id.
+            medicalImages = medicalImages.Where(x => x.MedicalRecordId == filter.MedicalRecord);
+
+            // Created is specified.
+            if (filter.MinCreated != null)
+                medicalImages = medicalImages.Where(x => x.Created >= filter.MinCreated.Value);
+            if (filter.MaxCreated != null)
+                medicalImages = medicalImages.Where(x => x.Created <= filter.MaxCreated.Value);
+
+            return medicalImages;
+        }
+
+        /// <summary>
+        /// Base on the requester role to do exact filter function.
+        /// </summary>
+        /// <param name="medicalImages"></param>
+        /// <param name="filter"></param>
+        /// <param name="olivesHealthEntities"></param>
+        /// <returns></returns>
+        private IQueryable<MedicalImage> FilterMedicalImagesByRequesterRole(IQueryable<MedicalImage> medicalImages,
+            FilterMedicalImageViewModel filter, OlivesHealthEntities olivesHealthEntities)
+        {
+            // Requester is not defined.
+            if (filter.Requester == null)
+                throw new Exception("Requester must be specified.");
+
+            // Patient only can see his/her records.
+            if (filter.Requester.Role == (byte)Role.Patient)
+            {
+                medicalImages = medicalImages.Where(x => x.Owner == filter.Requester.Id);
+                if (filter.Partner != null)
+                    medicalImages = medicalImages.Where(x => x.Creator == filter.Partner.Value);
+
+                return medicalImages;
+            }
+
+            // Doctor can see every record whose owner has connection to him/her.
+            IQueryable<Relation> relationships = olivesHealthEntities.Relations;
+            relationships = relationships.Where(x => x.Status == (byte)StatusRelation.Active);
+            relationships = relationships.Where(x => x.Target == filter.Requester.Id);
+
+            // Partner is specified. This means to be a patient
+            // Only patient can send request to doctor, that means he/she is the source of relationship.
+            if (filter.Partner != null)
+                relationships = relationships.Where(x => x.Source == filter.Partner.Value);
+
+            var results = from r in relationships
+                          from m in medicalImages
+                          where r.Source == m.Owner || m.Creator == filter.Requester.Id
+                          select m;
+
+            return results;
+        }
+
         #endregion
     }
 }

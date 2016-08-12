@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -70,7 +71,9 @@ namespace Olives.Repositories.Medical
             // By default, take all record by searching creator id.
             var context = _dataContext.Context;
             IQueryable<MedicalNote> medicalNotes = context.MedicalNotes;
-            medicalNotes = FilterMedicalNotes(medicalNotes, filter);
+
+            // Do the basic filter.
+            medicalNotes = FilterMedicalNotes(medicalNotes, filter, context);
 
             // Result sort.
             switch (filter.Direction)
@@ -136,10 +139,14 @@ namespace Olives.Repositories.Medical
         /// </summary>
         /// <param name="medicalNotes"></param>
         /// <param name="filter"></param>
+        /// <param name="olivesHealthEntities"></param>
         /// <returns></returns>
         private IQueryable<MedicalNote> FilterMedicalNotes(IQueryable<MedicalNote> medicalNotes,
-            FilterMedicalNoteViewModel filter)
+            FilterMedicalNoteViewModel filter, OlivesHealthEntities olivesHealthEntities)
         {
+            // Base on requester role to do filter.
+            medicalNotes = FilterMedicalNotesByRequesterRole(medicalNotes, filter, olivesHealthEntities);
+
             // Id is defined.
             if (filter.Id != null)
                 medicalNotes = medicalNotes.Where(x => x.Id == filter.Id.Value);
@@ -147,33 +154,7 @@ namespace Olives.Repositories.Medical
             // Medical record is defined.
             if (filter.MedicalRecord != null)
                 medicalNotes = medicalNotes.Where(x => x.MedicalRecordId == filter.MedicalRecord);
-
-            // Base on the mode of image filter to decide the role of requester.
-            if (filter.Mode == RecordFilterMode.RequesterIsOwner)
-            {
-                medicalNotes = medicalNotes.Where(x => x.Owner == filter.Requester);
-                if (filter.Partner != null)
-                    medicalNotes = medicalNotes.Where(x => x.Creator == filter.Partner.Value);
-            }
-            else if (filter.Mode == RecordFilterMode.RequesterIsCreator)
-            {
-                medicalNotes = medicalNotes.Where(x => x.Creator == filter.Requester);
-                if (filter.Partner != null)
-                    medicalNotes = medicalNotes.Where(x => x.Owner == filter.Partner);
-            }
-            else
-            {
-                if (filter.Partner == null)
-                    medicalNotes =
-                        medicalNotes.Where(x => x.Creator == filter.Requester || x.Owner == filter.Requester);
-                else
-                    medicalNotes =
-                        medicalNotes.Where(
-                            x =>
-                                (x.Creator == filter.Requester && x.Owner == filter.Partner.Value) ||
-                                (x.Creator == filter.Partner.Value && x.Owner == filter.Requester));
-            }
-
+            
             // Note is specified.
             if (filter.Note != null)
                 medicalNotes = medicalNotes.Where(x => x.Note.Contains(filter.Note));
@@ -196,6 +177,48 @@ namespace Olives.Repositories.Medical
         }
 
         /// <summary>
+        /// Base on the requester role to do exact filter function.
+        /// </summary>
+        /// <param name="medicalNotes"></param>
+        /// <param name="filter"></param>
+        /// <param name="olivesHealthEntities"></param>
+        /// <returns></returns>
+        private IQueryable<MedicalNote> FilterMedicalNotesByRequesterRole(IQueryable<MedicalNote> medicalNotes,
+            FilterMedicalNoteViewModel filter, OlivesHealthEntities olivesHealthEntities)
+        {
+            // Requester is not defined.
+            if (filter.Requester == null)
+                throw new Exception("Requester must be specified.");
+
+            // Patient only can see his/her records.
+            if (filter.Requester.Role == (byte)Role.Patient)
+            {
+                medicalNotes = medicalNotes.Where(x => x.Owner == filter.Requester.Id);
+                if (filter.Partner != null)
+                    medicalNotes = medicalNotes.Where(x => x.Creator == filter.Partner.Value);
+
+                return medicalNotes;
+            }
+
+            // Doctor can see every record whose owner has connection to him/her.
+            IQueryable<Relation> relationships = olivesHealthEntities.Relations;
+            relationships = relationships.Where(x => x.Status == (byte)StatusRelation.Active);
+            relationships = relationships.Where(x => x.Target == filter.Requester.Id);
+
+            // Partner is specified. This means to be a patient
+            // Only patient can send request to doctor, that means he/she is the source of relationship.
+            if (filter.Partner != null)
+                relationships = relationships.Where(x => x.Source == filter.Partner.Value);
+
+            var results = from r in relationships
+                          from m in medicalNotes
+                          where r.Source == m.Owner || m.Creator == filter.Requester.Id
+                          select m;
+
+            return results;
+        }
+
+        /// <summary>
         ///     Delete medical note by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>
@@ -204,7 +227,7 @@ namespace Olives.Repositories.Medical
         {
             var context = _dataContext.Context;
             IQueryable<MedicalNote> medicalNotes = context.MedicalNotes;
-            medicalNotes = FilterMedicalNotes(medicalNotes, filter);
+            medicalNotes = FilterMedicalNotes(medicalNotes, filter, context);
 
             // Remove records.
             context.MedicalNotes.RemoveRange(medicalNotes);

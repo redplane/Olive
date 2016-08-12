@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Web.ModelBinding;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Enumerations.Filter;
 using Shared.Interfaces;
+using Shared.Models;
 using Shared.Resources;
 
 namespace Shared.ViewModels.Filter
@@ -13,7 +14,8 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         ///     Id of person who sent the filter request.
         /// </summary>
-        public int Requester { get; set; }
+        [BindNever]
+        public Person Requester { get; set; }
 
         /// <summary>
         ///     Person who created / received the image.
@@ -25,16 +27,23 @@ namespace Shared.ViewModels.Filter
         /// </summary>
         public int MedicalRecord { get; set; }
 
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
+            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeGreaterThan")]
+        [NumericPropertyCompare("MaxCreated", Comparision = Comparision.LowerEqual,
+            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+        public double? MinCreated { get; set; }
+
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
+            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeGreaterThan")]
+        [NumericPropertyCompare("MinCreated", Comparision = Comparision.LowerEqual,
+            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+        public double? MaxCreated { get; set; }
+        
         /// <summary>
         ///     Whether records are sorted ascendingly or decendingly.
         /// </summary>
         public SortDirection Direction { get; set; } = SortDirection.Ascending;
-
-        /// <summary>
-        ///     Mode of filtering.
-        /// </summary>
-        public RecordFilterMode? Mode { get; set; }
-
+        
         /// <summary>
         ///     Index of page result.
         /// </summary>

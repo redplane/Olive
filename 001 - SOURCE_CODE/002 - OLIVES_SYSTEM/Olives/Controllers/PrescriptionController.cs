@@ -68,13 +68,25 @@ namespace Olives.Controllers
 
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            
+            var filter = new FilterPrescriptionViewModel();
+            filter.Requester = requester;
+            
+            // Do the filter.
+            var result = await _repositoryPrescription.FilterPrescriptionAsync(filter);
+            if (result.Total != 1)
+            {
+                _log.Error($"There is/are {result.Total} prescription [Id: {id}]");
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
 
-            // Find the prescription by using id.
-            var prescription = await _repositoryPrescription.FindPrescriptionAsync(id);
-
-            // No record is found.
+            var prescription = result.Prescriptions.FirstOrDefault();
             if (prescription == null)
             {
+                _log.Error($"There is/are {result.Total} prescription [Id: {id}]");
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
                     Error = $"{Language.WarnRecordNotFound}"
@@ -82,60 +94,7 @@ namespace Olives.Controllers
             }
 
             #endregion
-
-            #region Owner validation
-
-            // Find the owner of medical record.
-            var owner =
-                await
-                    _repositoryAccountExtended.FindPersonAsync(prescription.Owner, null, null, null,
-                        StatusAccount.Active);
-            if (owner == null)
-            {
-                // Tell requester the record isn't found.
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
-
-            #endregion
-
-            #region Relationship validation
-
-            // Requester is different from the medical record owner.
-            if (requester.Id != owner.Id)
-            {
-                // Only prescription created by patient can be viewed by doctor who has relationship with owner..
-                if (requester.Id != prescription.Creator && prescription.Creator != prescription.Owner)
-                {
-                    // Log the error.
-                    _log.Error($"Requester [Id: [{requester.Id}] is not the creator of Prescription [{prescription.Id}]");
-
-                    // Tell the client that the record is not found.
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new
-                    {
-                        Error = $"{Language.WarnRecordNotFound}"
-                    });
-                }
-
-                // Find the relationship between requester and owner.
-                var relationships = await _repositoryRelation.FindRelationshipAsync(requester.Id, owner.Id,
-                    (byte) StatusRelation.Active);
-
-                // No active relationship is found.
-                if (relationships == null || relationships.Count < 1)
-                {
-                    // Tell requester the record isn't found.
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new
-                    {
-                        Error = $"{Language.WarnRecordNotFound}"
-                    });
-                }
-            }
-
-            #endregion
-
+            
             #region Response initialization
 
             return Request.CreateResponse(HttpStatusCode.OK, new
@@ -521,7 +480,7 @@ namespace Olives.Controllers
             {
                 // Retrieve information of person who sent request.
                 var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-                filter.Requester = requester.Id;
+                filter.Requester = requester;
 
 
                 // Filter prescription by using specific conditions.

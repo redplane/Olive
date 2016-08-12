@@ -57,32 +57,38 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> FindMedicalExperimentAsync([FromUri] int id)
         {
-            // Find the medical experiment first.
-            var experimentNote = await _repositoryExperimentNote.FindExperimentNoteAsync(id);
+            #region Record filter
+
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            
+            var filter = new FilterExperimentNoteViewModel();
+            filter.Id = id;
+            filter.Requester = requester;
+
+            var result = await _repositoryExperimentNote.FilterExperimentNotesAsync(filter);
+            if (result.Total != 1)
+            {
+                _log.Error($"There is/are {result.Total} medical experiment note [Id:{id}]");
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
+
+            var experimentNote = result.ExperimentNotes.FirstOrDefault();
             if (experimentNote == null)
             {
-                _log.Error($"There is no medical experiment [Id: {id}] in database");
+                _log.Error($"There is/are {result.Total} medical experiment note [Id:{id}]");
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
-            // Requester doesn't take part in medical experiment.
-            if (experimentNote.Owner != requester.Id && experimentNote.Creator != requester.Id)
-            {
-                _log.Error($"Requester [Id: {requester.Id}] isn't either creator or owner");
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
+            
+            #endregion
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -106,14 +112,14 @@ namespace Olives.Controllers
         /// <param name="initializer"></param>
         /// <returns></returns>
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> InitializeMedialExperiment(
             [FromBody] InitializeMedicalExperiment initializer)
         {
             #region Parameters validation
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
 
             // Initializer hasn't been initialized.
@@ -172,7 +178,7 @@ namespace Olives.Controllers
             try
             {
                 #region Record initialization
-                
+
                 // Initialize note.
                 var note = new ExperimentNote();
                 note.Info = JsonConvert.SerializeObject(initializer.Infos);
@@ -196,8 +202,8 @@ namespace Olives.Controllers
                         recipient = note.Creator;
 
                     var notification = new Notification();
-                    notification.Type = (byte) NotificationType.Create;
-                    notification.Topic = (byte) NotificationTopic.ExperimentNote;
+                    notification.Type = (byte)NotificationType.Create;
+                    notification.Topic = (byte)NotificationTopic.ExperimentNote;
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
                     notification.Record = note.Id;
@@ -248,7 +254,7 @@ namespace Olives.Controllers
         /// <param name="modifier">List of informations which need changing</param>
         /// <returns></returns>
         [HttpPut]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> ModifyMedialExperimentNote([FromUri] int experiment,
             [FromBody] EditMedicalExperiment modifier)
         {
@@ -291,7 +297,7 @@ namespace Olives.Controllers
             #region Relationship find
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Requester doesn't take part in the medical note.
             if (requester.Id != experimentNote.Creator && requester.Id != experimentNote.Owner)
@@ -352,8 +358,8 @@ namespace Olives.Controllers
                         recipient = experimentNote.Creator;
 
                     var notification = new Notification();
-                    notification.Type = (byte) NotificationType.Edit;
-                    notification.Topic = (byte) NotificationTopic.ExperimentNote;
+                    notification.Type = (byte)NotificationType.Edit;
+                    notification.Topic = (byte)NotificationTopic.ExperimentNote;
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
                     notification.Record = experimentNote.Id;
@@ -401,19 +407,19 @@ namespace Olives.Controllers
         /// <param name="experiment">Experiment which contains records.</param>
         /// <returns></returns>
         [HttpDelete]
-        [OlivesAuthorize(new[] {Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Patient })]
         public async Task<HttpResponseMessage> DeleteMedialExperimentNote([FromUri] int experiment)
         {
             try
             {
                 // Retrieve information of person who sent request.
-                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Filter initialization.
                 var filter = new FilterExperimentNoteViewModel();
                 filter.Id = experiment;
-                filter.Requester = requester.Id;
-                filter.Mode = RecordFilterMode.RequesterIsOwner;
+                filter.Requester = requester;
+
                 // Remove note and retrieve the response.
                 var records = await _repositoryExperimentNote.DeleteExperimentNotesAsync(filter);
 
@@ -448,7 +454,7 @@ namespace Olives.Controllers
         /// <param name="filter"></param>
         /// <returns></returns>
         [Route("api/medical/experiment/filter")]
-        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
         public async Task<HttpResponseMessage> FilterMedicalExperimentNoteAsync(
             [FromBody] FilterExperimentNoteViewModel filter)
         {
@@ -478,10 +484,10 @@ namespace Olives.Controllers
             try
             {
                 // Retrieve information of person who sent request.
-                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Update the filter.
-                filter.Requester = requester.Id;
+                filter.Requester = requester;
 
                 // Do the filter.
                 var result = await _repositoryExperimentNote.FilterExperimentNotesAsync(filter);

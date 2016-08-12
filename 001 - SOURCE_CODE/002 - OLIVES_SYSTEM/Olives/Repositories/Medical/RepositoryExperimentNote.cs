@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -86,7 +87,7 @@ namespace Olives.Repositories.Medical
             var context = _dataContext.Context;
 
             IQueryable<ExperimentNote> experimentNotes = context.ExperimentNotes;
-            experimentNotes = FilterExperimentNotes(experimentNotes, filter);
+            experimentNotes = FilterExperimentNotes(experimentNotes, filter, context);
             context.ExperimentNotes.RemoveRange(experimentNotes);
             var records = await context.SaveChangesAsync();
             return records;
@@ -102,7 +103,7 @@ namespace Olives.Repositories.Medical
             // By default, take all experiment notes.
             var context = _dataContext.Context;
             IQueryable<ExperimentNote> experimentNotes = context.ExperimentNotes;
-            experimentNotes = FilterExperimentNotes(experimentNotes, filter);
+            experimentNotes = FilterExperimentNotes(experimentNotes, filter, context);
 
             switch (filter.Direction)
             {
@@ -158,10 +159,14 @@ namespace Olives.Repositories.Medical
         /// </summary>
         /// <param name="experimentNotes"></param>
         /// <param name="filter"></param>
+        /// <param name="context"></param>
         /// <returns></returns>
         public IQueryable<ExperimentNote> FilterExperimentNotes(IQueryable<ExperimentNote> experimentNotes,
-            FilterExperimentNoteViewModel filter)
+            FilterExperimentNoteViewModel filter, OlivesHealthEntities context)
         {
+            // Base on the requester role to do the filter function.
+            experimentNotes = FilterExperimentNotesByRequesterRole(experimentNotes, filter, context);
+
             // Id is specified
             if (filter.Id != null)
                 experimentNotes = experimentNotes.Where(x => x.Id == filter.Id.Value);
@@ -169,33 +174,7 @@ namespace Olives.Repositories.Medical
             // Filter by medical record id.
             if (filter.MedicalRecord != null)
                 experimentNotes = experimentNotes.Where(x => x.MedicalRecordId == filter.MedicalRecord);
-
-            // Base on the mode of image filter to decide the role of requester.
-            if (filter.Mode == RecordFilterMode.RequesterIsOwner)
-            {
-                experimentNotes = experimentNotes.Where(x => x.Owner == filter.Requester);
-                if (filter.Partner != null)
-                    experimentNotes = experimentNotes.Where(x => x.Creator == filter.Partner.Value);
-            }
-            else if (filter.Mode == RecordFilterMode.RequesterIsCreator)
-            {
-                experimentNotes = experimentNotes.Where(x => x.Creator == filter.Requester);
-                if (filter.Partner != null)
-                    experimentNotes = experimentNotes.Where(x => x.Owner == filter.Partner);
-            }
-            else
-            {
-                if (filter.Partner == null)
-                    experimentNotes =
-                        experimentNotes.Where(x => x.Creator == filter.Requester || x.Owner == filter.Requester);
-                else
-                    experimentNotes =
-                        experimentNotes.Where(
-                            x =>
-                                (x.Creator == filter.Requester && x.Owner == filter.Partner.Value) ||
-                                (x.Creator == filter.Partner.Value && x.Owner == filter.Requester));
-            }
-
+            
             // Filter by medical record name.
             if (!string.IsNullOrWhiteSpace(filter.Name))
                 experimentNotes = experimentNotes.Where(x => x.Name.Contains(filter.Name));
@@ -221,6 +200,47 @@ namespace Olives.Repositories.Medical
             return experimentNotes;
         }
 
+        /// <summary>
+        /// Base on the requester role to do exact filter function.
+        /// </summary>
+        /// <param name="experimentNotes"></param>
+        /// <param name="filter"></param>
+        /// <param name="olivesHealthEntities"></param>
+        /// <returns></returns>
+        private IQueryable<ExperimentNote> FilterExperimentNotesByRequesterRole(IQueryable<ExperimentNote> experimentNotes,
+            FilterExperimentNoteViewModel filter, OlivesHealthEntities olivesHealthEntities)
+        {
+            // Requester is not defined.
+            if (filter.Requester == null)
+                throw new Exception("Requester must be specified.");
+
+            // Patient only can see his/her records.
+            if (filter.Requester.Role == (byte)Role.Patient)
+            {
+                experimentNotes = experimentNotes.Where(x => x.Owner == filter.Requester.Id);
+                if (filter.Partner != null)
+                    experimentNotes = experimentNotes.Where(x => x.Creator == filter.Partner.Value);
+
+                return experimentNotes;
+            }
+
+            // Doctor can see every record whose owner has connection to him/her.
+            IQueryable<Relation> relationships = olivesHealthEntities.Relations;
+            relationships = relationships.Where(x => x.Status == (byte)StatusRelation.Active);
+            relationships = relationships.Where(x => x.Target == filter.Requester.Id);
+
+            // Partner is specified. This means to be a patient
+            // Only patient can send request to doctor, that means he/she is the source of relationship.
+            if (filter.Partner != null)
+                relationships = relationships.Where(x => x.Source == filter.Partner.Value);
+
+            var results = from r in relationships
+                          from m in experimentNotes
+                          where r.Source == m.Owner || m.Creator == filter.Requester.Id
+                          select m;
+
+            return results;
+        }
         #endregion
     }
 }

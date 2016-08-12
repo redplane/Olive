@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -154,31 +155,13 @@ namespace Olives.Repositories.Medical
             var context = _dataContext.Context;
             IQueryable<Prescription> prescriptions = context.Prescriptions;
 
+            // Base on the requester's role to do the exact filter.
+            prescriptions = FilterPrescriptionByRequesterRole(prescriptions, filter, context);
+
             // Medical record is defined.
             if (filter.MedicalRecord != null)
                 prescriptions = prescriptions.Where(x => x.MedicalRecordId == filter.MedicalRecord);
-
-            // Base on the mode to decide who is the creator, who is the owner of prescription.
-
-            // Base on the filter mode to decide requester is data creator or owner.
-            if (filter.Mode == RecordFilterMode.RequesterIsCreator)
-            {
-                prescriptions = prescriptions.Where(x => x.Creator == filter.Requester);
-                if (filter.Partner != null)
-                    prescriptions = prescriptions.Where(x => x.Owner == filter.Partner);
-            }
-            else if (filter.Mode == RecordFilterMode.RequesterIsOwner)
-            {
-                prescriptions = prescriptions.Where(x => x.Owner == filter.Requester);
-                if (filter.Partner != null)
-                    prescriptions = prescriptions.Where(x => x.Creator == filter.Partner);
-            }
-            else
-            {
-                prescriptions =
-                    prescriptions.Where(x => x.Creator == filter.Requester || x.Owner == filter.Requester);
-            }
-
+            
             // From is defined.
             if (filter.MinFrom != null) prescriptions = prescriptions.Where(x => x.From >= filter.MinFrom);
             if (filter.MaxFrom != null) prescriptions = prescriptions.Where(x => x.From <= filter.MaxFrom);
@@ -239,6 +222,48 @@ namespace Olives.Repositories.Medical
             return response;
         }
 
+        /// <summary>
+        /// Base on the requester role to do exact filter function.
+        /// </summary>
+        /// <param name="prescriptions"></param>
+        /// <param name="filter"></param>
+        /// <param name="olivesHealthEntities"></param>
+        /// <returns></returns>
+        private IQueryable<Prescription> FilterPrescriptionByRequesterRole(IQueryable<Prescription> prescriptions,
+            FilterPrescriptionViewModel filter, OlivesHealthEntities olivesHealthEntities)
+        {
+            // Requester is not defined.
+            if (filter.Requester == null)
+                throw new Exception("Requester must be specified.");
+
+            // Patient only can see his/her records.
+            if (filter.Requester.Role == (byte)Role.Patient)
+            {
+                prescriptions = prescriptions.Where(x => x.Owner == filter.Requester.Id);
+                if (filter.Partner != null)
+                    prescriptions = prescriptions.Where(x => x.Creator == filter.Partner.Value);
+
+                return prescriptions;
+            }
+
+            // Doctor can see every record whose owner has connection to him/her.
+            IQueryable<Relation> relationships = olivesHealthEntities.Relations;
+            relationships = relationships.Where(x => x.Status == (byte)StatusRelation.Active);
+            relationships = relationships.Where(x => x.Target == filter.Requester.Id);
+
+            // Partner is specified. This means to be a patient
+            // Only patient can send request to doctor, that means he/she is the source of relationship.
+            if (filter.Partner != null)
+                relationships = relationships.Where(x => x.Source == filter.Partner.Value);
+
+            var results = from r in relationships
+                          from m in prescriptions
+                          where r.Source == m.Owner || m.Creator == filter.Requester.Id
+                          select m;
+
+            return results;
+        }
+        
         #endregion
     }
 }

@@ -61,39 +61,35 @@ namespace Olives.Controllers
         {
             // Retrieve information of person who sent request.
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            
+            #region Record filter
 
-            #region Medical record find
+            var filter = new FilterMedicalRecordViewModel();
+            filter.Id = id;
+            filter.Requester = requester;
+            
+            // Do the filter.
+            var result = await _repositoryMedical.FilterMedicalRecordAsync(filter);
+            if (result.Total != 1)
+            {
+                _log.Error($"There is/are {result.Total} medical record [Id: {id}]");
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
+            }
 
-            // Find the medical record by using id.
-            var medicalRecord = await _repositoryMedical.FindMedicalRecordAsync(id);
-
-            // No result has been received.
+            // Take the first result
+            var medicalRecord = result.MedicalRecords.FirstOrDefault();
             if (medicalRecord == null)
             {
-                // Log the error.
-                _log.Error($"Medical record [Id: {id}] is not found.");
-
-                // Tell client no record has been found.
+                _log.Error($"There is/are {result.Total} medical record [Id: {id}]");
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-
-            #endregion
-
-            #region Relationship validate
-
-            var isRelationshipAvailable = await _repositoryRelation.IsPeopleConnected(requester.Id, medicalRecord.Owner);
-            if (!isRelationshipAvailable)
-            {
-                _log.Error($"No relationship between requester [Id: {requester.Id}] and owner [Id: {medicalRecord.Owner}] is found.");
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
-
+            
             #endregion
 
             return Request.CreateResponse(HttpStatusCode.OK, new
@@ -507,28 +503,7 @@ namespace Olives.Controllers
             {
                 // Retrieve information of person who sent request.
                 var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
-                // Update the requester.
-                filter.Requester = requester.Id;
-
-                // Partner is specified, and mode is null.
-                // This means doctor wants to see every medical records of patients.
-                if (filter.Partner != null && filter.Mode == null)
-                {
-                    // Check the relationship between the requester and the owner.
-                    var isRelationshipAvailable =
-                        await _repositoryRelation.IsPeopleConnected(filter.Requester, filter.Partner.Value);
-
-                    // No relationship is found.
-                    if (!isRelationshipAvailable)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK, new
-                        {
-                            MedicalRecords = new object[0],
-                            Total = 0
-                        });
-                    }
-                }
+                filter.Requester = requester;
 
                 // Filter medical records.
                 var results = await _repositoryMedical.FilterMedicalRecordAsync(filter);

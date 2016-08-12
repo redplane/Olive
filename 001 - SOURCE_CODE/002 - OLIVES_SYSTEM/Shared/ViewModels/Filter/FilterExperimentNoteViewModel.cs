@@ -4,6 +4,7 @@ using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;
+using Shared.Models;
 using Shared.Resources;
 
 namespace Shared.ViewModels.Filter
@@ -30,18 +31,13 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         ///     Person who sents the filter request.
         /// </summary>
-        public int Requester { get; set; }
+        public Person Requester { get; set; }
 
         /// <summary>
         ///     Partner who is included in medical experiment notes.
         /// </summary>
         public int? Partner { get; set; }
-
-        /// <summary>
-        ///     Mode of filter.
-        /// </summary>
-        public RecordFilterMode? Mode { get; set; }
-
+        
         /// <summary>
         ///     Time after which experiment was lastly created.
         /// </summary>

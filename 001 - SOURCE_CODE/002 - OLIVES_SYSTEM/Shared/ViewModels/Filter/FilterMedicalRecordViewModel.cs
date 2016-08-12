@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Web.ModelBinding;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;
+using Shared.Models;
 using Shared.Resources;
 
 namespace Shared.ViewModels.Filter
@@ -11,9 +13,15 @@ namespace Shared.ViewModels.Filter
     public class FilterMedicalRecordViewModel : IPagination
     {
         /// <summary>
+        /// Id of medical record.
+        /// </summary>
+        public int? Id { get; set; }
+
+        /// <summary>
         ///     Who sent the filter request.
         /// </summary>
-        public int Requester { get; set; }
+        [BindNever]
+        public Person Requester { get; set; }
 
         /// <summary>
         ///     Who is included in medical record.
@@ -24,7 +32,7 @@ namespace Shared.ViewModels.Filter
         ///     Filtering mode.
         /// </summary>
         public RecordFilterMode? Mode { get; set; }
-
+        
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MaxTime", Comparision = Comparision.LowerEqual,

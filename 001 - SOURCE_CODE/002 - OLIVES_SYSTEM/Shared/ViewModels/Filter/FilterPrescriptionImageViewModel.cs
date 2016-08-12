@@ -4,6 +4,7 @@ using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;
+using Shared.Models;
 using Shared.Resources;
 
 namespace Shared.ViewModels.Filter
@@ -13,24 +14,31 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         ///     Who send the filter request.
         /// </summary>
-        public int Requester { get; set; }
+        public Person Requester { get; set; }
 
         /// <summary>
         ///     Who created prescription image or just own it.
         /// </summary>
         public int? Partner { get; set; }
-
-        /// <summary>
-        ///     Mode of prescription image filter.
-        /// </summary>
-        public RecordFilterMode? Mode { get; set; }
-
+        
         /// <summary>
         ///     Index of prescription.
         /// </summary>
         [NumericCompare(1, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsInvalid")]
         public int Prescription { get; set; }
+
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
+            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+        [NumericPropertyCompare("MaxCreated", Comparision = Comparision.LowerEqual,
+            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+        public double? MinCreated { get; set; }
+
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
+            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+        [NumericPropertyCompare("MinCreated", Comparision = Comparision.GreaterEqual,
+            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+        public double? MaxCreated { get; set; }
 
         /// <summary>
         ///     Index of result page.

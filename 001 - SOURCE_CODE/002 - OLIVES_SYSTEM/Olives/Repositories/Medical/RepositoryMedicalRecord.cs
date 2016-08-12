@@ -1,4 +1,6 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,17 +36,20 @@ namespace Olives.Repositories.Medical
         /// <summary>
         ///     Initialize / edit a medical record asynchronously.
         /// </summary>
-        /// <param name="info"></param>
+        /// <param name="initializer"></param>
         /// <returns></returns>
-        public async Task<MedicalRecord> InitializeMedicalRecordAsync(MedicalRecord info)
+        public async Task<MedicalRecord> InitializeMedicalRecordAsync(MedicalRecord initializer)
         {
-            // Add or update the record.
+            // Context initialization.
             var context = _dataContext.Context;
-            context.MedicalRecords.AddOrUpdate(info);
+
+            // Record doesn't contain id. That means it is a new record. 
+            context.MedicalRecords.AddOrUpdate(initializer);
 
             // Save the record asynchronously.
             await context.SaveChangesAsync();
-            return info;
+
+            return initializer;
         }
 
         /// <summary>
@@ -159,54 +164,8 @@ namespace Olives.Repositories.Medical
             // By default, take all records.
             var context = _dataContext.Context;
             IQueryable<MedicalRecord> medicalRecords = context.MedicalRecords;
-
-            // Base on the mode of image filter to decide the role of requester.
-            if (filter.Mode == RecordFilterMode.RequesterIsOwner)
-            {
-                medicalRecords = medicalRecords.Where(x => x.Owner == filter.Requester);
-                if (filter.Partner != null)
-                    medicalRecords = medicalRecords.Where(x => x.Creator == filter.Partner.Value);
-            }
-            else if (filter.Mode == RecordFilterMode.RequesterIsCreator)
-            {
-                medicalRecords = medicalRecords.Where(x => x.Creator == filter.Requester);
-                if (filter.Partner != null)
-                    medicalRecords = medicalRecords.Where(x => x.Owner == filter.Partner);
-            }
-            else
-            {
-                if (filter.Partner == null)
-                    medicalRecords =
-                        medicalRecords.Where(x => x.Creator == filter.Requester || x.Owner == filter.Requester);
-                else
-                {
-                    medicalRecords =
-                        medicalRecords.Where(
-                            x =>
-                                (x.Creator == filter.Requester && x.Owner == filter.Partner.Value) ||
-                                (x.Creator == filter.Partner.Value && x.Owner == filter.Requester));
-                }
-            }
-
-
-            // Time is specified.
-            if (filter.MinTime != null) medicalRecords = medicalRecords.Where(x => x.Time >= filter.MinTime);
-            if (filter.MaxTime != null) medicalRecords = medicalRecords.Where(x => x.Time <= filter.MaxTime);
-
-            // Medical category is specified.
-            if (filter.Category != null)
-                medicalRecords = medicalRecords.Where(x => x.Category == filter.Category.Value);
-
-            // Created is specified.
-            if (filter.MinCreated != null) medicalRecords = medicalRecords.Where(x => x.Created >= filter.MinCreated);
-            if (filter.MaxCreated != null) medicalRecords = medicalRecords.Where(x => x.Created <= filter.MaxCreated);
-
-            // Last modified is specified.
-            if (filter.MinLastModified != null)
-                medicalRecords = medicalRecords.Where(x => x.LastModified >= filter.MinLastModified);
-            if (filter.MaxLastModified != null)
-                medicalRecords = medicalRecords.Where(x => x.LastModified <= filter.MaxLastModified);
-
+            medicalRecords = FilterMedicalRecords(medicalRecords, filter, context);
+            
             // Result sorting
             switch (filter.Direction)
             {
@@ -247,7 +206,7 @@ namespace Olives.Repositories.Medical
             // Record is defined.
             if (filter.Records != null)
             {
-                medicalRecords = medicalRecords.Skip(filter.Page*filter.Records.Value)
+                medicalRecords = medicalRecords.Skip(filter.Page * filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
@@ -257,17 +216,83 @@ namespace Olives.Repositories.Medical
         }
 
         /// <summary>
-        ///     Initialize / update medical image.
+        /// Filter medical records by using specific conditions.
         /// </summary>
-        /// <param name="info"></param>
+        /// <param name="medicalRecords"></param>
+        /// <param name="filter"></param>
+        /// <param name="olivesHealthEntities"></param>
         /// <returns></returns>
-        public async Task<MedicalImage> InitializeMedicalImageAsync(MedicalImage info)
+        private IQueryable<MedicalRecord> FilterMedicalRecords(IQueryable<MedicalRecord> medicalRecords, FilterMedicalRecordViewModel filter, OlivesHealthEntities olivesHealthEntities)
         {
-            var context = _dataContext.Context;
-            context.MedicalImages.AddOrUpdate(info);
-            await context.SaveChangesAsync();
-            return info;
+            // Base on requester role, do the filter.
+            medicalRecords = FilterMedicalRecordsByRequesterRole(medicalRecords, filter, olivesHealthEntities);
+
+            // Id is specified.
+            if (filter.Id != null)
+                medicalRecords = medicalRecords.Where(x => x.Id == filter.Id);
+
+            // Time is specified.
+            if (filter.MinTime != null) medicalRecords = medicalRecords.Where(x => x.Time >= filter.MinTime);
+            if (filter.MaxTime != null) medicalRecords = medicalRecords.Where(x => x.Time <= filter.MaxTime);
+
+            // Medical category is specified.
+            if (filter.Category != null)
+                medicalRecords = medicalRecords.Where(x => x.Category == filter.Category.Value);
+
+            // Created is specified.
+            if (filter.MinCreated != null) medicalRecords = medicalRecords.Where(x => x.Created >= filter.MinCreated);
+            if (filter.MaxCreated != null) medicalRecords = medicalRecords.Where(x => x.Created <= filter.MaxCreated);
+
+            // Last modified is specified.
+            if (filter.MinLastModified != null)
+                medicalRecords = medicalRecords.Where(x => x.LastModified >= filter.MinLastModified);
+            if (filter.MaxLastModified != null)
+                medicalRecords = medicalRecords.Where(x => x.LastModified <= filter.MaxLastModified);
+
+            return medicalRecords;
         }
+
+        /// <summary>
+        /// Base on the requester role to do exact filter function.
+        /// </summary>
+        /// <param name="medicalRecords"></param>
+        /// <param name="filter"></param>
+        /// <param name="olivesHealthEntities"></param>
+        /// <returns></returns>
+        private IQueryable<MedicalRecord> FilterMedicalRecordsByRequesterRole(IQueryable<MedicalRecord> medicalRecords,
+            FilterMedicalRecordViewModel filter, OlivesHealthEntities olivesHealthEntities)
+        {
+            // Requester is not defined.
+            if (filter.Requester == null)
+                throw new Exception("Requester must be specified.");
+            
+            // Patient only can see his/her records.
+            if (filter.Requester.Role == (byte) Role.Patient)
+            {
+                medicalRecords = medicalRecords.Where(x => x.Owner == filter.Requester.Id);
+                if (filter.Partner != null)
+                    medicalRecords = medicalRecords.Where(x => x.Creator == filter.Partner.Value);
+
+                return medicalRecords;
+            }
+
+            // Doctor can see every record whose owner has connection to him/her.
+            IQueryable<Relation> relationships = olivesHealthEntities.Relations;
+            relationships = relationships.Where(x => x.Status == (byte) StatusRelation.Active);
+            relationships = relationships.Where(x => x.Target == filter.Requester.Id);
+
+            // Partner is specified. This means to be a patient
+            // Only patient can send request to doctor, that means he/she is the source of relationship.
+            if (filter.Partner != null)
+                relationships = relationships.Where(x => x.Source == filter.Partner.Value);
+
+            var results = from r in relationships
+                from m in medicalRecords
+                where r.Source == m.Owner || m.Creator == filter.Requester.Id
+                select m;
+
+            return results;
+        } 
 
         #endregion
     }

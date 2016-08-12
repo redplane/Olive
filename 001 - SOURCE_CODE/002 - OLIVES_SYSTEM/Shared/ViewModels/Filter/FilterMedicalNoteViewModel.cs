@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Web.ModelBinding;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;
+using Shared.Models;
 using Shared.Resources;
 
 namespace Shared.ViewModels.Filter
@@ -23,18 +25,14 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         ///     Id of request sender.
         /// </summary>
-        public int Requester { get; set; }
+        [BindNever]
+        public Person Requester { get; set; }
 
         /// <summary>
         ///     Who is included in medical note.
         /// </summary>
         public int? Partner { get; set; }
-
-        /// <summary>
-        ///     Mode of record filter.
-        /// </summary>
-        public RecordFilterMode? Mode { get; set; }
-
+        
         /// <summary>
         ///     Note of medical record.
         /// </summary>

@@ -63,39 +63,31 @@ namespace Olives.Controllers
         {
             try
             {
-                #region Record find
+                #region Result filter
 
                 // Retrieve information of person who sent request.
-                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
-                // Find the medical record by using id.
-                var medicalNote = await _repositoryMedicalNote.FindMedicalNoteAsync(id);
+                var filter = new FilterMedicalNoteViewModel();
+                filter.Id = id;
+                filter.Requester = requester;
 
-                // No result has been received.
-                if (medicalNote == null)
+                // Do the filter.
+                var result = await _repositoryMedicalNote.FilterMedicalNotesAsync(filter);
+                if (result.Total != 1)
                 {
-                    // Log the error.
-                    _log.Error($"Medical note [Id: {id}] is not found");
-
-                    // Tell client no record has been found.
+                    _log.Error($"There is/are {result.Total} medical note [Id: {id}]");
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {
                         Error = $"{Language.WarnRecordNotFound}"
                     });
                 }
 
-                #endregion
-
-                #region Relationship check
-
-                var isRelationshipAvailable =
-                    await _repositoryRelation.IsPeopleConnected(requester.Id, medicalNote.Owner);
-                if (!isRelationshipAvailable)
+                // Find the first result.
+                var medicalNote = result.MedicalNotes.FirstOrDefault();
+                if (medicalNote == null)
                 {
-                    // Logging.
-                    _log.Error(
-                        $"There is no relationship between requester [Id: {requester.Id}] and owner [Id: {medicalNote.Owner}]");
-
+                    _log.Error($"There is/are {result.Total} medical note [Id: {id}]");
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
                     {
                         Error = $"{Language.WarnRecordNotFound}"
@@ -429,9 +421,8 @@ namespace Olives.Controllers
             // Filter initialization.
             var filter = new FilterMedicalNoteViewModel();
             filter.Id = id;
-            filter.Requester = requester.Id;
-            filter.Mode = RecordFilterMode.RequesterIsOwner;
-
+            filter.Requester = requester;
+            
             try
             {
                 var records = await _repositoryMedicalNote.DeleteMedicalNoteAsync(filter);
@@ -491,7 +482,7 @@ namespace Olives.Controllers
             try
             {
                 // Update the requester.
-                filter.Requester = requester.Id;
+                filter.Requester = requester;
 
                 // Insert a new allergy to database.
                 var result = await _repositoryMedicalNote.FilterMedicalNotesAsync(filter);
