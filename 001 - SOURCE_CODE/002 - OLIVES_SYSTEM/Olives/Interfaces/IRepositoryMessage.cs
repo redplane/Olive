@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
+using Olives.ViewModels.Filter;
 using Shared.Models;
-using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
-namespace Shared.Interfaces
+namespace Olives.Interfaces
 {
     public interface IRepositoryMessage
     {

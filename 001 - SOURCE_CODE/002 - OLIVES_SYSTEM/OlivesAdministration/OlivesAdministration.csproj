@@ -231,6 +231,7 @@
     <Compile Include="ViewModels\Edit\EditStatusViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterDoctorViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPatientViewModel.cs" />
+    <Compile Include="ViewModels\Edit\EditAdminProfileViewModel.cs" />
     <Compile Include="ViewModels\Statistic\StatusSummaryViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalCategoryViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePlaceViewModel.cs" />

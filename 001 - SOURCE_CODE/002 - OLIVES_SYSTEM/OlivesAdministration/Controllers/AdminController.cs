@@ -4,12 +4,16 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
+using OlivesAdministration.Attributes;
 using OlivesAdministration.Constants;
 using OlivesAdministration.Interfaces;
 using OlivesAdministration.Models;
+using OlivesAdministration.ViewModels.Edit;
+using OlivesAdministration.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
+using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels;
 
@@ -25,13 +29,16 @@ namespace OlivesAdministration.Controllers
         /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositoryStorage"></param>
         /// <param name="log"></param>
+        /// <param name="timeService"></param>
         public AdminController(
             IRepositoryAccountExtended repositoryAccountExtended, IRepositoryStorage repositoryStorage,
-            ILog log)
+            ILog log,
+            ITimeService timeService)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
             _repositoryStorage = repositoryStorage;
             _log = log;
+            _timeService = timeService;
         }
 
         #endregion
@@ -120,6 +127,115 @@ namespace OlivesAdministration.Controllers
             #endregion
         }
 
+        /// <summary>
+        ///     Find a patient by using specific id.
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut]
+        [OlivesAuthorize(new[] { Role.Admin })]
+        [Route("api/admin/profile")]
+        public async Task<HttpResponseMessage> EditPatientAsync([FromBody] EditAdminProfileViewModel editor)
+        {
+            #region Request parameters validation
+
+            // Model hasn't been initialized.
+            if (editor == null)
+            {
+                editor = new EditAdminProfileViewModel();
+                Validate(editor);
+            }
+
+            // ModelState is invalid.
+            if (!ModelState.IsValid)
+            {
+                _log.Error("Request parameters are invalid. Errors sent to client");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            #endregion
+
+            #region Information construction
+
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // First name is defined.
+            if (!string.IsNullOrWhiteSpace(editor.FirstName))
+                requester.FirstName = editor.FirstName;
+
+            // Last name is defined.
+            if (!string.IsNullOrWhiteSpace(editor.LastName))
+                requester.LastName = editor.LastName;
+
+            // Birthday is defined.
+            if (editor.Birthday != null)
+                requester.Birthday = editor.Birthday;
+
+            // Password is defined.
+            if (!string.IsNullOrWhiteSpace(editor.Password))
+                requester.Password = editor.Password;
+
+            // Gender is defined.
+            if (editor.Gender != null)
+                requester.Gender = (byte)editor.Gender;
+
+            // Phone is defined.
+            if (!string.IsNullOrWhiteSpace(editor.Phone))
+                requester.Phone = editor.Phone;
+
+            // Address is defined.
+            if (!string.IsNullOrWhiteSpace(editor.Address))
+                requester.Address = editor.Address;
+
+            // Update person full name.
+            requester.FullName = requester.FirstName + " " + requester.LastName;
+            
+            #endregion
+
+            #region Result handling
+
+            try
+            {
+                // Update the last modified.
+                requester.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+
+                // Update the patient.
+                requester = await _repositoryAccountExtended.EditPersonProfileAsync(requester.Id, requester);
+
+                // Find the avatar storage.
+                var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    User = new
+                    {
+                        requester.Id,
+                        requester.Email,
+                        requester.Password,
+                        requester.FirstName,
+                        requester.LastName,
+                        requester.Birthday,
+                        requester.Phone,
+                        requester.Gender,
+                        requester.Role,
+                        requester.Created,
+                        requester.LastModified,
+                        requester.Status,
+                        requester.Address,
+                        Photo =
+                            InitializeUrl(storageAvatar.Relative, requester.Photo,
+                                Values.StandardImageExtension)
+                    }
+                });
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception.Message, exception);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+
+            #endregion
+        }
         #endregion
 
         #region Properties
@@ -139,6 +255,11 @@ namespace OlivesAdministration.Controllers
         /// </summary>
         private readonly ILog _log;
 
+        /// <summary>
+        /// Service which is used to access time calculation functions.
+        /// </summary>
+        private readonly ITimeService _timeService;
+        
         #endregion
     }
 }

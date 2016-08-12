@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 using OlivesAdministration.Enumerations;
@@ -368,6 +370,45 @@ namespace OlivesAdministration.Repositories
             return await filteredResult.ToListAsync();
         }
 
+        /// <summary>
+        ///     Edit person profile asynchronously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        public async Task<Person> EditPersonProfileAsync(int id, Person info)
+        {
+            // Information hasn't been specified.
+            if (info == null)
+                throw new Exception("Personal information is required.");
+
+            // Keep the id.
+            info.Id = id;
+
+            var context = _dataContext.Context;
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Add or update information base on the primary key.
+                    context.People.AddOrUpdate(info);
+                    
+                    // Save change to database.
+                    await context.SaveChangesAsync();
+
+                    // Commit the transaction.
+                    transaction.Commit();
+                    return info;
+                }
+                catch
+                {
+                    // Error happens, transaction will be rolled back and error will be thrown to client.
+                    transaction.Rollback();
+
+                    throw;
+                }
+            }
+        }
         #endregion
     }
 }

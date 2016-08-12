@@ -1,14 +1,15 @@
 ﻿using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using Olives.Interfaces;
+using Olives.ViewModels.Filter;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
-namespace Shared.Repositories
+namespace Olives.Repositories
 {
     public class RepositoryMessage : IRepositoryMessage
     {
@@ -141,7 +142,7 @@ namespace Shared.Repositories
             var context = _dataContext.Context;
             return await context.Messages.FirstOrDefaultAsync(x => x.Id == id);
         }
-
+        
         #endregion
     }
 }

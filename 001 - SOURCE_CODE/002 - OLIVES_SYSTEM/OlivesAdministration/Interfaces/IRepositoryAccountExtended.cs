@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using OlivesAdministration.ViewModels.Filter;
 using OlivesAdministration.ViewModels.Statistic;
 using Shared.Interfaces;
+using Shared.Models;
 using Shared.ViewModels.Response;
 
 namespace OlivesAdministration.Interfaces
@@ -28,5 +29,13 @@ namespace OlivesAdministration.Interfaces
         /// </summary>
         /// <returns></returns>
         Task<IList<StatusSummaryViewModel>> SummarizePersonRoleAsync(byte? role);
+
+        /// <summary>
+        ///     Edit person profile asynchronously.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        Task<Person> EditPersonProfileAsync(int id, Person info);
     }
 }

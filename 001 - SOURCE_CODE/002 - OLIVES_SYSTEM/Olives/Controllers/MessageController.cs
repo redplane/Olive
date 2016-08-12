@@ -7,18 +7,19 @@ using System.Web.Http;
 using log4net;
 using Olives.Attributes;
 using Olives.Hubs;
+using Olives.Interfaces;
+using Olives.ViewModels.Filter;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
-using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
     [Route("api/message")]
-    [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
+    [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
     public class MessageController : ApiParentControllerHub<NotificationHub>
     {
         #region Constructors
@@ -58,7 +59,7 @@ namespace Olives.Controllers
             var message = await _repositoryMessage.FindMessageAsync(id);
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // The requester didn't take part in the message broadcasting.
             if (!(message.Broadcaster == requester.Id || message.Recipient == requester.Id))
@@ -112,7 +113,7 @@ namespace Olives.Controllers
             #region Relationship check
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // User cannot send message to recipient.
             if (requester.Id == initializer.Recipient)
@@ -228,7 +229,7 @@ namespace Olives.Controllers
             #region Filter & result handling
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Update the information of filter.
             filter.Requester = requester.Id;
@@ -253,6 +254,29 @@ namespace Olives.Controllers
             #endregion
         }
 
+        [Route("api/message/filter/people")]
+        public async Task<HttpResponseMessage> FilterMessagePeople([FromBody] FilterConversationViewModel filter)
+        {
+            #region Request parameters validation
+
+            if (filter == null)
+            {
+                filter = new FilterConversationViewModel();
+                Validate(filter);
+            }
+
+            if (!ModelState.IsValid)
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+
+            #endregion
+
+            #region Filter initialization
+
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            filter.Requester = requester.Id;
+
+            #endregion
+        }
         #endregion
 
         #region Properties
