@@ -63,7 +63,7 @@ namespace OlivesAdministration.Controllers
         /// <param name="initializer"></param>
         /// <returns></returns>
         [Route("api/medical/category")]
-        [HttpGet]
+        [HttpPost]
         public async Task<HttpResponseMessage> InitializeMedicalCategory(
             [FromBody] InitializeMedicalCategoryViewModel initializer)
         {
