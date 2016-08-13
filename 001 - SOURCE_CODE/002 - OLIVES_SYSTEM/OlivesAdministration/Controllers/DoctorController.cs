@@ -65,7 +65,11 @@ namespace OlivesAdministration.Controllers
                     });
                 }
 
+                // Find the storage where avatar is saved.
                 var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
+
+                // Find the path where profile pdf is saved.
+                var storageProfilePdf = _repositoryStorage.FindStorage(Storage.Profile);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -98,7 +102,8 @@ namespace OlivesAdministration.Controllers
                         },
                         account.Doctor.Voters,
                         account.Created,
-                        account.LastModified
+                        account.LastModified,
+                        Profile = InitializeUrl(storageProfilePdf.Relative, account.Doctor.ProfilePdf, Values.StandardProfilePdfExtension)
                     }
                 });
             }
@@ -146,8 +151,12 @@ namespace OlivesAdministration.Controllers
             {
                 // Retrieve result from server.
                 var result = await _repositoryAccountExtended.FilterDoctorsAsync(filter);
-
-                var storage = _repositoryStorage.FindStorage(Storage.Avatar);
+                 
+                // Find the path where avatars are stored.
+                var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
+          
+                // Find the path where profiles are stored.
+                var storageProfilePdf = _repositoryStorage.FindStorage(Storage.Profile);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -164,7 +173,7 @@ namespace OlivesAdministration.Controllers
                         x.Person.Phone,
                         x.Person.Role,
                         Photo =
-                            InitializeUrl(storage.Relative, x.Person.Photo,
+                            InitializeUrl(storageAvatar.Relative, x.Person.Photo,
                                 Values.StandardImageExtension),
                         x.Rank,
                         Specialty = new
@@ -179,6 +188,7 @@ namespace OlivesAdministration.Controllers
                             x.Place.Country
                         },
                         x.Voters,
+                        Profile = InitializeUrl(storageProfilePdf.Relative, x.ProfilePdf, Values.StandardProfilePdfExtension),
                         x.Person.Created,
                         x.Person.LastModified
                     }),

@@ -27,11 +27,12 @@ namespace Shared.Models
         public int SpecialtyId { get; set; }
         public int Voters { get; set; }
         public int PlaceId { get; set; }
+        public string ProfilePdf { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Diary> Diaries { get; set; }
-        public virtual Person Person { get; set; }
         public virtual Place Place { get; set; }
+        public virtual Person Person { get; set; }
         public virtual Specialty Specialty { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Rating> Ratings { get; set; }

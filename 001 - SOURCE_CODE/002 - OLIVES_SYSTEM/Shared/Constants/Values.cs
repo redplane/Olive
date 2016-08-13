@@ -119,6 +119,11 @@
         /// </summary>
         public const string StandardImageExtension = "png";
 
+        /// <summary>
+        /// Extension of profile which will be used for storing on server.
+        /// </summary>
+        public const string StandardProfilePdfExtension = "pdf";
+
         #endregion
 
         #region SignalR keys
