@@ -1,6 +1,7 @@
 {
 
   "Storage": {
-    "Avatar": "~/Resources/Avatar"
+    "Avatar": "~/Resources/Avatar",
+    "Profile": "~/Resources/Profile"
   }
 }
