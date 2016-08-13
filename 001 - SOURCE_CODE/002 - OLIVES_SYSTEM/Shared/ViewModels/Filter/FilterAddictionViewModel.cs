@@ -18,7 +18,7 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         ///     Owner of addiction note
         /// </summary>
-        [NumericCompare(1, ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueIsInvalid")]
+        [NumericCompare(1, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueIsInvalid")]
         public int? Owner { get; set; }
 
         /// <summary>
