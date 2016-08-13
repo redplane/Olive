@@ -8,6 +8,8 @@
         Prescription,
         PrescriptionImage,
         ExperimentNote,
-        MedicalNote
+        MedicalNote,
+        RelationshipRequest,
+        Relationship
     }
 }

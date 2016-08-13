@@ -7,6 +7,7 @@ using System.Web.Http;
 using log4net;
 using Olives.Attributes;
 using Olives.Constants;
+using Olives.Hubs;
 using Olives.Interfaces;
 using Olives.ViewModels.Filter;
 using Olives.ViewModels.Initialize;
@@ -19,7 +20,7 @@ using Shared.Resources;
 namespace Olives.Controllers
 {
     [Route("api/relationship/request")]
-    public class RelationshipRequestController : ApiParentController
+    public class RelationshipRequestController : ApiParentControllerHub<NotificationHub>
     {
         #region Constructors
 
@@ -30,18 +31,21 @@ namespace Olives.Controllers
         /// <param name="repositoryRelationshipRequest"></param>
         /// <param name="repositoryStorage"></param>
         /// <param name="timeService"></param>
+        /// <param name="notificationService"></param>
         /// <param name="log"></param>
         public RelationshipRequestController(
             IRepositoryRelationship repositoryRelation,
             IRepositoryRelationshipRequest repositoryRelationshipRequest,
             IRepositoryStorage repositoryStorage,
             ITimeService timeService,
+            INotificationService notificationService,
             ILog log)
         {
             _repositoryRelation = repositoryRelation;
             _repositoryRelationshipRequest = repositoryRelationshipRequest;
             _repositoryStorage = repositoryStorage;
             _timeService = timeService;
+            _notificationService = notificationService;
             _log = log;
         }
 
@@ -196,7 +200,25 @@ namespace Olives.Controllers
                 relationshipRequest.Content = initializer.Content;
                 relationshipRequest.Created = unix;
 
-                await _repositoryRelationshipRequest.InitializeRelationshipRequest(relationshipRequest);
+                relationshipRequest = await _repositoryRelationshipRequest.InitializeRelationshipRequest(relationshipRequest);
+
+                #endregion
+
+                #region Broadcast notification
+                
+                var notification = new Notification();
+                notification.Type = (byte)NotificationType.Create;
+                notification.Topic = (byte)NotificationTopic.RelationshipRequest;
+                notification.Container = relationshipRequest.Id;
+                notification.ContainerType = (byte)NotificationTopic.RelationshipRequest;
+                notification.Broadcaster = requester.Id;
+                notification.Recipient = initializer.Target;
+                notification.Record = relationshipRequest.Id;
+                notification.Message = string.Format(Language.NotifyRelationshipRequestCreate, requester.FullName);
+                notification.Created = unix;
+
+                // Broadcast the notification with fault tolerant.
+                await _notificationService.BroadcastNotificationAsync(notification, Hub);
 
                 #endregion
 
@@ -227,14 +249,15 @@ namespace Olives.Controllers
                 // Retrieve information of person who sent request.
                 var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
                 
+                // Retrieve the current time.
+                var unix = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+
                 #region Find the relationship request
 
                 var filter = new FilterRelationshipRequestViewModel();
                 filter.Id = id;
                 filter.Requester = requester;
                 var relationshipRequest = await _repositoryRelationshipRequest.FindRelationshipRequest(filter);
-
-                #endregion
 
                 // No relationship request is found.
                 if (relationshipRequest == null)
@@ -245,6 +268,26 @@ namespace Olives.Controllers
                         Error = $"{Language.WarnRecordNotFound}"
                     });
                 }
+
+                #endregion
+                
+                #region Broadcast notification
+
+                var notification = new Notification();
+                notification.Type = (byte)NotificationType.Confirm;
+                notification.Topic = (byte)NotificationTopic.RelationshipRequest;
+                notification.Container = relationshipRequest.Id;
+                notification.ContainerType = (byte)NotificationTopic.RelationshipRequest;
+                notification.Broadcaster = requester.Id;
+                notification.Recipient = relationshipRequest.Source;
+                notification.Record = relationshipRequest.Id;
+                notification.Message = string.Format(Language.NotifyRelationshipRequestConfirm, requester.FullName);
+                notification.Created = unix;
+
+                // Broadcast the notification with fault tolerant.
+                await _notificationService.BroadcastNotificationAsync(notification, Hub);
+
+                #endregion
 
                 // Delete relationship and retrieve the number of affected records.
                 await _repositoryRelationshipRequest.InitializeRelationship(relationshipRequest);
@@ -421,6 +464,11 @@ namespace Olives.Controllers
         ///     Service which provides functions to access time calculation.
         /// </summary>
         private readonly ITimeService _timeService;
+
+        /// <summary>
+        /// Service which provides functions to access notification broadcast.
+        /// </summary>
+        private readonly INotificationService _notificationService;
 
         /// <summary>
         ///     Instance of module which is used for logging.

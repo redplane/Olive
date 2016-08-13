@@ -4,6 +4,7 @@
     {
         Create,
         Edit,
-        Delete
+        Delete,
+        Confirm
     }
 }
