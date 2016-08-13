@@ -213,19 +213,16 @@ namespace Olives.Controllers
 
                 #region Notification broadcast
 
-                if (medicalNote.Creator != medicalNote.Owner)
+                // Only the owner should receive the notification.
+                if (requester.Id != medicalNote.Owner)
                 {
-                    var recipient = medicalNote.Owner;
-                    if (requester.Id == medicalNote.Owner)
-                        recipient = medicalNote.Creator;
-
                     var notification = new Notification();
                     notification.Type = (byte) NotificationType.Create;
                     notification.Topic = (byte) NotificationTopic.MedicalNote;
                     notification.Container = medicalRecord.Id;
                     notification.ContainerType = (byte) NotificationTopic.MedicalRecord;
                     notification.Broadcaster = requester.Id;
-                    notification.Recipient = recipient;
+                    notification.Recipient = medicalNote.Owner;
                     notification.Record = medicalNote.Id;
                     notification.Message = string.Format(Language.NotifyMedicalNoteCreate, requester.FullName);
                     notification.Created = medicalNote.Created;

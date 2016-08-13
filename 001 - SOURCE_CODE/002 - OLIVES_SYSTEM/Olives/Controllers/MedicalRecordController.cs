@@ -357,11 +357,12 @@ namespace Olives.Controllers
                 #endregion
 
                 #region Notification initialization
-
-                var recipient = requester.Id == medicalRecord.Owner ? medicalRecord.Creator : medicalRecord.Owner;
-
-                if (requester.Id != medicalRecord.Owner)
+                
+                // If the medical record is created privately, no notification should be sent.
+                if (medicalRecord.Creator != medicalRecord.Owner)
                 {
+                    var recipient = requester.Id == medicalRecord.Owner ? medicalRecord.Creator : medicalRecord.Owner;
+                    
                     var notification = new Notification();
                     notification.Type = (byte)NotificationType.Edit;
                     notification.Topic = (byte)NotificationTopic.MedicalRecord;
