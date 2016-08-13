@@ -107,6 +107,7 @@ namespace Olives.Controllers
                     prescription.From,
                     prescription.To,
                     prescription.Medicine,
+                    prescription.Name,
                     prescription.Note,
                     prescription.Created,
                     prescription.LastModified
