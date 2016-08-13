@@ -236,6 +236,8 @@ namespace Olives.Controllers
                 var notification = new Notification();
                 notification.Type = (byte) NotificationType.Create;
                 notification.Topic = (byte) NotificationTopic.Appointment;
+                notification.Container = appointment.Id;
+                notification.ContainerType = (byte) NotificationTopic.Appointment;
                 notification.Broadcaster = requester.Id;
                 notification.Recipient = dater.Id;
                 notification.Record = appointment.Id;
@@ -373,6 +375,8 @@ namespace Olives.Controllers
             var notification = new Notification();
             notification.Type = (byte) NotificationType.Edit;
             notification.Topic = (byte) NotificationTopic.Appointment;
+            notification.Container = appointment.Id;
+            notification.ContainerType = (byte)NotificationTopic.Appointment;
             notification.Broadcaster = requester.Id;
             notification.Recipient = recipient;
             notification.Record = appointment.Id;
