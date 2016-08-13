@@ -59,7 +59,7 @@ namespace Olives.Controllers
         /// <param name="initializer"></param>
         /// <returns></returns>
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Patient })]
         public async Task<HttpResponseMessage> InitializeRelation([FromBody] InitializeRelationshipViewModel initializer)
         {
             #region Request parameters validation
@@ -86,7 +86,7 @@ namespace Olives.Controllers
             try
             {
                 // Retrieve information of person who sent request.
-                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Check whether these two people have relation or not.
                 var relationship =
@@ -111,7 +111,7 @@ namespace Olives.Controllers
                 relation.Source = requester.Id;
                 relation.Target = initializer.Target;
                 relation.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
-                relation.Status = (byte) StatusRelation.Pending;
+                relation.Status = (byte)StatusRelation.Pending;
 
                 await _repositoryRelation.InitializeRelationAsync(relation);
 
@@ -133,18 +133,18 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/relationship/confirm")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
+        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
         public async Task<HttpResponseMessage> DecideRelationshipAsync(
             [FromBody] ConfirmRelationshipViewModel confirmation)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find the relationship by using id.
             var relationship =
                 await
                     _repositoryRelation.FindRelationshipAsync(confirmation.Id, requester.Id, RoleRelationship.Target,
-                        (byte) StatusRelation.Pending);
+                        (byte)StatusRelation.Pending);
 
             // No relationship has been returned.
             if (relationship == null)
@@ -157,7 +157,7 @@ namespace Olives.Controllers
                 });
             }
 
-            relationship.Status = (byte) StatusRelation.Active;
+            relationship.Status = (byte)StatusRelation.Active;
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
@@ -167,11 +167,11 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
-        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
+        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
         public async Task<HttpResponseMessage> DeleteRelationship([FromUri] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             try
             {
@@ -210,7 +210,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/relationship/filter/doctor")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Patient})]
+        [OlivesAuthorize(new[] { Role.Patient })]
         public async Task<HttpResponseMessage> FilterRelatedDoctor([FromBody] FilterRelatedPeopleViewModel filter)
         {
             #region Parameters validation
@@ -232,7 +232,7 @@ namespace Olives.Controllers
             #endregion
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Filter the relationship.
             var result =
@@ -262,7 +262,9 @@ namespace Olives.Controllers
                         x.Doctor.Person.Address,
                         Photo =
                             InitializeUrl(storageAvatar.Relative, x.Doctor.Person.Photo,
-                                Values.StandardImageExtension)
+                                Values.StandardImageExtension),
+                        x.Doctor.Person.Phone,
+                        x.Doctor.Person.Email
                     },
                     Status = x.RelationshipStatus,
                     x.Created
@@ -278,7 +280,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/relationship/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
+        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
         public async Task<HttpResponseMessage> FilterRelationship([FromBody] FilterRelationshipViewModel filter)
         {
             #region Parameters validation
@@ -302,7 +304,7 @@ namespace Olives.Controllers
             #region Result handling
 
             // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Update the filter.
             filter.Requester = requester.Id;
