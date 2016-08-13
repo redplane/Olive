@@ -153,10 +153,10 @@ namespace Olives.Repositories
                     {
                         x.Source,
                         x.Target
-                    });
+                    }, relation);
 
                     // Remove the relationship request.
-                    context.RelationshipRequests.Remove(relationshipRequest);
+                    context.RelationshipRequests.RemoveRange(context.RelationshipRequests.Where(x => x.Id == relationshipRequest.Id));
 
                     // Save changes.
                     await context.SaveChangesAsync();

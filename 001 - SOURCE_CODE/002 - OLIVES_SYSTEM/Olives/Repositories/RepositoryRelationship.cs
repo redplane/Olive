@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using Shared.Models;
 using Shared.ViewModels;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
+using FilterRelationshipViewModel = Olives.ViewModels.Filter.FilterRelationshipViewModel;
 
 namespace Olives.Repositories
 {
@@ -37,25 +39,25 @@ namespace Olives.Repositories
         #endregion
 
         #region Methods
-        
+
         /// <summary>
-        ///     Find the relation between 2 people.
+        ///     Find the relationship with specific conditions.
         /// </summary>
-        /// <param name="firstPerson"></param>
-        /// <param name="secondPerson"></param>
-        /// <param name="status"></param>
+        /// <param name="filter"></param>>
         /// <returns></returns>
-        public async Task<IList<Relation>> FindRelationshipAsync(int firstPerson, int secondPerson, byte? status = null)
+        public async Task<Relation> FindRelationshipAsync(FilterRelationshipViewModel filter)
         {
+            // Database context initialization.
             var context = _dataContext.Context;
 
-            // Find the participation of people in relationships.
-            var results = context.Relations.Where(
-                x =>
-                    (x.Source == firstPerson && x.Target == secondPerson) ||
-                    (x.Source == secondPerson && x.Target == firstPerson));
-            
-            return await results.ToListAsync();
+            // Take all relationships.
+            IQueryable<Relation> relationships = context.Relations;
+
+            // Filter the relationships.
+            relationships = FilterRelationships(relationships, filter);
+
+            // Return the first queried result.
+            return await relationships.FirstOrDefaultAsync();
         }
 
         /// <summary>
@@ -81,32 +83,18 @@ namespace Olives.Repositories
         /// <summary>
         ///     Delete a relation asynchronously.
         /// </summary>
-        /// <param name="id">Id of relationship</param>
-        /// <param name="requester">Id of person who request to delete relationship.</param>
-        /// <param name="role">The participation of requester in relationship.</param>
-        /// <param name="status">Status of relationship.</param>
+        /// <param name="filter">Id of relationship</param>
         /// <returns></returns>
-        public async Task<int> DeleteRelationAsync(int id, int? requester, RoleRelationship? role,
-            StatusRelation? status)
+        public async Task<int> DeleteRelationAsync(FilterRelationshipViewModel filter)
         {
             var context = _dataContext.Context;
 
             // By default, take all relationships.
             IQueryable<Relation> relationships = context.Relations;
-
-            // Find the relationship by using id.
-            relationships = relationships.Where(x => x.Id == id);
-
-            // Requester is defined. Find the his/her participation in the relationship.
-            if (requester != null)
-            {
-                if (role == RoleRelationship.Source)
-                    relationships = relationships.Where(x => x.Source == requester.Value);
-                else if (role == RoleRelationship.Target)
-                    relationships = relationships.Where(x => x.Target == requester.Value);
-                else
-                    relationships = relationships.Where(x => x.Source == requester || x.Target == requester);
-            }
+            
+            // Filter the relationships.
+            relationships = FilterRelationships(relationships, filter);
+            
             
             // Find the relation whose id is matched and has the specific person takes part in.
             context.Relations.RemoveRange(relationships);
@@ -124,35 +112,8 @@ namespace Olives.Repositories
 
             // By default, take all relationship.
             IQueryable<Relation> relationships = context.Relations;
-
-            // In case the relationship role is defined.
-            if (filter.Mode == RoleRelationship.Source)
-            {
-                // Requester is the source of relationship.
-                relationships = relationships.Where(x => x.Source == filter.Requester);
-
-                // Therefore, partner is the target of relationship.
-                if (filter.Partner != null)
-                    relationships = relationships.Where(x => x.Target == filter.Partner.Value);
-            }
-            else if (filter.Mode == RoleRelationship.Target)
-            {
-                // Requester is the target of relationship.
-                relationships = relationships.Where(x => x.Target == filter.Requester);
-
-                // Therefore, partner is the source of relationship.
-                if (filter.Partner != null)
-                    relationships = relationships.Where(x => x.Source == filter.Partner.Value);
-            }
-            else
-                relationships = relationships.Where(x => x.Source == filter.Requester || x.Target == filter.Requester);
+            relationships = FilterRelationships(relationships, filter);
             
-            // Created is defined.
-            if (filter.MinCreated != null)
-                relationships = relationships.Where(x => x.Created >= filter.MinCreated.Value);
-            if (filter.MaxCreated != null)
-                relationships = relationships.Where(x => x.Created <= filter.MaxCreated.Value);
-
             // Response initialization.Filter
             var response = new ResponseRelationshipFilter();
             response.Total = await relationships.CountAsync();
@@ -169,11 +130,10 @@ namespace Olives.Repositories
         ///     Filter related doctors.
         /// </summary>
         /// <param name="requester"></param>
-        /// <param name="status"></param>
         /// <param name="page"></param>
         /// <param name="records"></param>
         /// <returns></returns>
-        public async Task<ResponseRelatedDoctorFilter> FilterRelatedDoctorAsync(int requester, StatusRelation? status,
+        public async Task<ResponseRelatedDoctorFilter> FilterRelatedDoctorAsync(int requester,
             int page, int? records)
         {
             var context = _dataContext.Context;
@@ -249,6 +209,67 @@ namespace Olives.Repositories
                         (x.Source == secondPerson && x.Target == firstPerson));
         }
 
+        /// <summary>
+        ///     Filter medical records by using specific conditions.
+        /// </summary>
+        /// <param name="relationships"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        private IQueryable<Relation> FilterRelationships(
+            IQueryable<Relation> relationships, FilterRelationshipViewModel filter)
+        {
+            // Base on requester role, do the filter.
+            relationships = FilterRelationshipsByRequesterRole(relationships, filter);
+
+            // Id is specified.
+            if (filter.Id != null)
+                relationships = relationships.Where(x => x.Id == filter.Id);
+            
+            // Created is specified.
+            if (filter.MinCreated != null)
+                relationships = relationships.Where(x => x.Created >= filter.MinCreated);
+            if (filter.MaxCreated != null)
+                relationships = relationships.Where(x => x.Created <= filter.MaxCreated);
+
+            return relationships;
+        }
+
+        /// <summary>
+        ///     Base on the requester role to do exact filter function.
+        /// </summary>
+        /// <param name="relationships"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        private IQueryable<Relation> FilterRelationshipsByRequesterRole(
+            IQueryable<Relation> relationships,
+            FilterRelationshipViewModel filter)
+        {
+            // Requester is not defined.
+            if (filter.Requester == null)
+                throw new Exception("Requester must be specified.");
+
+            // Patient is always the relationship request sender.
+            if (filter.Requester.Role == (byte)Role.Patient)
+            {
+                // Find the source by using patient id.
+                relationships = relationships.Where(x => x.Source == filter.Requester.Id);
+
+                // Partner is specified.
+                if (filter.Partner != null)
+                    relationships = relationships.Where(x => x.Target == filter.Partner.Value);
+
+                return relationships;
+            }
+
+            // Doctor is always the relationship request receiver.
+            relationships = relationships.Where(x => x.Target == filter.Requester.Id);
+
+            // Partner is specified. Find the source of relationship request.
+            if (filter.Partner != null)
+                relationships = relationships.Where(x => x.Source == filter.Partner.Value);
+
+            return relationships;
+        }
         #endregion
     }
 }

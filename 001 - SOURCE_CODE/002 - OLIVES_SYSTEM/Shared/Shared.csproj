@@ -96,7 +96,6 @@
     <Compile Include="Enumerations\RoleRelationship.cs" />
     <Compile Include="Enumerations\TaskType.cs" />
     <Compile Include="Enumerations\TypeAccountCode.cs" />
-    <Compile Include="Enumerations\StatusRelation.cs" />
     <Compile Include="Enumerations\SortDirection.cs" />
     <Compile Include="Enumerations\StatusAccount.cs" />
     <Compile Include="Constants\HeaderFields.cs" />
@@ -259,7 +258,6 @@
     <Compile Include="ViewModels\Filter\FilterPrescriptionImageViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPrescriptionViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterRatingViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterRelationshipViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseNotificationFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseExperimentNoteFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseMedicalCategoryFilter.cs" />

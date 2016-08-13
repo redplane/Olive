@@ -1,11 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Web.Http;
+using System.Web.ModelBinding;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
+using Shared.Models;
 using Shared.Resources;
 
-namespace Shared.ViewModels.Filter
+namespace Olives.ViewModels.Filter
 {
     public class FilterRelationshipViewModel : IPagination
     {
@@ -17,18 +20,15 @@ namespace Shared.ViewModels.Filter
         /// <summary>
         ///     Who sent the filter request.
         /// </summary>
-        public int Requester { get; set; }
+        [HttpBindNever]
+        [BindNever]
+        public Person Requester { get; set; }
 
         /// <summary>
         ///     Who is included in medical record.
         /// </summary>
         public int? Partner { get; set; }
-
-        /// <summary>
-        ///     Filtering mode.
-        /// </summary>
-        public RoleRelationship? Mode { get; set; }
-
+        
         /// <summary>
         ///     Time after which relationship which was created.
         /// </summary>

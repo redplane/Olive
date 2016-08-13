@@ -15,6 +15,7 @@ using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels.Filter;
+using FilterRelationshipViewModel = Olives.ViewModels.Filter.FilterRelationshipViewModel;
 
 namespace Olives.Controllers
 {
@@ -52,25 +53,31 @@ namespace Olives.Controllers
         [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
         public async Task<HttpResponseMessage> DeleteRelationship([FromUri] int id)
         {
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
             try
             {
-                // Delete relationship and retrieve the number of affected records.
-                var records = await _repositoryRelation.DeleteRelationAsync(id, requester.Id, null, null);
-                if (records < 1)
-                {
-                    // No record has been found. Log the error for future trace.
-                    _log.Error($"There is no relationship [Id: {id}].");
+                // Retrieve information of person who sent request.
+                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+                
+                // Filter initialization.
+                var filter = new FilterRelationshipViewModel();
+                filter.Requester = requester;
+                filter.Id = id;
 
-                    // Tell the client about the rror.
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new
-                    {
-                        Error = $"{Language.WarnRecordNotFound}"
-                    });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK);
+                // Count the number of deleted records.
+                var records = await _repositoryRelation.DeleteRelationAsync(filter);
+
+                // Delete successfully
+                if (records >= 1)
+                    return Request.CreateResponse(HttpStatusCode.OK);
+
+                // No record has been found. Log the error for future trace.
+                _log.Error($"There is no relationship [Id: {id}].");
+
+                // Tell the client about the rror.
+                return Request.CreateResponse(HttpStatusCode.NotFound, new
+                {
+                    Error = $"{Language.WarnRecordNotFound}"
+                });
             }
             catch (Exception exception)
             {
@@ -119,7 +126,7 @@ namespace Olives.Controllers
             // Filter the relationship.
             var result =
                 await
-                    _repositoryRelation.FilterRelatedDoctorAsync(requester.Id, filter.Status, filter.Page,
+                    _repositoryRelation.FilterRelatedDoctorAsync(requester.Id, filter.Page,
                         filter.Records);
 
             // Find the avatar storage.
@@ -189,7 +196,7 @@ namespace Olives.Controllers
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Update the filter.
-            filter.Requester = requester.Id;
+            filter.Requester = requester;
 
             // Filter the relationship.
             var result =

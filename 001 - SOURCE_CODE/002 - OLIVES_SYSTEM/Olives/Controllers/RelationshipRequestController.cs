@@ -221,21 +221,23 @@ namespace Olives.Controllers
         [OlivesAuthorize(new[] {Role.Doctor})]
         public async Task<HttpResponseMessage> ConfirmRelationshipRequest([FromUri] int id)
         {
-            // Retrieve information of person who sent request.
-            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
+            
             try
             {
+                // Retrieve information of person who sent request.
+                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+                
                 #region Find the relationship request
 
                 var filter = new FilterRelationshipRequestViewModel();
                 filter.Id = id;
+                filter.Requester = requester;
                 var relationshipRequest = await _repositoryRelationshipRequest.FindRelationshipRequest(filter);
 
                 #endregion
 
                 // No relationship request is found.
-                if (relationshipRequest == null || requester.Id != relationshipRequest.Target)
+                if (relationshipRequest == null)
                 {
                     _log.Error($"Relationship request [Id: {id}] is not found in system");
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
