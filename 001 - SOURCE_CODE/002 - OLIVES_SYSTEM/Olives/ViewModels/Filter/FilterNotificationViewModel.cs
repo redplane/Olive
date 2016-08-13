@@ -6,7 +6,7 @@ using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Resources;
 
-namespace Shared.ViewModels.Filter
+namespace Olives.ViewModels.Filter
 {
     public class FilterNotificationViewModel : IPagination
     {

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
+using Olives.Interfaces;
+using Olives.ViewModels.Filter;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
@@ -91,6 +93,8 @@ namespace Olives.Controllers
                         x.Id,
                         x.Type,
                         x.Topic,
+                        x.Container,
+                        x.ContainerType,
                         x.Broadcaster,
                         x.Recipient,
                         x.Record,
@@ -116,11 +120,11 @@ namespace Olives.Controllers
         /// <summary>
         ///     Make the appointment to be seen.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPost]
         [Route("api/notification/seen")]
-        public async Task<HttpResponseMessage> MakeAppointmentNotificationSeen([FromUri] int id)
+        public async Task<HttpResponseMessage> MakeAppointmentNotificationSeen([FromBody] FilterNotificationViewModel filter) 
         {
             try
             {
@@ -128,63 +132,14 @@ namespace Olives.Controllers
                 var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Find the appointment notification first.
-                var filter = new FilterNotificationViewModel();
                 filter.Requester = requester.Id;
-                filter.Id = id;
                 filter.Mode = RecordFilterMode.RequesterIsOwner;
                 filter.IsSeen = false;
 
                 // Do the filter.
-                var result = await _repositoryNotification.FilterNotificationsAsync(filter);
+                await _repositoryNotification.ConfirmNotificationSeen(filter);
 
-                // No record has been found.
-                if (result.Total != 1)
-                {
-                    // Log the error.
-                    _log.Error($"There (is/are) {result.Total} record(s) (has/have) been found.");
-
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new
-                    {
-                        Error = $"{Language.WarnRecordNotFound}"
-                    });
-                }
-
-                // Retrieve the first result.
-                var notification = result.Notifications.FirstOrDefault();
-
-                // No record has been found.
-                if (notification == null)
-                {
-                    // Log the error.
-                    _log.Error($"There (is/are) {result.Total} record(s) (has/have) been found.");
-
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new
-                    {
-                        Error = $"{Language.WarnRecordNotFound}"
-                    });
-                }
-
-                // Update the seen status.
-                notification.IsSeen = true;
-
-                // Update the database.
-                await _repositoryNotification.InitializeNotificationAsync(notification);
-
-                return Request.CreateResponse(HttpStatusCode.OK, new
-                {
-                    Notification = new
-                    {
-                        notification.Id,
-                        notification.Type,
-                        notification.Topic,
-                        notification.Broadcaster,
-                        notification.Recipient,
-                        notification.Record,
-                        notification.Message,
-                        notification.Created,
-                        notification.IsSeen
-                    }
-                });
+                return Request.CreateResponse(HttpStatusCode.OK);
             }
             catch (Exception exception)
             {

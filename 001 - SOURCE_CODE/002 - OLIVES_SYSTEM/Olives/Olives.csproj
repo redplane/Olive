@@ -283,6 +283,7 @@
     <Compile Include="Interfaces\INotificationService.cs" />
     <Compile Include="Interfaces\IRepositoryAccountExtended.cs" />
     <Compile Include="Interfaces\IRepositoryMessage.cs" />
+    <Compile Include="Interfaces\IRepositoryNotification.cs" />
     <Compile Include="Interfaces\IRepositoryRelationshipRequest.cs" />
     <Compile Include="Interfaces\IRepositoryRelationship.cs" />
     <Compile Include="Interfaces\Medical\IRepositoryExperimentNote.cs" />
@@ -317,6 +318,7 @@
     <Compile Include="Repositories\RepositoryAccountExtended.cs" />
     <Compile Include="Repositories\PersonalNote\RepositoryDiary.cs" />
     <Compile Include="Repositories\RepositoryMessage.cs" />
+    <Compile Include="Repositories\RepositoryNotification.cs" />
     <Compile Include="Repositories\RepositoryRelationship.cs" />
     <Compile Include="Repositories\RepositoryRelationshipRequest.cs" />
     <Compile Include="Services\EmailService.cs" />
@@ -340,6 +342,7 @@
     <Compile Include="ViewModels\Filter\FilterDiaryViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterDoctorViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMessageViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterNotificationViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPatientViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterRelatedPeopleViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterRelationshipRequestViewModel.cs" />

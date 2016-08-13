@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
+using Olives.ViewModels.Filter;
 using Shared.Models;
-using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
-namespace Shared.Interfaces
+namespace Olives.Interfaces
 {
     public interface IRepositoryNotification
     {
@@ -27,5 +27,12 @@ namespace Shared.Interfaces
         /// <param name="filter"></param>
         /// <returns></returns>
         Task<ResponseNotificationFilter> FilterNotificationsAsync(FilterNotificationViewModel filter);
+
+        /// <summary>
+        /// Make the notification matched with the conditions be seen.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        Task<int> ConfirmNotificationSeen(FilterNotificationViewModel filter);
     }
 }
