@@ -156,7 +156,6 @@ namespace Olives.Controllers
                         x.Doctor.Person.Phone,
                         x.Doctor.Person.Email
                     },
-                    Status = x.RelationshipStatus,
                     x.Created
                 }),
                 result.Total

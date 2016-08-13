@@ -323,11 +323,12 @@ namespace Olives.Controllers
             {
                 var filter = new FilterRelationshipRequestViewModel();
                 filter.Id = id;
+                filter.Requester = requester;
+
                 var relationshipRequest = await _repositoryRelationshipRequest.FindRelationshipRequest(filter);
 
                 // No relationship request is found.
-                if (relationshipRequest == null || requester.Id != relationshipRequest.Source ||
-                    requester.Id != relationshipRequest.Target)
+                if (relationshipRequest == null)
                 {
                     _log.Error($"Relationship [Id: {id}] is not found in system");
                     return Request.CreateResponse(HttpStatusCode.NotFound, new
