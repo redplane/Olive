@@ -172,7 +172,7 @@ namespace Olives.Controllers
 
                 var filter = new FilterRelationshipRequestViewModel();
                 filter.Requester = requester;
-                filter.Partner = filter.Partner;
+                filter.Partner = initializer.Target;
 
                 // Find the relationship request.
                 var relationshipRequest = await _repositoryRelationshipRequest.FindRelationshipRequest(filter);

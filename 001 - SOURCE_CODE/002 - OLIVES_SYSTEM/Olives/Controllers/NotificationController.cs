@@ -46,7 +46,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("api/notification/filter")]
-        public async Task<HttpResponseMessage> FilterAppointmentNotificationAsync(
+        public async Task<HttpResponseMessage> FilterNotificationAsync(
             [FromBody] FilterNotificationViewModel filter)
         {
             #region Parameters validation
@@ -124,7 +124,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("api/notification/seen")]
-        public async Task<HttpResponseMessage> MakeAppointmentNotificationSeen([FromBody] FilterNotificationViewModel filter) 
+        public async Task<HttpResponseMessage> MakeNotificationsSeen([FromBody] FilterNotificationViewModel filter) 
         {
             try
             {

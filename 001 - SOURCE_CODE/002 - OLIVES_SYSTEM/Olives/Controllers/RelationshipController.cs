@@ -137,6 +137,7 @@ namespace Olives.Controllers
             {
                 Relationships = result.List.Select(x => new
                 {
+                    x.Relation,
                     Doctor = new
                     {
                         x.Doctor.Id,

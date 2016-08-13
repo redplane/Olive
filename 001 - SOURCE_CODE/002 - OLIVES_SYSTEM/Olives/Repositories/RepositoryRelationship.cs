@@ -151,6 +151,7 @@ namespace Olives.Repositories
                 join d in doctors on r.Target equals d.Id
                 select new RelatedDoctorViewModel
                 {
+                    Relation = r.Id,
                     Doctor = d,
                     Created = r.Created
                 };
