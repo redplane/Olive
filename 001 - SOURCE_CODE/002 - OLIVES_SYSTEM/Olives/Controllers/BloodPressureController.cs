@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
+using Olives.Interfaces;
 using Olives.Interfaces.PersonalNote;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
@@ -31,7 +32,7 @@ namespace Olives.Controllers
         /// <param name="timeService"></param>
         /// <param name="log"></param>
         public BloodPressureController(IRepositoryBloodPressure repositoryBloodPressure,
-            IRepositoryRelation repositoryRelation, ITimeService timeService, ILog log)
+            IRepositoryRelationship repositoryRelation, ITimeService timeService, ILog log)
         {
             _repositoryBloodPressure = repositoryBloodPressure;
             _repositoryRelation = repositoryRelation;
@@ -422,7 +423,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of relationships.
         /// </summary>
-        private readonly IRepositoryRelation _repositoryRelation;
+        private readonly IRepositoryRelationship _repositoryRelation;
 
         /// <summary>
         ///     Time service which provides functions to access time calculation functions.

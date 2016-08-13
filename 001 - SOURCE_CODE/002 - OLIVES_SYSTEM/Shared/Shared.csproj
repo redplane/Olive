@@ -119,7 +119,6 @@
     <Compile Include="Interfaces\IRepositoryPlace.cs" />
     <Compile Include="Interfaces\IRepositoryRating.cs" />
     <Compile Include="Interfaces\IRepositoryRealTimeConnection.cs" />
-    <Compile Include="Interfaces\IRepositoryRelation.cs" />
     <Compile Include="Interfaces\IRepositorySpecialty.cs" />
     <Compile Include="Interfaces\IRepositoryStorage.cs" />
     <Compile Include="Interfaces\ITimeService.cs" />
@@ -210,6 +209,9 @@
     <Compile Include="Models\Relation.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\RelationshipRequest.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\ResponseErrror.cs" />
     <Compile Include="Models\PathService.cs" />
     <Compile Include="Models\Specialty.cs">
@@ -224,7 +226,6 @@
     <Compile Include="Repositories\RepositoryMedicalCategory.cs" />
     <Compile Include="Repositories\RepositoryNotification.cs" />
     <Compile Include="Repositories\RepositoryRealTimeConnection.cs" />
-    <Compile Include="Repositories\RepositoryRelation.cs" />
     <Compile Include="Repositories\RepositoryAccount.cs" />
     <Compile Include="Repositories\RepositoryCode.cs" />
     <Compile Include="Repositories\RepositoryPlace.cs" />

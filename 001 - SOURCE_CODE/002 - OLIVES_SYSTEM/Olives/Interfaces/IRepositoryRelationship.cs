@@ -5,9 +5,9 @@ using Shared.Models;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
-namespace Shared.Interfaces
+namespace Olives.Interfaces
 {
-    public interface IRepositoryRelation
+    public interface IRepositoryRelationship
     {
         /// <summary>
         ///     Find the relation between 2 people.
@@ -17,24 +17,7 @@ namespace Shared.Interfaces
         /// <param name="status"></param>
         /// <returns></returns>
         Task<IList<Relation>> FindRelationshipAsync(int firstPerson, int secondPerson, byte? status);
-
-        /// <summary>
-        ///     Find a relation by using specific information.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="person"></param>
-        /// <param name="role">Whether person is the source (0) or target (1) of relationship</param>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        Task<Relation> FindRelationshipAsync(int id, int? person, RoleRelationship? role, StatusRelation? status);
-
-        /// <summary>
-        ///     Initialize a relationship to database.
-        /// </summary>
-        /// <param name="relation"></param>
-        /// <returns></returns>
-        Task<Relation> InitializeRelationAsync(Relation relation);
-
+        
         /// <summary>
         ///     Find a relation whose id match with search condition and person is taking part in it.
         /// </summary>

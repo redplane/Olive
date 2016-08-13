@@ -38,7 +38,7 @@ namespace Olives.Controllers
         /// <param name="log"></param>
         public PrescriptionController(IRepositoryAccountExtended repositoryAccountExtended,
             IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryPrescription repositoryPrescription,
-            IRepositoryRelation repositoryRelation,
+            IRepositoryRelationship repositoryRelation,
             ITimeService timeService, INotificationService notificationService,
             ILog log)
         {
@@ -551,7 +551,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of relationships.
         /// </summary>
-        private readonly IRepositoryRelation _repositoryRelation;
+        private readonly IRepositoryRelationship _repositoryRelation;
 
         /// <summary>
         ///     Repository of notification.

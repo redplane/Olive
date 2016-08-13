@@ -2,6 +2,7 @@
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using Olives.Interfaces;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
@@ -9,19 +10,26 @@ using Shared.ViewModels;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
-namespace Shared.Repositories
+namespace Olives.Repositories
 {
-    public class RepositoryRelation : IRepositoryRelation
+    public class RepositoryRelationship : IRepositoryRelationship
     {
         #region Properties
 
+        /// <summary>
+        /// Context wrapper which contains context to access to database.
+        /// </summary>
         private readonly IOliveDataContext _dataContext;
 
         #endregion
 
         #region Constructors
 
-        public RepositoryRelation(IOliveDataContext dataContext)
+        /// <summary>
+        /// Initialize an instance of repository which contains context wrapper.
+        /// </summary>
+        /// <param name="dataContext"></param>
+        public RepositoryRelationship(IOliveDataContext dataContext)
         {
             _dataContext = dataContext;
         }
@@ -29,61 +37,7 @@ namespace Shared.Repositories
         #endregion
 
         #region Methods
-
-        /// <summary>
-        ///     Initialize a relationship to database.
-        /// </summary>
-        /// <param name="relation"></param>
-        /// <returns></returns>
-        public async Task<Relation> InitializeRelationAsync(Relation relation)
-        {
-            var context = _dataContext.Context;
-
-            // Save relation to database.
-            context.Relations.Add(relation);
-            await context.SaveChangesAsync();
-
-            return relation;
-        }
-
-        /// <summary>
-        ///     Find a relation by using specific information.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="person"></param>
-        /// <param name="role"></param>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        public async Task<Relation> FindRelationshipAsync(int id, int? person, RoleRelationship? role,
-            StatusRelation? status)
-        {
-            var context = _dataContext.Context;
-
-            // Query result.
-            IQueryable<Relation> relationships = context.Relations;
-
-            // Filter relationship by using id.
-            relationships = relationships.Where(x => x.Id == id);
-
-            // Source is specified.
-            if (person != null)
-            {
-                // Role role is specified.
-                if (role == RoleRelationship.Source)
-                    relationships = relationships.Where(x => x.Source == person.Value);
-                else if (role == RoleRelationship.Target)
-                    relationships = relationships.Where(x => x.Target == person.Value);
-                else
-                    relationships = relationships.Where(x => x.Source == person.Value || x.Target == person.Value);
-            }
-
-            // Status is specified.
-            if (status != null)
-                relationships = relationships.Where(x => x.Status == (byte) status);
-
-            return await relationships.FirstOrDefaultAsync();
-        }
-
+        
         /// <summary>
         ///     Find the relation between 2 people.
         /// </summary>
@@ -100,9 +54,7 @@ namespace Shared.Repositories
                 x =>
                     (x.Source == firstPerson && x.Target == secondPerson) ||
                     (x.Source == secondPerson && x.Target == firstPerson));
-
-            // Find the status which matches with the status we wanna find.
-            results = results.Where(x => x.Status == status);
+            
             return await results.ToListAsync();
         }
 
@@ -122,11 +74,7 @@ namespace Shared.Repositories
 
             // Find the relation whose id is matched and has the specific person takes part in.
             results = results.Where(x => x.Id == id && (x.Source == id || x.Target == id));
-
-            // Status is defined
-            if (status != null)
-                results = results.Where(x => x.Status == status);
-
+            
             return await results.ToListAsync();
         }
 
@@ -159,11 +107,7 @@ namespace Shared.Repositories
                 else
                     relationships = relationships.Where(x => x.Source == requester || x.Target == requester);
             }
-
-            // Status is defined.
-            if (status != null)
-                relationships = relationships.Where(x => x.Status == (byte) status);
-
+            
             // Find the relation whose id is matched and has the specific person takes part in.
             context.Relations.RemoveRange(relationships);
 
@@ -202,11 +146,7 @@ namespace Shared.Repositories
             }
             else
                 relationships = relationships.Where(x => x.Source == filter.Requester || x.Target == filter.Requester);
-
-            // Status is defined.
-            if (filter.Status != null)
-                relationships = relationships.Where(x => x.Status == (byte) filter.Status.Value);
-
+            
             // Created is defined.
             if (filter.MinCreated != null)
                 relationships = relationships.Where(x => x.Created >= filter.MinCreated.Value);
@@ -243,11 +183,7 @@ namespace Shared.Repositories
 
             // Take the relationship whose source is requester and type is provide treatment.
             relationships = relationships.Where(x => x.Source == requester);
-
-            // Status is defined.
-            if (status != null)
-                relationships = relationships.Where(x => x.Status == (byte) status.Value);
-
+            
             // Take all people who are doctor.
             IQueryable<Doctor> doctors = context.Doctors;
 
@@ -256,7 +192,6 @@ namespace Shared.Repositories
                 select new RelatedDoctorViewModel
                 {
                     Doctor = d,
-                    RelationshipStatus = r.Status,
                     Created = r.Created
                 };
 
@@ -305,10 +240,7 @@ namespace Shared.Repositories
 
             // By default, take all relationships.
             IQueryable<Relation> relationships = context.Relations;
-
-            // Filter to take active relationship only.
-            relationships = relationships.Where(x => x.Status == (byte) StatusRelation.Active);
-
+            
             // Find the relationship which these 2 people take part in.
             return await
                 relationships.AnyAsync(

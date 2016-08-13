@@ -35,7 +35,7 @@ namespace Olives.Controllers
         /// <param name="notificationService"></param>
         /// <param name="log"></param>
         public MedicalRecordController(IRepositoryMedicalRecord repositoryMedical,
-            IRepositoryRelation repositoryRelation,
+            IRepositoryRelationship repositoryRelation,
             ITimeService timeService, INotificationService notificationService,
             ILog log)
         {
@@ -568,7 +568,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of relationships.
         /// </summary>
-        private readonly IRepositoryRelation _repositoryRelation;
+        private readonly IRepositoryRelationship _repositoryRelation;
 
         /// <summary>
         ///     Notification service.

@@ -36,7 +36,7 @@ namespace Olives.Controllers
         /// <param name="notificationService"></param>
         /// <param name="log"></param>
         public MedicalNoteController(IRepositoryMedicalNote repositoryMedicalNote,
-            IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryRelation repositoryRelation,
+            IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryRelationship repositoryRelation,
             ITimeService timeService, INotificationService notificationService,
             ILog log)
         {
@@ -535,7 +535,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of relationships.
         /// </summary>
-        private readonly IRepositoryRelation _repositoryRelation;
+        private readonly IRepositoryRelationship _repositoryRelation;
 
         /// <summary>
         ///     Service which provides function to access time calculation.

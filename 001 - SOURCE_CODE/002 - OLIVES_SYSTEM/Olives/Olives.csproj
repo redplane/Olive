@@ -256,6 +256,7 @@
     <Compile Include="Controllers\MedicalRecordController.cs" />
     <Compile Include="Controllers\PlaceController.cs" />
     <Compile Include="Controllers\RateController.cs" />
+    <Compile Include="Controllers\RelationshipRequestController.cs" />
     <Compile Include="Controllers\RelationshipController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ServiceController.cs" />
@@ -272,6 +273,7 @@
     <Compile Include="Enumerations\Filter\FilterDoctorSort.cs" />
     <Compile Include="Enumerations\Filter\PatientFilterSort.cs" />
     <Compile Include="Constants\Storage.cs" />
+    <Compile Include="Enumerations\Filter\RelationshipRequestFilterSort.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -281,6 +283,8 @@
     <Compile Include="Interfaces\INotificationService.cs" />
     <Compile Include="Interfaces\IRepositoryAccountExtended.cs" />
     <Compile Include="Interfaces\IRepositoryMessage.cs" />
+    <Compile Include="Interfaces\IRepositoryRelationshipRequest.cs" />
+    <Compile Include="Interfaces\IRepositoryRelationship.cs" />
     <Compile Include="Interfaces\Medical\IRepositoryExperimentNote.cs" />
     <Compile Include="Interfaces\Medical\IRepositoryMedicalImage.cs" />
     <Compile Include="Interfaces\Medical\IRepositoryMedicalNote.cs" />
@@ -313,6 +317,8 @@
     <Compile Include="Repositories\RepositoryAccountExtended.cs" />
     <Compile Include="Repositories\PersonalNote\RepositoryDiary.cs" />
     <Compile Include="Repositories\RepositoryMessage.cs" />
+    <Compile Include="Repositories\RepositoryRelationship.cs" />
+    <Compile Include="Repositories\RepositoryRelationshipRequest.cs" />
     <Compile Include="Services\EmailService.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\NotificationService.cs" />
@@ -336,6 +342,7 @@
     <Compile Include="ViewModels\Filter\FilterMessageViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPatientViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterRelatedPeopleViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterRelationshipRequestViewModel.cs" />
     <Compile Include="ViewModels\Initialize\ConfirmRelationshipViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAddictionViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeAllergyViewModel.cs" />
@@ -362,6 +369,7 @@
     <Compile Include="ViewModels\MedicineInfoViewModel.cs" />
     <Compile Include="ViewModels\RequestActivationCodeViewModel.cs" />
     <Compile Include="ViewModels\Response\ResponseDiaryFilter.cs" />
+    <Compile Include="ViewModels\Response\ResponseRelationshipRequestFilter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -371,6 +379,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\web.config" />
     <Content Include="Views\AccountVerify\Index.cshtml" />
+    <Content Include="Resources\Profile\3i3i3i3i343243" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

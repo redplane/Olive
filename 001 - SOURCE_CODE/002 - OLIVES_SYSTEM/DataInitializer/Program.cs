@@ -4,7 +4,9 @@ using System.Data.Entity.Migrations;
 using System.Data.Entity.Validation;
 using System.Linq;
 using Newtonsoft.Json;
+using Olives.Interfaces;
 using Olives.Interfaces.Medical;
+using Olives.Repositories;
 using Olives.Repositories.Medical;
 using Olives.ViewModels;
 using Shared.Constants;
@@ -21,7 +23,7 @@ namespace DataInitializer
         private static readonly IRepositoryAccount RepositoryAccount = new RepositoryAccount();
         private static readonly IRepositoryMedicalRecord RepositoryMedical = new RepositoryMedicalRecord();
         private static readonly IRepositoryPrescription RepositoryPrescription = new RepositoryPrescription();
-        private static readonly IRepositoryRelation RepositoryRelation = new RepositoryRelation();
+        private static readonly IRepositoryRelationship RepositoryRelation = new RepositoryRelationship();
         private static readonly ITimeService TimeService = new TimeService();
         private static readonly IRepositoryExperimentNote RepositoryExperimentNote = new RepositoryExperimentNote();
         private static readonly IRepositoryMedicalNote RepositoryMedicalNote = new RepositoryMedicalNote();

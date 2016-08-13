@@ -12,6 +12,11 @@
         /// </summary>
         public const int MaxAvatarSize = 2048;
 
+        /// <summary>
+        ///     Maximum character of relationship request content length.
+        /// </summary>
+        public const int MaxRelationshipRequestContentLength = 128;
+
         #region Email templates
 
         /// <summary>

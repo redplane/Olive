@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
+using Olives.Interfaces;
 using Olives.Interfaces.PersonalNote;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
@@ -31,7 +32,7 @@ namespace Olives.Controllers
         /// <param name="timeService"></param>
         /// <param name="log"></param>
         public AllergyController(IRepositoryAllergy repositoryAllergy,
-            IRepositoryRelation repositoryRelation, ITimeService timeService, ILog log)
+            IRepositoryRelationship repositoryRelation, ITimeService timeService, ILog log)
         {
             _repositoryAllergy = repositoryAllergy;
             _repositoryRelation = repositoryRelation;
@@ -385,6 +386,7 @@ namespace Olives.Controllers
                     .Select(x => new
                     {
                         x.Id,
+                        x.Owner,
                         x.Name,
                         x.Cause,
                         x.Note,
@@ -409,7 +411,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of relationships.
         /// </summary>
-        private readonly IRepositoryRelation _repositoryRelation;
+        private readonly IRepositoryRelationship _repositoryRelation;
 
         /// <summary>
         ///     Service which provides functions for time calculation.

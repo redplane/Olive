@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
+using Olives.Interfaces;
 using Olives.Interfaces.PersonalNote;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
@@ -32,7 +33,7 @@ namespace Olives.Controllers
         /// <param name="timeService"></param>
         /// <param name="log"></param>
         public HeartbeatController(IRepositoryHeartbeat repositoryHeartbeat,
-            IRepositoryRelation repositoryRelation, ITimeService timeService,
+            IRepositoryRelationship repositoryRelation, ITimeService timeService,
             ILog log)
         {
             _repositoryHeartbeat = repositoryHeartbeat;
@@ -384,7 +385,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of relationships.
         /// </summary>
-        private readonly IRepositoryRelation _repositoryRelation;
+        private readonly IRepositoryRelationship _repositoryRelation;
 
         /// <summary>
         ///     Service which provides functions to access time calculation.

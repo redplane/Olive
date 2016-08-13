@@ -278,7 +278,6 @@ namespace Olives.Repositories.Medical
 
             // Doctor can see every record whose owner has connection to him/her.
             IQueryable<Relation> relationships = olivesHealthEntities.Relations;
-            relationships = relationships.Where(x => x.Status == (byte) StatusRelation.Active);
             relationships = relationships.Where(x => x.Target == filter.Requester.Id);
 
             // Partner is specified. This means to be a patient

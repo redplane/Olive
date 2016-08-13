@@ -19,6 +19,7 @@ DROP TABLE Heartbeat;
 DROP TABLE Notification;
 DROP TABLE Appointment;
 DROP TABLE Rating;
+DROP TABLE RelationshipRequest;
 DROP TABLE Relation;
 DROP TABLE Patient;
 DROP TABLE Doctor;
@@ -193,6 +194,20 @@ CREATE TABLE Patient
 	FOREIGN KEY (Id) REFERENCES Person(Id)
 )
 
+-- This table is for storing relationship requests.
+CREATE TABLE RelationshipRequest
+(
+	Id					INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	Source				INT NOT NULL,
+	Target				INT NOT NULL,
+	Content				NVARCHAR(128),
+	Created				FLOAT NOT NULL,
+	LastModified		FLOAT,
+
+	FOREIGN KEY (Source) REFERENCES Patient(Id),
+	FOREIGN KEY (Target) REFERENCES Doctor(Id)	
+)
+
 -- Relation table
 CREATE TABLE Relation
 (
@@ -200,8 +215,7 @@ CREATE TABLE Relation
 	Source				INT NOT NULL,
 	Target				INT NOT NULL,
 	Created				FLOAT NOT NULL,
-	Status				TINYINT NOT NULL,
-
+	
 	FOREIGN KEY (Source) REFERENCES Patient(Id),
 	FOREIGN KEY (Target) REFERENCES Doctor(Id)			
 );
@@ -392,4 +406,3 @@ CREATE TABLE [Message]
 	FOREIGN KEY (Broadcaster) REFERENCES Person(Id),
 	FOREIGN KEY (Recipient) REFERENCES Person(Id)
 )
-

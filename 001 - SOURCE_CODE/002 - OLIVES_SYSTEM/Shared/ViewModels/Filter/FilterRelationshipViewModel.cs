@@ -10,6 +10,11 @@ namespace Shared.ViewModels.Filter
     public class FilterRelationshipViewModel : IPagination
     {
         /// <summary>
+        /// Id of request.
+        /// </summary>
+        public int? Id { get; set; }
+
+        /// <summary>
         ///     Who sent the filter request.
         /// </summary>
         public int Requester { get; set; }
@@ -41,12 +46,7 @@ namespace Shared.ViewModels.Filter
         [NumericPropertyCompare("MinCreated", Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public double? MaxCreated { get; set; }
-
-        /// <summary>
-        ///     Status of relationship.
-        /// </summary>
-        public StatusRelation? Status { get; set; }
-
+        
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsInvalid")]

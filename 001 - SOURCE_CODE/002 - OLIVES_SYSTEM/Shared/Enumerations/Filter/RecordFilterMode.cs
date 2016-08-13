@@ -3,7 +3,6 @@
     public enum RecordFilterMode
     {
         RequesterIsCreator,
-        RequesterIsOwner,
-        RequesterIsSpectator
+        RequesterIsOwner
     }
 }
