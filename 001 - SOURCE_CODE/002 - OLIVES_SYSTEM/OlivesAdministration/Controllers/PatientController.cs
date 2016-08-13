@@ -76,8 +76,7 @@ namespace OlivesAdministration.Controllers
                 // Retrieve list of patients.
                 var account =
                     await
-                        _repositoryAccountExtended.FindPersonAsync(id, null, null, (byte) Role.Patient,
-                            StatusAccount.Active);
+                        _repositoryAccountExtended.FindPersonAsync(id, null, null, (byte) Role.Patient, null);
 
                 // No patient has been found.
                 if (account == null)
