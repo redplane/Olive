@@ -42,7 +42,7 @@ namespace Shared.Attributes
                 throw new Exception("Invalid milestones.");
 
             // Convert value to int.
-            var casted = (int) value;
+            var casted = Convert.ToInt32(value);
 
             if (!_milesStone.Any(x => x.Equals(casted)))
                 return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
