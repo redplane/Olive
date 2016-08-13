@@ -11,7 +11,7 @@ DROP TABLE Prescription;
 DROP TABLE MedicalRecord;
 DROP TABLE MedicalCategory;
 DROP TABLE AccountCode;
-DROP TABLE Allergy;Ex
+DROP TABLE Allergy;
 DROP TABLE Addiction;
 DROP TABLE SugarBlood;
 DROP TABLE BloodPressure;
@@ -176,7 +176,8 @@ CREATE TABLE Doctor
 	SpecialtyId			INT NOT NULL,
 	Voters				INT				NOT NULL,
 	PlaceId				INT				NOT NULL,
-	
+	ProfilePdf			NVARCHAR(32)
+
 	FOREIGN KEY (Id) REFERENCES Person(Id),
 	FOREIGN KEY (SpecialtyId) REFERENCES Specialty(Id),
 	FOREIGN KEY (PlaceId) REFERENCES Place(Id)
