@@ -40,7 +40,7 @@ namespace Olives.Controllers
         /// <param name="applicationSetting"></param>
         public PatientController(
             IRepositoryAccountExtended repositoryAccountExtended, IRepositoryCode repositoryCode,
-            IRepositoryRelation repositoryRelation,
+            IRepositoryRelationship repositoryRelation,
             IRepositoryStorage repositoryStorage,
             ITimeService timeService, IEmailService emailService,
             ILog log,
@@ -504,7 +504,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository which provides functions to relationship database.
         /// </summary>
-        private readonly IRepositoryRelation _repositoryRelation;
+        private readonly IRepositoryRelationship _repositoryRelation;
 
         /// <summary>
         ///     Repository which provides functions to storage setting.

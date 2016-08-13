@@ -31,7 +31,7 @@ namespace Olives.Controllers
         /// <param name="timeService"></param>
         /// <param name="log"></param>
         public RateController(IRepositoryAccountExtended repositoryAccountExtended, IRepositoryRating repositoryRating,
-            IRepositoryRelation repositoryRelation,
+            IRepositoryRelationship repositoryRelation,
             ITimeService timeService, ILog log)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
@@ -248,7 +248,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of relationships.
         /// </summary>
-        private readonly IRepositoryRelation _repositoryRelation;
+        private readonly IRepositoryRelationship _repositoryRelation;
 
         /// <summary>
         ///     Service which provides functions to access time calculation.

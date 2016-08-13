@@ -510,4 +510,10 @@
   <data name="NotifyMedicalImageCreate" xml:space="preserve">
     <value>{0} uploaded an image for medical record</value>
   </data>
+  <data name="NotifyRelationshipRequestConfirm" xml:space="preserve">
+    <value>{0} accepted to create relationship with you</value>
+  </data>
+  <data name="NotifyRelationshipRequestCreate" xml:space="preserve">
+    <value>{0} sent you a relationship request.</value>
+  </data>
 </root>

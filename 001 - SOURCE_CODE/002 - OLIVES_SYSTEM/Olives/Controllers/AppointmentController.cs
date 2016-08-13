@@ -33,7 +33,7 @@ namespace Olives.Controllers
         /// <param name="timeService"></param>
         /// <param name="notificationService"></param>
         public AppointmentController(IRepositoryAccountExtended repositoryAccountExtended,
-            IRepositoryAppointment repositoryAppointment, IRepositoryRelation repositoryRelation,
+            IRepositoryAppointment repositoryAppointment, IRepositoryRelationship repositoryRelation,
             ILog log,
             ITimeService timeService, INotificationService notificationService)
         {
@@ -176,49 +176,30 @@ namespace Olives.Controllers
 
                 #endregion
 
-                #region Relation validation
+                #region Find the dater
 
-                // Retrieve information of person who sent request.
-                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
-                // Find the dater by using id.
-                var dater =
-                    await _repositoryAccountExtended.FindPersonAsync(info.Dater, null, null, null, StatusAccount.Active);
-
-                // No information has been found.
+                var dater = await _repositoryAccountExtended.FindPersonAsync(info.Dater, null, null, null, StatusAccount.Active);
                 if (dater == null)
                 {
+                    _log.Error($"Dater [Id: {info.Dater}] is not found as active in system");
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
                         Error = $"{Language.WarnDaterNotFound}"
                     });
                 }
 
-                // Only patients and doctor can date each other.
-                if (dater.Role != (byte) Role.Doctor && dater.Role != (byte) Role.Patient)
-                {
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                    {
-                        Error = $"{Language.WarnDaterInvalidRole}"
-                    });
-                }
+                #endregion
 
-                // 2 people with same role cannot date each other.
-                if (dater.Role == requester.Role)
-                {
-                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
-                    {
-                        Error = $"{Language.WarnDaterSameRole}"
-                    });
-                }
+                #region Relation validation
 
+                // Retrieve information of person who sent request.
+                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
-                // Check whether 2 people have relation with each other or not.
-                var relationships =
-                    await
-                        _repositoryRelation.FindRelationshipAsync(requester.Id, info.Dater, (byte) StatusRelation.Active);
-                if (relationships == null || relationships.Count < 1)
+                // Check whether 2 people are connected or not.
+                var rPeopleConnected = await _repositoryRelation.IsPeopleConnected(requester.Id, info.Dater);
+                if (!rPeopleConnected)
                 {
+                    _log.Error($"Requester [Id: {requester.Id}] doesn't have any relationships with Dater [Id: {info.Dater}]");
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
                     {
                         Error = $"{Language.WarnHasNoRelationship}"
@@ -226,7 +207,7 @@ namespace Olives.Controllers
                 }
 
                 #endregion
-
+                
                 #region Appointment initialization
 
                 var unixTime = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
@@ -532,7 +513,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of relationships.
         /// </summary>
-        private readonly IRepositoryRelation _repositoryRelation;
+        private readonly IRepositoryRelationship _repositoryRelation;
 
         private readonly ITimeService _timeService;
 

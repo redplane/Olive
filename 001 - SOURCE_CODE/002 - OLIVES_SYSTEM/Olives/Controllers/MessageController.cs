@@ -33,7 +33,7 @@ namespace Olives.Controllers
         /// <param name="log"></param>
         /// <param name="timeService"></param>
         public MessageController(IRepositoryMessage repositoryMessage,
-            IRepositoryRealTimeConnection repositoryRealTimeConnection, IRepositoryRelation repositoryRelation,
+            IRepositoryRealTimeConnection repositoryRealTimeConnection, IRepositoryRelationship repositoryRelation,
             ILog log, ITimeService timeService)
         {
             _repositoryMessage = repositoryMessage;
@@ -261,7 +261,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of relationships.
         /// </summary>
-        private readonly IRepositoryRelation _repositoryRelation;
+        private readonly IRepositoryRelationship _repositoryRelation;
 
         /// <summary>
         ///     Repository which provides function to access real time connection database.

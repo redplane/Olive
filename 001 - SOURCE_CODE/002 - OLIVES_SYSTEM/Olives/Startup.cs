@@ -84,7 +84,10 @@ namespace Olives
 
             // Repository account registration.
             builder.RegisterType<RepositoryAccountExtended>().As<IRepositoryAccountExtended>().SingleInstance();
-            builder.RegisterType<RepositoryRelation>().As<IRepositoryRelation>().SingleInstance();
+
+            builder.RegisterType<RepositoryRelationship>().As<IRepositoryRelationship>().SingleInstance();
+            builder.RegisterType<RepositoryRelationshipRequest>().As<IRepositoryRelationshipRequest>().SingleInstance();
+
             builder.RegisterType<RepositorySpecialty>().As<IRepositorySpecialty>().SingleInstance();
 
             builder.RegisterType<RepositoryHeartbeat>().As<IRepositoryHeartbeat>().SingleInstance();

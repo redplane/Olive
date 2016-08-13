@@ -9,10 +9,6 @@ namespace Olives.ViewModels.Filter
 {
     public class FilterRelatedPeopleViewModel : IPagination
     {
-        [InEnumerationsArray(new object[] {StatusRelation.Active, StatusRelation.Pending},
-            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
-        public StatusRelation? Status { get; set; }
-
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsInvalid")]

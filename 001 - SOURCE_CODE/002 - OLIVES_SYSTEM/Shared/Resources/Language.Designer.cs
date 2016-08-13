@@ -547,6 +547,24 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} accepted to create relationship with you.
+        /// </summary>
+        public static string NotifyRelationshipRequestConfirm {
+            get {
+                return ResourceManager.GetString("NotifyRelationshipRequestConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} sent you a relationship request..
+        /// </summary>
+        public static string NotifyRelationshipRequestCreate {
+            get {
+                return ResourceManager.GetString("NotifyRelationshipRequestCreate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Olive account activation code.
         /// </summary>
         public static string OliveActivationCodeEmailTitle {

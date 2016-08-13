@@ -35,7 +35,7 @@ namespace Olives.Controllers
         /// <param name="notificationService"></param>
         /// <param name="log"></param>
         public MedicalRecordController(IRepositoryMedicalRecord repositoryMedical,
-            IRepositoryRelation repositoryRelation,
+            IRepositoryRelationship repositoryRelation,
             ITimeService timeService, INotificationService notificationService,
             ILog log)
         {
@@ -357,11 +357,12 @@ namespace Olives.Controllers
                 #endregion
 
                 #region Notification initialization
-
-                var recipient = requester.Id == medicalRecord.Owner ? medicalRecord.Creator : medicalRecord.Owner;
-
-                if (requester.Id != medicalRecord.Owner)
+                
+                // If the medical record is created privately, no notification should be sent.
+                if (medicalRecord.Creator != medicalRecord.Owner)
                 {
+                    var recipient = requester.Id == medicalRecord.Owner ? medicalRecord.Creator : medicalRecord.Owner;
+                    
                     var notification = new Notification();
                     notification.Type = (byte)NotificationType.Edit;
                     notification.Topic = (byte)NotificationTopic.MedicalRecord;
@@ -568,7 +569,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of relationships.
         /// </summary>
-        private readonly IRepositoryRelation _repositoryRelation;
+        private readonly IRepositoryRelationship _repositoryRelation;
 
         /// <summary>
         ///     Notification service.

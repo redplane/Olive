@@ -36,7 +36,7 @@ namespace Olives.Controllers
         /// <param name="notificationService"></param>
         /// <param name="log"></param>
         public MedicalNoteController(IRepositoryMedicalNote repositoryMedicalNote,
-            IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryRelation repositoryRelation,
+            IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryRelationship repositoryRelation,
             ITimeService timeService, INotificationService notificationService,
             ILog log)
         {
@@ -213,19 +213,16 @@ namespace Olives.Controllers
 
                 #region Notification broadcast
 
-                if (medicalNote.Creator != medicalNote.Owner)
+                // Only the owner should receive the notification.
+                if (requester.Id != medicalNote.Owner)
                 {
-                    var recipient = medicalNote.Owner;
-                    if (requester.Id == medicalNote.Owner)
-                        recipient = medicalNote.Creator;
-
                     var notification = new Notification();
                     notification.Type = (byte) NotificationType.Create;
                     notification.Topic = (byte) NotificationTopic.MedicalNote;
                     notification.Container = medicalRecord.Id;
                     notification.ContainerType = (byte) NotificationTopic.MedicalRecord;
                     notification.Broadcaster = requester.Id;
-                    notification.Recipient = recipient;
+                    notification.Recipient = medicalNote.Owner;
                     notification.Record = medicalNote.Id;
                     notification.Message = string.Format(Language.NotifyMedicalNoteCreate, requester.FullName);
                     notification.Created = medicalNote.Created;
@@ -535,7 +532,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of relationships.
         /// </summary>
-        private readonly IRepositoryRelation _repositoryRelation;
+        private readonly IRepositoryRelationship _repositoryRelation;
 
         /// <summary>
         ///     Service which provides function to access time calculation.

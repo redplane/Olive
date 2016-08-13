@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
+using Olives.Interfaces;
 using Olives.Interfaces.PersonalNote;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
@@ -30,7 +31,7 @@ namespace Olives.Controllers
         /// <param name="timeService"></param>
         /// <param name="log"></param>
         public AddictionController(IRepositoryAddiction repositoryAddiction,
-            IRepositoryRelation repositoryRelation, ITimeService timeService,
+            IRepositoryRelationship repositoryRelation, ITimeService timeService,
             ILog log)
         {
             _repositoryAddiction = repositoryAddiction;
@@ -413,7 +414,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of relationships.
         /// </summary>
-        private readonly IRepositoryRelation _repositoryRelation;
+        private readonly IRepositoryRelationship _repositoryRelation;
 
         /// <summary>
         ///     Service which provides functions for time calculation.
