@@ -135,7 +135,7 @@ namespace OlivesAdministration.Controllers
         /// <param name="modifier"></param>
         /// <returns></returns>
         [Route("api/medical/category")]
-        [HttpPost]
+        [HttpPut]
         public async Task<HttpResponseMessage> ModifyMedicalCategory([FromUri] int id,
             [FromBody] InitializeMedicalCategoryViewModel modifier)
         {
