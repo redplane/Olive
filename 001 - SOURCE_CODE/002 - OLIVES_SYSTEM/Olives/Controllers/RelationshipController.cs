@@ -150,9 +150,7 @@ namespace Olives.Controllers
                         },
                         x.Doctor.Rank,
                         x.Doctor.Person.Address,
-                        Photo =
-                            InitializeUrl(storageAvatar.Relative, x.Doctor.Person.Photo,
-                                Values.StandardImageExtension),
+                        Photo = x.Doctor.Person.PhotoUrl,
                         x.Doctor.Person.Phone,
                         x.Doctor.Person.Email
                     },
@@ -217,16 +215,14 @@ namespace Olives.Controllers
                         Id = x.Source,
                         x.Patient.Person.FirstName,
                         x.Patient.Person.LastName,
-                        Photo =
-                            InitializeUrl(storageAvatar.Relative, x.Patient.Person.Photo, Values.StandardImageExtension)
+                        Photo = x.Patient.Person.PhotoUrl
                     },
                     Target = new
                     {
                         Id = x.Target,
                         x.Doctor.Person.FirstName,
                         x.Doctor.Person.LastName,
-                        Photo =
-                            InitializeUrl(storageAvatar.Relative, x.Doctor.Person.Photo, Values.StandardImageExtension)
+                        Photo = x.Doctor.Person.PhotoUrl
                     },
                     x.Created
                 }),

@@ -55,7 +55,8 @@ namespace Shared.Models
         public Nullable<double> LastModified { get; set; }
         public byte Status { get; set; }
         public string Address { get; set; }
-        public string Photo { get; set; }
+        public string PhotoUrl { get; set; }
+        public string PhotoPhysicPath { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccountCode> AccountCodes { get; set; }

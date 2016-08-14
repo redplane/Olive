@@ -124,9 +124,7 @@ namespace Olives.Controllers
                         account.Role,
                         account.Status,
                         account.Address,
-                        Photo =
-                            InitializeUrl(storageAvatar.Relative, account.Photo,
-                                Values.StandardImageExtension),
+                        Photo = account.PhotoUrl,
                         account.Patient.Height,
                         account.Patient.Weight
                     }
@@ -327,9 +325,7 @@ namespace Olives.Controllers
                         requester.LastModified,
                         requester.Status,
                         requester.Address,
-                        Photo =
-                            InitializeUrl(storageAvatar.Relative, requester.Photo,
-                                Values.StandardImageExtension),
+                        Photo = requester.PhotoUrl,
                         requester.Patient.Height,
                         requester.Patient.Weight
                     }
@@ -388,9 +384,7 @@ namespace Olives.Controllers
                     x.Person.LastName,
                     x.Person.Birthday,
                     x.Person.Phone,
-                    Photo =
-                        InitializeUrl(storageAvatar.Relative, x.Person.Photo,
-                            Values.StandardImageExtension),
+                    Photo = x.Person.PhotoUrl,
                     x.Person.Address,
                     x.Height,
                     x.Weight
