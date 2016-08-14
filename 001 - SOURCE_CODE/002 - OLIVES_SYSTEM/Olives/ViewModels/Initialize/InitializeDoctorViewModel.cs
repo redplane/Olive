@@ -51,7 +51,7 @@ namespace Olives.ViewModels.Initialize
             ErrorMessageResourceName = "InvalidEmailMaximumLength")]
         [RegularExpression(Regexes.Email, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "InvalidEmailFormat")]
-        [AccountValidate(AccountValidateInputType.Email, true, ErrorMessageResourceType = typeof (Language),
+        [AccountValidate(AccountValidateInputType.Email, false, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueHasBeenRegistered")]
         public string Email { get; set; }
 

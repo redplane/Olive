@@ -10,6 +10,7 @@ using Olives.Hubs;
 using Olives.Interfaces;
 using Olives.ViewModels.Filter;
 using Olives.ViewModels.Initialize;
+using Olives.ViewModels.Response;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
@@ -397,19 +398,22 @@ namespace Olives.Controllers
             var result =
                 await
                     _repositoryRelationshipRequest.FilterRelationshipRequest(filter);
-
+            
             // Throw the list back to client.
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 RelationshipRequests = result.RelationshipRequests.Select(x => new
                 {
                     x.Id,
+                    x.Content,
                     Source = new
                     {
                         Id = x.Source,
                         x.Patient.Person.FirstName,
                         x.Patient.Person.LastName,
-                        Photo = x.Patient.Person.PhotoUrl
+                        Photo = x.Patient.Person.PhotoUrl,
+                        x.Patient.Person.Address,
+                        x.Patient.Person.Phone
                     },
                     Target = new
                     {
