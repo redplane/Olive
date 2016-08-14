@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Olives.Interfaces.Medical;
 using Shared.Enumerations;
-using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels.Filter;
@@ -63,7 +62,7 @@ namespace Olives.Repositories.Medical
             // Record is defined.
             if (filter.Records != null)
             {
-                medicalImages = medicalImages.Skip(filter.Page*filter.Records.Value)
+                medicalImages = medicalImages.Skip(filter.Page * filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
@@ -80,51 +79,31 @@ namespace Olives.Repositories.Medical
         /// <returns></returns>
         public async Task<int> DeleteMedicalImageAsync(int id, int? owner)
         {
+            // Database context initialization.
             var context = _dataContext.Context;
-            using (var transaction = context.Database.BeginTransaction())
+
+            // By default, take all records.
+            IQueryable<MedicalImage> medicalImages = context.MedicalImages;
+
+            // Find the medical image by using id.
+            medicalImages = medicalImages.Where(x => x.Id == id);
+
+            // Owner is specified.
+            if (owner != null)
+                medicalImages = medicalImages.Where(x => x.Owner == owner);
+
+            // Go through every record and put the file path to must deleted list.
+            await medicalImages.ForEachAsync(x =>
             {
-                try
-                {
-                    // By default, take all records.
-                    IQueryable<MedicalImage> medicalImages = context.MedicalImages;
+                x.Available = false;
+            });
+            
+            // Count the number of affected records.
+            var records = await context.SaveChangesAsync();
+            
+            // Tell the calling function the number of affected records.
+            return records;
 
-                    // Find the medical image by using id.
-                    medicalImages = medicalImages.Where(x => x.Id == id);
-
-                    // Owner is specified.
-                    if (owner != null)
-                        medicalImages = medicalImages.Where(x => x.Owner == owner);
-
-                    // Go through every record and put the file path to must deleted list.
-                    await medicalImages.ForEachAsync(x =>
-                    {
-                        // This step is to tell background worker to take care the file which should be deleted.
-                        var junkFile = new JunkFile();
-                        junkFile.FullPath = x.FullPath;
-                        context.JunkFiles.Add(junkFile);
-                    });
-
-                    // Remove all medical image records
-                    context.MedicalImages.RemoveRange(medicalImages);
-
-                    // Count the number of affected records.
-                    var records = await context.SaveChangesAsync();
-
-                    // Confirm doing transaction.
-                    transaction.Commit();
-
-                    // Tell the calling function the number of affected records.
-                    return records;
-                }
-                catch
-                {
-                    // Error happens, rollback the transaction first.
-                    transaction.Rollback();
-
-                    // Let the calling function handle the exception.
-                    throw;
-                }
-            }
         }
 
         /// <summary>
@@ -155,6 +134,9 @@ namespace Olives.Repositories.Medical
 
             // Filter by medical record id.
             medicalImages = medicalImages.Where(x => x.MedicalRecordId == filter.MedicalRecord);
+
+            // Only take the available image.
+            medicalImages = medicalImages.Where(x => x.Available);
 
             // Created is specified.
             if (filter.MinCreated != null)

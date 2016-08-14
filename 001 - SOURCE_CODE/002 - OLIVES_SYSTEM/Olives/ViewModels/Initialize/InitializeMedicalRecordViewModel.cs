@@ -26,6 +26,7 @@ namespace Olives.ViewModels.Initialize
         /// Name of medical record.
         /// </summary>
         [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsRequired")]
+        [StringLength(OlivesValues.MaxMedicalRecordNameLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Name { get; set; }
 
         /// <summary>
@@ -33,7 +34,6 @@ namespace Olives.ViewModels.Initialize
         /// </summary>
         [MedicalCategoryValidate(ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsInvalid")]
-        [StringLength(OlivesValues.MaxMedicalRecordNameLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public int Category { get; set; }
 
         /// <summary>

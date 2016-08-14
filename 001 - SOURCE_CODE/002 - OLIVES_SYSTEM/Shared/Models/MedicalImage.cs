@@ -21,6 +21,7 @@ namespace Shared.Models
         public string Image { get; set; }
         public string FullPath { get; set; }
         public double Created { get; set; }
+        public bool Available { get; set; }
     
         public virtual MedicalRecord MedicalRecord { get; set; }
         public virtual Person Person { get; set; }

@@ -46,6 +46,7 @@ namespace Olives.Repositories.Medical
 
             // Find the prescription.
             prescriptions = prescriptions.Where(x => x.Id == id);
+            prescriptions = prescriptions.Where(x => x.Available);
 
             // Owner is defined.
             if (owner != null)
@@ -62,6 +63,7 @@ namespace Olives.Repositories.Medical
         public async Task<Prescription> InitializePrescriptionAsync(Prescription prescription)
         {
             var context = _dataContext.Context;
+
             // Initialize or update prescription.
             context.Prescriptions.AddOrUpdate(prescription);
 
@@ -154,12 +156,16 @@ namespace Olives.Repositories.Medical
             // By default, take all prescriptions.
             var context = _dataContext.Context;
             IQueryable<Prescription> prescriptions = context.Prescriptions;
-
+            
             // Base on the requester's role to do the exact filter.
             prescriptions = FilterPrescriptionByRequesterRole(prescriptions, filter, context);
 
+            // Id is specified.
             if (filter.Id != null)
                 prescriptions = prescriptions.Where(x => x.Id == filter.Id.Value);
+
+            // Only take the available medical record.
+            prescriptions = prescriptions.Where(x => x.Available);
 
             // Medical record is defined.
             if (filter.MedicalRecord != null)

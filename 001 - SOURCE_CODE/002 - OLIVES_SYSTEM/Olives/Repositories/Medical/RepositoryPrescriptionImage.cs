@@ -80,49 +80,28 @@ namespace Olives.Repositories.Medical
         public async Task<int> DeletePrescriptionImageAsync(int id, int? owner)
         {
             var context = _dataContext.Context;
-            using (var transaction = context.Database.BeginTransaction())
+            
+            // By default, take all records.
+            IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
+
+            // Find the medical image by using id.
+            prescriptionImages = prescriptionImages.Where(x => x.Id == id);
+
+            // Owner is defined.
+            if (owner != null)
+                prescriptionImages = prescriptionImages.Where(x => x.Owner == owner.Value);
+
+            await prescriptionImages.ForEachAsync(x =>
             {
-                try
-                {
-                    // By default, take all records.
-                    IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
-
-                    // Find the medical image by using id.
-                    prescriptionImages = prescriptionImages.Where(x => x.Id == id);
-
-                    // Owner is defined.
-                    if (owner != null)
-                        prescriptionImages = prescriptionImages.Where(x => x.Owner == owner.Value);
-
-                    // Go through every images we found, enlist each one to junk files list.
-                    await prescriptionImages.ForEachAsync(x =>
-                    {
-                        // Enlist the file to junk file.
-                        var junkFile = new JunkFile();
-                        junkFile.FullPath = x.FullPath;
-                        context.JunkFiles.Add(junkFile);
-                    });
-
-                    context.PrescriptionImages.RemoveRange(prescriptionImages);
-
-                    // Count the number of affected records.
-                    var records = await context.SaveChangesAsync();
-
-                    // Commit the transaction.
-                    transaction.Commit();
-
-                    // Tell the caller function the number of affected records.
-                    return records;
-                }
-                catch
-                {
-                    // Exception is thrown, rollback the transaction first.
-                    transaction.Rollback();
-
-                    // Throw the exception to the calling function.
-                    throw;
-                }
-            }
+                x.Available = false;
+            });
+            
+            // Count the number of affected records.
+            var records = await context.SaveChangesAsync();
+            
+            // Tell the caller function the number of affected records.
+            return records;
+             
         }
 
         /// <summary>
@@ -177,6 +156,12 @@ namespace Olives.Repositories.Medical
 
             // Prescription is defined.
             prescriptionImages = prescriptionImages.Where(x => x.PrescriptionId == filter.Prescription);
+            
+            // Only take the available images.
+            prescriptionImages = prescriptionImages.Where(x => x.Available);
+
+            if (filter.Id != null)
+                prescriptionImages = prescriptionImages.Where(x => x.Id == filter.Id);
 
             // Created is specified.
             if (filter.MinCreated != null)

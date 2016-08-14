@@ -61,10 +61,13 @@ namespace Olives.Repositories.Medical
         {
             // By default, take all record.
             var context = _dataContext.Context;
-            IQueryable<MedicalRecord> results = context.MedicalRecords;
+            IQueryable<MedicalRecord> medicalRecords = context.MedicalRecords;
+
+            // Cannot find the medical record which has marked as delete.
+            medicalRecords = medicalRecords.Where(x => x.Available);
 
             // Find the record by using id.
-            return await results.FirstOrDefaultAsync(x => x.Id == id);
+            return await medicalRecords.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         /// <summary>
@@ -101,11 +104,19 @@ namespace Olives.Repositories.Medical
                     medicalImages = medicalImages.Where(x => x.MedicalRecordId == id);
                     await medicalImages.ForEachAsync(x =>
                     {
-                        var junkFile = new JunkFile();
-                        junkFile.FullPath = x.FullPath;
-                        context.JunkFiles.Add(junkFile);
+                        x.Available = false;
                     });
-                    context.MedicalImages.RemoveRange(medicalImages);
+
+                    #endregion
+
+                    #region Prescription Image
+
+                    IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
+                    prescriptionImages = prescriptionImages.Where(x => x.MedicalRecordId == id);
+                    await prescriptionImages.ForEachAsync(x =>
+                    {
+                        x.Available = false;
+                    });
 
                     #endregion
 
@@ -113,20 +124,10 @@ namespace Olives.Repositories.Medical
 
                     IQueryable<Prescription> prescriptions = context.Prescriptions;
                     prescriptions = prescriptions.Where(x => x.MedicalRecordId == id);
-                    await prescriptions.ForEachAsync(prescription =>
+                    await prescriptions.ForEachAsync(x =>
                     {
-                        IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
-                        prescriptionImages = prescriptionImages.Where(x => x.PrescriptionId == prescription.Id);
-                        prescriptionImages.ForEachAsync(prescriptionImage =>
-                        {
-                            var junkFile = new JunkFile();
-                            junkFile.FullPath = prescriptionImage.FullPath;
-                        });
-
-                        context.PrescriptionImages.RemoveRange(prescriptionImages);
+                        x.Available = false;
                     });
-
-                    context.Prescriptions.RemoveRange(prescriptions);
 
                     #endregion
 
@@ -134,7 +135,10 @@ namespace Olives.Repositories.Medical
 
                     IQueryable<MedicalRecord> medicalRecords = context.MedicalRecords;
                     medicalRecords = medicalRecords.Where(x => x.Id == id);
-                    context.MedicalRecords.RemoveRange(medicalRecords);
+                    await medicalRecords.ForEachAsync(x =>
+                    {
+                        x.Available = false;
+                    });
 
                     #endregion
 
@@ -226,10 +230,13 @@ namespace Olives.Repositories.Medical
         {
             // Base on requester role, do the filter.
             medicalRecords = FilterMedicalRecordsByRequesterRole(medicalRecords, filter, olivesHealthEntities);
-
+            
             // Id is specified.
             if (filter.Id != null)
                 medicalRecords = medicalRecords.Where(x => x.Id == filter.Id);
+
+            // Only find the available medical record.
+            medicalRecords = medicalRecords.Where(x => x.Available);
 
             // Time is specified.
             if (filter.MinTime != null) medicalRecords = medicalRecords.Where(x => x.Time >= filter.MinTime);

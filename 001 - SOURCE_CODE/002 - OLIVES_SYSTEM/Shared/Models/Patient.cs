@@ -18,6 +18,7 @@ namespace Shared.Models
         public Patient()
         {
             this.Diaries = new HashSet<Diary>();
+            this.PrescriptionImages = new HashSet<PrescriptionImage>();
             this.Ratings = new HashSet<Rating>();
             this.Relations = new HashSet<Relation>();
             this.RelationshipRequests = new HashSet<RelationshipRequest>();
@@ -30,6 +31,8 @@ namespace Shared.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Diary> Diaries { get; set; }
         public virtual Person Person { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PrescriptionImage> PrescriptionImages { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Rating> Ratings { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
