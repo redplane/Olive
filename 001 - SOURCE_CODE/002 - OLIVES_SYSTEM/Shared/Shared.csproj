@@ -107,11 +107,9 @@
     <Compile Include="Enumerations\Filter\PartnerFilterMode.cs" />
     <Compile Include="Enumerations\StatusAppointment.cs" />
     <Compile Include="Enumerations\Comparision.cs" />
-    <Compile Include="Helpers\CodeGeneratorHelper.cs" />
     <Compile Include="Interfaces\IOliveDataContext.cs" />
     <Compile Include="Interfaces\IPagination.cs" />
     <Compile Include="Interfaces\IRepositoryAccount.cs" />
-    <Compile Include="Interfaces\IRepositoryCode.cs" />
     <Compile Include="Interfaces\IRepositoryAppointment.cs" />
     <Compile Include="Interfaces\IRepositoryMedicalCategory.cs" />
     <Compile Include="Interfaces\IRepositoryPlace.cs" />
@@ -224,7 +222,6 @@
     <Compile Include="Repositories\RepositoryMedicalCategory.cs" />
     <Compile Include="Repositories\RepositoryRealTimeConnection.cs" />
     <Compile Include="Repositories\RepositoryAccount.cs" />
-    <Compile Include="Repositories\RepositoryCode.cs" />
     <Compile Include="Repositories\RepositoryPlace.cs" />
     <Compile Include="Repositories\RepositoryRating.cs" />
     <Compile Include="Repositories\RepositoryAppointment.cs" />
@@ -325,6 +322,9 @@
       <Project>{1F851995-9C6B-4B34-82AF-AC4E075F00C2}</Project>
       <Name>MultipartFormDataMediaFormatter</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Helpers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

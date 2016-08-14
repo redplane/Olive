@@ -412,11 +412,29 @@ namespace Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Email is not found as pending in the system.
+        /// </summary>
+        public static string MessageEmailNotFoundAsPending {
+            get {
+                return ResourceManager.GetString("MessageEmailNotFoundAsPending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Activation code is invalid.
         /// </summary>
         public static string MessageInvalidActivationCode {
             get {
                 return ResourceManager.GetString("MessageInvalidActivationCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Token has been expired.
+        /// </summary>
+        public static string MessageTokenIsExpired {
+            get {
+                return ResourceManager.GetString("MessageTokenIsExpired", resourceCulture);
             }
         }
         
