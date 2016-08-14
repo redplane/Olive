@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Olives.Attributes;
 using Olives.Constants;
 using Shared.Attributes;
 using Shared.Constants;
@@ -9,6 +10,12 @@ namespace Olives.ViewModels.Initialize
 {
     public class InitializeDiaryViewModel
     {
+        /// <summary>
+        /// Patient id
+        /// </summary>
+        [AccountValidate(AccountValidateInputType.Id, true, Role.Patient, StatusAccount.Active, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
+        public int Target { get; set; }
+
         /// <summary>
         ///     Time when the diary is noted.
         /// </summary>

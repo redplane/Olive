@@ -143,6 +143,9 @@ namespace Olives.Repositories.PersonalNote
             if (filter.Owner != null)
                 diaries = diaries.Where(x => x.Owner == filter.Owner);
 
+            if (filter.Target != null)
+                diaries = diaries.Where(x => x.Target == filter.Target.Value);
+
             // Note is specified.
             if (!string.IsNullOrWhiteSpace(filter.Note))
                 diaries = diaries.Where(x => x.Note.Contains(filter.Note));

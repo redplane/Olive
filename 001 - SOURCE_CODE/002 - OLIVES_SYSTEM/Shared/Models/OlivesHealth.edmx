@@ -77,6 +77,7 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Owner" Type="int" Nullable="false" />
+          <Property Name="Target" Type="int" Nullable="false" />
           <Property Name="Time" Type="float" Nullable="false" />
           <Property Name="Note" Type="nvarchar" MaxLength="512" />
           <Property Name="Created" Type="float" Nullable="false" />
@@ -398,7 +399,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Diary__LastModif__39E294A9">
+        <Association Name="FK__Diary__LastModif__6D6238AF">
           <End Role="Doctor" Type="Self.Doctor" Multiplicity="1" />
           <End Role="Diary" Type="Self.Diary" Multiplicity="*" />
           <ReferentialConstraint>
@@ -407,6 +408,18 @@
             </Principal>
             <Dependent Role="Diary">
               <PropertyRef Name="Owner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Diary__Target__6E565CE8">
+          <End Role="Patient" Type="Self.Patient" Multiplicity="1" />
+          <End Role="Diary" Type="Self.Diary" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patient">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Diary">
+              <PropertyRef Name="Target" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -846,8 +859,12 @@
             <End Role="Person" EntitySet="Person" />
             <End Role="BloodPressure" EntitySet="BloodPressure" />
           </AssociationSet>
-          <AssociationSet Name="FK__Diary__LastModif__39E294A9" Association="Self.FK__Diary__LastModif__39E294A9">
+          <AssociationSet Name="FK__Diary__LastModif__6D6238AF" Association="Self.FK__Diary__LastModif__6D6238AF">
             <End Role="Doctor" EntitySet="Doctor" />
+            <End Role="Diary" EntitySet="Diary" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Diary__Target__6E565CE8" Association="Self.FK__Diary__Target__6E565CE8">
+            <End Role="Patient" EntitySet="Patient" />
             <End Role="Diary" EntitySet="Diary" />
           </AssociationSet>
           <AssociationSet Name="FK__Doctor__PlaceId__2C88998B" Association="Self.FK__Doctor__PlaceId__2C88998B">
@@ -1038,8 +1055,12 @@
             <End Role="Person" EntitySet="People" />
             <End Role="BloodPressure" EntitySet="BloodPressures" />
           </AssociationSet>
-          <AssociationSet Name="FK__Diary__LastModif__39E294A9" Association="OlivesHealthModel.FK__Diary__LastModif__39E294A9">
+          <AssociationSet Name="FK__Diary__LastModif__6D6238AF" Association="OlivesHealthModel.FK__Diary__LastModif__6D6238AF">
             <End Role="Doctor" EntitySet="Doctors" />
+            <End Role="Diary" EntitySet="Diaries" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Diary__Target__6E565CE8" Association="OlivesHealthModel.FK__Diary__Target__6E565CE8">
+            <End Role="Patient" EntitySet="Patients" />
             <End Role="Diary" EntitySet="Diaries" />
           </AssociationSet>
           <AssociationSet Name="FK__Doctor__PlaceId__2C88998B" Association="OlivesHealthModel.FK__Doctor__PlaceId__2C88998B">
@@ -1248,11 +1269,13 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Owner" Type="Int32" Nullable="false" />
+          <Property Name="Target" Type="Int32" Nullable="false" />
           <Property Name="Time" Type="Double" Nullable="false" />
           <Property Name="Note" Type="String" MaxLength="512" FixedLength="false" Unicode="true" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
-          <NavigationProperty Name="Doctor" Relationship="OlivesHealthModel.FK__Diary__LastModif__39E294A9" FromRole="Diary" ToRole="Doctor" />
+          <NavigationProperty Name="Doctor" Relationship="OlivesHealthModel.FK__Diary__LastModif__6D6238AF" FromRole="Diary" ToRole="Doctor" />
+          <NavigationProperty Name="Patient" Relationship="OlivesHealthModel.FK__Diary__Target__6E565CE8" FromRole="Diary" ToRole="Patient" />
         </EntityType>
         <EntityType Name="Doctor">
           <Key>
@@ -1264,7 +1287,7 @@
           <Property Name="Voters" Type="Int32" Nullable="false" />
           <Property Name="PlaceId" Type="Int32" Nullable="false" />
           <Property Name="ProfilePdf" Type="String" MaxLength="32" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Diaries" Relationship="OlivesHealthModel.FK__Diary__LastModif__39E294A9" FromRole="Doctor" ToRole="Diary" />
+          <NavigationProperty Name="Diaries" Relationship="OlivesHealthModel.FK__Diary__LastModif__6D6238AF" FromRole="Doctor" ToRole="Diary" />
           <NavigationProperty Name="Place" Relationship="OlivesHealthModel.FK__Doctor__PlaceId__2C88998B" FromRole="Doctor" ToRole="Place" />
           <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Doctor__ProfileP__2AA05119" FromRole="Doctor" ToRole="Person" />
           <NavigationProperty Name="Specialty" Relationship="OlivesHealthModel.FK__Doctor__Specialt__2B947552" FromRole="Doctor" ToRole="Specialty" />
@@ -1408,6 +1431,7 @@
           <Property Name="Id" Type="Int32" Nullable="false" />
           <Property Name="Weight" Type="Double" />
           <Property Name="Height" Type="Double" />
+          <NavigationProperty Name="Diaries" Relationship="OlivesHealthModel.FK__Diary__Target__6E565CE8" FromRole="Patient" ToRole="Diary" />
           <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Patient__Height__2F650636" FromRole="Patient" ToRole="Person" />
           <NavigationProperty Name="Ratings" Relationship="OlivesHealthModel.FK__Rating__Maker__595B4002" FromRole="Patient" ToRole="Rating" />
           <NavigationProperty Name="Relations" Relationship="OlivesHealthModel.FK__Relation__Source__361203C5" FromRole="Patient" ToRole="Relation" />
@@ -1641,7 +1665,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Diary__LastModif__39E294A9">
+        <Association Name="FK__Diary__LastModif__6D6238AF">
           <End Type="OlivesHealthModel.Doctor" Role="Doctor" Multiplicity="1" />
           <End Type="OlivesHealthModel.Diary" Role="Diary" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1650,6 +1674,18 @@
             </Principal>
             <Dependent Role="Diary">
               <PropertyRef Name="Owner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Diary__Target__6E565CE8">
+          <End Type="OlivesHealthModel.Patient" Role="Patient" Multiplicity="1" />
+          <End Type="OlivesHealthModel.Diary" Role="Diary" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Patient">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Diary">
+              <PropertyRef Name="Target" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2120,6 +2156,7 @@
                 <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="Note" ColumnName="Note" />
                 <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Target" ColumnName="Target" />
                 <ScalarProperty Name="Owner" ColumnName="Owner" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

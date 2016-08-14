@@ -15,6 +15,8 @@ namespace Olives.ViewModels.Filter
 
         public int? Owner { get; set; }
 
+        public int? Target { get; set; }
+
         [StringLength(OlivesValues.MaxDiaryLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Note { get; set; }

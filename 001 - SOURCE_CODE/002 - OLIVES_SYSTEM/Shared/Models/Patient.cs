@@ -17,6 +17,7 @@ namespace Shared.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Patient()
         {
+            this.Diaries = new HashSet<Diary>();
             this.Ratings = new HashSet<Rating>();
             this.Relations = new HashSet<Relation>();
             this.RelationshipRequests = new HashSet<RelationshipRequest>();
@@ -26,6 +27,8 @@ namespace Shared.Models
         public Nullable<double> Weight { get; set; }
         public Nullable<double> Height { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Diary> Diaries { get; set; }
         public virtual Person Person { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Rating> Ratings { get; set; }
