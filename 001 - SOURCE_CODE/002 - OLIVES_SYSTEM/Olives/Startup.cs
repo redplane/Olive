@@ -127,7 +127,7 @@ namespace Olives
 
             #region Services
             
-            builder.RegisterType<EmailService>().As<IEmailService>().OnActivating(e => e.ReplaceInstance(new EmailService(HttpContext.Current, applicationSetting))).SingleInstance();
+            builder.RegisterType<SendGridService>().As<IEmailService>().OnActivating(e => e.ReplaceInstance(new SendGridService(HttpContext.Current, applicationSetting))).SingleInstance();
             builder.RegisterType<FileService>().As<IFileService>().SingleInstance();
             builder.RegisterType<TimeService>().As<ITimeService>().SingleInstance();
             builder.RegisterType<NotificationService>().As<INotificationService>().SingleInstance();

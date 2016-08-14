@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Net.Mail;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using log4net;
@@ -16,12 +13,12 @@ using SendGrid.Helpers.Mail;
 
 namespace Olives.Services
 {
-    public class EmailService : IEmailService
+    public class SendGridService : IEmailService
     {
         #region Properties
 
         /// <summary>
-        /// Instance saves send grid configuration.
+        ///     Instance saves send grid configuration.
         /// </summary>
         private readonly SendGridAPIClient _sendGridApiClient;
 
@@ -31,7 +28,7 @@ namespace Olives.Services
         public Dictionary<string, SendGridContent> ContentsCollection { get; set; }
 
         /// <summary>
-        /// Logging instance which is used for writing log.
+        ///     Logging instance which is used for writing log.
         /// </summary>
         public ILog Log { get; set; }
 
@@ -40,20 +37,20 @@ namespace Olives.Services
         #region Constructor
 
         /// <summary>
-        /// Initialize an instance of service which is used for broadcasting email.
+        ///     Initialize an instance of service which is used for broadcasting email.
         /// </summary>
-        public EmailService()
+        public SendGridService()
         {
             // Initialize email content collection.
             ContentsCollection = new Dictionary<string, SendGridContent>();
         }
 
         /// <summary>
-        /// Initialize an instance of service which is used for broadcasting email.
+        ///     Initialize an instance of service which is used for broadcasting email.
         /// </summary>
         /// <param name="httpContext"></param>
         /// <param name="applicationSetting"></param>
-        public EmailService(HttpContext httpContext, ApplicationSetting applicationSetting):this()
+        public SendGridService(HttpContext httpContext, ApplicationSetting applicationSetting) : this()
         {
             if (applicationSetting == null)
                 throw new Exception("Application setting is required.");
@@ -84,9 +81,9 @@ namespace Olives.Services
         {
             // Retrieve the content.
             var sendGridContent = ContentsCollection[templateName];
-            
+
             // Render the email body.
-            var body = Nustache.Core.Render.StringToString(sendGridContent.Body, data);
+            var body = Render.StringToString(sendGridContent.Body, data);
 
             // Address of broadcaster email.
             var from = new Email(sendGridContent.From);
@@ -100,26 +97,26 @@ namespace Olives.Services
                     var mail = new Mail(from, sendGridContent.Subject, to, content);
 
                     // Broadcast the email.
-                    var response = await _sendGridApiClient.client.mail.send.post(requestBody: mail.Get());
+                    await _sendGridApiClient.client.mail.send.post(requestBody: mail.Get());
                 }
                 catch (Exception exception)
                 {
                     Log.Error(exception.Message, exception);
-                    continue;
                 }
             }
-            
+
 
             return true;
         }
 
 
         /// <summary>
-        /// Load email content from file.
+        ///     Load email content from file.
         /// </summary>
         /// <param name="httpContext"></param>
         /// <param name="emailPreconfigurations"></param>
-        private void LoadEmailContentFromFile(HttpContext httpContext, IDictionary<string, SendGridPreconfiguration> emailPreconfigurations)
+        private void LoadEmailContentFromFile(HttpContext httpContext,
+            IDictionary<string, SendGridPreconfiguration> emailPreconfigurations)
         {
             // No email is found.
             if (emailPreconfigurations.Keys.Count < 1)
@@ -130,13 +127,14 @@ namespace Olives.Services
             {
                 // Obtain the preconfiguration.
                 var emailPreconfiguration = emailPreconfigurations[key];
-                
+
                 // Load the email.
                 var filePath = httpContext.Server.MapPath(emailPreconfiguration.File);
                 var content = File.ReadAllText(filePath);
 
                 // Load email to template collection.
-                var sendGridContent = new SendGridContent(emailPreconfiguration.Subject, content, emailPreconfiguration.From);
+                var sendGridContent = new SendGridContent(emailPreconfiguration.Subject, content,
+                    emailPreconfiguration.From);
 
                 if (ContentsCollection.ContainsKey(key))
                 {
