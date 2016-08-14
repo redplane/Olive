@@ -116,6 +116,7 @@ namespace Olives.Controllers
                         medicalRecord.MedicalCategory.Id,
                         medicalRecord.MedicalCategory.Name
                     },
+                    medicalRecord.Name,
                     medicalRecord.Info,
                     medicalRecord.Time,
                     medicalRecord.Created,
@@ -211,6 +212,7 @@ namespace Olives.Controllers
                 medicalRecord.Creator = info.Creator.Value;
                 medicalRecord.Owner = info.Owner.Value;
                 medicalRecord.Category = info.Category;
+                medicalRecord.Name = info.Name;
                 medicalRecord.Info = JsonConvert.SerializeObject(info.Infos);
                 medicalRecord.Time = info.Time;
                 medicalRecord.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
@@ -249,6 +251,7 @@ namespace Olives.Controllers
                         result.Owner,
                         result.Creator,
                         result.Category,
+                        result.Name,
                         result.Info,
                         result.Time,
                         result.Created
@@ -341,6 +344,9 @@ namespace Olives.Controllers
                 if (info.Infos != null)
                     medicalRecord.Info = JsonConvert.SerializeObject(info.Infos);
 
+                if (!string.IsNullOrWhiteSpace(info.Name))
+                    medicalRecord.Name = info.Name;
+
                 // Time needs updating.
                 if (info.Time != null)
                     medicalRecord.Time = info.Time.Value;
@@ -386,6 +392,7 @@ namespace Olives.Controllers
                     {
                         result.Id,
                         result.Info,
+                        result.Name,
                         Creator = new
                         {
                             medicalRecord.Person.Id,
@@ -400,7 +407,6 @@ namespace Olives.Controllers
                             medicalRecord.Person1.LastName,
                             medicalRecord.Person1.Role
                         },
-                        Category = new { },
                         result.Time,
                         result.Created,
                         result.LastModified
@@ -537,6 +543,7 @@ namespace Olives.Controllers
                             x.MedicalCategory.Id,
                             x.MedicalCategory.Name
                         },
+                        x.Name,
                         x.Info,
                         x.Time,
                         x.Created,

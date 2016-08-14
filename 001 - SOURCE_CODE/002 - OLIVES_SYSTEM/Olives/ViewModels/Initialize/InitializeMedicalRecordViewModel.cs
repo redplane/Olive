@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Olives.Attributes;
+using Olives.Constants;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
@@ -21,10 +23,17 @@ namespace Olives.ViewModels.Initialize
         public int? Creator { get; set; }
 
         /// <summary>
+        /// Name of medical record.
+        /// </summary>
+        [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsRequired")]
+        public string Name { get; set; }
+
+        /// <summary>
         ///     Id of category.
         /// </summary>
         [MedicalCategoryValidate(ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsInvalid")]
+        [StringLength(OlivesValues.MaxMedicalRecordNameLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public int Category { get; set; }
 
         /// <summary>

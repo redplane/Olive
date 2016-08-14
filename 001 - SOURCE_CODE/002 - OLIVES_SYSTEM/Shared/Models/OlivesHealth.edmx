@@ -172,6 +172,7 @@
           <Property Name="Time" Type="float" Nullable="false" />
           <Property Name="Created" Type="float" Nullable="false" />
           <Property Name="LastModified" Type="float" />
+          <Property Name="Name" Type="nvarchar" MaxLength="64" />
         </EntityType>
         <EntityType Name="Message">
           <Key>
@@ -1360,6 +1361,7 @@
           <Property Name="Time" Type="Double" Nullable="false" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
+          <Property Name="Name" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="ExperimentNotes" Relationship="OlivesHealthModel.FK__Experimen__Medic__54968AE5" FromRole="MedicalRecord" ToRole="ExperimentNote" />
           <NavigationProperty Name="MedicalCategory" Relationship="OlivesHealthModel.FK__MedicalRe__Categ__408F9238" FromRole="MedicalRecord" ToRole="MedicalCategory" />
           <NavigationProperty Name="MedicalImages" Relationship="OlivesHealthModel.FK__MedicalIm__Medic__436BFEE3" FromRole="MedicalRecord" ToRole="MedicalImage" />
@@ -2211,6 +2213,7 @@
           <EntitySetMapping Name="MedicalRecords">
             <EntityTypeMapping TypeName="OlivesHealthModel.MedicalRecord">
               <MappingFragment StoreEntitySet="MedicalRecord">
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="LastModified" ColumnName="LastModified" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="Time" ColumnName="Time" />

@@ -31,6 +31,7 @@ namespace Shared.Models
         public double Time { get; set; }
         public double Created { get; set; }
         public Nullable<double> LastModified { get; set; }
+        public string Name { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ExperimentNote> ExperimentNotes { get; set; }

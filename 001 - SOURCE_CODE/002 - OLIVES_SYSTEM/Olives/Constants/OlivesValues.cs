@@ -13,6 +13,11 @@
         public const int MaxAvatarSize = 2048;
 
         /// <summary>
+        /// Maximum length of medical record name.
+        /// </summary>
+        public const int MaxMedicalRecordNameLength = 64;
+
+        /// <summary>
         ///     Maximum character of relationship request content length.
         /// </summary>
         public const int MaxRelationshipRequestContentLength = 128;
