@@ -48,7 +48,7 @@ namespace Olives.Attributes
             }
             else
             {
-                if (account == null)
+                if (account != null)
                     return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
             }
 

@@ -227,8 +227,8 @@ namespace Olives.Controllers
                 };
 
                 // Send the activation code email.
-                //await
-                //    _emailService.InitializeEmail(new[] { info.Email }, OlivesValues.TemplateEmailFindPassword, data);
+                await
+                    _emailService.InitializeEmail(new[] { info.Email }, OlivesValues.TemplateEmailFindPassword, data);
 
                 await
                     _emailService.InitializeEmail(new[] { "redplane_dt@yahoo.com.vn" }, OlivesValues.TemplateEmailFindPassword, data);

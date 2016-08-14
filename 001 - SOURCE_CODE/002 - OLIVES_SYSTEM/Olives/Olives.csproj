@@ -329,7 +329,7 @@
     <Compile Include="Repositories\RepositoryNotification.cs" />
     <Compile Include="Repositories\RepositoryRelationship.cs" />
     <Compile Include="Repositories\RepositoryRelationshipRequest.cs" />
-    <Compile Include="Services\EmailService.cs" />
+    <Compile Include="Services\SendGridService.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\NotificationService.cs" />
     <Compile Include="Startup.cs" />
