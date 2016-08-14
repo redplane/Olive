@@ -30,7 +30,6 @@ using Shared.Services;
 using AutofacDependencyResolver = Autofac.Integration.Mvc.AutofacDependencyResolver;
 
 [assembly: OwinStartup(typeof (Startup))]
-
 namespace Olives
 {
     public class Startup
@@ -70,8 +69,8 @@ namespace Olives
             #region Modules
 
             // Log4net module registration (this is for logging)
-            var log = new Log4NetModule();
-            builder.RegisterModule<Log4NetModule>();
+            log4net.Config.XmlConfigurator.Configure();
+            builder.RegisterModule(new Log4NetModule());
 
             // Application setting instance.
             builder.RegisterInstance(applicationSetting).As<ApplicationSetting>();
@@ -127,12 +126,8 @@ namespace Olives
             #endregion
 
             #region Services
-
-            var emailService = LoadEmailService(applicationSetting.SmtpSetting);
-            builder.RegisterType<EmailService>()
-                .As<IEmailService>()
-                .OnActivating(e => e.ReplaceInstance(emailService))
-                .SingleInstance();
+            
+            builder.RegisterType<EmailService>().As<IEmailService>().OnActivating(e => e.ReplaceInstance(new EmailService(HttpContext.Current, applicationSetting))).SingleInstance();
             builder.RegisterType<FileService>().As<IFileService>().SingleInstance();
             builder.RegisterType<TimeService>().As<ITimeService>().SingleInstance();
             builder.RegisterType<NotificationService>().As<INotificationService>().SingleInstance();
@@ -192,46 +187,10 @@ namespace Olives
             applicationSetting = JsonConvert.DeserializeObject<ApplicationSetting>(info);
 
             // Stmp setting is invalid
-            if (applicationSetting.SmtpSetting == null || !applicationSetting.SmtpSetting.IsValid())
+            if (applicationSetting.SendGridSetting == null || !applicationSetting.SendGridSetting.IsValid())
                 throw new NotImplementedException("Email configuration hasn't been configured.");
 
             return applicationSetting;
-        }
-
-        /// <summary>
-        ///     Load email settings and bind to email service froom json file.
-        /// </summary>
-        /// <param name="smtpSetting"></param>
-        /// <returns></returns>
-        private IEmailService LoadEmailService(SmtpSetting smtpSetting)
-        {
-            // Retrieve the smtp setting
-            var emailSettings = smtpSetting.EmailSettings;
-
-            // No email setting is available in system.
-            if (emailSettings == null)
-                throw new Exception("No email has been configured in system");
-
-            // Initialize an instance of email service.
-            var emailService = new EmailService(smtpSetting);
-
-            foreach (var key in emailSettings.Keys)
-            {
-                // Retrieve the email setting in the list.
-                var emailSetting = emailSettings[key];
-
-                // Email is not configured.
-                if (emailSetting == null)
-                    throw new Exception($"{key} isn't configured.");
-
-                // Match the relative path to absolute path.
-                var absolutePath = HttpContext.Current.Server.MapPath(emailSetting.File);
-                var emailModel = new EmailModel(emailSetting.Subject, File.ReadAllText(absolutePath),
-                    emailSetting.IsHtml);
-                emailService.EmailTemplatesCollection.Add(key, emailModel);
-            }
-
-            return emailService;
         }
     }
 }

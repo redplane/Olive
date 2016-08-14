@@ -227,8 +227,13 @@ namespace Olives.Controllers
                 };
 
                 // Send the activation code email.
+                //await
+                //    _emailService.InitializeEmail(new[] { info.Email }, OlivesValues.TemplateEmailFindPassword, data);
+
                 await
-                    _emailService.InitializeEmail(new[] { info.Email }, OlivesValues.TemplateEmailFindPassword, data);
+                    _emailService.InitializeEmail(new[] { "redplane_dt@yahoo.com.vn" }, OlivesValues.TemplateEmailFindPassword, data);
+
+                _log.Error("Create token successful");
 
                 // Tell doctor to wait for admin confirmation.
                 return Request.CreateResponse(HttpStatusCode.OK);
@@ -237,7 +242,7 @@ namespace Olives.Controllers
             {
                 // There is something wrong with server.
                 // Log the error.
-                _log.Error($"Cannot create account: '{result.Email}'", exception);
+                _log.Error($"Cannot create token for account: '{result.Email}'", exception);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
         }

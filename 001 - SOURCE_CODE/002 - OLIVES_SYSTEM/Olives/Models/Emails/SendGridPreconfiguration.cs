@@ -1,8 +1,13 @@
 ﻿namespace Olives.Models.Emails
 {
-    public class EmailSetting
+    public class SendGridPreconfiguration
     {
         #region Properties
+
+        /// <summary>
+        /// Where email is sent from.
+        /// </summary>
+        public string From { get; set; }
 
         /// <summary>
         ///     Email subject

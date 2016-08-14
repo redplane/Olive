@@ -1,6 +1,6 @@
 ﻿namespace Olives.Models.Emails
 {
-    public class EmailModel
+    public class SendGridContent
     {
         #region Constructors
 
@@ -9,12 +9,12 @@
         /// </summary>
         /// <param name="subject"></param>
         /// <param name="body"></param>
-        /// <param name="isHtml"></param>
-        public EmailModel(string subject, string body, bool isHtml)
+        /// <param name="from"></param>
+        public SendGridContent(string subject, string body, string from)
         {
             Subject = subject;
             Body = body;
-            IsHtml = isHtml;
+            From = from;
         }
 
         #endregion
@@ -30,11 +30,11 @@
         ///     Body of email.
         /// </summary>
         public string Body { get; private set; }
-
+        
         /// <summary>
-        ///     Whether email should be written in html or not.
+        /// Address where email sent from.
         /// </summary>
-        public bool IsHtml { get; private set; }
+        public string From { get; private set; }
 
         #endregion
     }
