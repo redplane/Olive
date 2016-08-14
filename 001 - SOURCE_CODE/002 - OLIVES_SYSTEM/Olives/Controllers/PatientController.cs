@@ -462,15 +462,21 @@ namespace Olives.Controllers
         /// <param name="account"></param>
         private async Task InitializeActivationCodeAsync(Person account)
         {
-            // Initialize activation code.
-            var activationToken =
-                await
-                    _repositoryCode.InitializeAccountCodeAsync(account.Id, TypeAccountCode.Activation,
-                        DateTime.UtcNow);
+            #region Token initialization
 
+            var accountToken = new AccountCode();
+            accountToken.Code = Guid.NewGuid().ToString();
+            accountToken.Expired = DateTime.UtcNow.AddHours(Values.ActivationCodeHourDuration);
+            accountToken.Owner = account.Id;
+            accountToken.Type = (byte) TypeAccountCode.Activation;
+
+            accountToken = await _repositoryCode.InitializeToken(accountToken);
+
+            #endregion
+            
             // Url construction.
             var url = Url.Link("Default",
-                new {controller = "Service", action = "Verify", code = activationToken.Code});
+                new {controller = "Service", action = "Verify", code = accountToken.Code});
 
             // Data which will be bound to email.
             var data = new
@@ -478,7 +484,7 @@ namespace Olives.Controllers
                 firstName = account.FirstName,
                 lastName = account.LastName,
                 url,
-                expired = activationToken.Expired.ToLocalTime()
+                expired = accountToken.Expired.ToLocalTime()
             };
 
             // Write an email to user to notify him/her to activate account.

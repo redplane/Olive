@@ -290,6 +290,7 @@
     <Compile Include="Interfaces\IFileService.cs" />
     <Compile Include="Interfaces\INotificationService.cs" />
     <Compile Include="Interfaces\IRepositoryAccountExtended.cs" />
+    <Compile Include="Interfaces\IRepositoryToken.cs" />
     <Compile Include="Interfaces\IRepositoryMessage.cs" />
     <Compile Include="Interfaces\IRepositoryNotification.cs" />
     <Compile Include="Interfaces\IRepositoryRelationshipRequest.cs" />
@@ -325,6 +326,7 @@
     <Compile Include="Repositories\PersonalNote\RepositoryHeartbeat.cs" />
     <Compile Include="Repositories\RepositoryAccountExtended.cs" />
     <Compile Include="Repositories\PersonalNote\RepositoryDiary.cs" />
+    <Compile Include="Repositories\RepositoryToken.cs" />
     <Compile Include="Repositories\RepositoryMessage.cs" />
     <Compile Include="Repositories\RepositoryNotification.cs" />
     <Compile Include="Repositories\RepositoryRelationship.cs" />
@@ -347,6 +349,7 @@
     <Compile Include="ViewModels\Edit\EditAddictionViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditBloodSugarViewModel.cs" />
     <Compile Include="ViewModels\Edit\InitializeNewPasswordViewModel.cs" />
+    <Compile Include="ViewModels\Filter\AccountTokenViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterDiaryViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterDoctorViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMessageViewModel.cs" />

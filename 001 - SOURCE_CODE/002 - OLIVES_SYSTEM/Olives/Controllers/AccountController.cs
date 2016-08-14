@@ -11,6 +11,7 @@ using Olives.Constants;
 using Olives.Enumerations;
 using Olives.Interfaces;
 using Olives.ViewModels.Edit;
+using Olives.ViewModels.Filter;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
@@ -188,16 +189,13 @@ namespace Olives.Controllers
             #endregion
 
             // Check whether email has been used or not.
-            var result =
+            var account =
                 await _repositoryAccountExtended.FindPersonAsync(null, info.Email, null, null, StatusAccount.Active);
 
             // Found a patient. This means email has been used before.
-            if (result == null)
+            if (account == null)
             {
-                // Tell the client that person is not found.
                 _log.Error($"Person [Email: {info.Email}] is not found as active in system");
-
-                // Tell the client about this error.
                 return Request.CreateResponse(HttpStatusCode.NotFound,
                     new
                     {
@@ -207,11 +205,13 @@ namespace Olives.Controllers
 
             try
             {
-                // Initialize an activation code.
-                var findPasswordToken =
-                    await
-                        _repositoryActivationCode.InitializeAccountCodeAsync(result.Id, TypeAccountCode.ForgotPassword,
-                            DateTime.UtcNow);
+                var accountToken = new AccountCode();
+                accountToken.Owner = account.Id;
+                accountToken.Code = Guid.NewGuid().ToString();
+                accountToken.Type = (byte) TypeAccountCode.ForgotPassword;
+                accountToken.Expired = DateTime.UtcNow.AddHours(Values.ActivationCodeHourDuration);
+
+                accountToken = await _repositoryActivationCode.InitializeToken(accountToken);
 
                 // Url construction.
                 var url = Url.Link("Default",
@@ -220,10 +220,10 @@ namespace Olives.Controllers
                 // Data which will be bound to email template.
                 var data = new
                 {
-                    firstName = result.FirstName,
-                    lastName = result.LastName,
+                    firstName = account.FirstName,
+                    lastName = account.LastName,
                     url,
-                    findPasswordToken.Expired
+                    accountToken.Expired
                 };
 
                 // Send the activation code email.
@@ -239,7 +239,7 @@ namespace Olives.Controllers
             {
                 // There is something wrong with server.
                 // Log the error.
-                _log.Error($"Cannot create token for account: '{result.Email}'", exception);
+                _log.Error($"Cannot create token for account: '{account.Email}'", exception);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
         }
@@ -273,16 +273,17 @@ namespace Olives.Controllers
 
             #endregion
 
-            #region Token validation
+            #region Token find
 
-            // Check whether email has been used or not.
-            var token =
-                await
-                    _repositoryActivationCode.FindAccountCodeAsync(null, (byte)TypeAccountCode.ForgotPassword,
-                        initializer.Token);
+            var filter = new FilterAccountTokenViewModel();
+            filter.Code = initializer.Token;
+            filter.Type = (byte) TypeAccountCode.ForgotPassword;
 
-            // Token couldn't be found.
-            if (token == null)
+            // Find the account token.
+            var accountToken = await _repositoryActivationCode.FindAccountTokenAsync(filter);
+
+            // Token is not found.
+            if (accountToken == null)
             {
                 _log.Error($"Token [Code: {initializer.Token}] is not found in the system.");
                 return Request.CreateResponse(HttpStatusCode.NotFound,
@@ -292,12 +293,16 @@ namespace Olives.Controllers
                     });
             }
 
+            #endregion
+
+            #region Token validation
+            
             // Token is expired.
-            if (DateTime.UtcNow > token.Expired)
+            if (DateTime.UtcNow > accountToken.Expired)
             {
                 // Log the error.
                 _log.Error(
-                    $"Token [Code: {token.Code}] is expired. It should be activated before {token.Expired.ToString("F")}");
+                    $"Token [Code: {accountToken.Code}] is expired. It should be activated before {accountToken.Expired.ToString("F")}");
 
                 // Tell the client about the error.
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
@@ -308,24 +313,57 @@ namespace Olives.Controllers
 
             #endregion
 
+            #region Account find
+
+            // Find the account.
+            var account =
+                await
+                    _repositoryAccountExtended.FindPersonAsync(accountToken.Owner, null, null, (byte)Role.Patient,
+                        StatusAccount.Pending);
+
+            // No account is not found.
+            if (account == null)
+            {
+                _log.Error($"Account [Id: {accountToken.Owner}] is not found in the system.");
+                return Request.CreateResponse(HttpStatusCode.NotFound,
+                    new
+                    {
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
+            }
+
+            #endregion
+
             #region Information modify
 
             try
             {
-                // Update client new password.
-                await _repositoryActivationCode.InitializeNewAccountPassword(token, initializer.Password);
+                // Update account information.
+                account.Password = initializer.Password;
 
-                // Tell doctor to wait for admin confirmation.
+                // Save account to database.
+                await _repositoryAccountExtended.InitializePersonAsync(account);
+
+                try
+                {
+                    // Delete the token.
+                    await _repositoryActivationCode.DetachAccountToken(filter);
+                }
+                catch (Exception exception)
+                {
+                    _log.Error(exception.Message, exception);
+                }
+
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
             catch (Exception exception)
             {
-                // There is something wrong with server.
-                // Log the error.
-                _log.Error($"Cannot create account: '{token.Person.Email}'", exception);
+                _log.Error(exception.Message, exception);
+
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
-
+            
+            
             #endregion
         }
 

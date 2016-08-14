@@ -1,20 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Shared.Enumerations;
+﻿using System.Threading.Tasks;
+using Olives.ViewModels.Filter;
 using Shared.Models;
 
 namespace Olives.Interfaces
 {
     public interface IRepositoryToken
     {
-        /// <summary>
-        ///     Initialize an allergy with given information.
-        /// </summary>
-        /// <param name="owner"></param>
-        /// <param name="type"></param>
-        /// <param name="created"></param>
-        Task<AccountCode> InitializeAccountCodeAsync(int owner, TypeAccountCode type, DateTime created);
-
         /// <summary>
         ///     Find activation code by owner and code.
         /// </summary>
@@ -23,20 +14,29 @@ namespace Olives.Interfaces
         /// <param name="code"></param>
         /// <returns></returns>
         Task<AccountCode> FindAccountCodeAsync(int? owner, byte? type, string code);
+        
+        #region New 
+        /// <summary>
+        /// Initialize a token and link to an account.
+        /// </summary>
+        /// <param name="accountToken"></param>
+        /// <returns></returns>
+        Task<AccountCode> InitializeToken(AccountCode accountToken);
 
         /// <summary>
-        ///     Delete an activation code asynchronously.
+        /// Find the first account token by using specified conditions.
         /// </summary>
-        /// <param name="activationCode"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        void DeleteActivationCode(AccountCode activationCode);
+        Task<AccountCode> FindAccountTokenAsync(FilterAccountTokenViewModel filter);
 
         /// <summary>
-        ///     Initialize new password from forgot password token.
+        /// Find and remove the conditions matched account tokens.
         /// </summary>
-        /// <param name="token"></param>
-        /// <param name="password"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        Task<int> InitializeNewAccountPassword(AccountCode token, string password);
+        Task<int> DetachAccountToken(FilterAccountTokenViewModel filter);
+        
+        #endregion
     }
 }

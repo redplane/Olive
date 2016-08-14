@@ -3,7 +3,9 @@ using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.SqlServer.Server;
 using Olives.Interfaces;
+using Olives.ViewModels.Filter;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
@@ -27,32 +29,7 @@ namespace Olives.Repositories
         }
 
         #endregion
-
-        /// <summary>
-        ///     Initialize an allergy with given information.
-        /// </summary>
-        /// <param name="owner"></param>
-        /// <param name="type"></param>
-        /// <param name="created"></param>
-        public async Task<AccountCode> InitializeAccountCodeAsync(int owner, TypeAccountCode type, DateTime created)
-        {
-            var context = _dataContext.Context;
-
-            var accountCode = new AccountCode();
-            accountCode.Code = Guid.NewGuid().ToString();
-            accountCode.Expired = DateTime.UtcNow.AddHours(Values.ActivationCodeHourDuration);
-            accountCode.Owner = owner;
-            accountCode.Type = (byte) type;
-
-            // Add allergy to database context.
-            context.AccountCodes.AddOrUpdate(accountCode);
-
-            // Submit allergy.
-            await context.SaveChangesAsync();
-
-            return accountCode;
-        }
-
+        
         /// <summary>
         ///     Find activation code by owner and code.
         /// </summary>
@@ -92,61 +69,93 @@ namespace Olives.Repositories
 
             return await results.FirstOrDefaultAsync();
         }
+        
+        #region New code
 
         /// <summary>
-        ///     Delete an activation code synchronously.
+        /// Filter and detach the account tokens.
         /// </summary>
-        /// <param name="activationCode"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        public async void DeleteActivationCode(AccountCode activationCode)
+        public async Task<int> DetachAccountToken(FilterAccountTokenViewModel filter)
         {
+            // Database context initialization.
             var context = _dataContext.Context;
 
-            // Remove the specific result.
-            context.AccountCodes.Remove(activationCode);
+            // Take all the records.
+            IQueryable<AccountCode> accountTokens = context.AccountCodes;
 
-            // Save result asynchronously.
+            // Filter and detach.
+            accountTokens = FilterAccountTokens(accountTokens, filter);
+            context.AccountCodes.RemoveRange(accountTokens);
+
+            // Retrieve the number of records which have been deleted.
+            var records = await context.SaveChangesAsync();
+
+            return records;
+        }
+        
+        /// <summary>
+        /// Initialize account token.
+        /// </summary>
+        /// <param name="accountToken"></param>
+        /// <returns></returns>
+        public async Task<AccountCode> InitializeToken(AccountCode accountToken)
+        {
+            // Database context initialization.
+            var context = _dataContext.Context;
+
+            context.AccountCodes.AddOrUpdate(x => new
+            {
+                x.Owner,
+                x.Type
+            }, accountToken);
+
             await context.SaveChangesAsync();
+
+            return accountToken;
         }
 
         /// <summary>
-        ///     Initialize a new password to a target account by searching token.
+        /// Find the account token by using specific conditions.
         /// </summary>
-        /// <param name="token"></param>
-        /// <param name="password"></param>
-        public async Task<int> InitializeNewAccountPassword(AccountCode token, string password)
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public Task<AccountCode> FindAccountTokenAsync(FilterAccountTokenViewModel filter)
         {
+            // Database context initialization.
             var context = _dataContext.Context;
 
-            using (var transaction = context.Database.BeginTransaction())
-            {
-                try
-                {
-                    // Find and delete the account code.
-                    context.AccountCodes.RemoveRange(
-                        context.AccountCodes.Where(
-                            x => x.Code.Equals(token.Code) && x.Type == (byte) TypeAccountCode.ForgotPassword));
+            // Take all account tokens.
+            IQueryable<AccountCode> accountCodes = context.AccountCodes;
+            accountCodes = FilterAccountTokens(accountCodes, filter);
 
-                    // Find and change the account code.
-                    var person = await context.People.FirstOrDefaultAsync(x => x.Id == token.Owner);
-                    person.Password = password;
-                    context.People.AddOrUpdate(person);
-
-                    // Save modifies.
-                    var records = await context.SaveChangesAsync();
-
-                    // Commit the transaction.
-                    transaction.Commit();
-
-                    return records;
-                }
-                catch (Exception)
-                {
-                    // Error happens, throw the error after rollback the transaction.
-                    transaction.Rollback();
-                    throw;
-                }
-            }
+            return accountCodes.FirstOrDefaultAsync();
         }
+
+        /// <summary>
+        /// Filter account tokens by using specific conditions.
+        /// </summary>
+        /// <param name="accountTokens"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        private IQueryable<AccountCode> FilterAccountTokens(IQueryable<AccountCode> accountTokens, FilterAccountTokenViewModel filter)
+        {
+            // Owner is specified.
+            if (filter.Owner != null)
+                accountTokens = accountTokens.Where(x => x.Owner == filter.Owner.Value);
+
+            // Code is specified.
+            if (!string.IsNullOrWhiteSpace(filter.Code))
+                accountTokens = accountTokens.Where(x => x.Code.Contains(filter.Code));
+
+            // Type is specified.
+            if (filter.Type != null)
+                accountTokens = accountTokens.Where(x => x.Type == filter.Type.Value);
+
+            return accountTokens;
+        }
+
+        #endregion
     }
 }
