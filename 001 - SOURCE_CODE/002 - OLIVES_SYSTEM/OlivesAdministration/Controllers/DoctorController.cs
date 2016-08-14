@@ -103,7 +103,8 @@ namespace OlivesAdministration.Controllers
                         account.Doctor.Voters,
                         account.Created,
                         account.LastModified,
-                        Profile = InitializeUrl(storageProfilePdf.Relative, account.Doctor.ProfilePdf, Values.StandardProfilePdfExtension)
+                        Profile = InitializeUrl(storageProfilePdf.Relative, account.Doctor.ProfilePdf, Values.StandardProfilePdfExtension),
+                        account.Status
                     }
                 });
             }
@@ -189,6 +190,7 @@ namespace OlivesAdministration.Controllers
                         },
                         x.Voters,
                         Profile = InitializeUrl(storageProfilePdf.Relative, x.ProfilePdf, Values.StandardProfilePdfExtension),
+                        x.Person.Status,
                         x.Person.Created,
                         x.Person.LastModified
                     }),
