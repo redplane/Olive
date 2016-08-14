@@ -234,9 +234,9 @@ namespace Olives.Repositories.Medical
                 relationships = relationships.Where(x => x.Source == filter.Partner.Value);
 
             var results = from r in relationships
-                          from m in experimentNotes
-                          where r.Source == m.Owner || m.Creator == filter.Requester.Id
-                          select m;
+                          from e in experimentNotes
+                          where r.Source == e.Owner || r.Source == e.Creator
+                          select e;
 
             return results;
         }

@@ -224,7 +224,7 @@ namespace Olives.Repositories.Medical
 
             var results = from r in relationships
                           from m in prescriptionImages
-                          where r.Source == m.Owner || m.Creator == filter.Requester.Id
+                          where r.Source == m.Owner || r.Source == m.Creator
                           select m;
 
             return results;
