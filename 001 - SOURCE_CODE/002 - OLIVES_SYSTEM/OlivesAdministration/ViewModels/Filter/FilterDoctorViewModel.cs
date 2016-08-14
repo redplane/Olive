@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using OlivesAdministration.Enumerations;
 using Shared.Attributes;
 using Shared.Constants;
@@ -143,7 +144,7 @@ namespace OlivesAdministration.ViewModels.Filter
         /// <summary>
         ///     Status of account.
         /// </summary>
-        public StatusAccount? Status { get; set; }
+        public List<byte> Statuses { get; set; } = new List<byte>{(byte)StatusAccount.Active, (byte)StatusAccount.Inactive};
 
         /// <summary>
         ///     Index of result page.

@@ -67,16 +67,14 @@ namespace OlivesAdministration.Controllers
         {
             try
             {
-                // TODO: Fix this.
                 // File or path is invalid
-                //if (string.IsNullOrWhiteSpace(path) || string.IsNullOrWhiteSpace(file))
-                //    return null;
+                if (string.IsNullOrWhiteSpace(path) || string.IsNullOrWhiteSpace(file))
+                    return null;
 
                 if (!string.IsNullOrWhiteSpace(extension))
                     file = $"{file}.{extension}";
-                //var fullPath = Path.Combine(path, file);
-                //return Url.Content(fullPath);
-                return $"http://olive.azurewebsites.net/{path}/{file}.{extension}";
+                var fullPath = Path.Combine(path, file);
+                return Url.Content(fullPath);
             }
             catch
             {

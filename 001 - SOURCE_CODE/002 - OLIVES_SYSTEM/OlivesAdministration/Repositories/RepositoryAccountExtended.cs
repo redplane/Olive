@@ -85,10 +85,14 @@ namespace OlivesAdministration.Repositories
                 doctors = doctors.Where(x => x.Person.Created >= filter.MinCreated);
             if (filter.MaxCreated != null)
                 doctors = doctors.Where(x => x.Person.Created <= filter.MaxCreated);
-
+            
             // Filter by status.
-            if (filter.Status != null)
-                doctors = doctors.Where(x => x.Person.Status == (byte) filter.Status);
+            if (filter.Statuses != null)
+            {
+                doctors = from doctor in doctors
+                    where filter.Statuses.Contains(doctor.Person.Status)
+                    select doctor;
+            }
 
             #endregion
 
