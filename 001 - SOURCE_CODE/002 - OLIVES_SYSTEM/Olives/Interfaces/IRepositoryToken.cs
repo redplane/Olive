@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Models;
 
-namespace Shared.Interfaces
+namespace Olives.Interfaces
 {
-    public interface IRepositoryCode
+    public interface IRepositoryToken
     {
         /// <summary>
         ///     Initialize an allergy with given information.

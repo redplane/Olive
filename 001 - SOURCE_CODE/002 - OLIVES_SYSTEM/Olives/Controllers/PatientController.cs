@@ -39,7 +39,7 @@ namespace Olives.Controllers
         /// <param name="log"></param>
         /// <param name="applicationSetting"></param>
         public PatientController(
-            IRepositoryAccountExtended repositoryAccountExtended, IRepositoryCode repositoryCode,
+            IRepositoryAccountExtended repositoryAccountExtended, IRepositoryToken repositoryCode,
             IRepositoryRelationship repositoryRelation,
             IRepositoryStorage repositoryStorage,
             ITimeService timeService, IEmailService emailService,
@@ -190,7 +190,7 @@ namespace Olives.Controllers
                 person = await _repositoryAccountExtended.InitializePersonAsync(person);
 
                 // Initialize activation code and send to client.
-                InitializeActivationCodeAsync(person);
+                await InitializeActivationCodeAsync(person);
 
                 // Tell doctor to wait for admin confirmation.
                 return Request.CreateResponse(HttpStatusCode.OK, new
@@ -460,7 +460,7 @@ namespace Olives.Controllers
         ///     This function is for generating activation code and send to client.
         /// </summary>
         /// <param name="account"></param>
-        private async void InitializeActivationCodeAsync(Person account)
+        private async Task InitializeActivationCodeAsync(Person account)
         {
             // Initialize activation code.
             var activationToken =
@@ -523,7 +523,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository which provides functions to access account code database.
         /// </summary>
-        private readonly IRepositoryCode _repositoryCode;
+        private readonly IRepositoryToken _repositoryCode;
 
         /// <summary>
         ///     Service which provides functions to access mail sending service.

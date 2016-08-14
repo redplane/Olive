@@ -3,14 +3,15 @@ using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
+using Olives.Interfaces;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 
-namespace Shared.Repositories
+namespace Olives.Repositories
 {
-    public class RepositoryCode : IRepositoryCode
+    public class RepositoryToken : IRepositoryToken
     {
         #region Properties
 
@@ -20,7 +21,7 @@ namespace Shared.Repositories
 
         #region Properties
 
-        public RepositoryCode(IOliveDataContext dataContext)
+        public RepositoryToken(IOliveDataContext dataContext)
         {
             _dataContext = dataContext;
         }

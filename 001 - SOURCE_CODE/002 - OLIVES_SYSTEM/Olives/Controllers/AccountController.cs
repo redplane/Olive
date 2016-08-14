@@ -35,7 +35,7 @@ namespace Olives.Controllers
         /// <param name="emailService"></param>
         /// <param name="fileService"></param>
         public AccountController(
-            IRepositoryAccountExtended repositoryAccountExtended, IRepositoryCode repositoryActivationCode,
+            IRepositoryAccountExtended repositoryAccountExtended, IRepositoryToken repositoryActivationCode,
             IRepositoryStorage repositoryStorage,
             ILog log,
             IEmailService emailService, IFileService fileService)
@@ -484,7 +484,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of activation codes.
         /// </summary>
-        private readonly IRepositoryCode _repositoryActivationCode;
+        private readonly IRepositoryToken _repositoryActivationCode;
 
         /// <summary>
         ///     Instance of module which is used for logging.
