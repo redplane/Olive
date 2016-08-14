@@ -10,22 +10,22 @@ namespace OlivesAdministration
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             // main admin URLs
-            routes.MapRoute("AdminSignin", "signin", new {controller = "Home", action = "Index"});
-            routes.MapRoute("AdminMain", "admin", new {controller = "Home", action = "Index"});
-            routes.MapRoute("AdminRequest", "admin/requests/{id}",
-                new { controller = "Home", action = "Index", id = UrlParameter.Optional });
-            routes.MapRoute("AdminPatients", "admin/patients/{id}",
-                new {controller = "Home", action = "Index", id = UrlParameter.Optional});
-            routes.MapRoute("AdminDoctors", "admin/doctors/{id}",
-                new {controller = "Home", action = "Index", id = UrlParameter.Optional});
-            routes.MapRoute("AdminPlaces", "admin/places/{id}",
-                new { controller = "Home", action = "Index", id = UrlParameter.Optional });
-            routes.MapRoute("AdminCategories", "admin/categories/{id}",
-                new { controller = "Home", action = "Index", id = UrlParameter.Optional });
+            //routes.MapRoute("AdminSignin", "signin", new {controller = "Home", action = "Index"});
+            //routes.MapRoute("AdminMain", "admin", new {controller = "Home", action = "Index"});
+            //routes.MapRoute("AdminRequest", "admin/requests/{id}",
+            //    new { controller = "Home", action = "Index", id = UrlParameter.Optional });
+            //routes.MapRoute("AdminPatients", "admin/patients/{id}/{*queryvalues}",
+            //    new {controller = "Home", action = "Index", id = UrlParameter.Optional});
+            //routes.MapRoute("AdminDoctors", "admin/doctors/{id};{page}",
+            //    new {controller = "Home", action = "Index", id = UrlParameter.Optional});
+            //routes.MapRoute("AdminPlaces", "admin/places/{id}",
+            //    new { controller = "Home", action = "Index", id = UrlParameter.Optional });
+            //routes.MapRoute("AdminCategories", "admin/categories/{id}",
+            //    new { controller = "Home", action = "Index", id = UrlParameter.Optional });
 
             routes.MapRoute(
                 "Default",
-                "{controller}/{action}/{id}",
+                "{*url}",
                 new {controller = "Home", action = "Index", id = UrlParameter.Optional}
                 );
         }
