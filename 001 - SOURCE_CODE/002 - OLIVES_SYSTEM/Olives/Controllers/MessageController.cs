@@ -253,7 +253,48 @@ namespace Olives.Controllers
 
             #endregion
         }
-        
+
+        /// <summary>
+        ///     Filter messages list by using specific conditions.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [Route("api/message/seen")]
+        public async Task<HttpResponseMessage> MakeMessageSeen([FromBody] FilterMessageViewModel filter)
+        {
+            #region Request parameters validation
+
+            if (filter == null)
+            {
+                filter = new FilterMessageViewModel();
+                Validate(filter);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                _log.Error("Request parameters are invalid. Errors sent to client");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            #endregion
+
+            #region Filter & result handling
+
+            // Retrieve information of person who sent request.
+            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Update the information of filter.
+            filter.Requester = requester.Id;
+
+            // Do filter.
+            await _repositoryMessage.MakeMessagesSeen(filter);
+
+            return Request.CreateResponse(HttpStatusCode.OK);
+
+            #endregion
+        }
+
+
         #endregion
 
         #region Properties

@@ -27,5 +27,12 @@ namespace Olives.Interfaces
         /// <param name="filter"></param>
         /// <returns></returns>
         Task<ResponseMessageFilter> FilterMessagesAsync(FilterMessageViewModel filter);
+
+        /// <summary>
+        /// Filter and make messages be seen.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        Task<int> MakeMessagesSeen(FilterMessageViewModel filter);
     }
 }
