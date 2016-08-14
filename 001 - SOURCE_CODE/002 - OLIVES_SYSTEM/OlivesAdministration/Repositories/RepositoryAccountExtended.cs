@@ -89,8 +89,9 @@ namespace OlivesAdministration.Repositories
             // Filter by status.
             if (filter.Statuses != null)
             {
+                var statuses = new List<byte>(filter.Statuses);
                 doctors = from doctor in doctors
-                    where filter.Statuses.Contains(doctor.Person.Status)
+                    where statuses.Contains(doctor.Person.Status)
                     select doctor;
             }
 

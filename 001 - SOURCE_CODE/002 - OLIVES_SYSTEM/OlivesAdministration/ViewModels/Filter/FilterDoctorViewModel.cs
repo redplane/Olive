@@ -144,7 +144,7 @@ namespace OlivesAdministration.ViewModels.Filter
         /// <summary>
         ///     Status of account.
         /// </summary>
-        public List<byte> Statuses { get; set; } = new List<byte>{(byte)StatusAccount.Active, (byte)StatusAccount.Inactive};
+        public byte[] Statuses { get; set; } = {(byte)StatusAccount.Active, (byte)StatusAccount.Inactive};
 
         /// <summary>
         ///     Index of result page.
