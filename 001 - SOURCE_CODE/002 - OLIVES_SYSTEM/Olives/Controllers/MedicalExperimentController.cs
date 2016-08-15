@@ -322,7 +322,7 @@ namespace Olives.Controllers
                 var isDataChanged = false;
                 if (modifier.Time != null)
                 {
-                    modifier.Time = modifier.Time;
+                    experimentNote.Time = modifier.Time.Value;
                     isDataChanged = true;
                 }
 
