@@ -257,7 +257,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\MedicalNoteController.cs" />
-    <Compile Include="Controllers\MedicalExperimentController.cs" />
+    <Compile Include="Controllers\ExperimentNoteController.cs" />
     <Compile Include="Controllers\PrescriptionImageController.cs" />
     <Compile Include="Controllers\PrescriptionController.cs" />
     <Compile Include="Controllers\MedicalImageController.cs" />

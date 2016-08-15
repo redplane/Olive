@@ -217,7 +217,7 @@ namespace Olives.Repositories
             }
             // Notification topic filter.
             if (filter.Topics != null)
-            {;
+            {
                 var topics = new List<byte>(filter.Topics);
                 notifications = notifications.Where(x => topics.Contains(x.Topic));
             }

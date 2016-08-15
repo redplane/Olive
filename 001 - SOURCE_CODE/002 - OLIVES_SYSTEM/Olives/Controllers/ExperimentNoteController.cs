@@ -22,7 +22,7 @@ using Shared.ViewModels.Filter;
 namespace Olives.Controllers
 {
     [Route("api/medical/experiment")]
-    public class MedicalExperimentController : ApiParentControllerHub<NotificationHub>
+    public class ExperimentNoteController : ApiParentControllerHub<NotificationHub>
     {
         #region Constructors
 
@@ -34,7 +34,7 @@ namespace Olives.Controllers
         /// <param name="log"></param>
         /// <param name="timeService"></param>
         /// <param name="notificationService"></param>
-        public MedicalExperimentController(IRepositoryMedicalRecord repositoryMedicalRecord,
+        public ExperimentNoteController(IRepositoryMedicalRecord repositoryMedicalRecord,
             IRepositoryExperimentNote repositoryExperimentNote,
             ITimeService timeService, INotificationService notificationService,
             ILog log)
