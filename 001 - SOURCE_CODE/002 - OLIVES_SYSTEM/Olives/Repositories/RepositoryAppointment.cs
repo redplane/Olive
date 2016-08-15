@@ -2,13 +2,14 @@
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
+using Olives.Interfaces;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
 
-namespace Shared.Repositories
+namespace Olives.Repositories
 {
     public class RepositoryAppointment : IRepositoryAppointment
     {

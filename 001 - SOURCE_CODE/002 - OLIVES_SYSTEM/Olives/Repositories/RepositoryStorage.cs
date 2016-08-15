@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.Remoting.Messaging;
 using System.Web;
+using Olives.Interfaces;
 using Shared.Interfaces;
 using Shared.Models;
 
-namespace Shared.Repositories
+namespace Olives.Repositories
 {
     public class RepositoryStorage : IRepositoryStorage
     {

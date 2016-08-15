@@ -6,13 +6,9 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using OlivesAdministration.Attributes;
-using OlivesAdministration.Constants;
 using OlivesAdministration.Interfaces;
-using OlivesAdministration.Models;
 using OlivesAdministration.ViewModels.Filter;
-using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Interfaces;
 using Shared.Resources;
 
 namespace OlivesAdministration.Controllers
@@ -26,14 +22,12 @@ namespace OlivesAdministration.Controllers
         ///     Initialize an instance of DoctorController
         /// </summary>
         /// <param name="repositoryAccountExtended"></param>
-        /// <param name="repositoryStorage"></param>
         /// <param name="log"></param>
         public DoctorController(
-            IRepositoryAccountExtended repositoryAccountExtended, IRepositoryStorage repositoryStorage,
+            IRepositoryAccountExtended repositoryAccountExtended,
             ILog log)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
-            _repositoryStorage = repositoryStorage;
             _log = log;
         }
 
@@ -46,13 +40,13 @@ namespace OlivesAdministration.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] { Role.Admin })]
+        [OlivesAuthorize(new[] {Role.Admin})]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
             try
             {
                 // Retrieve filtered result asynchronously.
-                var account = await _repositoryAccountExtended.FindPersonAsync(id, null, null, (byte)Role.Doctor, null);
+                var account = await _repositoryAccountExtended.FindPersonAsync(id, null, null, (byte) Role.Doctor, null);
 
                 // No result has been found.
                 if (account == null)
@@ -65,12 +59,7 @@ namespace OlivesAdministration.Controllers
                     });
                 }
 
-                // Find the storage where avatar is saved.
-                var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
-
-                // Find the path where profile pdf is saved.
-                var storageProfilePdf = _repositoryStorage.FindStorage(Storage.Profile);
-
+                // TODO: Update doctor profile pdf file.
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     Doctor = new
@@ -101,7 +90,7 @@ namespace OlivesAdministration.Controllers
                         account.Doctor.Voters,
                         account.Created,
                         account.LastModified,
-                        Profile = InitializeUrl(storageProfilePdf.Relative, account.Doctor.ProfilePdf, Values.StandardProfilePdfExtension),
+                        Profile = "",
                         account.Status
                     }
                 });
@@ -122,7 +111,7 @@ namespace OlivesAdministration.Controllers
         /// <returns></returns>
         [Route("api/doctor/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Admin })]
+        [OlivesAuthorize(new[] {Role.Admin})]
         public async Task<HttpResponseMessage> Filter([FromBody] FilterDoctorViewModel filter)
         {
             #region Request parameters validation
@@ -150,13 +139,8 @@ namespace OlivesAdministration.Controllers
             {
                 // Retrieve result from server.
                 var result = await _repositoryAccountExtended.FilterDoctorsAsync(filter);
-                 
-                // Find the path where avatars are stored.
-                var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
-          
-                // Find the path where profiles are stored.
-                var storageProfilePdf = _repositoryStorage.FindStorage(Storage.Profile);
 
+                // TODO: Update doctor profile PDF
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     Doctors = result.Doctors.Select(x => new
@@ -185,7 +169,7 @@ namespace OlivesAdministration.Controllers
                             x.Place.Country
                         },
                         x.Voters,
-                        Profile = InitializeUrl(storageProfilePdf.Relative, x.ProfilePdf, Values.StandardProfilePdfExtension),
+                        Profile = "",
                         x.Person.Status,
                         x.Person.Created,
                         x.Person.LastModified
@@ -210,15 +194,10 @@ namespace OlivesAdministration.Controllers
         private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
-        /// Repository of storage.
-        /// </summary>
-        private readonly IRepositoryStorage _repositoryStorage;
-
-        /// <summary>
         ///     Instance for logging management.
         /// </summary>
         private readonly ILog _log;
-        
+
         #endregion
     }
 }

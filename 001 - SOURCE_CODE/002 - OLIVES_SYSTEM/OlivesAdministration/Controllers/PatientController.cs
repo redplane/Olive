@@ -6,13 +6,9 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using OlivesAdministration.Attributes;
-using OlivesAdministration.Constants;
 using OlivesAdministration.Interfaces;
-using OlivesAdministration.Models;
 using OlivesAdministration.ViewModels.Filter;
-using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Interfaces;
 using Shared.Resources;
 
 namespace OlivesAdministration.Controllers
@@ -26,14 +22,12 @@ namespace OlivesAdministration.Controllers
         ///     Initialize an instance of AdminController.
         /// </summary>
         /// <param name="repositoryAccountExtended"></param>
-        /// <param name="repositoryStorage"></param>
         /// <param name="log"></param>
         public PatientController(
-            IRepositoryAccountExtended repositoryAccountExtended, IRepositoryStorage repositoryStorage,
+            IRepositoryAccountExtended repositoryAccountExtended,
             ILog log)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
-            _repositoryStorage = repositoryStorage;
             _log = log;
         }
 
@@ -47,15 +41,10 @@ namespace OlivesAdministration.Controllers
         private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
-        /// Repository of storage.
-        /// </summary>
-        private readonly IRepositoryStorage _repositoryStorage;
-
-        /// <summary>
         ///     Instance which provides functions for logging.
         /// </summary>
         private readonly ILog _log;
-        
+
         #endregion
 
         #region Methods
@@ -87,8 +76,6 @@ namespace OlivesAdministration.Controllers
                         Error = $"{Language.WarnRecordNotFound}"
                     });
                 }
-
-                var storage = _repositoryStorage.FindStorage(Storage.Avatar);
 
                 // Respond to client.
                 return Request.CreateResponse(HttpStatusCode.OK, new
@@ -155,8 +142,6 @@ namespace OlivesAdministration.Controllers
 
             // Filter patient by using specific conditions.
             var result = await _repositoryAccountExtended.FilterPatientsAsync(filter);
-
-            var storage = _repositoryStorage.FindStorage(Storage.Avatar);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {

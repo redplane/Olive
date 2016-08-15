@@ -1,6 +1,6 @@
 ﻿using Shared.Models;
 
-namespace Shared.Interfaces
+namespace Olives.Interfaces
 {
     public interface IRepositoryStorage
     {

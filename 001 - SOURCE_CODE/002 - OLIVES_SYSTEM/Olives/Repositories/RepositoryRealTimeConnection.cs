@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using Olives.Interfaces;
 using Shared.Interfaces;
 using Shared.Models;
 
-namespace Shared.Repositories
+namespace Olives.Repositories
 {
     public class RepositoryRealTimeConnection : IRepositoryRealTimeConnection
     {

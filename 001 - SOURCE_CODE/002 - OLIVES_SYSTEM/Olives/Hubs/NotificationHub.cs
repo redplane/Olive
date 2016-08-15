@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using Olives.Attributes;
+using Olives.Interfaces;
 using Shared.Constants;
 using Shared.Interfaces;
 using Shared.Models;

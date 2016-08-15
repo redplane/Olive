@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Shared.Models;
 
-namespace Shared.Interfaces
+namespace Olives.Interfaces
 {
     public interface IRepositoryRealTimeConnection
     {
