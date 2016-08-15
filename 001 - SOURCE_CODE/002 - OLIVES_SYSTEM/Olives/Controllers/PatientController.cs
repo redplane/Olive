@@ -39,7 +39,7 @@ namespace Olives.Controllers
         /// <param name="log"></param>
         /// <param name="applicationSetting"></param>
         public PatientController(
-            IRepositoryAccountExtended repositoryAccountExtended, IRepositoryCode repositoryCode,
+            IRepositoryAccountExtended repositoryAccountExtended, IRepositoryToken repositoryCode,
             IRepositoryRelationship repositoryRelation,
             IRepositoryStorage repositoryStorage,
             ITimeService timeService, IEmailService emailService,
@@ -124,9 +124,7 @@ namespace Olives.Controllers
                         account.Role,
                         account.Status,
                         account.Address,
-                        Photo =
-                            InitializeUrl(storageAvatar.Relative, account.Photo,
-                                Values.StandardImageExtension),
+                        Photo = account.PhotoUrl,
                         account.Patient.Height,
                         account.Patient.Weight
                     }
@@ -192,7 +190,7 @@ namespace Olives.Controllers
                 person = await _repositoryAccountExtended.InitializePersonAsync(person);
 
                 // Initialize activation code and send to client.
-                InitializeActivationCodeAsync(person);
+                await InitializeActivationCodeAsync(person);
 
                 // Tell doctor to wait for admin confirmation.
                 return Request.CreateResponse(HttpStatusCode.OK, new
@@ -327,9 +325,7 @@ namespace Olives.Controllers
                         requester.LastModified,
                         requester.Status,
                         requester.Address,
-                        Photo =
-                            InitializeUrl(storageAvatar.Relative, requester.Photo,
-                                Values.StandardImageExtension),
+                        Photo = requester.PhotoUrl,
                         requester.Patient.Height,
                         requester.Patient.Weight
                     }
@@ -388,9 +384,7 @@ namespace Olives.Controllers
                     x.Person.LastName,
                     x.Person.Birthday,
                     x.Person.Phone,
-                    Photo =
-                        InitializeUrl(storageAvatar.Relative, x.Person.Photo,
-                            Values.StandardImageExtension),
+                    Photo = x.Person.PhotoUrl,
                     x.Person.Address,
                     x.Height,
                     x.Weight
@@ -466,17 +460,23 @@ namespace Olives.Controllers
         ///     This function is for generating activation code and send to client.
         /// </summary>
         /// <param name="account"></param>
-        private async void InitializeActivationCodeAsync(Person account)
+        private async Task InitializeActivationCodeAsync(Person account)
         {
-            // Initialize activation code.
-            var activationToken =
-                await
-                    _repositoryCode.InitializeAccountCodeAsync(account.Id, TypeAccountCode.Activation,
-                        DateTime.UtcNow);
+            #region Token initialization
 
+            var accountToken = new AccountCode();
+            accountToken.Code = Guid.NewGuid().ToString();
+            accountToken.Expired = DateTime.UtcNow.AddHours(Values.ActivationCodeHourDuration);
+            accountToken.Owner = account.Id;
+            accountToken.Type = (byte) TypeAccountCode.Activation;
+
+            accountToken = await _repositoryCode.InitializeToken(accountToken);
+
+            #endregion
+            
             // Url construction.
             var url = Url.Link("Default",
-                new {controller = "Service", action = "Verify", code = activationToken.Code});
+                new {controller = "Service", action = "Verify", code = accountToken.Code});
 
             // Data which will be bound to email.
             var data = new
@@ -484,7 +484,7 @@ namespace Olives.Controllers
                 firstName = account.FirstName,
                 lastName = account.LastName,
                 url,
-                expired = activationToken.Expired.ToLocalTime()
+                expired = accountToken.Expired.ToLocalTime()
             };
 
             // Write an email to user to notify him/her to activate account.
@@ -529,7 +529,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository which provides functions to access account code database.
         /// </summary>
-        private readonly IRepositoryCode _repositoryCode;
+        private readonly IRepositoryToken _repositoryCode;
 
         /// <summary>
         ///     Service which provides functions to access mail sending service.

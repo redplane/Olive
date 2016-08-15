@@ -12,6 +12,11 @@ namespace Shared.ViewModels.Filter
     public class FilterPrescriptionImageViewModel : IPagination
     {
         /// <summary>
+        /// Id of prescription image.
+        /// </summary>
+        public int? Id { get; set; }
+
+        /// <summary>
         ///     Who send the filter request.
         /// </summary>
         public Person Requester { get; set; }

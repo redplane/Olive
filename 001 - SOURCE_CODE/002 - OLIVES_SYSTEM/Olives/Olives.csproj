@@ -120,6 +120,14 @@
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="SendGrid, Version=8.0.2.0, Culture=neutral, PublicKeyToken=4f047e93159395ca, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sendgrid.8.0.2\lib\SendGrid.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SendGrid.CSharp.HTTP.Client, Version=3.0.0.0, Culture=neutral, PublicKeyToken=79219bf4e5ecaaca, processorArchitecture=MSIL">
+      <HintPath>..\packages\SendGrid.CSharp.HTTP.Client.3.0.0\lib\SendGrid.CSharp.HTTP.Client.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Web.Cors, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Cors.5.2.3\lib\net45\System.Web.Cors.dll</HintPath>
@@ -282,6 +290,7 @@
     <Compile Include="Interfaces\IFileService.cs" />
     <Compile Include="Interfaces\INotificationService.cs" />
     <Compile Include="Interfaces\IRepositoryAccountExtended.cs" />
+    <Compile Include="Interfaces\IRepositoryToken.cs" />
     <Compile Include="Interfaces\IRepositoryMessage.cs" />
     <Compile Include="Interfaces\IRepositoryNotification.cs" />
     <Compile Include="Interfaces\IRepositoryRelationshipRequest.cs" />
@@ -299,9 +308,9 @@
     <Compile Include="Interfaces\PersonalNote\IRepositoryBloodSugar.cs" />
     <Compile Include="Interfaces\PersonalNote\IRepositoryHeartbeat.cs" />
     <Compile Include="Models\ApplicationSetting.cs" />
-    <Compile Include="Models\Emails\EmailSetting.cs" />
-    <Compile Include="Models\Emails\EmailModel.cs" />
-    <Compile Include="Models\SmtpSetting.cs" />
+    <Compile Include="Models\Emails\SendGridPreconfiguration.cs" />
+    <Compile Include="Models\Emails\SendGridContent.cs" />
+    <Compile Include="Models\SendGridSetting.cs" />
     <Compile Include="Module\Log4NetModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\Medical\RepositoryExperimentNote.cs" />
@@ -317,11 +326,12 @@
     <Compile Include="Repositories\PersonalNote\RepositoryHeartbeat.cs" />
     <Compile Include="Repositories\RepositoryAccountExtended.cs" />
     <Compile Include="Repositories\PersonalNote\RepositoryDiary.cs" />
+    <Compile Include="Repositories\RepositoryToken.cs" />
     <Compile Include="Repositories\RepositoryMessage.cs" />
     <Compile Include="Repositories\RepositoryNotification.cs" />
     <Compile Include="Repositories\RepositoryRelationship.cs" />
     <Compile Include="Repositories\RepositoryRelationshipRequest.cs" />
-    <Compile Include="Services\EmailService.cs" />
+    <Compile Include="Services\SendGridService.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\NotificationService.cs" />
     <Compile Include="Startup.cs" />
@@ -339,6 +349,7 @@
     <Compile Include="ViewModels\Edit\EditAddictionViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditBloodSugarViewModel.cs" />
     <Compile Include="ViewModels\Edit\InitializeNewPasswordViewModel.cs" />
+    <Compile Include="ViewModels\Filter\AccountTokenViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterDiaryViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterDoctorViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMessageViewModel.cs" />

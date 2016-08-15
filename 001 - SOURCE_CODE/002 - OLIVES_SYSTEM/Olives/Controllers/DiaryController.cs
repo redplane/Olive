@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
+using Olives.Interfaces;
 using Olives.Interfaces.PersonalNote;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Filter;
@@ -28,13 +29,16 @@ namespace Olives.Controllers
         ///     Initialize an instance of DiaryController with Dependency injections.
         /// </summary>
         /// <param name="repositoryDiary"></param>
+        /// <param name="repositoryRelationship"></param>
         /// <param name="timeService"></param>
         /// <param name="log"></param>
-        public DiaryController(IRepositoryDiary repositoryDiary,
+        public DiaryController(
+            IRepositoryDiary repositoryDiary, IRepositoryRelationship repositoryRelationship,
             ITimeService timeService,
             ILog log)
         {
             _repositoryDiary = repositoryDiary;
+            _repositoryRelationship = repositoryRelationship;
             _timeService = timeService;
             _log = log;
         }
@@ -97,6 +101,7 @@ namespace Olives.Controllers
                     {
                         diary.Id,
                         diary.Owner,
+                        diary.Target,
                         diary.Note,
                         diary.Time,
                         diary.Created,
@@ -125,7 +130,7 @@ namespace Olives.Controllers
         public async Task<HttpResponseMessage> InitializeDiaryAsync(
             [FromBody] InitializeDiaryViewModel initializer)
         {
-            #region Paramters validation
+            #region Parameters validation
 
             // Model hasn't been initialized.
             if (initializer == null)
@@ -144,19 +149,35 @@ namespace Olives.Controllers
 
             #endregion
 
+            #region Relationship validation
+
+            // Find the requester.
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
+            // Find the relationship.
+            var rPeopleConnected = await _repositoryRelationship.IsPeopleConnected(requester.Id, initializer.Target);
+            if (!rPeopleConnected)
+            {
+                _log.Error($"There is no relationship between requester [Id: {requester.Id}] and Target [Id: {initializer.Target}]");
+                return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                {
+                    Error = $"{Language.WarnHasNoRelationship}"
+                });
+            }
+
+            #endregion
+
             #region Result handling
 
             try
             {
                 #region Result initialization
-
-                // Retrieve information of person who sent request.
-                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
+                
                 // Initialize an instance of MedicalNote.
                 var diary = new Diary();
                 diary.Note = initializer.Note;
                 diary.Owner = requester.Id;
+                diary.Target = initializer.Target;
                 diary.Time = initializer.Time;
                 diary.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
@@ -174,6 +195,7 @@ namespace Olives.Controllers
                         diary.Id,
                         diary.Note,
                         diary.Time,
+                        diary.Target,
                         diary.Owner,
                         diary.Created
                     }
@@ -233,9 +255,7 @@ namespace Olives.Controllers
             // Medical note is not found.
             if (diary == null)
             {
-                // Log the error and tell client about the result.
                 _log.Error($"Diary [Id: {id}] is not found");
-
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
                     Error = $"{Language.WarnRecordNotFound}"
@@ -296,6 +316,7 @@ namespace Olives.Controllers
                     {
                         diary.Id,
                         diary.Owner,
+                        diary.Target,
                         diary.Note,
                         diary.Time,
                         diary.Created,
@@ -402,6 +423,7 @@ namespace Olives.Controllers
                         x.Id,
                         x.Note,
                         x.Owner,
+                        x.Target,
                         x.Time,
                         x.Created,
                         x.LastModified
@@ -428,6 +450,9 @@ namespace Olives.Controllers
         ///     Repository which provides functions to access diary database.
         /// </summary>
         private readonly IRepositoryDiary _repositoryDiary;
+
+        
+        private readonly IRepositoryRelationship _repositoryRelationship;
 
         /// <summary>
         ///     Service which provides function to access time calculation.

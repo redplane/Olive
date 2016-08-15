@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
-using Olives.Constants;
 using Olives.Hubs;
 using Olives.Interfaces;
 using Olives.ViewModels.Filter;
 using Olives.ViewModels.Initialize;
+using Olives.ViewModels.Response;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
@@ -29,21 +29,18 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="repositoryRelation"></param>
         /// <param name="repositoryRelationshipRequest"></param>
-        /// <param name="repositoryStorage"></param>
         /// <param name="timeService"></param>
         /// <param name="notificationService"></param>
         /// <param name="log"></param>
         public RelationshipRequestController(
             IRepositoryRelationship repositoryRelation,
             IRepositoryRelationshipRequest repositoryRelationshipRequest,
-            IRepositoryStorage repositoryStorage,
             ITimeService timeService,
             INotificationService notificationService,
             ILog log)
         {
             _repositoryRelation = repositoryRelation;
             _repositoryRelationshipRequest = repositoryRelationshipRequest;
-            _repositoryStorage = repositoryStorage;
             _timeService = timeService;
             _notificationService = notificationService;
             _log = log;
@@ -54,22 +51,22 @@ namespace Olives.Controllers
         #region Methods
 
         /// <summary>
-        /// Find the relationship request by using id.
+        ///     Find the relationship request by using id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
+        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
         public async Task<HttpResponseMessage> FindRelationshipRequest([FromUri] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
             // Filter initialization.
             var filter = new FilterRelationshipRequestViewModel();
             filter.Id = id;
             filter.Requester = requester;
-            
+
             // Find the relationship.
             var relationshipRequest = await _repositoryRelationshipRequest.FindRelationshipRequest(filter);
 
@@ -82,9 +79,6 @@ namespace Olives.Controllers
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-            
-            // Find the storage where avatars are located.
-            var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -96,18 +90,14 @@ namespace Olives.Controllers
                         Id = relationshipRequest.Source,
                         relationshipRequest.Patient.Person.FirstName,
                         relationshipRequest.Patient.Person.LastName,
-                        Photo =
-                            InitializeUrl(storageAvatar.Relative, relationshipRequest.Patient.Person.Photo,
-                                Values.StandardImageExtension)
+                        Photo = relationshipRequest.Patient.Person.PhotoUrl
                     },
                     Target = new
                     {
                         Id = relationshipRequest.Target,
                         relationshipRequest.Doctor.Person.FirstName,
                         relationshipRequest.Doctor.Person.LastName,
-                        Photo =
-                            InitializeUrl(storageAvatar.Relative, relationshipRequest.Doctor.Person.Photo,
-                                Values.StandardImageExtension)
+                        Photo = relationshipRequest.Doctor.Person.PhotoUrl
                     },
                     relationshipRequest.Created
                 }
@@ -200,17 +190,18 @@ namespace Olives.Controllers
                 relationshipRequest.Content = initializer.Content;
                 relationshipRequest.Created = unix;
 
-                relationshipRequest = await _repositoryRelationshipRequest.InitializeRelationshipRequest(relationshipRequest);
+                relationshipRequest =
+                    await _repositoryRelationshipRequest.InitializeRelationshipRequest(relationshipRequest);
 
                 #endregion
 
                 #region Broadcast notification
-                
+
                 var notification = new Notification();
-                notification.Type = (byte)NotificationType.Create;
-                notification.Topic = (byte)NotificationTopic.RelationshipRequest;
+                notification.Type = (byte) NotificationType.Create;
+                notification.Topic = (byte) NotificationTopic.RelationshipRequest;
                 notification.Container = relationshipRequest.Id;
-                notification.ContainerType = (byte)NotificationTopic.RelationshipRequest;
+                notification.ContainerType = (byte) NotificationTopic.RelationshipRequest;
                 notification.Broadcaster = requester.Id;
                 notification.Recipient = initializer.Target;
                 notification.Record = relationshipRequest.Id;
@@ -243,12 +234,11 @@ namespace Olives.Controllers
         [OlivesAuthorize(new[] {Role.Doctor})]
         public async Task<HttpResponseMessage> ConfirmRelationshipRequest([FromUri] int id)
         {
-            
             try
             {
                 // Retrieve information of person who sent request.
-                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-                
+                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
                 // Retrieve the current time.
                 var unix = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
@@ -270,14 +260,14 @@ namespace Olives.Controllers
                 }
 
                 #endregion
-                
+
                 #region Broadcast notification
 
                 var notification = new Notification();
-                notification.Type = (byte)NotificationType.Confirm;
-                notification.Topic = (byte)NotificationTopic.RelationshipRequest;
+                notification.Type = (byte) NotificationType.Confirm;
+                notification.Topic = (byte) NotificationTopic.RelationshipRequest;
                 notification.Container = relationshipRequest.Id;
-                notification.ContainerType = (byte)NotificationTopic.RelationshipRequest;
+                notification.ContainerType = (byte) NotificationTopic.RelationshipRequest;
                 notification.Broadcaster = requester.Id;
                 notification.Recipient = relationshipRequest.Source;
                 notification.Record = relationshipRequest.Id;
@@ -408,31 +398,29 @@ namespace Olives.Controllers
             var result =
                 await
                     _repositoryRelationshipRequest.FilterRelationshipRequest(filter);
-
-            // Find the storage of avatar.
-            var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
-
+            
             // Throw the list back to client.
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 RelationshipRequests = result.RelationshipRequests.Select(x => new
                 {
                     x.Id,
+                    x.Content,
                     Source = new
                     {
                         Id = x.Source,
                         x.Patient.Person.FirstName,
                         x.Patient.Person.LastName,
-                        Photo =
-                            InitializeUrl(storageAvatar.Relative, x.Patient.Person.Photo, Values.StandardImageExtension)
+                        Photo = x.Patient.Person.PhotoUrl,
+                        x.Patient.Person.Address,
+                        x.Patient.Person.Phone
                     },
                     Target = new
                     {
                         Id = x.Target,
                         x.Doctor.Person.FirstName,
                         x.Doctor.Person.LastName,
-                        Photo =
-                            InitializeUrl(storageAvatar.Relative, x.Doctor.Person.Photo, Values.StandardImageExtension)
+                        Photo = x.Doctor.Person.PhotoUrl
                     },
                     x.Created
                 }),
@@ -457,17 +445,12 @@ namespace Olives.Controllers
         private readonly IRepositoryRelationshipRequest _repositoryRelationshipRequest;
 
         /// <summary>
-        ///     Repository of storage.
-        /// </summary>
-        private readonly IRepositoryStorage _repositoryStorage;
-
-        /// <summary>
         ///     Service which provides functions to access time calculation.
         /// </summary>
         private readonly ITimeService _timeService;
 
         /// <summary>
-        /// Service which provides functions to access notification broadcast.
+        ///     Service which provides functions to access notification broadcast.
         /// </summary>
         private readonly INotificationService _notificationService;
 

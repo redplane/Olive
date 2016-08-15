@@ -1,23 +1,16 @@
 {
-  "SmtpSetting": {
-    "Host": "smtp.gmail.com",
-    "Port": 587,
-    "EnableSsl": true,
-    "Timeout": 30000,
-    "Email": "oliveshealth@gmail.com",
-    "Password": "Redplane1",
-    "From": "noreply@oliveshealth.com",
-    "DisplayName": "Olives Health",
-    "EmailSettings": {
+  "SendGridSetting": {
+    "ApiKey": "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",
+    "SendGridPreconfigurations": {
       "Activation": {
+        "From": "noreply@oliveshealth.com",
         "Subject": "Email activate instruction",
-        "File": "~/Emails/Activation.html",
-        "IsHtml": true
+        "File": "~/Emails/Activation.html"
       },
       "FindPassword": {
+        "From": "noreply@oliveshealth.com",
         "Subject": "Forgot password instruction",
-        "File": "~/Emails/FindPassword.html",
-        "IsHtml": true
+        "File": "~/Emails/FindPassword.html"
       }
     }
   },

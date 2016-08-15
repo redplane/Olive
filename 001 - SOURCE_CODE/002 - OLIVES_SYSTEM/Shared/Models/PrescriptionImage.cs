@@ -16,12 +16,16 @@ namespace Shared.Models
     {
         public int Id { get; set; }
         public int PrescriptionId { get; set; }
+        public int MedicalRecordId { get; set; }
         public string Image { get; set; }
         public string FullPath { get; set; }
         public int Owner { get; set; }
         public int Creator { get; set; }
         public double Created { get; set; }
+        public bool Available { get; set; }
     
+        public virtual MedicalRecord MedicalRecord { get; set; }
+        public virtual Patient Patient { get; set; }
         public virtual Person Person { get; set; }
         public virtual Prescription Prescription { get; set; }
     }

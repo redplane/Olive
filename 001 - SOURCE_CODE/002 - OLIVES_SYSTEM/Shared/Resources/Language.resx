@@ -516,4 +516,10 @@
   <data name="NotifyRelationshipRequestCreate" xml:space="preserve">
     <value>{0} sent you a relationship request.</value>
   </data>
+  <data name="MessageEmailNotFoundAsPending" xml:space="preserve">
+    <value>Email is not found as pending in the system</value>
+  </data>
+  <data name="MessageTokenIsExpired" xml:space="preserve">
+    <value>Token has been expired</value>
+  </data>
 </root>

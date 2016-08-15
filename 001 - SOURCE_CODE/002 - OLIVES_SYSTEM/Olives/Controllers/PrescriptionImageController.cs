@@ -155,11 +155,13 @@ namespace Olives.Controllers
                 // Initialize a prescription image.
                 var prescriptionImage = new PrescriptionImage();
                 prescriptionImage.PrescriptionId = prescription.Id;
+                prescriptionImage.MedicalRecordId = prescription.MedicalRecordId;
                 prescriptionImage.Image = fileName;
                 prescriptionImage.FullPath = fullPath;
                 prescriptionImage.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
                 prescriptionImage.Creator = requester.Id;
                 prescriptionImage.Owner = prescription.Owner;
+                prescriptionImage.Available = true;
 
                 // Save the prescription image to database.
                 prescriptionImage = await _repositoryPrescriptionImage.InitializePrescriptionImage(prescriptionImage);

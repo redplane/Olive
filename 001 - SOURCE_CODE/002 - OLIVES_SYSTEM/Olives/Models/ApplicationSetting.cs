@@ -7,7 +7,7 @@ namespace Olives.Models
         /// <summary>
         ///     Simple mail transfer protocol setting properties.
         /// </summary>
-        public SmtpSetting SmtpSetting { get; set; }
+        public SendGridSetting SendGridSetting { get; set; }
 
         /// <summary>
         ///     List of storage with their relative paths.

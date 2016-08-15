@@ -43,7 +43,7 @@ namespace Olives.Attributes
             var account = RepositoryAccountExtended.FindPerson(id, email, null, Role, Status);
             if (!_isAccountAvailable)
             {
-                if (account == null)
+                if (account != null)
                     return new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
             }
             else

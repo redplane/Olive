@@ -85,9 +85,7 @@ namespace OlivesAdministration.Controllers
                         account.Address,
                         account.Phone,
                         account.Role,
-                        Photo =
-                            InitializeUrl(storageAvatar.Relative, account.Photo,
-                                Values.StandardImageExtension),
+                        Photo = account.PhotoUrl,
                         account.Doctor.Rank,
                         Specialty = new
                         {
@@ -173,9 +171,7 @@ namespace OlivesAdministration.Controllers
                         x.Person.Address,
                         x.Person.Phone,
                         x.Person.Role,
-                        Photo =
-                            InitializeUrl(storageAvatar.Relative, x.Person.Photo,
-                                Values.StandardImageExtension),
+                        Photo = x.Person.PhotoUrl,
                         x.Rank,
                         Specialty = new
                         {

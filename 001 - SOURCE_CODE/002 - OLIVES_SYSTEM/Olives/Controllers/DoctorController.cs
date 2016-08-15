@@ -32,21 +32,16 @@ namespace Olives.Controllers
         /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositorySpecialty"></param>
         /// <param name="repositoryPlace"></param>
-        /// <param name="repositoryStorage"></param>
         /// <param name="log"></param>
         /// <param name="timeService"></param>
-        /// <param name="applicationSetting"></param>
         public DoctorController(IRepositoryAccountExtended repositoryAccountExtended,
             IRepositorySpecialty repositorySpecialty,
             IRepositoryPlace repositoryPlace,
-            IRepositoryStorage repositoryStorage,
-            ILog log, ITimeService timeService,
-            ApplicationSetting applicationSetting)
+            ILog log, ITimeService timeService)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
             _repositorySpecialty = repositorySpecialty;
             _repositoryPlace = repositoryPlace;
-            _repositoryStorage = repositoryStorage;
             _log = log;
             _timeService = timeService;
         }
@@ -83,8 +78,7 @@ namespace Olives.Controllers
             #endregion
             
             #region Result handling
-
-            var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
+            
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 Doctor = new
@@ -98,9 +92,7 @@ namespace Olives.Controllers
                     account.Address,
                     account.Phone,
                     account.Role,
-                    Photo =
-                        InitializeUrl(storageAvatar.Relative, account.Photo,
-                            Values.StandardImageExtension),
+                    Photo = account.PhotoUrl,
                     Specialty = new
                     {
                         account.Doctor.Specialty.Id,
@@ -289,10 +281,7 @@ namespace Olives.Controllers
             {
                 // Save account.
                 requester = await _repositoryAccountExtended.EditPersonProfileAsync(requester.Id, requester);
-
-                // Find the storage of avatar.
-                var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
-
+                
                 // Respond information to client.
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -311,9 +300,7 @@ namespace Olives.Controllers
                         requester.LastModified,
                         requester.Status,
                         requester.Address,
-                        Photo =
-                            InitializeUrl(storageAvatar.Relative, requester.Photo,
-                                Values.StandardImageExtension)
+                        Photo = requester.PhotoUrl
                     }
                 });
             }
@@ -358,10 +345,7 @@ namespace Olives.Controllers
             {
                 filter.Status = StatusAccount.Active;
                 var result = await _repositoryAccountExtended.FilterDoctorsAsync(filter);
-
-                // Find the storage of avatar.
-                var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
-
+                
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     Doctors = result.Doctors.Select(x => new
@@ -376,9 +360,7 @@ namespace Olives.Controllers
                         x.Person.Address,
                         x.Person.Phone,
                         x.Person.Role,
-                        Photo =
-                            InitializeUrl(storageAvatar.Relative, x.Person.Photo,
-                                Values.StandardImageExtension),
+                        Photo = x.Person.PhotoUrl,
                         x.Rank,
                         Specialty = new
                         {
@@ -425,12 +407,7 @@ namespace Olives.Controllers
         ///     Repository of places.
         /// </summary>
         private readonly IRepositoryPlace _repositoryPlace;
-
-        /// <summary>
-        ///     Repository of storages.
-        /// </summary>
-        private readonly IRepositoryStorage _repositoryStorage;
-
+        
         /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>

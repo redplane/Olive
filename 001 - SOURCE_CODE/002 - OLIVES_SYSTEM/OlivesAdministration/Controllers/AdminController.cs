@@ -109,9 +109,7 @@ namespace OlivesAdministration.Controllers
                         admin.Address,
                         admin.Role,
                         admin.Status,
-                        Photo =
-                            InitializeUrl(storageAvatar.Relative, admin.Photo,
-                                Values.StandardImageExtension),
+                        Photo = admin.PhotoUrl,
                         admin.LastModified
                     }
                 });
@@ -220,9 +218,7 @@ namespace OlivesAdministration.Controllers
                         requester.LastModified,
                         requester.Status,
                         requester.Address,
-                        Photo =
-                            InitializeUrl(storageAvatar.Relative, requester.Photo,
-                                Values.StandardImageExtension)
+                        Photo = requester.PhotoUrl
                     }
                 });
             }

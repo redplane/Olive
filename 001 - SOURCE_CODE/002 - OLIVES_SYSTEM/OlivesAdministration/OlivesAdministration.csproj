@@ -186,6 +186,8 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Configurations\Olives.json" />
+    <None Include="Properties\PublishProfiles\olivesadmin - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\olivesadmin - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\olivesadministrator - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\olivesadministrator - Web Deploy.pubxml" />
     <Content Include="Scripts\app.763f15b3a1c255a40be2.js" />

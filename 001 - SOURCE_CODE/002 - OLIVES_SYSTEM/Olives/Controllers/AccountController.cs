@@ -11,6 +11,7 @@ using Olives.Constants;
 using Olives.Enumerations;
 using Olives.Interfaces;
 using Olives.ViewModels.Edit;
+using Olives.ViewModels.Filter;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
@@ -35,7 +36,7 @@ namespace Olives.Controllers
         /// <param name="emailService"></param>
         /// <param name="fileService"></param>
         public AccountController(
-            IRepositoryAccountExtended repositoryAccountExtended, IRepositoryCode repositoryActivationCode,
+            IRepositoryAccountExtended repositoryAccountExtended, IRepositoryToken repositoryActivationCode,
             IRepositoryStorage repositoryStorage,
             ILog log,
             IEmailService emailService, IFileService fileService)
@@ -59,7 +60,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/account/avatar")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
+        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
         public async Task<HttpResponseMessage> InitializeAvatarAsync([FromBody] InitializeAvatarViewModel info)
         {
             #region Request parameters validation
@@ -84,7 +85,7 @@ namespace Olives.Controllers
             try
             {
                 // Retrieve information of person who sent request.
-                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Retrieve avatar storage setting.
                 var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
@@ -92,43 +93,38 @@ namespace Olives.Controllers
                 // Convert by stream to image.
                 var imageAvatar = _fileService.ConvertBytesToImage(info.Avatar.Buffer);
 
-                // As the requester has existed image before, use that name, otherwise generate a new one.
-                if (!string.IsNullOrEmpty(requester.Photo))
-                {
-                    // Update the image full path.
-                    var fullPath = Path.Combine(storageAvatar.Absolute,
-                        $"{requester.Photo}.{Values.StandardImageExtension}");
+                #region Image save
 
-                    // Save the image to physical disk.
-                    imageAvatar.Save(fullPath, ImageFormat.Png);
+                // Generate name for image and save image first.
+                var imageName = Guid.NewGuid().ToString("N");
 
-                    _log.Info($"{requester.Email} has updated avatar successfuly.");
-                }
-                else
-                {
-                    // Generate name for image and save image first.
-                    var imageName = Guid.NewGuid().ToString("N");
+                // Take the full path.
+                var fullPath = Path.Combine(storageAvatar.Absolute,
+                    $"{imageName}.{Values.StandardImageExtension}");
 
-                    // Take the full path.
-                    var fullPath = Path.Combine(storageAvatar.Absolute,
-                        $"{imageName}.{Values.StandardImageExtension}");
+                // Save the avatar file to disk.
+                imageAvatar.Save(fullPath, ImageFormat.Png);
 
-                    // Save the avatar file to disk.
-                    imageAvatar.Save(fullPath, ImageFormat.Png);
+                // Log the information.
+                _log.Info($"{requester.Email} has uploaded avatar successfuly.");
 
-                    // Log the information.
-                    _log.Info($"{requester.Email} has uploaded avatar successfuly.");
 
-                    // Update to database.
-                    requester.Photo = imageName;
+                #endregion
 
-                    // Update information to database.
-                    await _repositoryAccountExtended.InitializePersonAsync(requester);
+                #region Image link generation
 
-                    // Log the information.
-                    _log.Info($"{requester.Email} has saved avatar successfully");
-                }
+                // Initialize url and physical path of photo and save to database.
+                requester.PhotoUrl = InitializeUrl(storageAvatar.Relative, imageName, Values.StandardImageExtension);
+                requester.PhotoPhysicPath = fullPath;
 
+                // Update information to database.
+                await _repositoryAccountExtended.InitializePersonAsync(requester);
+
+                // Log the information.
+                _log.Info($"{requester.Email} has saved avatar successfully");
+
+                #endregion
+                
                 // Everything is successful. Tell client the result.
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -147,9 +143,7 @@ namespace Olives.Controllers
                         requester.LastModified,
                         requester.Status,
                         requester.Address,
-                        Photo =
-                            InitializeUrl(storageAvatar.Relative, requester.Photo,
-                                Values.StandardImageExtension)
+                        Photo = requester.PhotoUrl
                     }
                 });
             }
@@ -195,16 +189,13 @@ namespace Olives.Controllers
             #endregion
 
             // Check whether email has been used or not.
-            var result =
+            var account =
                 await _repositoryAccountExtended.FindPersonAsync(null, info.Email, null, null, StatusAccount.Active);
 
             // Found a patient. This means email has been used before.
-            if (result == null)
+            if (account == null)
             {
-                // Tell the client that person is not found.
                 _log.Error($"Person [Email: {info.Email}] is not found as active in system");
-
-                // Tell the client about this error.
                 return Request.CreateResponse(HttpStatusCode.NotFound,
                     new
                     {
@@ -214,28 +205,32 @@ namespace Olives.Controllers
 
             try
             {
-                // Initialize an activation code.
-                var findPasswordToken =
-                    await
-                        _repositoryActivationCode.InitializeAccountCodeAsync(result.Id, TypeAccountCode.ForgotPassword,
-                            DateTime.UtcNow);
+                var accountToken = new AccountCode();
+                accountToken.Owner = account.Id;
+                accountToken.Code = Guid.NewGuid().ToString();
+                accountToken.Type = (byte) TypeAccountCode.ForgotPassword;
+                accountToken.Expired = DateTime.UtcNow.AddHours(Values.ActivationCodeHourDuration);
+
+                accountToken = await _repositoryActivationCode.InitializeToken(accountToken);
 
                 // Url construction.
                 var url = Url.Link("Default",
-                    new {controller = "Service", action = "FindPassword"});
+                    new { controller = "Service", action = "FindPassword" });
 
                 // Data which will be bound to email template.
                 var data = new
                 {
-                    firstName = result.FirstName,
-                    lastName = result.LastName,
+                    firstName = account.FirstName,
+                    lastName = account.LastName,
                     url,
-                    findPasswordToken.Expired
+                    accountToken.Expired
                 };
 
                 // Send the activation code email.
                 await
-                    _emailService.InitializeEmail(new[] {info.Email}, OlivesValues.TemplateEmailFindPassword, data);
+                    _emailService.InitializeEmail(new[] { info.Email }, OlivesValues.TemplateEmailFindPassword, data);
+                
+                _log.Error("Create token successful");
 
                 // Tell doctor to wait for admin confirmation.
                 return Request.CreateResponse(HttpStatusCode.OK);
@@ -244,7 +239,7 @@ namespace Olives.Controllers
             {
                 // There is something wrong with server.
                 // Log the error.
-                _log.Error($"Cannot create account: '{result.Email}'", exception);
+                _log.Error($"Cannot create token for account: '{account.Email}'", exception);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
         }
@@ -278,16 +273,17 @@ namespace Olives.Controllers
 
             #endregion
 
-            #region Token validation
+            #region Token find
 
-            // Check whether email has been used or not.
-            var token =
-                await
-                    _repositoryActivationCode.FindAccountCodeAsync(null, (byte) TypeAccountCode.ForgotPassword,
-                        initializer.Token);
+            var filter = new FilterAccountTokenViewModel();
+            filter.Code = initializer.Token;
+            filter.Type = (byte) TypeAccountCode.ForgotPassword;
 
-            // Token couldn't be found.
-            if (token == null)
+            // Find the account token.
+            var accountToken = await _repositoryActivationCode.FindAccountTokenAsync(filter);
+
+            // Token is not found.
+            if (accountToken == null)
             {
                 _log.Error($"Token [Code: {initializer.Token}] is not found in the system.");
                 return Request.CreateResponse(HttpStatusCode.NotFound,
@@ -297,12 +293,16 @@ namespace Olives.Controllers
                     });
             }
 
+            #endregion
+
+            #region Token validation
+            
             // Token is expired.
-            if (DateTime.UtcNow > token.Expired)
+            if (DateTime.UtcNow > accountToken.Expired)
             {
                 // Log the error.
                 _log.Error(
-                    $"Token [Code: {token.Code}] is expired. It should be activated before {token.Expired.ToString("F")}");
+                    $"Token [Code: {accountToken.Code}] is expired. It should be activated before {accountToken.Expired.ToString("F")}");
 
                 // Tell the client about the error.
                 return Request.CreateResponse(HttpStatusCode.Forbidden, new
@@ -313,24 +313,57 @@ namespace Olives.Controllers
 
             #endregion
 
+            #region Account find
+
+            // Find the account.
+            var account =
+                await
+                    _repositoryAccountExtended.FindPersonAsync(accountToken.Owner, null, null, (byte)Role.Patient,
+                        StatusAccount.Pending);
+
+            // No account is not found.
+            if (account == null)
+            {
+                _log.Error($"Account [Id: {accountToken.Owner}] is not found in the system.");
+                return Request.CreateResponse(HttpStatusCode.NotFound,
+                    new
+                    {
+                        Error = $"{Language.WarnRecordNotFound}"
+                    });
+            }
+
+            #endregion
+
             #region Information modify
 
             try
             {
-                // Update client new password.
-                await _repositoryActivationCode.InitializeNewAccountPassword(token, initializer.Password);
+                // Update account information.
+                account.Password = initializer.Password;
 
-                // Tell doctor to wait for admin confirmation.
+                // Save account to database.
+                await _repositoryAccountExtended.InitializePersonAsync(account);
+
+                try
+                {
+                    // Delete the token.
+                    await _repositoryActivationCode.DetachAccountToken(filter);
+                }
+                catch (Exception exception)
+                {
+                    _log.Error(exception.Message, exception);
+                }
+
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
             catch (Exception exception)
             {
-                // There is something wrong with server.
-                // Log the error.
-                _log.Error($"Cannot create account: '{token.Person.Email}'", exception);
+                _log.Error(exception.Message, exception);
+
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
-
+            
+            
             #endregion
         }
 
@@ -379,7 +412,7 @@ namespace Olives.Controllers
             }
 
             // Requested user is not a patient or a doctor.
-            if (account.Role != (byte) Role.Patient && account.Role != (byte) Role.Doctor)
+            if (account.Role != (byte)Role.Patient && account.Role != (byte)Role.Doctor)
             {
                 _log.Error($"{loginViewModel.Email} is a admin, therefore, it cannot be used here.");
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -389,10 +422,10 @@ namespace Olives.Controllers
             }
 
             // Login is failed because of account is pending.
-            if ((StatusAccount) account.Status == StatusAccount.Pending)
+            if ((StatusAccount)account.Status == StatusAccount.Pending)
             {
                 // Tell doctor to contact admin for account verification.
-                if (account.Role == (byte) Role.Doctor)
+                if (account.Role == (byte)Role.Doctor)
                 {
                     _log.Error($"Access is forbidden because {loginViewModel.Email} is waiting for admin confirmation");
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
@@ -410,7 +443,7 @@ namespace Olives.Controllers
             }
 
             // Login is failed because of account has been disabled.
-            if ((StatusAccount) account.Status == StatusAccount.Inactive)
+            if ((StatusAccount)account.Status == StatusAccount.Inactive)
             {
                 _log.Error($"Access is forbidden because {loginViewModel.Email} has been disabled");
                 // Tell patient to access his/her email to verify the account.
@@ -424,7 +457,7 @@ namespace Olives.Controllers
 
             var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
 
-            if (account.Role == (byte) Role.Doctor)
+            if (account.Role == (byte)Role.Doctor)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -443,9 +476,7 @@ namespace Olives.Controllers
                         account.LastModified,
                         account.Status,
                         account.Address,
-                        Photo =
-                            InitializeUrl(storageAvatar.Relative, account.Photo,
-                                Values.StandardImageExtension)
+                        Photo = account.PhotoUrl
                     }
                 });
             }
@@ -467,9 +498,7 @@ namespace Olives.Controllers
                     account.LastModified,
                     account.Status,
                     account.Address,
-                    Photo =
-                            InitializeUrl(storageAvatar.Relative, account.Photo,
-                                Values.StandardImageExtension),
+                    Photo = account.PhotoUrl,
                     account.Patient.Weight,
                     account.Patient.Height
                 }
@@ -493,7 +522,7 @@ namespace Olives.Controllers
         /// <summary>
         ///     Repository of activation codes.
         /// </summary>
-        private readonly IRepositoryCode _repositoryActivationCode;
+        private readonly IRepositoryToken _repositoryActivationCode;
 
         /// <summary>
         ///     Instance of module which is used for logging.

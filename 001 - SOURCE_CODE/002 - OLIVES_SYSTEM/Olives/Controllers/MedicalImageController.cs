@@ -141,6 +141,7 @@ namespace Olives.Controllers
                 medicalImage.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
                 medicalImage.FullPath = Path.Combine(storageMedicalImage.Absolute,
                     $"{imageName}.{Values.StandardImageExtension}");
+                medicalImage.Available = true;
 
                 // Convert bytestream to image file.
                 var medicalImageFile = _fileService.ConvertBytesToImage(info.File.Buffer);
