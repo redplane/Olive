@@ -51,6 +51,7 @@ namespace OlivesAdministration
             #region Modules
 
             // Log4net module registration (this is for logging)
+            log4net.Config.XmlConfigurator.Configure();
             builder.RegisterModule<Log4NetModule>();
 
             #endregion
