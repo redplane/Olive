@@ -223,16 +223,20 @@ namespace Olives.Controllers
                 #endregion
 
                 #region Notification initialization
-
-                if (requester.Id != info.Owner.Value)
+                
+                if (medicalRecord.Creator != info.Owner.Value)
                 {
+                    var recipient = info.Owner.Value;
+                    if (requester.Id == info.Owner.Value)
+                        recipient = info.Creator.Value;
+
                     var notification = new Notification();
                     notification.Type = (byte)NotificationType.Create;
                     notification.Topic = (byte)NotificationTopic.MedicalRecord;
                     notification.Container = medicalRecord.Id;
                     notification.ContainerType = (byte) NotificationTopic.MedicalRecord;
                     notification.Broadcaster = requester.Id;
-                    notification.Recipient = medicalRecord.Owner;
+                    notification.Recipient = recipient;
                     notification.Record = medicalRecord.Id;
                     notification.Message = string.Format(Language.NotifyMedicalRecordCreate, requester.FullName);
                     notification.Created = medicalRecord.Created;

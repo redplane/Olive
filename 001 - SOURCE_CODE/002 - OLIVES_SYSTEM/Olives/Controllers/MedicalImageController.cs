@@ -156,11 +156,11 @@ namespace Olives.Controllers
 
                 #region Notification broadcast
 
-                if (medicalImage.Creator != medicalImage.Owner)
+                if (medicalRecord.Creator != medicalRecord.Owner)
                 {
                     var recipient = medicalRecord.Owner;
-                    if (requester.Id == medicalImage.Owner)
-                        recipient = medicalImage.Creator;
+                    if (requester.Id == medicalRecord.Owner)
+                        recipient = medicalRecord.Creator;
 
                     var notification = new Notification();
                     notification.Type = (byte) NotificationType.Create;
