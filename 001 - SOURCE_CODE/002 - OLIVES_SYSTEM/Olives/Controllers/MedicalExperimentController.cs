@@ -14,7 +14,6 @@ using Olives.ViewModels.Edit;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -57,13 +56,13 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> FindMedicalExperimentAsync([FromUri] int id)
         {
             #region Record filter
 
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
             var filter = new FilterExperimentNoteViewModel();
             filter.Id = id;
             filter.Requester = requester;
@@ -87,7 +86,7 @@ namespace Olives.Controllers
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-            
+
             #endregion
 
             return Request.CreateResponse(HttpStatusCode.OK, new
@@ -112,14 +111,14 @@ namespace Olives.Controllers
         /// <param name="initializer"></param>
         /// <returns></returns>
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> InitializeMedialExperiment(
             [FromBody] InitializeMedicalExperiment initializer)
         {
             #region Parameters validation
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
 
             // Initializer hasn't been initialized.
@@ -202,8 +201,8 @@ namespace Olives.Controllers
                         recipient = note.Creator;
 
                     var notification = new Notification();
-                    notification.Type = (byte)NotificationType.Create;
-                    notification.Topic = (byte)NotificationTopic.ExperimentNote;
+                    notification.Type = (byte) NotificationType.Create;
+                    notification.Topic = (byte) NotificationTopic.ExperimentNote;
                     notification.Container = medicalRecord.Id;
                     notification.ContainerType = (byte) NotificationTopic.MedicalRecord;
                     notification.Broadcaster = requester.Id;
@@ -229,6 +228,7 @@ namespace Olives.Controllers
                         note.Owner,
                         note.Name,
                         note.Info,
+                        note.Time,
                         note.Created
                     }
                 });
@@ -256,7 +256,7 @@ namespace Olives.Controllers
         /// <param name="modifier">List of informations which need changing</param>
         /// <returns></returns>
         [HttpPut]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> ModifyMedialExperimentNote([FromUri] int experiment,
             [FromBody] EditMedicalExperiment modifier)
         {
@@ -299,7 +299,7 @@ namespace Olives.Controllers
             #region Relationship find
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Requester doesn't take part in the medical note.
             if (requester.Id != experimentNote.Creator && requester.Id != experimentNote.Owner)
@@ -360,10 +360,10 @@ namespace Olives.Controllers
                         recipient = experimentNote.Creator;
 
                     var notification = new Notification();
-                    notification.Type = (byte)NotificationType.Edit;
-                    notification.Topic = (byte)NotificationTopic.ExperimentNote;
+                    notification.Type = (byte) NotificationType.Edit;
+                    notification.Topic = (byte) NotificationTopic.ExperimentNote;
                     notification.Container = experimentNote.MedicalRecordId;
-                    notification.ContainerType = (byte)NotificationTopic.MedicalRecord;
+                    notification.ContainerType = (byte) NotificationTopic.MedicalRecord;
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
                     notification.Record = experimentNote.Id;
@@ -387,6 +387,7 @@ namespace Olives.Controllers
                         MedicalRecord = experimentNote.MedicalRecordId,
                         experimentNote.Name,
                         experimentNote.Info,
+                        experimentNote.Time,
                         experimentNote.Created,
                         experimentNote.LastModified
                     }
@@ -411,13 +412,13 @@ namespace Olives.Controllers
         /// <param name="experiment">Experiment which contains records.</param>
         /// <returns></returns>
         [HttpDelete]
-        [OlivesAuthorize(new[] { Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> DeleteMedialExperimentNote([FromUri] int experiment)
         {
             try
             {
                 // Retrieve information of person who sent request.
-                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Filter initialization.
                 var filter = new FilterExperimentNoteViewModel();
@@ -458,7 +459,7 @@ namespace Olives.Controllers
         /// <param name="filter"></param>
         /// <returns></returns>
         [Route("api/medical/experiment/filter")]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> FilterMedicalExperimentNoteAsync(
             [FromBody] FilterExperimentNoteViewModel filter)
         {
@@ -488,7 +489,7 @@ namespace Olives.Controllers
             try
             {
                 // Retrieve information of person who sent request.
-                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Update the filter.
                 filter.Requester = requester;
