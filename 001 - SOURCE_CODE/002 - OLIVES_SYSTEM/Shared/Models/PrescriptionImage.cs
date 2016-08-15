@@ -22,7 +22,6 @@ namespace Shared.Models
         public int Owner { get; set; }
         public int Creator { get; set; }
         public double Created { get; set; }
-        public bool Available { get; set; }
     
         public virtual MedicalRecord MedicalRecord { get; set; }
         public virtual Patient Patient { get; set; }

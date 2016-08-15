@@ -216,8 +216,7 @@ namespace Olives.Controllers
                 medicalRecord.Info = JsonConvert.SerializeObject(info.Infos);
                 medicalRecord.Time = info.Time;
                 medicalRecord.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
-                medicalRecord.Available = true;
-
+                
                 // Insert a new allergy to database.
                 var result = await _repositoryMedical.InitializeMedicalRecordAsync(medicalRecord);
 

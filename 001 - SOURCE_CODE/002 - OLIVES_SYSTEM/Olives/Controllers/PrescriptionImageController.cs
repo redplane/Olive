@@ -161,8 +161,7 @@ namespace Olives.Controllers
                 prescriptionImage.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
                 prescriptionImage.Creator = requester.Id;
                 prescriptionImage.Owner = prescription.Owner;
-                prescriptionImage.Available = true;
-
+                
                 // Save the prescription image to database.
                 prescriptionImage = await _repositoryPrescriptionImage.InitializePrescriptionImage(prescriptionImage);
 

@@ -31,7 +31,6 @@ namespace Shared.Models
         public string Note { get; set; }
         public double Created { get; set; }
         public Nullable<double> LastModified { get; set; }
-        public bool Available { get; set; }
     
         public virtual MedicalRecord MedicalRecord { get; set; }
         public virtual Person Person { get; set; }

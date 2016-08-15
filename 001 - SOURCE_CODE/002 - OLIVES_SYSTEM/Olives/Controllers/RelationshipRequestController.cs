@@ -413,7 +413,10 @@ namespace Olives.Controllers
                         x.Patient.Person.LastName,
                         Photo = x.Patient.Person.PhotoUrl,
                         x.Patient.Person.Address,
-                        x.Patient.Person.Phone
+                        x.Patient.Person.Phone,
+                        x.Patient.Height,
+                        x.Patient.Weight,
+                        x.Patient.Person.Birthday
                     },
                     Target = new
                     {
