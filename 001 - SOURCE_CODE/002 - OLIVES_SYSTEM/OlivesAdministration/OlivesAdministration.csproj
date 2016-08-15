@@ -151,10 +151,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Contents\app.e2f7ff974365927f7e51.js" />
-    <Content Include="Contents\polyfills.e2f7ff974365927f7e51.js" />
-    <Content Include="Contents\vendor.e2f7ff974365927f7e51.js" />
-    <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
     <None Include="Properties\PublishProfiles\olivesadmin - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\olivesadmin - Web Deploy.pubxml" />
