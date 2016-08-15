@@ -205,7 +205,6 @@
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ResponseErrror.cs" />
-    <Compile Include="Models\PathService.cs" />
     <Compile Include="Models\Specialty.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
