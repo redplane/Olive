@@ -17,7 +17,6 @@ using Olives.Interfaces;
 using Olives.Interfaces.Medical;
 using Olives.Interfaces.PersonalNote;
 using Olives.Models;
-using Olives.Models.Emails;
 using Olives.Module;
 using Olives.Repositories;
 using Olives.Repositories.Medical;
@@ -171,7 +170,6 @@ namespace Olives
         private ApplicationSetting LoadApplicationSetting()
         {
             // Initialize an instance of application setting.
-            var applicationSetting = new ApplicationSetting();
 
             // Retrieve file name which stores database configuration.
             var applicationConfig = ConfigurationManager.AppSettings["ApplicationConfigFile"];
@@ -184,7 +182,7 @@ namespace Olives
                 throw new NotImplementedException($"{applicationConfigFile} is required to make server run properly.");
 
             var info = File.ReadAllText(applicationConfigFile);
-            applicationSetting = JsonConvert.DeserializeObject<ApplicationSetting>(info);
+            var applicationSetting = JsonConvert.DeserializeObject<ApplicationSetting>(info);
 
             // Stmp setting is invalid
             if (applicationSetting.SendGridSetting == null || !applicationSetting.SendGridSetting.IsValid())

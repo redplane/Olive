@@ -33,12 +33,12 @@ namespace Olives.ViewModels.Filter
         /// <summary>
         ///     Notification type.
         /// </summary>
-        public NotificationType? Type { get; set; }
+        public byte[] Types { get; set; }
 
         /// <summary>
         ///     Topic of notification.
         /// </summary>
-        public NotificationTopic? Topic { get; set; }
+        public byte[] Topics { get; set; }
 
         /// <summary>
         ///     Id of record.
