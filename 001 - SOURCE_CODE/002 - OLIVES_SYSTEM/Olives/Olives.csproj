@@ -401,7 +401,7 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\web.config" />
-    <Content Include="Views\AccountVerify\Index.cshtml" />
+    <Content Include="Views\Service\Verify.cshtml" />
     <Content Include="Resources\Profile\3i3i3i3i343243" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
