@@ -62,7 +62,8 @@ CREATE TABLE Person
 	LastModified		FLOAT,
 	Status				TINYINT				NOT NULL,
 	Address				NVARCHAR(128),
-	Photo				VARCHAR(32)
+	PhotoUrl			NVARCHAR(MAX),
+	PhotoPhysicPath		NVARCHAR(MAX)
 );
 
 -- Heartbeat table.
@@ -224,12 +225,14 @@ CREATE TABLE Diary
 (
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	Owner					INT NOT NULL,
+	Target					INT NOT NULL,
 	Time					FLOAT NOT NULL,
 	Note					NVARCHAR(512),
 	Created					FLOAT NOT NULL,
 	LastModified			FLOAT
 
-	FOREIGN KEY (Owner) REFERENCES Doctor(Id)
+	FOREIGN KEY (Owner) REFERENCES Doctor(Id),
+	FOREIGN KEY (Target) REFERENCES Patient(Id)
 )
 
 CREATE TABLE MedicalCategory
@@ -247,8 +250,10 @@ CREATE TABLE MedicalRecord
 	Owner					INT NOT NULL,
 	Creator					INT NOT NULL,
 	Category				INT NOT NULL,
+	Name					NVARCHAR(64),
 	Info					NVARCHAR(MAX),
 	Time					FLOAT NOT NULL,
+	Available				BIT NOT NULL DEFAULT 1,
 	Created					FLOAT NOT NULL,
 	LastModified			FLOAT,
 
@@ -267,7 +272,7 @@ CREATE TABLE MedicalImage
 	Image					NVARCHAR(32) NOT NULL,
 	FullPath				NVARCHAR(MAX) NOT NULL,
 	Created					FLOAT NOT NULL,
-	
+	Available				BIT NOT NULL DEFAULT 1
 	FOREIGN KEY (MedicalRecordId) REFERENCES MedicalRecord(Id),
 	FOREIGN KEY (Owner) REFERENCES Person(Id)					
 )
@@ -300,6 +305,7 @@ CREATE TABLE Prescription
 	Name					NVARCHAR(32),
 	Medicine				NVARCHAR(MAX),
 	Note					NVARCHAR(128),
+	Available				BIT NOT NULL DEFAULT 1,
 	Created					FLOAT NOT NULL,
 	LastModified			FLOAT,
 
@@ -313,13 +319,18 @@ CREATE TABLE PrescriptionImage
 (
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	PrescriptionId			INT NOT NULL,
+	MedicalRecordId			INT NOT NULL,
 	Image					NVARCHAR(32) NOT NULL,
 	FullPath				NVARCHAR(MAX) NOT NULL,
 	Owner					INT NOT NULL,
 	Creator					INT NOT NULL,
 	Created					FLOAT NOT NULL,
+	Available				BIT NOT NULL DEFAULT 1
+
+	FOREIGN KEY (MedicalRecordId) REFERENCES MedicalRecord(Id),
 	FOREIGN KEY (PrescriptionId) REFERENCES Prescription(Id),
-	FOREIGN KEY (Creator) REFERENCES Person(Id)					
+	FOREIGN KEY (Creator) REFERENCES Person(Id),
+	FOREIGN KEY (Owner) REFERENCES Patient(Id)					
 )
 
 CREATE TABLE ExperimentNote

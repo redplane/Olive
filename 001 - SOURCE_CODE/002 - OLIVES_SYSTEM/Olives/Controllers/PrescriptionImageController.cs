@@ -161,8 +161,7 @@ namespace Olives.Controllers
                 prescriptionImage.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
                 prescriptionImage.Creator = requester.Id;
                 prescriptionImage.Owner = prescription.Owner;
-                prescriptionImage.Available = true;
-
+                
                 // Save the prescription image to database.
                 prescriptionImage = await _repositoryPrescriptionImage.InitializePrescriptionImage(prescriptionImage);
 
@@ -170,11 +169,11 @@ namespace Olives.Controllers
 
                 #region Notification broadcast
 
-                if (prescriptionImage.Creator != prescriptionImage.Owner)
+                if (prescription.Creator != prescription.Owner)
                 {
-                    var recipient = prescriptionImage.Owner;
-                    if (requester.Id == prescriptionImage.Owner)
-                        recipient = prescriptionImage.Creator;
+                    var recipient = prescription.Owner;
+                    if (requester.Id == prescription.Owner)
+                        recipient = prescription.Creator;
 
                     var notification = new Notification();
                     notification.Type = (byte) NotificationType.Create;

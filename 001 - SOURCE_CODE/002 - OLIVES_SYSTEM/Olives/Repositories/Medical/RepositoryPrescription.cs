@@ -46,8 +46,7 @@ namespace Olives.Repositories.Medical
 
             // Find the prescription.
             prescriptions = prescriptions.Where(x => x.Id == id);
-            prescriptions = prescriptions.Where(x => x.Available);
-
+            
             // Owner is defined.
             if (owner != null)
                 prescriptions = prescriptions.Where(x => x.Owner == owner.Value);
@@ -163,10 +162,7 @@ namespace Olives.Repositories.Medical
             // Id is specified.
             if (filter.Id != null)
                 prescriptions = prescriptions.Where(x => x.Id == filter.Id.Value);
-
-            // Only take the available medical record.
-            prescriptions = prescriptions.Where(x => x.Available);
-
+            
             // Medical record is defined.
             if (filter.MedicalRecord != null)
                 prescriptions = prescriptions.Where(x => x.MedicalRecordId == filter.MedicalRecord);

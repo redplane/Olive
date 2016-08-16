@@ -1,18 +1,10 @@
-﻿using System;
-using System.Configuration;
-using System.IO;
-using System.Reflection;
-using System.Web;
+﻿using System.Web;
 using System.Web.Http;
-using System.Web.Mvc;
 using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.WebApi;
-using Newtonsoft.Json;
 using OlivesAdministration.Attributes;
-using OlivesAdministration.Controllers;
 using OlivesAdministration.Interfaces;
-using OlivesAdministration.Models;
 using OlivesAdministration.Module;
 using OlivesAdministration.Repositories;
 using Shared.Interfaces;
@@ -32,26 +24,6 @@ namespace OlivesAdministration
 
             #endregion
 
-            #region General application configuration
-
-            // Initialize an instance of application setting.
-            var applicationSetting = new ApplicationSetting();
-
-            // Retrieve file name which stores database configuration.
-            var applicationConfig = ConfigurationManager.AppSettings["ApplicationConfigFile"];
-
-            // Find the file on physical path.
-            var applicationConfigFile = Server.MapPath($"~/{applicationConfig}.json");
-
-            // Invalid application configuration file.
-            if (!File.Exists(applicationConfigFile))
-                throw new NotImplementedException($"{applicationConfigFile} is required to make server run properly.");
-
-            var info = File.ReadAllText(applicationConfigFile);
-            applicationSetting = JsonConvert.DeserializeObject<ApplicationSetting>(info);
-
-            #endregion
-
             #region IoC registration
 
             var builder = new ContainerBuilder();
@@ -66,13 +38,6 @@ namespace OlivesAdministration
             builder.RegisterType<RepositoryPlace>().As<IRepositoryPlace>().SingleInstance();
             builder.RegisterType<RepositoryMedicalCategory>().As<IRepositoryMedicalCategory>().SingleInstance();
             builder.RegisterType<TimeService>().As<ITimeService>().SingleInstance();
-            
-            var repositoryStorage = new RepositoryStorage(HttpContext.Current);
-            foreach (var key in applicationSetting.Storage.Keys)
-                repositoryStorage.InitializeStorage(key, applicationSetting.Storage[key]);
-            builder.RegisterType<RepositoryStorage>()
-                .As<IRepositoryStorage>()
-                .OnActivating(e => e.ReplaceInstance(repositoryStorage)).SingleInstance();
 
             #endregion
 
@@ -86,16 +51,15 @@ namespace OlivesAdministration
             #region Modules
 
             // Log4net module registration (this is for logging)
+            log4net.Config.XmlConfigurator.Configure();
             builder.RegisterModule<Log4NetModule>();
-
-            // Application setting instance.
-            builder.RegisterInstance(applicationSetting).As<ApplicationSetting>();
 
             #endregion
 
             builder.RegisterWebApiFilterProvider(GlobalConfiguration.Configuration);
             var container = builder.Build();
             GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
+
             #endregion
         }
     }

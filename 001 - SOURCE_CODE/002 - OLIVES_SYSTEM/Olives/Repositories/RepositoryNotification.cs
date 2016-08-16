@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
@@ -210,13 +210,17 @@ namespace Olives.Repositories
             }
 
             // Notification type filter.
-            if (filter.Type != null)
-                notifications = notifications.Where(x => x.Type == (byte)filter.Type.Value);
-
+            if (filter.Types != null)
+            {
+                var types = new List<byte>(filter.Types);
+                notifications = notifications.Where(x => types.Contains(x.Type));
+            }
             // Notification topic filter.
-            if (filter.Topic != null)
-                notifications = notifications.Where(x => x.Topic == (byte)filter.Topic.Value);
-
+            if (filter.Topics != null)
+            {
+                var topics = new List<byte>(filter.Topics);
+                notifications = notifications.Where(x => topics.Contains(x.Topic));
+            }
             // Record is specified.
             if (filter.Record != null)
                 notifications = notifications.Where(x => x.Record == filter.Record.Value);

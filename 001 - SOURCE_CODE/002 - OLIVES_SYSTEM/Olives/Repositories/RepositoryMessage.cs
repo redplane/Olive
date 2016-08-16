@@ -142,9 +142,12 @@ namespace Olives.Repositories
                     {
                         x.IsSeen = true;
                     });
-
+                    
                     // Save the changes.
                     var records = await context.SaveChangesAsync();
+
+                    // Commit the transaction.
+                    transaction.Commit();
 
                     return records;
                 }

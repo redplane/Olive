@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using OlivesAdministration.Attributes;
-using OlivesAdministration.Constants;
 using OlivesAdministration.Interfaces;
 using OlivesAdministration.ViewModels.Edit;
 using Shared.Constants;
@@ -25,16 +24,14 @@ namespace OlivesAdministration.Controllers
         ///     Initialize an instance of AdminController.
         /// </summary>
         /// <param name="repositoryAccountExtended"></param>
-        /// <param name="repositoryStorage"></param>
         /// <param name="log"></param>
         /// <param name="timeService"></param>
         public AdminController(
-            IRepositoryAccountExtended repositoryAccountExtended, IRepositoryStorage repositoryStorage,
+            IRepositoryAccountExtended repositoryAccountExtended,
             ILog log,
             ITimeService timeService)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
-            _repositoryStorage = repositoryStorage;
             _log = log;
             _timeService = timeService;
         }
@@ -91,8 +88,6 @@ namespace OlivesAdministration.Controllers
                     });
                 }
 
-                var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
-
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     User = new
@@ -128,7 +123,7 @@ namespace OlivesAdministration.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPut]
-        [OlivesAuthorize(new[] { Role.Admin })]
+        [OlivesAuthorize(new[] {Role.Admin})]
         [Route("api/admin/profile")]
         public async Task<HttpResponseMessage> EditPatientAsync([FromBody] EditAdminProfileViewModel editor)
         {
@@ -153,7 +148,7 @@ namespace OlivesAdministration.Controllers
             #region Information construction
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // First name is defined.
             if (!string.IsNullOrWhiteSpace(editor.FirstName))
@@ -173,7 +168,7 @@ namespace OlivesAdministration.Controllers
 
             // Gender is defined.
             if (editor.Gender != null)
-                requester.Gender = (byte)editor.Gender;
+                requester.Gender = (byte) editor.Gender;
 
             // Phone is defined.
             if (!string.IsNullOrWhiteSpace(editor.Phone))
@@ -185,7 +180,7 @@ namespace OlivesAdministration.Controllers
 
             // Update person full name.
             requester.FullName = requester.FirstName + " " + requester.LastName;
-            
+
             #endregion
 
             #region Result handling
@@ -197,9 +192,6 @@ namespace OlivesAdministration.Controllers
 
                 // Update the patient.
                 requester = await _repositoryAccountExtended.EditPersonProfileAsync(requester.Id, requester);
-
-                // Find the avatar storage.
-                var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -230,6 +222,7 @@ namespace OlivesAdministration.Controllers
 
             #endregion
         }
+
         #endregion
 
         #region Properties
@@ -240,20 +233,15 @@ namespace OlivesAdministration.Controllers
         private readonly IRepositoryAccountExtended _repositoryAccountExtended;
 
         /// <summary>
-        /// Repository storage.
-        /// </summary>
-        private readonly IRepositoryStorage _repositoryStorage;
-        
-        /// <summary>
         ///     Instance for logging.
         /// </summary>
         private readonly ILog _log;
 
         /// <summary>
-        /// Service which is used to access time calculation functions.
+        ///     Service which is used to access time calculation functions.
         /// </summary>
         private readonly ITimeService _timeService;
-        
+
         #endregion
     }
 }

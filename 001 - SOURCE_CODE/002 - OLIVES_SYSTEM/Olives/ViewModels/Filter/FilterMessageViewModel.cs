@@ -19,7 +19,7 @@ namespace Olives.ViewModels.Filter
         /// <summary>
         /// Whether the partner is the message broadcaster or message receiver.
         /// </summary>
-        public RecordFilterMode Mode { get; set; }
+        public RecordFilterMode? Mode { get; set; }
 
         /// <summary>
         /// Time after which message was created.

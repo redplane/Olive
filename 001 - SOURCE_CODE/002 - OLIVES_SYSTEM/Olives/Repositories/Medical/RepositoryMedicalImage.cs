@@ -95,8 +95,13 @@ namespace Olives.Repositories.Medical
             // Go through every record and put the file path to must deleted list.
             await medicalImages.ForEachAsync(x =>
             {
-                x.Available = false;
+                var junkFile = new JunkFile();
+                junkFile.FullPath = x.FullPath;
+                context.JunkFiles.Add(junkFile);
+
             });
+
+            context.MedicalImages.RemoveRange(medicalImages);
             
             // Count the number of affected records.
             var records = await context.SaveChangesAsync();
@@ -134,10 +139,7 @@ namespace Olives.Repositories.Medical
 
             // Filter by medical record id.
             medicalImages = medicalImages.Where(x => x.MedicalRecordId == filter.MedicalRecord);
-
-            // Only take the available image.
-            medicalImages = medicalImages.Where(x => x.Available);
-
+            
             // Created is specified.
             if (filter.MinCreated != null)
                 medicalImages = medicalImages.Where(x => x.Created >= filter.MinCreated.Value);

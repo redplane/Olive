@@ -93,9 +93,13 @@ namespace Olives.Repositories.Medical
 
             await prescriptionImages.ForEachAsync(x =>
             {
-                x.Available = false;
+                var junkFile = new JunkFile();
+                junkFile.FullPath = x.FullPath;
+                context.JunkFiles.Add(junkFile);
             });
-            
+
+            context.PrescriptionImages.RemoveRange(prescriptionImages);
+
             // Count the number of affected records.
             var records = await context.SaveChangesAsync();
             
@@ -157,9 +161,6 @@ namespace Olives.Repositories.Medical
             // Prescription is defined.
             prescriptionImages = prescriptionImages.Where(x => x.PrescriptionId == filter.Prescription);
             
-            // Only take the available images.
-            prescriptionImages = prescriptionImages.Where(x => x.Available);
-
             if (filter.Id != null)
                 prescriptionImages = prescriptionImages.Where(x => x.Id == filter.Id);
 

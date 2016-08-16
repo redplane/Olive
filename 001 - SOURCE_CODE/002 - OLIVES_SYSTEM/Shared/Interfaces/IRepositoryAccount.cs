@@ -6,16 +6,6 @@ namespace Shared.Interfaces
 {
     public interface IRepositoryAccount
     {
-        #region Patient
-
-        /// <summary>
-        ///     Activate patient's account by search person id.
-        /// </summary>
-        /// <param name="code"></param>
-        Task<bool> InitializePatientActivation(string code);
-
-        #endregion
-
         #region Shared
 
         /// <summary>

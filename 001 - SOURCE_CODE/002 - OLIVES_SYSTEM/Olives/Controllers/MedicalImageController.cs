@@ -141,8 +141,7 @@ namespace Olives.Controllers
                 medicalImage.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
                 medicalImage.FullPath = Path.Combine(storageMedicalImage.Absolute,
                     $"{imageName}.{Values.StandardImageExtension}");
-                medicalImage.Available = true;
-
+                
                 // Convert bytestream to image file.
                 var medicalImageFile = _fileService.ConvertBytesToImage(info.File.Buffer);
 
@@ -157,11 +156,11 @@ namespace Olives.Controllers
 
                 #region Notification broadcast
 
-                if (medicalImage.Creator != medicalImage.Owner)
+                if (medicalRecord.Creator != medicalRecord.Owner)
                 {
                     var recipient = medicalRecord.Owner;
-                    if (requester.Id == medicalImage.Owner)
-                        recipient = medicalImage.Creator;
+                    if (requester.Id == medicalRecord.Owner)
+                        recipient = medicalRecord.Creator;
 
                     var notification = new Notification();
                     notification.Type = (byte) NotificationType.Create;

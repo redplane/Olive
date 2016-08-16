@@ -29,70 +29,7 @@ namespace Shared.Repositories
         }
 
         #endregion
-
-        #region Patient
-
-        /// <summary>
-        ///     Find and activate patient's account and remove the activation code.
-        /// </summary>
-        /// <param name="code"></param>
-        /// <returns></returns>
-        public async Task<bool> InitializePatientActivation(string code)
-        {
-            var context = _dataContext.Context;
-            using (var transaction = context.Database.BeginTransaction())
-            {
-                try
-                {
-                    var results = from p in context.People
-                        join c in
-                            context.AccountCodes.Where(
-                                x => x.Code.Equals(code) && x.Type == (byte) TypeAccountCode.Activation) on p.Id equals
-                            c.Owner
-                        select new
-                        {
-                            Person = p,
-                            Code = c
-                        };
-
-                    // Retrieve the total matched result.
-                    var resultsCount = await results.CountAsync();
-
-                    // No result has been returned.
-                    if (resultsCount < 1)
-                        throw new InstanceNotFoundException($"Couldn't find person whose code is : {code}");
-
-                    // Not only one result has been returned.
-                    if (resultsCount > 1)
-                        throw new Exception($"There are too many people whose code is : {code}");
-
-                    // Retrieve the first queried result.
-                    var result = await results.FirstOrDefaultAsync();
-                    if (result == null)
-                        throw new InstanceNotFoundException($"Couldn't find person whose code is : {code}");
-
-                    // Update the person status and remove the activation code.
-                    var person = result.Person;
-                    var activationCode = result.Code;
-                    person.Status = (byte) StatusAccount.Active;
-                    context.People.AddOrUpdate(person);
-                    context.AccountCodes.Remove(activationCode);
-                    await context.SaveChangesAsync();
-                    // Commit the transaction.
-                    transaction.Commit();
-                    return true;
-                }
-                catch
-                {
-                    // Something happens, roll the transaction back.
-                    transaction.Rollback();
-                    throw;
-                }
-            }
-        }
-
-        #endregion
-
+        
         #region Shared
 
         /// <summary>

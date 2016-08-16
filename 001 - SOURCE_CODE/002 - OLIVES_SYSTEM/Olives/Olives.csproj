@@ -257,7 +257,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\MedicalNoteController.cs" />
-    <Compile Include="Controllers\MedicalExperimentController.cs" />
+    <Compile Include="Controllers\ExperimentNoteController.cs" />
     <Compile Include="Controllers\PrescriptionImageController.cs" />
     <Compile Include="Controllers\PrescriptionController.cs" />
     <Compile Include="Controllers\MedicalImageController.cs" />
@@ -290,6 +290,10 @@
     <Compile Include="Interfaces\IFileService.cs" />
     <Compile Include="Interfaces\INotificationService.cs" />
     <Compile Include="Interfaces\IRepositoryAccountExtended.cs" />
+    <Compile Include="Interfaces\IRepositoryAppointment.cs" />
+    <Compile Include="Interfaces\IRepositoryRating.cs" />
+    <Compile Include="Interfaces\IRepositoryRealTimeConnection.cs" />
+    <Compile Include="Interfaces\IRepositoryStorage.cs" />
     <Compile Include="Interfaces\IRepositoryToken.cs" />
     <Compile Include="Interfaces\IRepositoryMessage.cs" />
     <Compile Include="Interfaces\IRepositoryNotification.cs" />
@@ -326,6 +330,10 @@
     <Compile Include="Repositories\PersonalNote\RepositoryHeartbeat.cs" />
     <Compile Include="Repositories\RepositoryAccountExtended.cs" />
     <Compile Include="Repositories\PersonalNote\RepositoryDiary.cs" />
+    <Compile Include="Repositories\RepositoryAppointment.cs" />
+    <Compile Include="Repositories\RepositoryRating.cs" />
+    <Compile Include="Repositories\RepositoryRealTimeConnection.cs" />
+    <Compile Include="Repositories\RepositoryStorage.cs" />
     <Compile Include="Repositories\RepositoryToken.cs" />
     <Compile Include="Repositories\RepositoryMessage.cs" />
     <Compile Include="Repositories\RepositoryNotification.cs" />

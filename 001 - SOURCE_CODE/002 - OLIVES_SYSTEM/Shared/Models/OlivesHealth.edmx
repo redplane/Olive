@@ -147,7 +147,6 @@
           <Property Name="Image" Type="nvarchar" MaxLength="32" Nullable="false" />
           <Property Name="FullPath" Type="nvarchar(max)" Nullable="false" />
           <Property Name="Created" Type="float" Nullable="false" />
-          <Property Name="Available" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="MedicalNote">
           <Key>
@@ -175,7 +174,6 @@
           <Property Name="Time" Type="float" Nullable="false" />
           <Property Name="Created" Type="float" Nullable="false" />
           <Property Name="LastModified" Type="float" />
-          <Property Name="Available" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Message">
           <Key>
@@ -256,7 +254,6 @@
           <Property Name="Note" Type="nvarchar" MaxLength="128" />
           <Property Name="Created" Type="float" Nullable="false" />
           <Property Name="LastModified" Type="float" />
-          <Property Name="Available" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="PrescriptionImage">
           <Key>
@@ -270,7 +267,6 @@
           <Property Name="Owner" Type="int" Nullable="false" />
           <Property Name="Creator" Type="int" Nullable="false" />
           <Property Name="Created" Type="float" Nullable="false" />
-          <Property Name="Available" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Rating">
           <Key>
@@ -1398,7 +1394,6 @@
           <Property Name="Image" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
           <Property Name="FullPath" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Created" Type="Double" Nullable="false" />
-          <Property Name="Available" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="MedicalRecord" Relationship="OlivesHealthModel.FK__MedicalIm__Avail__636EBA21" FromRole="MedicalImage" ToRole="MedicalRecord" />
           <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__MedicalIm__Owner__6462DE5A" FromRole="MedicalImage" ToRole="Person" />
         </EntityType>
@@ -1431,7 +1426,6 @@
           <Property Name="Time" Type="Double" Nullable="false" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
-          <Property Name="Available" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="ExperimentNotes" Relationship="OlivesHealthModel.FK__Experimen__Medic__1411F17C" FromRole="MedicalRecord" ToRole="ExperimentNote" />
           <NavigationProperty Name="MedicalCategory" Relationship="OlivesHealthModel.FK__MedicalRe__Categ__5F9E293D" FromRole="MedicalRecord" ToRole="MedicalCategory" />
           <NavigationProperty Name="MedicalImages" Relationship="OlivesHealthModel.FK__MedicalIm__Avail__636EBA21" FromRole="MedicalRecord" ToRole="MedicalImage" />
@@ -1555,7 +1549,6 @@
           <Property Name="Note" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Created" Type="Double" Nullable="false" />
           <Property Name="LastModified" Type="Double" />
-          <Property Name="Available" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="MedicalRecord" Relationship="OlivesHealthModel.FK__Prescript__Medic__6C040022" FromRole="Prescription" ToRole="MedicalRecord" />
           <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Prescript__Creat__6DEC4894" FromRole="Prescription" ToRole="Person" />
           <NavigationProperty Name="Person1" Relationship="OlivesHealthModel.FK__Prescript__Owner__6CF8245B" FromRole="Prescription" ToRole="Person" />
@@ -1573,7 +1566,6 @@
           <Property Name="Owner" Type="Int32" Nullable="false" />
           <Property Name="Creator" Type="Int32" Nullable="false" />
           <Property Name="Created" Type="Double" Nullable="false" />
-          <Property Name="Available" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="MedicalRecord" Relationship="OlivesHealthModel.FK__Prescript__Avail__71BCD978" FromRole="PrescriptionImage" ToRole="MedicalRecord" />
           <NavigationProperty Name="Patient" Relationship="OlivesHealthModel.FK__Prescript__Owner__74994623" FromRole="PrescriptionImage" ToRole="Patient" />
           <NavigationProperty Name="Person" Relationship="OlivesHealthModel.FK__Prescript__Creat__73A521EA" FromRole="PrescriptionImage" ToRole="Person" />
@@ -2301,7 +2293,6 @@
           <EntitySetMapping Name="MedicalImages">
             <EntityTypeMapping TypeName="OlivesHealthModel.MedicalImage">
               <MappingFragment StoreEntitySet="MedicalImage">
-                <ScalarProperty Name="Available" ColumnName="Available" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="FullPath" ColumnName="FullPath" />
                 <ScalarProperty Name="Image" ColumnName="Image" />
@@ -2329,7 +2320,6 @@
           <EntitySetMapping Name="MedicalRecords">
             <EntityTypeMapping TypeName="OlivesHealthModel.MedicalRecord">
               <MappingFragment StoreEntitySet="MedicalRecord">
-                <ScalarProperty Name="Available" ColumnName="Available" />
                 <ScalarProperty Name="LastModified" ColumnName="LastModified" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="Time" ColumnName="Time" />
@@ -2414,7 +2404,6 @@
           <EntitySetMapping Name="Prescriptions">
             <EntityTypeMapping TypeName="OlivesHealthModel.Prescription">
               <MappingFragment StoreEntitySet="Prescription">
-                <ScalarProperty Name="Available" ColumnName="Available" />
                 <ScalarProperty Name="LastModified" ColumnName="LastModified" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="Note" ColumnName="Note" />
@@ -2432,7 +2421,6 @@
           <EntitySetMapping Name="PrescriptionImages">
             <EntityTypeMapping TypeName="OlivesHealthModel.PrescriptionImage">
               <MappingFragment StoreEntitySet="PrescriptionImage">
-                <ScalarProperty Name="Available" ColumnName="Available" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
                 <ScalarProperty Name="Creator" ColumnName="Creator" />
                 <ScalarProperty Name="Owner" ColumnName="Owner" />
