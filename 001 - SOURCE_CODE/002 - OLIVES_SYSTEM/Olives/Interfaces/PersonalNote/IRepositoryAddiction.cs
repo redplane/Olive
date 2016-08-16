@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks;
+using Olives.ViewModels.Filter.Personal;
+using Olives.ViewModels.Response;
 using Shared.Models;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;

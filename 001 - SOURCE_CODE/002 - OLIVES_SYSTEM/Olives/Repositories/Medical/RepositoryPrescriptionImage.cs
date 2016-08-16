@@ -4,6 +4,8 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 using Olives.Interfaces.Medical;
+using Olives.ViewModels.Filter.Medical;
+using Olives.ViewModels.Response.Medical;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;

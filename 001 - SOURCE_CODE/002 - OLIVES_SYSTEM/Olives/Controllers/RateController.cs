@@ -7,6 +7,7 @@ using System.Web.Http;
 using log4net;
 using Olives.Attributes;
 using Olives.Interfaces;
+using Olives.ViewModels.Filter;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;

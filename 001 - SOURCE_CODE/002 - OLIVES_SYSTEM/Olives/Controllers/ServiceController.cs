@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using log4net;
+using Olives.Enumerations;
 using Olives.Interfaces;
 using Olives.ViewModels.Filter;
 using Shared.Enumerations;

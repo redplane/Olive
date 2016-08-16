@@ -1,8 +1,10 @@
 ﻿using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using Olives.Enumerations.Filter;
 using Olives.Interfaces;
 using Olives.ViewModels.Filter;
+using Olives.ViewModels.Response;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;

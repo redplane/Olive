@@ -2,7 +2,10 @@
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
+using Olives.Enumerations.Filter;
 using Olives.Interfaces.PersonalNote;
+using Olives.ViewModels.Filter.Personal;
+using Olives.ViewModels.Response.Personal;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;

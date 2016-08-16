@@ -3,6 +3,8 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 using Olives.Interfaces;
+using Olives.ViewModels.Filter;
+using Olives.ViewModels.Response;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;

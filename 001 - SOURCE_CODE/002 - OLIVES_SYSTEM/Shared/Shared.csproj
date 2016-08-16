@@ -68,7 +68,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\DateTimeCompareAttribute.cs" />
     <Compile Include="Attributes\DictionaryKeyLengthAttribute.cs" />
     <Compile Include="Attributes\DictionaryLengthAttribute.cs" />
     <Compile Include="Attributes\DictionaryKeyValueLengthAttribute.cs" />
@@ -76,26 +75,12 @@
     <Compile Include="Attributes\InEnumerationsArray.cs" />
     <Compile Include="Attributes\InNumericArrayAttribute.cs" />
     <Compile Include="Attributes\NumericPropertyCompareAttribute.cs" />
-    <Compile Include="Attributes\PropertyValidationAttribute.cs" />
     <Compile Include="Attributes\NumericCompareAttribute.cs" />
     <Compile Include="Attributes\RegexMatchAttribute.cs" />
-    <Compile Include="Attributes\RequiredIfAttribute.cs" />
     <Compile Include="Attributes\ValueStringLengthAttribute.cs" />
     <Compile Include="Enumerations\Filter\MedicalCategoryFilterSort.cs" />
-    <Compile Include="Enumerations\Filter\MedicalNoteFilterSort.cs" />
-    <Compile Include="Enumerations\Filter\MedicalRecordFilterSort.cs" />
     <Compile Include="Enumerations\Filter\PlaceFilterSort.cs" />
-    <Compile Include="Enumerations\Filter\ExperimentFilterSort.cs" />
-    <Compile Include="Enumerations\Filter\NoteResultSort.cs" />
     <Compile Include="Enumerations\Filter\RecordFilterMode.cs" />
-    <Compile Include="Enumerations\Filter\RatingResultSort.cs" />
-    <Compile Include="Enumerations\MessageFilterSort.cs" />
-    <Compile Include="Enumerations\Filter\NotificationFilterSort.cs" />
-    <Compile Include="Enumerations\NotificationTopic.cs" />
-    <Compile Include="Enumerations\NotificationType.cs" />
-    <Compile Include="Enumerations\RoleRelationship.cs" />
-    <Compile Include="Enumerations\TaskType.cs" />
-    <Compile Include="Enumerations\TypeAccountCode.cs" />
     <Compile Include="Enumerations\SortDirection.cs" />
     <Compile Include="Enumerations\StatusAccount.cs" />
     <Compile Include="Constants\HeaderFields.cs" />
@@ -105,7 +90,6 @@
     <Compile Include="Enumerations\Role.cs" />
     <Compile Include="Constants\Values.cs" />
     <Compile Include="Enumerations\Filter\PartnerFilterMode.cs" />
-    <Compile Include="Enumerations\StatusAppointment.cs" />
     <Compile Include="Enumerations\Comparision.cs" />
     <Compile Include="Interfaces\IOliveDataContext.cs" />
     <Compile Include="Interfaces\IPagination.cs" />
@@ -229,45 +213,13 @@
       <DependentUpon>Language.vi.resx</DependentUpon>
     </Compile>
     <Compile Include="Services\TimeService.cs" />
-    <Compile Include="ViewModels\Filter\FilterAddictionViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterAllergyViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterAppointmentViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterBloodPressureViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMedicalCategoryViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterExperimentNoteViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterMedicalNoteViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPlaceViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterHeatbeatViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterMedicalImageViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterMedicalRecordViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterPrescriptionImageViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterPrescriptionViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterRatingViewModel.cs" />
-    <Compile Include="ViewModels\Response\ResponseNotificationFilter.cs" />
-    <Compile Include="ViewModels\Response\ResponseExperimentNoteFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseMedicalCategoryFilter.cs" />
-    <Compile Include="ViewModels\Response\ResponseMedicalNoteFilter.cs" />
-    <Compile Include="ViewModels\Response\ResponseMessageFilter.cs" />
-    <Compile Include="ViewModels\Response\ResponseNoteDelete.cs" />
-    <Compile Include="ViewModels\Response\ResponsePrescriptionImageFilter.cs" />
-    <Compile Include="ViewModels\Response\ResponseRatingFilter.cs" />
-    <Compile Include="ViewModels\Response\ResponseRelatedDoctorFilter.cs" />
-    <Compile Include="ViewModels\RelatedDoctorViewModel.cs" />
-    <Compile Include="ViewModels\Response\ResponseAddictionFilter.cs" />
     <Compile Include="ViewModels\Response\ResponsePlaceFilter.cs" />
-    <Compile Include="ViewModels\Response\ResponseAllergyFilter.cs" />
-    <Compile Include="ViewModels\Response\ResponseAppointmentFilter.cs" />
-    <Compile Include="ViewModels\Response\ResponseBloodPressureFilter.cs" />
-    <Compile Include="ViewModels\Response\ResponseMedicalImageFilter.cs" />
-    <Compile Include="ViewModels\Response\ResponseMedicalRecordFilter.cs" />
-    <Compile Include="ViewModels\Response\ResponsePrescriptionFilterViewModel.cs" />
-    <Compile Include="ViewModels\Response\ResponseRelationshipFilter.cs" />
-    <Compile Include="ViewModels\Response\ResponseBloodSugarFilter.cs" />
-    <Compile Include="ViewModels\Response\ResponseHeartbeatFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseSpecialtyFilter.cs" />
     <Compile Include="ViewModels\Response\ResponseDoctorFilter.cs" />
     <Compile Include="ViewModels\Response\ResponsePatientFilter.cs" />
-    <Compile Include="ViewModels\Filter\FilterBloodSugarViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterSpecialtyViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
   </ItemGroup>

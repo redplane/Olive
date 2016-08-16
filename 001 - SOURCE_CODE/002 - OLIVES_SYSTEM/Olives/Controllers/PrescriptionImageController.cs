@@ -13,6 +13,7 @@ using Olives.Enumerations;
 using Olives.Hubs;
 using Olives.Interfaces;
 using Olives.Interfaces.Medical;
+using Olives.ViewModels.Filter.Medical;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;

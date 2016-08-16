@@ -1,4 +1,5 @@
-﻿using Shared.Constants;
+﻿using Olives.Enumerations.Filter;
+using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
 

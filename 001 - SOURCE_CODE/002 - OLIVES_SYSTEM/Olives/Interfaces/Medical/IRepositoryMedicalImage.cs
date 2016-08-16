@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks;
+using Olives.ViewModels.Filter.Medical;
+using Olives.ViewModels.Response.Medical;
 using Shared.Models;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;

@@ -9,6 +9,7 @@ using Olives.Attributes;
 using Olives.Interfaces;
 using Olives.Interfaces.PersonalNote;
 using Olives.ViewModels.Edit;
+using Olives.ViewModels.Filter.Personal;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;

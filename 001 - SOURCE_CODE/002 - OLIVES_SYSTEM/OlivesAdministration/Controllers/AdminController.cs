@@ -48,7 +48,7 @@ namespace OlivesAdministration.Controllers
         /// <returns></returns>
         [Route("api/admin/login")]
         [HttpPost]
-        public async Task<HttpResponseMessage> Login([FromBody] LoginViewModel loginViewModel)
+        public async Task<HttpResponseMessage> LoginAsync([FromBody] LoginViewModel loginViewModel)
         {
             #region Request parameters validation
 
@@ -125,7 +125,7 @@ namespace OlivesAdministration.Controllers
         [HttpPut]
         [OlivesAuthorize(new[] {Role.Admin})]
         [Route("api/admin/profile")]
-        public async Task<HttpResponseMessage> EditPatientAsync([FromBody] EditAdminProfileViewModel editor)
+        public async Task<HttpResponseMessage> EditAdminProfileAsync([FromBody] EditAdminProfileViewModel editor)
         {
             #region Request parameters validation
 
