@@ -156,9 +156,9 @@
     <None Include="Properties\PublishProfiles\olivesadmin - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\olivesadministrator - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\olivesadministrator - Web Deploy.pubxml" />
-    <Content Include="Scripts\app.1bd05daf9b14d6f5cf7e.js" />
-    <Content Include="Scripts\polyfills.1bd05daf9b14d6f5cf7e.js" />
-    <Content Include="Scripts\vendor.1bd05daf9b14d6f5cf7e.js" />
+    <Content Include="Scripts\app.e00ed9cbd823ddb6bb4c.js" />
+    <Content Include="Scripts\polyfills.e00ed9cbd823ddb6bb4c.js" />
+    <Content Include="Scripts\vendor.e00ed9cbd823ddb6bb4c.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
