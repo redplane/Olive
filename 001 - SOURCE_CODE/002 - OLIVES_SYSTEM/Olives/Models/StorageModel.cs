@@ -1,4 +1,4 @@
-﻿namespace Shared.Models
+﻿namespace Olives.Models
 {
     public class StorageModel
     {

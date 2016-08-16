@@ -72,7 +72,7 @@ namespace OlivesAdministration.Repositories
 
             // Filter by gender.
             if (filter.Gender != null)
-                doctors = doctors.Where(x => x.Person.Gender == filter.Gender);
+                doctors = doctors.Where(x => x.Person.Gender == (byte)filter.Gender);
 
             // Filter by last modified.
             if (filter.MinLastModified != null)
@@ -249,7 +249,7 @@ namespace OlivesAdministration.Repositories
 
             // Filter by gender.
             if (filter.Gender != null)
-                patients = patients.Where(x => x.Person.Gender == filter.Gender);
+                patients = patients.Where(x => x.Person.Gender == (byte)filter.Gender);
 
             // Filter by created.
             if (filter.MinCreated != null)
@@ -260,7 +260,7 @@ namespace OlivesAdministration.Repositories
 
             // Filter by status.
             if (filter.Status != null)
-                patients = patients.Where(x => x.Person.Status == filter.Status);
+                patients = patients.Where(x => x.Person.Status == (byte)filter.Status);
 
             // Filter by height.
             if (filter.MinHeight != null) patients = patients.Where(x => x.Height >= filter.MinHeight);

@@ -55,31 +55,6 @@ namespace OlivesAdministration.Controllers
 
             base.Initialize(controllerContext);
         }
-
-        /// <summary>
-        ///     Construct full url path.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="file"></param>
-        /// <param name="extension"></param>
-        /// <returns></returns>
-        protected string InitializeUrl(string path, string file, string extension)
-        {
-            try
-            {
-                // File or path is invalid
-                if (string.IsNullOrWhiteSpace(path) || string.IsNullOrWhiteSpace(file))
-                    return null;
-
-                if (!string.IsNullOrWhiteSpace(extension))
-                    file = $"{file}.{extension}";
-                var fullPath = Path.Combine(path, file);
-                return Url.Content(fullPath);
-            }
-            catch
-            {
-                return null;
-            }
-        }
+        
     }
 }

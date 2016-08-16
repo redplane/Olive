@@ -75,7 +75,7 @@ namespace OlivesAdministration.ViewModels.Filter
         /// </summary>
         [InEnumerationsArray(new object[] {Shared.Enumerations.Gender.Male, Shared.Enumerations.Gender.Female},
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "InvalidGender")]
-        public int? Gender { get; set; }
+        public Gender? Gender { get; set; }
 
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]

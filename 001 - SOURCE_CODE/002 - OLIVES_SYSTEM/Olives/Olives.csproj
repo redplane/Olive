@@ -327,6 +327,7 @@
     <Compile Include="Models\Emails\SendGridPreconfiguration.cs" />
     <Compile Include="Models\Emails\SendGridContent.cs" />
     <Compile Include="Models\SendGridSetting.cs" />
+    <Compile Include="Models\StorageModel.cs" />
     <Compile Include="Module\Log4NetModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\Medical\RepositoryExperimentNote.cs" />

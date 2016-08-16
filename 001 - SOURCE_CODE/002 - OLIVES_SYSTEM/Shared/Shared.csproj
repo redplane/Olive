@@ -192,7 +192,6 @@
     <Compile Include="Models\Specialty.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\StorageModel.cs" />
     <Compile Include="Models\SugarBlood.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>

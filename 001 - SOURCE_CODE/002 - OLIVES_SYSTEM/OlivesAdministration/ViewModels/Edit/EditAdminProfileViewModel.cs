@@ -27,7 +27,7 @@ namespace OlivesAdministration.ViewModels.Edit
         /// </summary>
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
-        public long? Birthday { get; set; }
+        public double? Birthday { get; set; }
 
         /// <summary>
         ///     Person gender.

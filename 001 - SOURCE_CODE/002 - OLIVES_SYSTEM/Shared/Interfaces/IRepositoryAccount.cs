@@ -6,8 +6,6 @@ namespace Shared.Interfaces
 {
     public interface IRepositoryAccount
     {
-        #region Shared
-
         /// <summary>
         ///     Find person by using specific information synchronously.
         /// </summary>
@@ -36,7 +34,5 @@ namespace Shared.Interfaces
         /// <param name="info"></param>
         /// <returns></returns>
         Task<Person> InitializePersonAsync(Person info);
-
-        #endregion
     }
 }
