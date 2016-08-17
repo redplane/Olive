@@ -81,7 +81,7 @@ CREATE TABLE Heartbeat
 )
 
 -- Sugarblood table
-CREATE TABLE SugarBlood
+CREATE TABLE BloodSugar
 (
 	Id					INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	Owner				INT NOT NULL,
@@ -110,10 +110,10 @@ CREATE TABLE BloodPressure
 )
 
 -- Activation code table.
-CREATE TABLE AccountCode
+CREATE TABLE AccountToken
 (
 	Owner				INT NOT NULL,
-	Code				VARCHAR(36),
+	Code				VARCHAR(36) NOT NULL,
 	Type				TINYINT NOT NULL,
 	Expired				DATETIME NOT NULL,
 	
@@ -178,7 +178,9 @@ CREATE TABLE Doctor
 	SpecialtyId			INT NOT NULL,
 	Voters				INT				NOT NULL,
 	PlaceId				INT				NOT NULL,
-	ProfilePdf			NVARCHAR(32)
+	ProfilePdf			NVARCHAR(32),
+	ProfileUrl			NVARCHAR(MAX),
+	ProfilePhysicPath	NVARCHAR(MAX),
 
 	FOREIGN KEY (Id) REFERENCES Person(Id),
 	FOREIGN KEY (SpecialtyId) REFERENCES Specialty(Id),
@@ -238,7 +240,7 @@ CREATE TABLE Diary
 CREATE TABLE MedicalCategory
 (
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	Name					NVARCHAR(32),
+	Name					NVARCHAR(32) NOT NULL,
 	Created					FLOAT NOT NULL,
 	LastModified			FLOAT
 )
@@ -253,7 +255,6 @@ CREATE TABLE MedicalRecord
 	Name					NVARCHAR(64),
 	Info					NVARCHAR(MAX),
 	Time					FLOAT NOT NULL,
-	Available				BIT NOT NULL DEFAULT 1,
 	Created					FLOAT NOT NULL,
 	LastModified			FLOAT,
 
@@ -272,7 +273,6 @@ CREATE TABLE MedicalImage
 	Image					NVARCHAR(32) NOT NULL,
 	FullPath				NVARCHAR(MAX) NOT NULL,
 	Created					FLOAT NOT NULL,
-	Available				BIT NOT NULL DEFAULT 1
 	FOREIGN KEY (MedicalRecordId) REFERENCES MedicalRecord(Id),
 	FOREIGN KEY (Owner) REFERENCES Person(Id)					
 )
@@ -284,7 +284,7 @@ CREATE TABLE MedicalNote
 	MedicalRecordId			INT NOT NULL,
 	Creator					INT NOT NULL,
 	Owner					INT NOT NULL,
-	Note					NVARCHAR(128),
+	Note					NVARCHAR(128) NOT NULL,
 	Time					FLOAT NOT NULL,
 	Created					FLOAT NOT NULL,
 	LastModified			FLOAT,
@@ -302,10 +302,9 @@ CREATE TABLE Prescription
 	MedicalRecordId			INT NOT NULL,
 	[From]					FLOAT NOT NULL,
 	[To]					FLOAT NOT NULL,
-	Name					NVARCHAR(32),
+	Name					NVARCHAR(32) NOT NULL,
 	Medicine				NVARCHAR(MAX),
 	Note					NVARCHAR(128),
-	Available				BIT NOT NULL DEFAULT 1,
 	Created					FLOAT NOT NULL,
 	LastModified			FLOAT,
 
@@ -325,8 +324,7 @@ CREATE TABLE PrescriptionImage
 	Owner					INT NOT NULL,
 	Creator					INT NOT NULL,
 	Created					FLOAT NOT NULL,
-	Available				BIT NOT NULL DEFAULT 1
-
+	
 	FOREIGN KEY (MedicalRecordId) REFERENCES MedicalRecord(Id),
 	FOREIGN KEY (PrescriptionId) REFERENCES Prescription(Id),
 	FOREIGN KEY (Creator) REFERENCES Person(Id),
@@ -357,8 +355,7 @@ CREATE TABLE Rating
 	Value					INT NOT NULL,
 	Comment					NVARCHAR(128),
 	Created					FLOAT NOT NULL,
-	LastModified			FLOAT,
-
+	
 	FOREIGN KEY (Maker) REFERENCES Patient(Id),
 	FOREIGN KEY (Target) REFERENCES Doctor(Id),
 	PRIMARY KEY (Maker, Target)
@@ -398,7 +395,7 @@ CREATE TABLE RealTimeConnection
 (
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	Owner					INT NOT NULL,
-	ConnectionId			NVARCHAR(MAX),
+	ConnectionId			NVARCHAR(MAX) NOT NULL,
 	Created					FLOAT NOT NULL,
 )
 
@@ -410,7 +407,7 @@ CREATE TABLE [Message]
 	Id						INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	Broadcaster				INT NOT NULL,
 	Recipient				INT NOT NULL,
-	Content					NVARCHAR(512),
+	Content					NVARCHAR(512) NOT NULL,
 	Created					FLOAT NOT NULL,
 	IsSeen					BIT NOT NULL,
 
