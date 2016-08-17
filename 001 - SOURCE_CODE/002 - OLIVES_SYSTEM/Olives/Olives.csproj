@@ -231,10 +231,10 @@
     <Content Include="Resources\Avatar\2.png" />
     <Content Include="Resources\Avatar\3.png" />
     <Content Include="Resources\Avatar\4.png" />
-    <Content Include="Scripts\app.88d986818f41e9dc87a7.js" />
-    <Content Include="Scripts\polyfills.88d986818f41e9dc87a7.js" />
-    <Content Include="Scripts\vendor.88d986818f41e9dc87a7.css" />
-    <Content Include="Scripts\vendor.88d986818f41e9dc87a7.js" />
+    <Content Include="Scripts\app.7371315fed25fbbd5501.js" />
+    <Content Include="Scripts\polyfills.7371315fed25fbbd5501.js" />
+    <Content Include="Scripts\vendor.7371315fed25fbbd5501.css" />
+    <Content Include="Scripts\vendor.7371315fed25fbbd5501.js" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\Index.html" />
     <Content Include="Web.config" />
