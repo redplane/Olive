@@ -207,6 +207,7 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
+        [HttpPost]
         [Route("api/message/filter")]
         public async Task<HttpResponseMessage> FilterMessagesAsync([FromBody] FilterMessageViewModel filter)
         {
@@ -259,6 +260,7 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
+        [HttpPost]
         [Route("api/message/seen")]
         public async Task<HttpResponseMessage> MakeMessageSeen([FromBody] FilterMessageViewModel filter)
         {
