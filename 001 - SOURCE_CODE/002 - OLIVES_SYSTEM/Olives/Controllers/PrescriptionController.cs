@@ -436,8 +436,12 @@ namespace Olives.Controllers
                 // Retrieve information of person who sent request.
                 var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
+                var filter = new FilterPrescriptionViewModel();
+                filter.Requester = requester;
+                filter.Id = id;
+
                 // Patient can only delete his/her record.
-                var records = await _repositoryPrescription.DeletePrescriptionAsync(id, requester.Id);
+                var records = await _repositoryPrescription.DeletePrescriptionAsync(filter);
 
                 // No record has been deleted.
                 if (records < 1)

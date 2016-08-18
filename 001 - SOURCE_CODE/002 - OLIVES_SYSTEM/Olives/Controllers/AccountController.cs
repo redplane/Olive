@@ -211,7 +211,7 @@ namespace Olives.Controllers
                 accountToken.Type = (byte) TypeAccountCode.ForgotPassword;
                 accountToken.Expired = DateTime.UtcNow.AddHours(Values.ActivationCodeHourDuration);
 
-                accountToken = await _repositoryActivationCode.InitializeToken(accountToken);
+                accountToken = await _repositoryActivationCode.InitializeAccountTokenAsync(accountToken);
 
                 // Url construction.
                 var url = Url.Link("Default",
@@ -347,7 +347,7 @@ namespace Olives.Controllers
                 try
                 {
                     // Delete the token.
-                    await _repositoryActivationCode.DetachAccountToken(filter);
+                    await _repositoryActivationCode.DeleteAccountTokenAsync(filter);
                 }
                 catch (Exception exception)
                 {

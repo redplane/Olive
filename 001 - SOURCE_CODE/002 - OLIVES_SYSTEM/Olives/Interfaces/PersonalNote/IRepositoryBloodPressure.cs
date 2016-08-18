@@ -14,26 +14,26 @@ namespace Olives.Interfaces.PersonalNote
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        Task<BloodPressure> InitializeBloodPressureNoteAsync(BloodPressure info);
+        Task<BloodPressure> InitializeBloodPressureAsync(BloodPressure info);
 
         /// <summary>
         ///     Find heartbeat by using heartbeat note id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<BloodPressure> FindBloodPressureNoteAsync(int id);
+        Task<BloodPressure> FindBloodPressureAsync(int id);
 
         /// <summary>
         ///     Find heartbeat by using conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        Task<ResponseBloodPressureFilter> FilterBloodPressureNoteAsync(FilterBloodPressureViewModel filter);
+        Task<ResponseBloodPressureFilter> FilterBloodPressureAsync(FilterBloodPressureViewModel filter);
 
         /// <summary>
         ///     Delete a heartbeat note asynchronously.
         /// </summary>
         /// <param name="filter"></param>
-        Task<int> DeleteBloodPressureNoteAsync(FilterBloodPressureViewModel filter);
+        Task<int> DeleteBloodPressureAsync(FilterBloodPressureViewModel filter);
     }
 }

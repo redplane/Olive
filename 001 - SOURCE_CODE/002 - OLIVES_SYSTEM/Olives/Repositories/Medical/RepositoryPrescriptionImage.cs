@@ -7,11 +7,8 @@ using Olives.Interfaces.Medical;
 using Olives.ViewModels.Filter.Medical;
 using Olives.ViewModels.Response.Medical;
 using Shared.Enumerations;
-using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Olives.Repositories.Medical
 {
@@ -52,7 +49,7 @@ namespace Olives.Repositories.Medical
         /// </summary>
         /// <param name="prescriptionImage"></param>
         /// <returns></returns>
-        public async Task<PrescriptionImage> InitializePrescriptionImage(PrescriptionImage prescriptionImage)
+        public async Task<PrescriptionImage> InitializePrescriptionImageAsync(PrescriptionImage prescriptionImage)
         {
             var context = _dataContext.Context;
             using (var transaction = context.Database.BeginTransaction())
@@ -76,23 +73,19 @@ namespace Olives.Repositories.Medical
         /// <summary>
         ///     Delete prescription image by using id.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="owner"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<int> DeletePrescriptionImageAsync(int id, int? owner)
+        public async Task<int> DeletePrescriptionImageAsync(FilterPrescriptionImageViewModel filter)
         {
+            // Data context initialization.
             var context = _dataContext.Context;
-            
+
             // By default, take all records.
             IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
 
-            // Find the medical image by using id.
-            prescriptionImages = prescriptionImages.Where(x => x.Id == id);
-
-            // Owner is defined.
-            if (owner != null)
-                prescriptionImages = prescriptionImages.Where(x => x.Owner == owner.Value);
-
+            // Filter prescription images.
+            prescriptionImages = FilterPrescriptionImages(prescriptionImages, filter, context);
+            
             await prescriptionImages.ForEachAsync(x =>
             {
                 var junkFile = new JunkFile();
@@ -104,10 +97,9 @@ namespace Olives.Repositories.Medical
 
             // Count the number of affected records.
             var records = await context.SaveChangesAsync();
-            
+
             // Tell the caller function the number of affected records.
             return records;
-             
         }
 
         /// <summary>
@@ -148,7 +140,7 @@ namespace Olives.Repositories.Medical
         }
 
         /// <summary>
-        /// Filter prescription by using specific conditions.
+        ///     Filter prescription by using specific conditions.
         /// </summary>
         /// <param name="prescriptionImages"></param>
         /// <param name="filter"></param>
@@ -162,7 +154,7 @@ namespace Olives.Repositories.Medical
 
             // Prescription is defined.
             prescriptionImages = prescriptionImages.Where(x => x.PrescriptionId == filter.Prescription);
-            
+
             if (filter.Id != null)
                 prescriptionImages = prescriptionImages.Where(x => x.Id == filter.Id);
 
@@ -176,7 +168,7 @@ namespace Olives.Repositories.Medical
         }
 
         /// <summary>
-        /// Filter prescription by using specific conditions.
+        ///     Filter prescription by using specific conditions.
         /// </summary>
         /// <param name="prescriptionImages"></param>
         /// <param name="filter"></param>
@@ -186,13 +178,12 @@ namespace Olives.Repositories.Medical
             IQueryable<PrescriptionImage> prescriptionImages, FilterPrescriptionImageViewModel filter,
             OlivesHealthEntities olivesHealthEntities)
         {
-
             // Requester is not defined.
             if (filter.Requester == null)
                 throw new Exception("Requester must be specified.");
 
             // Patient only can see his/her records.
-            if (filter.Requester.Role == (byte)Role.Patient)
+            if (filter.Requester.Role == (byte) Role.Patient)
             {
                 prescriptionImages = prescriptionImages.Where(x => x.Owner == filter.Requester.Id);
                 if (filter.Partner != null)
@@ -211,12 +202,13 @@ namespace Olives.Repositories.Medical
                 relationships = relationships.Where(x => x.Source == filter.Partner.Value);
 
             var results = from r in relationships
-                          from m in prescriptionImages
-                          where r.Source == m.Owner || r.Source == m.Creator
-                          select m;
+                from m in prescriptionImages
+                where r.Source == m.Owner || r.Source == m.Creator
+                select m;
 
             return results;
-        } 
+        }
+
         #endregion
     }
 }

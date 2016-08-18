@@ -58,7 +58,7 @@ namespace Olives.Repositories.PersonalNote
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<ResponseDiaryFilter> FilterDiariesAsync(FilterDiaryViewModel filter)
+        public async Task<ResponseDiaryFilter> FilterDiaryAsync(FilterDiaryViewModel filter)
         {
             var context = _dataContext.Context;
             IQueryable<Diary> diaries = context.Diaries;
@@ -133,6 +133,12 @@ namespace Olives.Repositories.PersonalNote
             return initializer;
         }
 
+        /// <summary>
+        ///     Filter diaries by using specific conditions.
+        /// </summary>
+        /// <param name="diaries"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         private IQueryable<Diary> FilterDiaries(IQueryable<Diary> diaries, FilterDiaryViewModel filter)
         {
             // Id is specified.

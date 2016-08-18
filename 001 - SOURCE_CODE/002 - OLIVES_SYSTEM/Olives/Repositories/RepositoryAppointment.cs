@@ -8,8 +8,6 @@ using Olives.ViewModels.Response;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Olives.Repositories
 {
@@ -37,7 +35,7 @@ namespace Olives.Repositories
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        public async Task<Appointment> InitializeAppointment(Appointment info)
+        public async Task<Appointment> InitializeAppointmentAsync(Appointment info)
         {
             var context = _dataContext.Context;
 

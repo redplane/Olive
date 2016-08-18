@@ -2,9 +2,6 @@
 using Olives.ViewModels.Filter.Medical;
 using Olives.ViewModels.Response.Medical;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
-
 namespace Olives.Interfaces.Medical
 {
     public interface IRepositoryMedicalImage
@@ -26,9 +23,8 @@ namespace Olives.Interfaces.Medical
         /// <summary>
         ///     Delete medical record by using id
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="owner"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        Task<int> DeleteMedicalImageAsync(int id, int? owner);
+        Task<int> DeleteMedicalImageAsync(FilterMedicalImageViewModel filter);
     }
 }

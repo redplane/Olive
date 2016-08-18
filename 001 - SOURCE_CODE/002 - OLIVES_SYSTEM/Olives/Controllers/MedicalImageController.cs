@@ -13,7 +13,6 @@ using Olives.Enumerations;
 using Olives.Hubs;
 using Olives.Interfaces;
 using Olives.Interfaces.Medical;
-using Olives.Models;
 using Olives.ViewModels.Filter.Medical;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
@@ -21,7 +20,6 @@ using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
-using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
@@ -40,12 +38,11 @@ namespace Olives.Controllers
         /// <param name="log"></param>
         /// <param name="fileService"></param>
         /// <param name="notificationService"></param>
-        /// <param name="applicationSetting"></param>
         public MedicalImageController(
             IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryMedicalImage repositoryMedicalImage,
             IRepositoryStorage repositoryStorage,
             ITimeService timeService, INotificationService notificationService,
-            ILog log, IFileService fileService, ApplicationSetting applicationSetting)
+            ILog log, IFileService fileService)
         {
             _repositoryMedicalRecord = repositoryMedicalRecord;
             _repositoryMedicalImage = repositoryMedicalImage;
@@ -54,7 +51,6 @@ namespace Olives.Controllers
             _timeService = timeService;
             _notificationService = notificationService;
             _fileService = fileService;
-            _applicationSetting = applicationSetting;
         }
 
         #endregion
@@ -143,7 +139,7 @@ namespace Olives.Controllers
                 medicalImage.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
                 medicalImage.FullPath = Path.Combine(storageMedicalImage.Absolute,
                     $"{imageName}.{Values.StandardImageExtension}");
-                
+
                 // Convert bytestream to image file.
                 var medicalImageFile = _fileService.ConvertBytesToImage(info.File.Buffer);
 
@@ -225,8 +221,12 @@ namespace Olives.Controllers
 
             try
             {
+                var filter = new FilterMedicalImageViewModel();
+                filter.Id = id;
+                filter.Requester = requester;
+
                 // Remove the addiction of the requester.
-                var records = await _repositoryMedicalImage.DeleteMedicalImageAsync(id, requester.Id);
+                var records = await _repositoryMedicalImage.DeleteMedicalImageAsync(filter);
 
                 // No record has been affected.
                 if (records < 1)
@@ -353,12 +353,7 @@ namespace Olives.Controllers
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-
-        /// <summary>
-        ///     Application setting.
-        /// </summary>
-        private readonly ApplicationSetting _applicationSetting;
-
+        
         /// <summary>
         ///     Service which provides functions to handle file operations.
         /// </summary>

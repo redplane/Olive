@@ -10,8 +10,6 @@ using Shared.Enumerations;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Olives.Repositories
 {

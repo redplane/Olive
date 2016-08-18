@@ -14,7 +14,7 @@ namespace Olives.Interfaces.PersonalNote
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        Task<ResponseAddictionFilter> FilterAddictionsAsync(FilterAddictionViewModel filter);
+        Task<ResponseAddictionFilter> FilterAddictionAsync(FilterAddictionViewModel filter);
 
         /// <summary>
         ///     Initialize an allergy with given information.

@@ -1,11 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Olives.ViewModels.Filter;
 using Olives.ViewModels.Response;
-using Shared.Enumerations;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
-using FilterRelationshipViewModel = Olives.ViewModels.Filter.FilterRelationshipViewModel;
 
 namespace Olives.Interfaces
 {
@@ -17,22 +13,13 @@ namespace Olives.Interfaces
         /// <param name="filter"></param>
         /// <returns></returns>
         Task<Relation> FindRelationshipAsync(FilterRelationshipViewModel filter);
-        
-        /// <summary>
-        ///     Find a relation whose id match with search condition and person is taking part in it.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="person"></param>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        Task<IList<Relation>> FindRelationParticipation(int id, int person, byte? status);
 
         /// <summary>
         ///     Delete a relation asynchronously.
         /// </summary>
         /// <param name="filter">Id of relationship</param>
         /// <returns></returns>
-        Task<int> DeleteRelationAsync(FilterRelationshipViewModel filter);
+        Task<int> DeleteRelationshipAsync(FilterRelationshipViewModel filter);
 
         /// <summary>
         ///     Filter relationship base on the role of requester.

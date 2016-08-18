@@ -7,11 +7,8 @@ using Olives.Interfaces.PersonalNote;
 using Olives.ViewModels.Filter.Personal;
 using Olives.ViewModels.Response.Personal;
 using Shared.Enumerations;
-using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Olives.Repositories.PersonalNote
 {
@@ -44,7 +41,7 @@ namespace Olives.Repositories.PersonalNote
             // By default, take all records.
             var context = _dataContext.Context;
             IQueryable<Allergy> allergies = context.Allergies;
-            allergies = FilterAllergiesAsync(allergies, filter);
+            allergies = FilterAllergies(allergies, filter);
 
             // Result sorting.
             switch (filter.Direction)
@@ -96,7 +93,7 @@ namespace Olives.Repositories.PersonalNote
         /// <param name="allergies"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public IQueryable<Allergy> FilterAllergiesAsync(IQueryable<Allergy> allergies, FilterAllergyViewModel filter)
+        public IQueryable<Allergy> FilterAllergies(IQueryable<Allergy> allergies, FilterAllergyViewModel filter)
         {
             // Id is specified.
             if (filter.Id != null)
@@ -174,7 +171,7 @@ namespace Olives.Repositories.PersonalNote
             IQueryable<Allergy> allergies = context.Allergies;
 
             // Do filter.
-            allergies = FilterAllergiesAsync(allergies, filter);
+            allergies = FilterAllergies(allergies, filter);
 
             // Remove the filtered result.
             context.Allergies.RemoveRange(allergies);

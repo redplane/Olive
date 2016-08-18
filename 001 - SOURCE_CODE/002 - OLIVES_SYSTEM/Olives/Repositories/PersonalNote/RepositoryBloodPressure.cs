@@ -7,11 +7,8 @@ using Olives.Interfaces.PersonalNote;
 using Olives.ViewModels.Filter.Personal;
 using Olives.ViewModels.Response.Personal;
 using Shared.Enumerations;
-using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Olives.Repositories.PersonalNote
 {
@@ -37,7 +34,7 @@ namespace Olives.Repositories.PersonalNote
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        public async Task<BloodPressure> InitializeBloodPressureNoteAsync(BloodPressure info)
+        public async Task<BloodPressure> InitializeBloodPressureAsync(BloodPressure info)
         {
             // Add allergy to database context.
             var context = _dataContext.Context;
@@ -54,7 +51,7 @@ namespace Olives.Repositories.PersonalNote
         /// </summary>
         /// <param name="id">Allergy Id</param>
         /// <returns></returns>
-        public async Task<BloodPressure> FindBloodPressureNoteAsync(int id)
+        public async Task<BloodPressure> FindBloodPressureAsync(int id)
         {
             // Find heartbeat note by using id.
             var context = _dataContext.Context;
@@ -66,14 +63,14 @@ namespace Olives.Repositories.PersonalNote
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<int> DeleteBloodPressureNoteAsync(FilterBloodPressureViewModel filter)
+        public async Task<int> DeleteBloodPressureAsync(FilterBloodPressureViewModel filter)
         {
             #region Record filter
 
             // By default, take all information.
             var context = _dataContext.Context;
             IQueryable<BloodPressure> bloodPressures = context.BloodPressures;
-            bloodPressures = FilterBloodPressuresAsync(bloodPressures, filter);
+            bloodPressures = FilterBloodPressures(bloodPressures, filter);
 
             #endregion
 
@@ -94,12 +91,12 @@ namespace Olives.Repositories.PersonalNote
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<ResponseBloodPressureFilter> FilterBloodPressureNoteAsync(FilterBloodPressureViewModel filter)
+        public async Task<ResponseBloodPressureFilter> FilterBloodPressureAsync(FilterBloodPressureViewModel filter)
         {
             // By default, take all information.
             var context = _dataContext.Context;
             IQueryable<BloodPressure> bloodPressures = context.BloodPressures;
-            bloodPressures = FilterBloodPressuresAsync(bloodPressures, filter);
+            bloodPressures = FilterBloodPressures(bloodPressures, filter);
 
             // Result sorting.
             switch (filter.Direction)
@@ -158,7 +155,7 @@ namespace Olives.Repositories.PersonalNote
         /// <param name="bloodPressures"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        private IQueryable<BloodPressure> FilterBloodPressuresAsync(IQueryable<BloodPressure> bloodPressures,
+        private IQueryable<BloodPressure> FilterBloodPressures(IQueryable<BloodPressure> bloodPressures,
             FilterBloodPressureViewModel filter)
         {
             // Id is specified.

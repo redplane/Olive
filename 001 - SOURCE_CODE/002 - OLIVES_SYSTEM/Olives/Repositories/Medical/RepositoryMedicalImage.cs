@@ -9,8 +9,6 @@ using Olives.ViewModels.Response.Medical;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Olives.Repositories.Medical
 {
@@ -64,7 +62,7 @@ namespace Olives.Repositories.Medical
             // Record is defined.
             if (filter.Records != null)
             {
-                medicalImages = medicalImages.Skip(filter.Page * filter.Records.Value)
+                medicalImages = medicalImages.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
@@ -76,41 +74,35 @@ namespace Olives.Repositories.Medical
         /// <summary>
         ///     Delete a medical image asynchronously.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="owner"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<int> DeleteMedicalImageAsync(int id, int? owner)
+        public async Task<int> DeleteMedicalImageAsync(FilterMedicalImageViewModel filter)
         {
             // Database context initialization.
             var context = _dataContext.Context;
 
             // By default, take all records.
             IQueryable<MedicalImage> medicalImages = context.MedicalImages;
-
+            
             // Find the medical image by using id.
-            medicalImages = medicalImages.Where(x => x.Id == id);
-
-            // Owner is specified.
-            if (owner != null)
-                medicalImages = medicalImages.Where(x => x.Owner == owner);
-
+            medicalImages = FilterMedicalImages(medicalImages, filter, context);
+            
             // Go through every record and put the file path to must deleted list.
             await medicalImages.ForEachAsync(x =>
             {
                 var junkFile = new JunkFile();
                 junkFile.FullPath = x.FullPath;
                 context.JunkFiles.Add(junkFile);
-
             });
 
+            // Remove all searched medical image
             context.MedicalImages.RemoveRange(medicalImages);
-            
+
             // Count the number of affected records.
             var records = await context.SaveChangesAsync();
-            
+
             // Tell the calling function the number of affected records.
             return records;
-
         }
 
         /// <summary>
@@ -127,7 +119,7 @@ namespace Olives.Repositories.Medical
         }
 
         /// <summary>
-        /// Filter medical images by using specific conditions and based on requester role.
+        ///     Filter medical images by using specific conditions and based on requester role.
         /// </summary>
         /// <param name="medicalImages"></param>
         /// <param name="filter"></param>
@@ -139,9 +131,13 @@ namespace Olives.Repositories.Medical
             // Filter image by role.
             medicalImages = FilterMedicalImagesByRequesterRole(medicalImages, filter, olivesHealthEntities);
 
+            // Id is specified.
+            if (filter.Id != null)
+                medicalImages = medicalImages.Where(x => x.Id == filter.Id);
+
             // Filter by medical record id.
             medicalImages = medicalImages.Where(x => x.MedicalRecordId == filter.MedicalRecord);
-            
+
             // Created is specified.
             if (filter.MinCreated != null)
                 medicalImages = medicalImages.Where(x => x.Created >= filter.MinCreated.Value);
@@ -152,7 +148,7 @@ namespace Olives.Repositories.Medical
         }
 
         /// <summary>
-        /// Base on the requester role to do exact filter function.
+        ///     Base on the requester role to do exact filter function.
         /// </summary>
         /// <param name="medicalImages"></param>
         /// <param name="filter"></param>
@@ -166,7 +162,7 @@ namespace Olives.Repositories.Medical
                 throw new Exception("Requester must be specified.");
 
             // Patient only can see his/her records.
-            if (filter.Requester.Role == (byte)Role.Patient)
+            if (filter.Requester.Role == (byte) Role.Patient)
             {
                 medicalImages = medicalImages.Where(x => x.Owner == filter.Requester.Id);
                 if (filter.Partner != null)
@@ -185,9 +181,9 @@ namespace Olives.Repositories.Medical
                 relationships = relationships.Where(x => x.Source == filter.Partner.Value);
 
             var results = from r in relationships
-                          from m in medicalImages
-                          where r.Source == m.Owner || r.Source == m.Creator
-                          select m;
+                from m in medicalImages
+                where r.Source == m.Owner || r.Source == m.Creator
+                select m;
 
             return results;
         }

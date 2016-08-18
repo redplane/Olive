@@ -186,7 +186,7 @@ namespace Olives.Repositories
             // Take all relations which requester takes part in.
             IQueryable<Relation> relationships = context.Relations;
             relationships = relationships.Where(x => x.Source == filter.Requester || x.Target == filter.Requester);
-            
+
             // By default, take all patients.
             IQueryable<Patient> patients = context.Patients;
             patients = patients.Where(x => x.Id != filter.Requester);

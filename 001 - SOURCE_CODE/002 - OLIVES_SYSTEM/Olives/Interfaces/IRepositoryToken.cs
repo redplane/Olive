@@ -13,7 +13,7 @@ namespace Olives.Interfaces
         /// <param name="type"></param>
         /// <param name="code"></param>
         /// <returns></returns>
-        Task<AccountCode> FindAccountCodeAsync(int? owner, byte? type, string code);
+        Task<AccountCode> FindAccountTokenAsync(int? owner, byte? type, string code);
         
         #region New 
         /// <summary>
@@ -21,7 +21,7 @@ namespace Olives.Interfaces
         /// </summary>
         /// <param name="accountToken"></param>
         /// <returns></returns>
-        Task<AccountCode> InitializeToken(AccountCode accountToken);
+        Task<AccountCode> InitializeAccountTokenAsync(AccountCode accountToken);
 
         /// <summary>
         /// Find the first account token by using specified conditions.
@@ -35,7 +35,7 @@ namespace Olives.Interfaces
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        Task<int> DetachAccountToken(FilterAccountTokenViewModel filter);
+        Task<int> DeleteAccountTokenAsync(FilterAccountTokenViewModel filter);
         
         #endregion
     }

@@ -164,7 +164,7 @@ namespace Olives.Controllers
                 prescriptionImage.Owner = prescription.Owner;
                 
                 // Save the prescription image to database.
-                prescriptionImage = await _repositoryPrescriptionImage.InitializePrescriptionImage(prescriptionImage);
+                prescriptionImage = await _repositoryPrescriptionImage.InitializePrescriptionImageAsync(prescriptionImage);
 
                 #endregion
 
@@ -232,11 +232,15 @@ namespace Olives.Controllers
         {
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
+            
             try
             {
+                var filter = new FilterPrescriptionImageViewModel();
+                filter.Id = id;
+                filter.Requester = requester;
+
                 // Find the prescription image and delete 'em.
-                var records = await _repositoryPrescriptionImage.DeletePrescriptionImageAsync(id, requester.Id);
+                var records = await _repositoryPrescriptionImage.DeletePrescriptionImageAsync(filter);
 
                 if (records < 0)
                 {

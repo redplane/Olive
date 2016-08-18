@@ -14,7 +14,7 @@ namespace Olives.Interfaces.PersonalNote
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        Task<Heartbeat> InitializeHeartbeatNoteAsync(Heartbeat info);
+        Task<Heartbeat> InitializeHeartbeatAsync(Heartbeat info);
 
         /// <summary>
         ///     Find heartbeat by using heartbeat note id.
@@ -34,6 +34,6 @@ namespace Olives.Interfaces.PersonalNote
         ///     Delete a heartbeat note asynchronously.
         /// </summary>
         /// <param name="filter"></param>
-        Task<int> DeleteHeartbeatNoteAsync(FilterHeatbeatViewModel filter);
+        Task<int> DeleteHeartbeatAsync(FilterHeatbeatViewModel filter);
     }
 }

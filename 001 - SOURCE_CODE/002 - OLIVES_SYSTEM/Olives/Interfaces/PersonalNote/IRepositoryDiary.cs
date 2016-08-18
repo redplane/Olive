@@ -33,6 +33,6 @@ namespace Olives.Interfaces.PersonalNote
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        Task<ResponseDiaryFilter> FilterDiariesAsync(FilterDiaryViewModel filter);
+        Task<ResponseDiaryFilter> FilterDiaryAsync(FilterDiaryViewModel filter);
     }
 }

@@ -2,8 +2,6 @@
 using Olives.ViewModels.Filter.Medical;
 using Olives.ViewModels.Response.Medical;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Olives.Interfaces.Medical
 {
@@ -12,9 +10,9 @@ namespace Olives.Interfaces.Medical
         /// <summary>
         ///     Delete the medical record asynchronously.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        Task<int> DeleteMedicalRecordAsync(int id);
+        Task<int> DeleteMedicalRecordAsync(FilterMedicalRecordViewModel filter);
 
         /// <summary>
         ///     Initialize / edit a medical record asynchronously.

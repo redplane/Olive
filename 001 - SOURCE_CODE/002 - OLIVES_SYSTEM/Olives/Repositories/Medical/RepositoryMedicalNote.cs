@@ -8,11 +8,8 @@ using Olives.Interfaces.Medical;
 using Olives.ViewModels.Filter.Medical;
 using Olives.ViewModels.Response.Medical;
 using Shared.Enumerations;
-using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Olives.Repositories.Medical
 {
@@ -69,7 +66,7 @@ namespace Olives.Repositories.Medical
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<ResponseMedicalNoteFilter> FilterMedicalNotesAsync(FilterMedicalNoteViewModel filter)
+        public async Task<ResponseMedicalNoteFilter> FilterMedicalNoteAsync(FilterMedicalNoteViewModel filter)
         {
             // By default, take all record by searching creator id.
             var context = _dataContext.Context;
@@ -157,7 +154,7 @@ namespace Olives.Repositories.Medical
             // Medical record is defined.
             if (filter.MedicalRecord != null)
                 medicalNotes = medicalNotes.Where(x => x.MedicalRecordId == filter.MedicalRecord);
-            
+
             // Note is specified.
             if (filter.Note != null)
                 medicalNotes = medicalNotes.Where(x => x.Note.Contains(filter.Note));
@@ -180,7 +177,7 @@ namespace Olives.Repositories.Medical
         }
 
         /// <summary>
-        /// Base on the requester role to do exact filter function.
+        ///     Base on the requester role to do exact filter function.
         /// </summary>
         /// <param name="medicalNotes"></param>
         /// <param name="filter"></param>
@@ -194,7 +191,7 @@ namespace Olives.Repositories.Medical
                 throw new Exception("Requester must be specified.");
 
             // Patient only can see his/her records.
-            if (filter.Requester.Role == (byte)Role.Patient)
+            if (filter.Requester.Role == (byte) Role.Patient)
             {
                 medicalNotes = medicalNotes.Where(x => x.Owner == filter.Requester.Id);
                 if (filter.Partner != null)
@@ -213,9 +210,9 @@ namespace Olives.Repositories.Medical
                 relationships = relationships.Where(x => x.Source == filter.Partner.Value);
 
             var results = from r in relationships
-                          from m in medicalNotes
-                          where r.Source == m.Owner || r.Source == m.Creator
-                          select m;
+                from m in medicalNotes
+                where r.Source == m.Owner || r.Source == m.Creator
+                select m;
 
             return results;
         }

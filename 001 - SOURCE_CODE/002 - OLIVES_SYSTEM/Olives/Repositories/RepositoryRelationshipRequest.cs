@@ -156,7 +156,8 @@ namespace Olives.Repositories
                     }, relation);
 
                     // Remove the relationship request.
-                    context.RelationshipRequests.RemoveRange(context.RelationshipRequests.Where(x => x.Id == relationshipRequest.Id));
+                    context.RelationshipRequests.RemoveRange(
+                        context.RelationshipRequests.Where(x => x.Id == relationshipRequest.Id));
 
                     // Save changes.
                     await context.SaveChangesAsync();

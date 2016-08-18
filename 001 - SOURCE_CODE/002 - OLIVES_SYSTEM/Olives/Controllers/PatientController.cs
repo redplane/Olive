@@ -470,7 +470,7 @@ namespace Olives.Controllers
             accountToken.Owner = account.Id;
             accountToken.Type = (byte) TypeAccountCode.Activation;
 
-            accountToken = await _repositoryCode.InitializeToken(accountToken);
+            accountToken = await _repositoryCode.InitializeAccountTokenAsync(accountToken);
 
             #endregion
             

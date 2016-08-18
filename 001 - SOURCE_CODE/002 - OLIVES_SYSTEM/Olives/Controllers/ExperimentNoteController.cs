@@ -19,8 +19,6 @@ using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
-using Shared.ViewModels.Filter;
-
 namespace Olives.Controllers
 {
     [Route("api/medical/experiment")]
@@ -69,7 +67,7 @@ namespace Olives.Controllers
             filter.Id = id;
             filter.Requester = requester;
 
-            var result = await _repositoryExperimentNote.FilterExperimentNotesAsync(filter);
+            var result = await _repositoryExperimentNote.FilterExperimentNoteAsync(filter);
             if (result.Total != 1)
             {
                 _log.Error($"There is/are {result.Total} medical experiment note [Id:{id}]");
@@ -190,7 +188,7 @@ namespace Olives.Controllers
                 note.Owner = medicalRecord.Owner;
                 note.Creator = requester.Id;
 
-                note = await _repositoryExperimentNote.InitializeExperimentNote(note);
+                note = await _repositoryExperimentNote.InitializeExperimentNoteAsync(note);
 
                 #endregion
 
@@ -348,7 +346,7 @@ namespace Olives.Controllers
                     experimentNote.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                     // Update the experiment note.
-                    experimentNote = await _repositoryExperimentNote.InitializeExperimentNote(experimentNote);
+                    experimentNote = await _repositoryExperimentNote.InitializeExperimentNoteAsync(experimentNote);
                 }
 
                 #endregion
@@ -428,7 +426,7 @@ namespace Olives.Controllers
                 filter.Requester = requester;
 
                 // Remove note and retrieve the response.
-                var records = await _repositoryExperimentNote.DeleteExperimentNotesAsync(filter);
+                var records = await _repositoryExperimentNote.DeleteExperimentNoteAsync(filter);
 
                 // No record has been removed.
                 if (records < 1)
@@ -497,7 +495,7 @@ namespace Olives.Controllers
                 filter.Requester = requester;
 
                 // Do the filter.
-                var result = await _repositoryExperimentNote.FilterExperimentNotesAsync(filter);
+                var result = await _repositoryExperimentNote.FilterExperimentNoteAsync(filter);
 
                 // Tell the client about the filter result.
                 return Request.CreateResponse(HttpStatusCode.OK, new

@@ -14,7 +14,7 @@ namespace Olives.Interfaces
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        Task<Appointment> InitializeAppointment(Appointment info);
+        Task<Appointment> InitializeAppointmentAsync(Appointment info);
 
         /// <summary>
         ///     Filter appointment with requester account & password.

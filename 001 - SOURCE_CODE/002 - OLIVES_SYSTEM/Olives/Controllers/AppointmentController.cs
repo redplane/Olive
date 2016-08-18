@@ -229,7 +229,7 @@ namespace Olives.Controllers
                 appointment.Status = (byte) StatusAppointment.Pending;
 
                 // Initialize an appointment into database.
-                appointment = await _repositoryAppointment.InitializeAppointment(appointment);
+                appointment = await _repositoryAppointment.InitializeAppointmentAsync(appointment);
 
                 #endregion
 
@@ -365,7 +365,7 @@ namespace Olives.Controllers
             appointment.LastModified = lastModifiedTime;
 
             // Update the appointment.
-            await _repositoryAppointment.InitializeAppointment(appointment);
+            await _repositoryAppointment.InitializeAppointmentAsync(appointment);
 
             #endregion
 

@@ -60,7 +60,7 @@ namespace Olives.Controllers
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Retrieve the result.
-            var bloodPressureNote = await _repositoryBloodPressure.FindBloodPressureNoteAsync(id);
+            var bloodPressureNote = await _repositoryBloodPressure.FindBloodPressureAsync(id);
 
             // No result has been received.
             if (bloodPressureNote == null)
@@ -166,7 +166,7 @@ namespace Olives.Controllers
             #region Result handling
 
             // Insert a new allergy to database.
-            bloodPressure = await _repositoryBloodPressure.InitializeBloodPressureNoteAsync(bloodPressure);
+            bloodPressure = await _repositoryBloodPressure.InitializeBloodPressureAsync(bloodPressure);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -221,7 +221,7 @@ namespace Olives.Controllers
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find allergy by using allergy id and owner id.
-            var bloodPressureNote = await _repositoryBloodPressure.FindBloodPressureNoteAsync(id);
+            var bloodPressureNote = await _repositoryBloodPressure.FindBloodPressureAsync(id);
 
             // Not record has been found.
             if (bloodPressureNote == null)
@@ -270,7 +270,7 @@ namespace Olives.Controllers
             bloodPressureNote.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Update the record.
-            bloodPressureNote = await _repositoryBloodPressure.InitializeBloodPressureNoteAsync(bloodPressureNote);
+            bloodPressureNote = await _repositoryBloodPressure.InitializeBloodPressureAsync(bloodPressureNote);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -309,7 +309,7 @@ namespace Olives.Controllers
                 filter.Owner = requester.Id;
 
                 // Remove the found allergy.
-                var deletedRecords = await _repositoryBloodPressure.DeleteBloodPressureNoteAsync(filter);
+                var deletedRecords = await _repositoryBloodPressure.DeleteBloodPressureAsync(filter);
                 if (deletedRecords < 1)
                 {
                     // Log the error.
@@ -391,7 +391,7 @@ namespace Olives.Controllers
             #region Result handling
 
             // Retrieve the results list.
-            var result = await _repositoryBloodPressure.FilterBloodPressureNoteAsync(filter);
+            var result = await _repositoryBloodPressure.FilterBloodPressureAsync(filter);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {

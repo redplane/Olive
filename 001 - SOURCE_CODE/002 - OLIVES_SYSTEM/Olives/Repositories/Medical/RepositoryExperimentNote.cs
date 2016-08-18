@@ -8,11 +8,8 @@ using Olives.Interfaces.Medical;
 using Olives.ViewModels.Filter.Medical;
 using Olives.ViewModels.Response.Medical;
 using Shared.Enumerations;
-using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Olives.Repositories.Medical
 {
@@ -53,7 +50,7 @@ namespace Olives.Repositories.Medical
         /// </summary>
         /// <param name="note"></param>
         /// <returns></returns>
-        public async Task<ExperimentNote> InitializeExperimentNote(ExperimentNote note)
+        public async Task<ExperimentNote> InitializeExperimentNoteAsync(ExperimentNote note)
         {
             // Begin a transaction.
             var context = _dataContext.Context;
@@ -84,7 +81,7 @@ namespace Olives.Repositories.Medical
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<int> DeleteExperimentNotesAsync(FilterExperimentNoteViewModel filter)
+        public async Task<int> DeleteExperimentNoteAsync(FilterExperimentNoteViewModel filter)
         {
             // Database context initialization.
             var context = _dataContext.Context;
@@ -101,7 +98,7 @@ namespace Olives.Repositories.Medical
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<ResponseExperimentNoteFilter> FilterExperimentNotesAsync(FilterExperimentNoteViewModel filter)
+        public async Task<ResponseExperimentNoteFilter> FilterExperimentNoteAsync(FilterExperimentNoteViewModel filter)
         {
             // By default, take all experiment notes.
             var context = _dataContext.Context;
@@ -164,7 +161,7 @@ namespace Olives.Repositories.Medical
         /// <param name="filter"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public IQueryable<ExperimentNote> FilterExperimentNotes(IQueryable<ExperimentNote> experimentNotes,
+        private IQueryable<ExperimentNote> FilterExperimentNotes(IQueryable<ExperimentNote> experimentNotes,
             FilterExperimentNoteViewModel filter, OlivesHealthEntities context)
         {
             // Base on the requester role to do the filter function.
@@ -177,7 +174,7 @@ namespace Olives.Repositories.Medical
             // Filter by medical record id.
             if (filter.MedicalRecord != null)
                 experimentNotes = experimentNotes.Where(x => x.MedicalRecordId == filter.MedicalRecord);
-            
+
             // Filter by medical record name.
             if (!string.IsNullOrWhiteSpace(filter.Name))
                 experimentNotes = experimentNotes.Where(x => x.Name.Contains(filter.Name));
@@ -204,13 +201,14 @@ namespace Olives.Repositories.Medical
         }
 
         /// <summary>
-        /// Base on the requester role to do exact filter function.
+        ///     Base on the requester role to do exact filter function.
         /// </summary>
         /// <param name="experimentNotes"></param>
         /// <param name="filter"></param>
         /// <param name="olivesHealthEntities"></param>
         /// <returns></returns>
-        private IQueryable<ExperimentNote> FilterExperimentNotesByRequesterRole(IQueryable<ExperimentNote> experimentNotes,
+        private IQueryable<ExperimentNote> FilterExperimentNotesByRequesterRole(
+            IQueryable<ExperimentNote> experimentNotes,
             FilterExperimentNoteViewModel filter, OlivesHealthEntities olivesHealthEntities)
         {
             // Requester is not defined.
@@ -218,7 +216,7 @@ namespace Olives.Repositories.Medical
                 throw new Exception("Requester must be specified.");
 
             // Patient only can see his/her records.
-            if (filter.Requester.Role == (byte)Role.Patient)
+            if (filter.Requester.Role == (byte) Role.Patient)
             {
                 experimentNotes = experimentNotes.Where(x => x.Owner == filter.Requester.Id);
                 if (filter.Partner != null)
@@ -237,12 +235,13 @@ namespace Olives.Repositories.Medical
                 relationships = relationships.Where(x => x.Source == filter.Partner.Value);
 
             var results = from r in relationships
-                          from e in experimentNotes
-                          where r.Source == e.Owner || r.Source == e.Creator
-                          select e;
+                from e in experimentNotes
+                where r.Source == e.Owner || r.Source == e.Creator
+                select e;
 
             return results;
         }
+
         #endregion
     }
 }

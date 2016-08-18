@@ -141,7 +141,7 @@ namespace Olives.Controllers
             heartbeat.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Insert a new allergy to database.
-            var result = await _repositoryHeartbeat.InitializeHeartbeatNoteAsync(heartbeat);
+            var result = await _repositoryHeartbeat.InitializeHeartbeatAsync(heartbeat);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -230,7 +230,7 @@ namespace Olives.Controllers
             heartbeat.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Update heartbeat.
-            heartbeat = await _repositoryHeartbeat.InitializeHeartbeatNoteAsync(heartbeat);
+            heartbeat = await _repositoryHeartbeat.InitializeHeartbeatAsync(heartbeat);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -267,7 +267,7 @@ namespace Olives.Controllers
                 filter.Owner = requester.Id;
 
                 // Remove the found allergy.
-                var deletedRecords = await _repositoryHeartbeat.DeleteHeartbeatNoteAsync(filter);
+                var deletedRecords = await _repositoryHeartbeat.DeleteHeartbeatAsync(filter);
 
                 // No record has been deleted.
                 if (deletedRecords < 1)

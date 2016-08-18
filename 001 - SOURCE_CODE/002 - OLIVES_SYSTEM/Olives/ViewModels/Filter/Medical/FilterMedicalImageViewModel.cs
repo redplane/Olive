@@ -12,6 +12,11 @@ namespace Olives.ViewModels.Filter.Medical
     public class FilterMedicalImageViewModel : IPagination
     {
         /// <summary>
+        /// Id of medical image
+        /// </summary>
+        public int? Id { get; set; }
+
+        /// <summary>
         ///     Id of person who sent the filter request.
         /// </summary>
         [BindNever]

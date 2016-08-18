@@ -2,8 +2,6 @@
 using Olives.ViewModels.Filter.Medical;
 using Olives.ViewModels.Response.Medical;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Olives.Interfaces.Medical
 {
@@ -21,20 +19,20 @@ namespace Olives.Interfaces.Medical
         /// </summary>
         /// <param name="note"></param>
         /// <returns></returns>
-        Task<ExperimentNote> InitializeExperimentNote(ExperimentNote note);
+        Task<ExperimentNote> InitializeExperimentNoteAsync(ExperimentNote note);
 
         /// <summary>
         ///     Delete experiment record or its infos only.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        Task<int> DeleteExperimentNotesAsync(FilterExperimentNoteViewModel filter);
+        Task<int> DeleteExperimentNoteAsync(FilterExperimentNoteViewModel filter);
 
         /// <summary>
         ///     Filter experiment note asynchronously by using specific conditions
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        Task<ResponseExperimentNoteFilter> FilterExperimentNotesAsync(FilterExperimentNoteViewModel filter);
+        Task<ResponseExperimentNoteFilter> FilterExperimentNoteAsync(FilterExperimentNoteViewModel filter);
     }
 }

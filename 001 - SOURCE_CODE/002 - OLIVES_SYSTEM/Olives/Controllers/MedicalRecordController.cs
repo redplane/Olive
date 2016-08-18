@@ -19,7 +19,6 @@ using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
-using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
@@ -58,18 +57,18 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Get([FromUri] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
             #region Record filter
 
             var filter = new FilterMedicalRecordViewModel();
             filter.Id = id;
             filter.Requester = requester;
-            
+
             // Do the filter.
             var result = await _repositoryMedical.FilterMedicalRecordAsync(filter);
             if (result.Total != 1)
@@ -91,7 +90,7 @@ namespace Olives.Controllers
                     Error = $"{Language.WarnRecordNotFound}"
                 });
             }
-            
+
             #endregion
 
             return Request.CreateResponse(HttpStatusCode.OK, new
@@ -133,7 +132,7 @@ namespace Olives.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Post([FromBody] InitializeMedicalRecordViewModel info)
         {
             #region Parameters validate
@@ -158,10 +157,10 @@ namespace Olives.Controllers
             #region Role to creator and owner
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Requester is a doctor, that means he is always the creator.
-            if (requester.Role == (byte)Role.Doctor)
+            if (requester.Role == (byte) Role.Doctor)
             {
                 info.Creator = requester.Id;
 
@@ -192,7 +191,8 @@ namespace Olives.Controllers
                     // Creator and owner doesn't have any relationship.
                     if (!rPeopleConnected)
                     {
-                        _log.Error($"Creator [Id: {info.Creator.Value}] doesn't have relationship with owner [Id: {info.Owner}]");
+                        _log.Error(
+                            $"Creator [Id: {info.Creator.Value}] doesn't have relationship with owner [Id: {info.Owner}]");
                         return Request.CreateResponse(HttpStatusCode.Forbidden, new
                         {
                             Error = $"{Language.WarnHasNoRelationship}"
@@ -218,14 +218,14 @@ namespace Olives.Controllers
                 medicalRecord.Info = JsonConvert.SerializeObject(info.Infos);
                 medicalRecord.Time = info.Time;
                 medicalRecord.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
-                
+
                 // Insert a new allergy to database.
                 var result = await _repositoryMedical.InitializeMedicalRecordAsync(medicalRecord);
 
                 #endregion
 
                 #region Notification initialization
-                
+
                 if (medicalRecord.Creator != info.Owner.Value)
                 {
                     var recipient = info.Owner.Value;
@@ -233,8 +233,8 @@ namespace Olives.Controllers
                         recipient = info.Creator.Value;
 
                     var notification = new Notification();
-                    notification.Type = (byte)NotificationType.Create;
-                    notification.Topic = (byte)NotificationTopic.MedicalRecord;
+                    notification.Type = (byte) NotificationType.Create;
+                    notification.Topic = (byte) NotificationTopic.MedicalRecord;
                     notification.Container = medicalRecord.Id;
                     notification.ContainerType = (byte) NotificationTopic.MedicalRecord;
                     notification.Broadcaster = requester.Id;
@@ -283,7 +283,7 @@ namespace Olives.Controllers
         /// <param name="info"></param>
         /// <returns></returns>
         [HttpPut]
-        [OlivesAuthorize(new[] { Role.Doctor, Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> Put([FromUri] int id, [FromBody] EditMedicalRecordViewModel info)
         {
             #region Paramters validation
@@ -308,7 +308,7 @@ namespace Olives.Controllers
             #region Medical record validation.
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find the record first.
             var medicalRecord = await _repositoryMedical.FindMedicalRecordAsync(id);
@@ -369,17 +369,17 @@ namespace Olives.Controllers
                 #endregion
 
                 #region Notification initialization
-                
+
                 // If the medical record is created privately, no notification should be sent.
                 if (medicalRecord.Creator != medicalRecord.Owner)
                 {
                     var recipient = requester.Id == medicalRecord.Owner ? medicalRecord.Creator : medicalRecord.Owner;
-                    
+
                     var notification = new Notification();
-                    notification.Type = (byte)NotificationType.Edit;
-                    notification.Topic = (byte)NotificationTopic.MedicalRecord;
+                    notification.Type = (byte) NotificationType.Edit;
+                    notification.Topic = (byte) NotificationTopic.MedicalRecord;
                     notification.Container = medicalRecord.Id;
-                    notification.ContainerType = (byte)NotificationTopic.MedicalRecord;
+                    notification.ContainerType = (byte) NotificationTopic.MedicalRecord;
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
                     notification.Record = medicalRecord.Id;
@@ -435,11 +435,11 @@ namespace Olives.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
-        [OlivesAuthorize(new[] { Role.Patient })]
+        [OlivesAuthorize(new[] {Role.Patient})]
         public async Task<HttpResponseMessage> Delete([FromUri] int id)
         {
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Find the medical record.
             var medicalRecord = await _repositoryMedical.FindMedicalRecordAsync(id);
@@ -466,7 +466,11 @@ namespace Olives.Controllers
 
             try
             {
-                var records = await _repositoryMedical.DeleteMedicalRecordAsync(id);
+                var filter = new FilterMedicalRecordViewModel();
+                filter.Id = id;
+                filter.Requester = requester;
+
+                var records = await _repositoryMedical.DeleteMedicalRecordAsync(filter);
                 if (records < 1)
                 {
                     _log.Error($"There is no medical record [Id: {id}] is found in database");
@@ -492,7 +496,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/medical/record/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
+        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
         public async Task<HttpResponseMessage> FilterMedicalRecord([FromBody] FilterMedicalRecordViewModel filter)
         {
             #region Paramters validation
@@ -519,7 +523,7 @@ namespace Olives.Controllers
             try
             {
                 // Retrieve information of person who sent request.
-                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
                 filter.Requester = requester;
 
                 // Filter medical records.

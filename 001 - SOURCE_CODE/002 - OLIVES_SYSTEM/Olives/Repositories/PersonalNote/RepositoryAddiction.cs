@@ -7,11 +7,8 @@ using Olives.Interfaces.PersonalNote;
 using Olives.ViewModels.Filter.Personal;
 using Olives.ViewModels.Response;
 using Shared.Enumerations;
-using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Olives.Repositories.PersonalNote
 {
@@ -43,7 +40,7 @@ namespace Olives.Repositories.PersonalNote
         {
             var context = _dataContext.Context;
             IQueryable<Addiction> addictions = context.Addictions;
-            addictions = FilterAddictionsAsync(addictions, filter);
+            addictions = FilterAddictions(addictions, filter);
 
             // Delete and retrieve the affected records.
             context.Addictions.RemoveRange(addictions);
@@ -59,12 +56,12 @@ namespace Olives.Repositories.PersonalNote
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<ResponseAddictionFilter> FilterAddictionsAsync(FilterAddictionViewModel filter)
+        public async Task<ResponseAddictionFilter> FilterAddictionAsync(FilterAddictionViewModel filter)
         {
             // By default, take all records from database.
             var context = _dataContext.Context;
             IQueryable<Addiction> addictions = context.Addictions;
-            addictions = FilterAddictionsAsync(addictions, filter);
+            addictions = FilterAddictions(addictions, filter);
 
             // Result filter
             switch (filter.Direction)
@@ -118,7 +115,7 @@ namespace Olives.Repositories.PersonalNote
         /// <param name="addictions"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        private IQueryable<Addiction> FilterAddictionsAsync(IQueryable<Addiction> addictions,
+        private IQueryable<Addiction> FilterAddictions(IQueryable<Addiction> addictions,
             FilterAddictionViewModel filter)
         {
             // Id is specified.

@@ -9,7 +9,6 @@ using Shared.Enumerations;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels.Response;
 
 namespace Olives.Repositories
 {
@@ -115,7 +114,7 @@ namespace Olives.Repositories
         }
 
         /// <summary>
-        /// Make the message be seen.
+        ///     Make the message be seen.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -140,11 +139,8 @@ namespace Olives.Repositories
                     messages = FilterMessages(messages, filter);
 
                     // Change the status of messages.
-                    await messages.ForEachAsync(x =>
-                    {
-                        x.IsSeen = true;
-                    });
-                    
+                    await messages.ForEachAsync(x => { x.IsSeen = true; });
+
                     // Save the changes.
                     var records = await context.SaveChangesAsync();
 
@@ -162,7 +158,7 @@ namespace Olives.Repositories
         }
 
         /// <summary>
-        /// Filter message by using specific conditions.
+        ///     Filter message by using specific conditions.
         /// </summary>
         /// <param name="messages"></param>
         /// <param name="filter"></param>
@@ -204,7 +200,7 @@ namespace Olives.Repositories
                 messages = messages.Where(x => x.IsSeen == filter.IsSeen.Value);
 
             return messages;
-        } 
+        }
 
         #endregion
     }

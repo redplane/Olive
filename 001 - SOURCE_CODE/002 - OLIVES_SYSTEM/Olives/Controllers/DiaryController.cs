@@ -414,7 +414,7 @@ namespace Olives.Controllers
                 filter.Owner = requester.Id;
 
                 // Insert a new allergy to database.
-                var result = await _repositoryDiary.FilterDiariesAsync(filter);
+                var result = await _repositoryDiary.FilterDiaryAsync(filter);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {

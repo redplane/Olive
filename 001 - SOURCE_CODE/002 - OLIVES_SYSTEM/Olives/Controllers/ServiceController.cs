@@ -122,7 +122,7 @@ namespace Olives.Controllers
 
                 try
                 {
-                    await _repositoryToken.DetachAccountToken(filter);
+                    await _repositoryToken.DeleteAccountTokenAsync(filter);
                 }
                 catch (Exception exception)
                 {

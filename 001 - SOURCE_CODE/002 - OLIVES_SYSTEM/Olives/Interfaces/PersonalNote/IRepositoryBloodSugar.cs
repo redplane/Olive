@@ -14,7 +14,7 @@ namespace Olives.Interfaces.PersonalNote
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        Task<SugarBlood> InitializeSugarbloodNoteAsync(SugarBlood info);
+        Task<SugarBlood> InitializeBloodSugarAsync(SugarBlood info);
 
         /// <summary>
         ///     Find blood sugar by using blood sugar note id.

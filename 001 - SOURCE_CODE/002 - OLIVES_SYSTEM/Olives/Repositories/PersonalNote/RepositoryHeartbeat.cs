@@ -7,11 +7,8 @@ using Olives.Interfaces.PersonalNote;
 using Olives.ViewModels.Filter.Personal;
 using Olives.ViewModels.Response.Personal;
 using Shared.Enumerations;
-using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Olives.Repositories.PersonalNote
 {
@@ -37,7 +34,7 @@ namespace Olives.Repositories.PersonalNote
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        public async Task<Heartbeat> InitializeHeartbeatNoteAsync(Heartbeat info)
+        public async Task<Heartbeat> InitializeHeartbeatAsync(Heartbeat info)
         {
             // Add allergy to database context.
             var context = _dataContext.Context;
@@ -66,7 +63,7 @@ namespace Olives.Repositories.PersonalNote
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<int> DeleteHeartbeatNoteAsync(FilterHeatbeatViewModel filter)
+        public async Task<int> DeleteHeartbeatAsync(FilterHeatbeatViewModel filter)
         {
             var context = _dataContext.Context;
 

@@ -7,11 +7,8 @@ using Olives.Interfaces.PersonalNote;
 using Olives.ViewModels.Filter.Personal;
 using Olives.ViewModels.Response.Personal;
 using Shared.Enumerations;
-using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Olives.Repositories.PersonalNote
 {
@@ -39,7 +36,7 @@ namespace Olives.Repositories.PersonalNote
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        public async Task<SugarBlood> InitializeSugarbloodNoteAsync(SugarBlood info)
+        public async Task<SugarBlood> InitializeBloodSugarAsync(SugarBlood info)
         {
             // Add allergy to database context.
             var context = _dataContext.Context;

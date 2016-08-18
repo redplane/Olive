@@ -2,8 +2,6 @@
 using System.Web;
 using Olives.Interfaces;
 using Olives.Models;
-using Shared.Interfaces;
-using Shared.Models;
 
 namespace Olives.Repositories
 {
@@ -83,7 +81,6 @@ namespace Olives.Repositories
             }
             catch
             {
-                return;
             }
         }
 

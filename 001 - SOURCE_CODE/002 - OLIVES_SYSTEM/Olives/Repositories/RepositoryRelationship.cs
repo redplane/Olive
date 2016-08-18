@@ -9,10 +9,6 @@ using Olives.ViewModels.Response;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
-using FilterRelationshipViewModel = Olives.ViewModels.Filter.FilterRelationshipViewModel;
 
 namespace Olives.Repositories
 {
@@ -21,7 +17,7 @@ namespace Olives.Repositories
         #region Properties
 
         /// <summary>
-        /// Context wrapper which contains context to access to database.
+        ///     Context wrapper which contains context to access to database.
         /// </summary>
         private readonly IOliveDataContext _dataContext;
 
@@ -30,7 +26,7 @@ namespace Olives.Repositories
         #region Constructors
 
         /// <summary>
-        /// Initialize an instance of repository which contains context wrapper.
+        ///     Initialize an instance of repository which contains context wrapper.
         /// </summary>
         /// <param name="dataContext"></param>
         public RepositoryRelationship(IOliveDataContext dataContext)
@@ -45,7 +41,8 @@ namespace Olives.Repositories
         /// <summary>
         ///     Find the relationship with specific conditions.
         /// </summary>
-        /// <param name="filter"></param>>
+        /// <param name="filter"></param>
+        /// >
         /// <returns></returns>
         public async Task<Relation> FindRelationshipAsync(FilterRelationshipViewModel filter)
         {
@@ -61,43 +58,23 @@ namespace Olives.Repositories
             // Return the first queried result.
             return await relationships.FirstOrDefaultAsync();
         }
-
-        /// <summary>
-        ///     Find a relation whose id match with search condition and person is taking part in it.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="person"></param>
-        /// <param name="status"></param>
-        /// <returns></returns>
-        public async Task<IList<Relation>> FindRelationParticipation(int id, int person, byte? status)
-        {
-            var context = _dataContext.Context;
-
-            // By default, take all relationship.
-            IQueryable<Relation> results = context.Relations;
-
-            // Find the relation whose id is matched and has the specific person takes part in.
-            results = results.Where(x => x.Id == id && (x.Source == id || x.Target == id));
-            
-            return await results.ToListAsync();
-        }
-
+        
         /// <summary>
         ///     Delete a relation asynchronously.
         /// </summary>
         /// <param name="filter">Id of relationship</param>
         /// <returns></returns>
-        public async Task<int> DeleteRelationAsync(FilterRelationshipViewModel filter)
+        public async Task<int> DeleteRelationshipAsync(FilterRelationshipViewModel filter)
         {
             var context = _dataContext.Context;
 
             // By default, take all relationships.
             IQueryable<Relation> relationships = context.Relations;
-            
+
             // Filter the relationships.
             relationships = FilterRelationships(relationships, filter);
-            
-            
+
+
             // Find the relation whose id is matched and has the specific person takes part in.
             context.Relations.RemoveRange(relationships);
 
@@ -115,7 +92,7 @@ namespace Olives.Repositories
             // By default, take all relationship.
             IQueryable<Relation> relationships = context.Relations;
             relationships = FilterRelationships(relationships, filter);
-            
+
             // Response initialization.Filter
             var response = new ResponseRelationshipFilter();
             response.Total = await relationships.CountAsync();
@@ -145,7 +122,7 @@ namespace Olives.Repositories
 
             // Take the relationship whose source is requester and type is provide treatment.
             relationships = relationships.Where(x => x.Source == requester);
-            
+
             // Take all people who are doctor.
             IQueryable<Doctor> doctors = context.Doctors;
 
@@ -203,7 +180,7 @@ namespace Olives.Repositories
 
             // By default, take all relationships.
             IQueryable<Relation> relationships = context.Relations;
-            
+
             // Find the relationship which these 2 people take part in.
             return await
                 relationships.AnyAsync(
@@ -227,7 +204,7 @@ namespace Olives.Repositories
             // Id is specified.
             if (filter.Id != null)
                 relationships = relationships.Where(x => x.Id == filter.Id);
-            
+
             // Created is specified.
             if (filter.MinCreated != null)
                 relationships = relationships.Where(x => x.Created >= filter.MinCreated);
@@ -252,7 +229,7 @@ namespace Olives.Repositories
                 throw new Exception("Requester must be specified.");
 
             // Patient is always the relationship request sender.
-            if (filter.Requester.Role == (byte)Role.Patient)
+            if (filter.Requester.Role == (byte) Role.Patient)
             {
                 // Find the source by using patient id.
                 relationships = relationships.Where(x => x.Source == filter.Requester.Id);
@@ -273,6 +250,7 @@ namespace Olives.Repositories
 
             return relationships;
         }
+
         #endregion
     }
 }

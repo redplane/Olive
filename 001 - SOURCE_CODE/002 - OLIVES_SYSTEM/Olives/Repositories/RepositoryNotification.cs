@@ -11,7 +11,6 @@ using Shared.Enumerations;
 using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels.Response;
 
 namespace Olives.Repositories
 {
@@ -35,7 +34,7 @@ namespace Olives.Repositories
         #region Methods
 
         /// <summary>
-        /// Filter notifications and make them to be seen.
+        ///     Filter notifications and make them to be seen.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -53,10 +52,7 @@ namespace Olives.Repositories
                     notifications = FilterNotifications(notifications, filter);
 
                     // Make the filtered notifications be seen.
-                    await notifications.ForEachAsync(x =>
-                    {
-                        x.IsSeen = true;
-                    });
+                    await notifications.ForEachAsync(x => { x.IsSeen = true; });
 
                     // Save the changes.
                     var records = await context.SaveChangesAsync();
@@ -72,8 +68,6 @@ namespace Olives.Repositories
                     throw;
                 }
             }
-
-
         }
 
         /// <summary>
@@ -172,7 +166,7 @@ namespace Olives.Repositories
         }
 
         /// <summary>
-        /// Filter notifications by using specific conditions.
+        ///     Filter notifications by using specific conditions.
         /// </summary>
         /// <param name="notifications"></param>
         /// <param name="filter"></param>
@@ -180,7 +174,6 @@ namespace Olives.Repositories
         private IQueryable<Notification> FilterNotifications(IQueryable<Notification> notifications,
             FilterNotificationViewModel filter)
         {
-
             // Id is specified.
             if (filter.Id != null)
                 notifications = notifications.Where(x => x.Id == filter.Id);
@@ -238,6 +231,7 @@ namespace Olives.Repositories
 
             return notifications;
         }
+
         #endregion
     }
 }

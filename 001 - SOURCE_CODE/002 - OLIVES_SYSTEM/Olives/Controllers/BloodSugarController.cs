@@ -159,7 +159,7 @@ namespace Olives.Controllers
             bloodSugar.Time = info.Time;
 
             // Insert a new allergy to database.
-            bloodSugar = await _repositorySugarblood.InitializeSugarbloodNoteAsync(bloodSugar);
+            bloodSugar = await _repositorySugarblood.InitializeBloodSugarAsync(bloodSugar);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -252,7 +252,7 @@ namespace Olives.Controllers
             bloodSugar.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Update allergy.
-            bloodSugar = await _repositorySugarblood.InitializeSugarbloodNoteAsync(bloodSugar);
+            bloodSugar = await _repositorySugarblood.InitializeBloodSugarAsync(bloodSugar);
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {

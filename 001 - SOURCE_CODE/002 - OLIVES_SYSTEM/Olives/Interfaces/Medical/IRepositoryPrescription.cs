@@ -13,9 +13,8 @@ namespace Olives.Interfaces.Medical
         ///     Find the prescription by using id asynchronously.
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="owner"></param>
         /// <returns></returns>
-        Task<Prescription> FindPrescriptionAsync(int id, int? owner = null);
+        Task<Prescription> FindPrescriptionAsync(int id);
 
         /// <summary>
         ///     Initialize or update an prescription.
@@ -27,10 +26,9 @@ namespace Olives.Interfaces.Medical
         /// <summary>
         ///     Delete prescription by using id.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="owner"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        Task<int> DeletePrescriptionAsync(int id, int? owner);
+        Task<int> DeletePrescriptionAsync(FilterPrescriptionViewModel filter);
 
         /// <summary>
         ///     Filter prescription asynchronously.

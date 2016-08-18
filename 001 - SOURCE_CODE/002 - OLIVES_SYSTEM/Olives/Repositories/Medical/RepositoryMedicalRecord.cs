@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
@@ -9,11 +8,8 @@ using Olives.Interfaces.Medical;
 using Olives.ViewModels.Filter.Medical;
 using Olives.ViewModels.Response.Medical;
 using Shared.Enumerations;
-using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Olives.Repositories.Medical
 {
@@ -65,7 +61,7 @@ namespace Olives.Repositories.Medical
             // By default, take all record.
             var context = _dataContext.Context;
             IQueryable<MedicalRecord> medicalRecords = context.MedicalRecords;
-            
+
             // Find the record by using id.
             return await medicalRecords.FirstOrDefaultAsync(x => x.Id == id);
         }
@@ -73,76 +69,69 @@ namespace Olives.Repositories.Medical
         /// <summary>
         ///     Delete medical record asynchronously.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<int> DeleteMedicalRecordAsync(int id)
+        public async Task<int> DeleteMedicalRecordAsync(FilterMedicalRecordViewModel filter)
         {
             var context = _dataContext.Context;
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    #region Experiment note delete
-
-                    IQueryable<ExperimentNote> experimentNotes = context.ExperimentNotes;
-                    experimentNotes = experimentNotes.Where(x => x.MedicalRecordId == id);
-                    context.ExperimentNotes.RemoveRange(experimentNotes);
-
-                    #endregion
-
-                    #region Medical note delete
-
-                    IQueryable<MedicalNote> medicalNotes = context.MedicalNotes;
-                    medicalNotes = medicalNotes.Where(x => x.MedicalRecordId == id);
-                    context.MedicalNotes.RemoveRange(medicalNotes);
-
-                    #endregion
-
-                    #region Medical image
-
-                    IQueryable<MedicalImage> medicalImages = context.MedicalImages;
-                    medicalImages = medicalImages.Where(x => x.MedicalRecordId == id);
-                    await medicalImages.ForEachAsync(x =>
-                    {
-                        var junkFile = new JunkFile();
-                        junkFile.FullPath = x.FullPath;
-                        context.JunkFiles.Add(junkFile);
-                    });
-
-                    context.MedicalImages.RemoveRange(medicalImages);
-
-                    #endregion
-
-                    #region Prescription Image
-
-                    IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
-                    prescriptionImages = prescriptionImages.Where(x => x.MedicalRecordId == id);
-                    await prescriptionImages.ForEachAsync(x =>
-                    {
-                        var junkFile = new JunkFile();
-                        junkFile.FullPath = x.FullPath;
-                        context.JunkFiles.Add(junkFile);
-                    });
-
-                    context.PrescriptionImages.RemoveRange(prescriptionImages);
-
-                    #endregion
-
-                    #region Prescription
-
-                    IQueryable<Prescription> prescriptions = context.Prescriptions;
-                    prescriptions = prescriptions.Where(x => x.MedicalRecordId == id);
-                    context.Prescriptions.RemoveRange(prescriptions);
-
-                    #endregion
-
                     #region Medical record
 
                     IQueryable<MedicalRecord> medicalRecords = context.MedicalRecords;
-                    medicalRecords = medicalRecords.Where(x => x.Id == id);
-                    context.MedicalRecords.RemoveRange(medicalRecords);
+                    medicalRecords = FilterMedicalRecords(medicalRecords, filter, context);
+                    var medicalRecordsList = await medicalRecords.ToListAsync();
 
                     #endregion
+
+                    #region Medical record dependencies
+                    
+                    foreach (var medicalRecord in medicalRecordsList)
+                    {
+                        // Experiment note.
+                        context.ExperimentNotes.RemoveRange(context.ExperimentNotes.Where(x => x.MedicalRecordId == medicalRecord.Id));
+
+                        // Medical note.
+                        context.MedicalNotes.RemoveRange(
+                            context.MedicalNotes.Where(x => x.MedicalRecordId == medicalRecord.Id));
+                        
+                        // Medical images.
+                        IQueryable<MedicalImage> medicalImages = context.MedicalImages;
+                        medicalImages = medicalImages.Where(x => x.MedicalRecordId == medicalRecord.Id);
+                        await medicalImages.ForEachAsync(x =>
+                        {
+                            var junkFile = new JunkFile();
+                            junkFile.FullPath = x.FullPath;
+                            context.JunkFiles.Add(junkFile);
+                        });
+
+                        context.MedicalImages.RemoveRange(medicalImages);
+
+                        // Prescription images.
+                        IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
+                        prescriptionImages = prescriptionImages.Where(x => x.MedicalRecordId == medicalRecord.Id);
+                        await prescriptionImages.ForEachAsync(x =>
+                        {
+                            var junkFile = new JunkFile();
+                            junkFile.FullPath = x.FullPath;
+                            context.JunkFiles.Add(junkFile);
+                        });
+
+                        context.PrescriptionImages.RemoveRange(prescriptionImages);
+
+                        // Prescription
+                        IQueryable<Prescription> prescriptions = context.Prescriptions;
+                        prescriptions = prescriptions.Where(x => x.MedicalRecordId == medicalRecord.Id);
+                        context.Prescriptions.RemoveRange(prescriptions);
+
+                    }
+
+                    #endregion
+                    
+                    // Lastly, medical records should be deleted.
+                    context.MedicalRecords.RemoveRange(medicalRecords);
 
                     // Save changes asynchronously.
                     var records = await context.SaveChangesAsync();
@@ -171,7 +160,7 @@ namespace Olives.Repositories.Medical
             var context = _dataContext.Context;
             IQueryable<MedicalRecord> medicalRecords = context.MedicalRecords;
             medicalRecords = FilterMedicalRecords(medicalRecords, filter, context);
-            
+
             // Result sorting
             switch (filter.Direction)
             {
@@ -212,7 +201,7 @@ namespace Olives.Repositories.Medical
             // Record is defined.
             if (filter.Records != null)
             {
-                medicalRecords = medicalRecords.Skip(filter.Page * filter.Records.Value)
+                medicalRecords = medicalRecords.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
             }
 
@@ -222,21 +211,22 @@ namespace Olives.Repositories.Medical
         }
 
         /// <summary>
-        /// Filter medical records by using specific conditions.
+        ///     Filter medical records by using specific conditions.
         /// </summary>
         /// <param name="medicalRecords"></param>
         /// <param name="filter"></param>
         /// <param name="olivesHealthEntities"></param>
         /// <returns></returns>
-        private IQueryable<MedicalRecord> FilterMedicalRecords(IQueryable<MedicalRecord> medicalRecords, FilterMedicalRecordViewModel filter, OlivesHealthEntities olivesHealthEntities)
+        private IQueryable<MedicalRecord> FilterMedicalRecords(IQueryable<MedicalRecord> medicalRecords,
+            FilterMedicalRecordViewModel filter, OlivesHealthEntities olivesHealthEntities)
         {
             // Base on requester role, do the filter.
             medicalRecords = FilterMedicalRecordsByRequesterRole(medicalRecords, filter, olivesHealthEntities);
-            
+
             // Id is specified.
             if (filter.Id != null)
                 medicalRecords = medicalRecords.Where(x => x.Id == filter.Id);
-            
+
             // Time is specified.
             if (filter.MinTime != null) medicalRecords = medicalRecords.Where(x => x.Time >= filter.MinTime);
             if (filter.MaxTime != null) medicalRecords = medicalRecords.Where(x => x.Time <= filter.MaxTime);
@@ -259,7 +249,7 @@ namespace Olives.Repositories.Medical
         }
 
         /// <summary>
-        /// Base on the requester role to do exact filter function.
+        ///     Base on the requester role to do exact filter function.
         /// </summary>
         /// <param name="medicalRecords"></param>
         /// <param name="filter"></param>
@@ -271,7 +261,7 @@ namespace Olives.Repositories.Medical
             // Requester is not defined.
             if (filter.Requester == null)
                 throw new Exception("Requester must be specified.");
-            
+
             // Patient only can see his/her records.
             if (filter.Requester.Role == (byte) Role.Patient)
             {
@@ -297,7 +287,7 @@ namespace Olives.Repositories.Medical
                 select m;
 
             return results;
-        } 
+        }
 
         #endregion
     }

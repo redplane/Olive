@@ -64,7 +64,7 @@ namespace Olives.Controllers
                 filter.Id = id;
 
                 // Count the number of deleted records.
-                var records = await _repositoryRelation.DeleteRelationAsync(filter);
+                var records = await _repositoryRelation.DeleteRelationshipAsync(filter);
 
                 // Delete successfully
                 if (records >= 1)

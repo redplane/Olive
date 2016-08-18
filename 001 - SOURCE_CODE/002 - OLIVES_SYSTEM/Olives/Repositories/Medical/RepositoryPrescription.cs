@@ -8,11 +8,8 @@ using Olives.Interfaces.Medical;
 using Olives.ViewModels.Filter.Medical;
 using Olives.ViewModels.Response.Medical;
 using Shared.Enumerations;
-using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Olives.Repositories.Medical
 {
@@ -39,9 +36,8 @@ namespace Olives.Repositories.Medical
         ///     Find the prescription asynchronously.
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="owner"></param>
         /// <returns></returns>
-        public async Task<Prescription> FindPrescriptionAsync(int id, int? owner)
+        public async Task<Prescription> FindPrescriptionAsync(int id)
         {
             // Take all prescriptions.
             var context = _dataContext.Context;
@@ -49,10 +45,6 @@ namespace Olives.Repositories.Medical
 
             // Find the prescription.
             prescriptions = prescriptions.Where(x => x.Id == id);
-            
-            // Owner is defined.
-            if (owner != null)
-                prescriptions = prescriptions.Where(x => x.Owner == owner.Value);
 
             return await prescriptions.FirstOrDefaultAsync();
         }
@@ -78,10 +70,9 @@ namespace Olives.Repositories.Medical
         /// <summary>
         ///     Delete prescription by using id.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="owner"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<int> DeletePrescriptionAsync(int id, int? owner)
+        public async Task<int> DeletePrescriptionAsync(FilterPrescriptionViewModel filter)
         {
             var context = _dataContext.Context;
 
@@ -94,36 +85,38 @@ namespace Olives.Repositories.Medical
 
                     // By default, delete all record.
                     IQueryable<Prescription> prescriptions = context.Prescriptions;
-                    prescriptions = prescriptions.Where(x => x.Id == id);
+                    prescriptions = FilterPrescriptions(prescriptions, filter);
 
-                    // Owner is specified.
-                    if (owner != null)
-                        prescriptions = prescriptions.Where(x => x.Owner == owner.Value);
+                    // Load the prescriptions into memory.
+                    var prescriptionsList = await prescriptions.ToListAsync();
 
                     #endregion
 
                     #region Find all prescription images
 
-                    // Find all prescription images first.
-                    IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
-
-                    // Find the prescription images which belong to the deleted prescription.
-                    prescriptionImages = prescriptionImages.Where(x => x.PrescriptionId == id);
-
-                    // Initialize a list of junk file.
-                    await prescriptionImages.ForEachAsync(x =>
+                    foreach (var prescription in prescriptionsList)
                     {
-                        var junkFile = new JunkFile();
-                        junkFile.FullPath = x.FullPath;
+                        // Find all prescription images first.
+                        IQueryable<PrescriptionImage> prescriptionImages = context.PrescriptionImages;
 
-                        // Enlist all images which should be deleted.
-                        context.JunkFiles.Add(junkFile);
-                    });
+                        // Find the prescription images which belong to the deleted prescription.
+                        prescriptionImages = prescriptionImages.Where(x => x.PrescriptionId == prescription.Id);
+
+                        // Initialize a list of junk file.
+                        await prescriptionImages.ForEachAsync(x =>
+                        {
+                            var junkFile = new JunkFile();
+                            junkFile.FullPath = x.FullPath;
+
+                            // Enlist all images which should be deleted.
+                            context.JunkFiles.Add(junkFile);
+                        });
+
+                        // Delete all prescription images first due to its dependence on prescriptions.
+                        context.PrescriptionImages.RemoveRange(prescriptionImages);
+                    }
 
                     #endregion
-
-                    // Delete all prescription images first due to its dependence on prescriptions.
-                    context.PrescriptionImages.RemoveRange(prescriptionImages);
 
                     // Delete the matched prescriptions.
                     context.Prescriptions.RemoveRange(prescriptions);
@@ -158,35 +151,10 @@ namespace Olives.Repositories.Medical
             // By default, take all prescriptions.
             var context = _dataContext.Context;
             IQueryable<Prescription> prescriptions = context.Prescriptions;
-            
+
             // Base on the requester's role to do the exact filter.
             prescriptions = FilterPrescriptionByRequesterRole(prescriptions, filter, context);
-
-            // Id is specified.
-            if (filter.Id != null)
-                prescriptions = prescriptions.Where(x => x.Id == filter.Id.Value);
-            
-            // Medical record is defined.
-            if (filter.MedicalRecord != null)
-                prescriptions = prescriptions.Where(x => x.MedicalRecordId == filter.MedicalRecord);
-            
-            // From is defined.
-            if (filter.MinFrom != null) prescriptions = prescriptions.Where(x => x.From >= filter.MinFrom);
-            if (filter.MaxFrom != null) prescriptions = prescriptions.Where(x => x.From <= filter.MaxFrom);
-
-            // To is defined.
-            if (filter.MinTo != null) prescriptions = prescriptions.Where(x => x.To >= filter.MinTo);
-            if (filter.MaxTo != null) prescriptions = prescriptions.Where(x => x.To <= filter.MaxTo);
-
-            // Created is defined.
-            if (filter.MinCreated != null) prescriptions = prescriptions.Where(x => x.Created >= filter.MinCreated);
-            if (filter.MaxCreated != null) prescriptions = prescriptions.Where(x => x.Created <= filter.MaxCreated);
-
-            // Last modified is defined.
-            if (filter.MinLastModified != null)
-                prescriptions = prescriptions.Where(x => x.LastModified >= filter.MinLastModified);
-            if (filter.MaxLastModified != null)
-                prescriptions = prescriptions.Where(x => x.LastModified <= filter.MaxLastModified);
+            prescriptions = FilterPrescriptions(prescriptions, filter);
 
             // Sort the record.
             switch (filter.Sort)
@@ -208,10 +176,7 @@ namespace Olives.Repositories.Medical
                     prescriptions = prescriptions.OrderByDescending(x => x.LastModified);
                     break;
             }
-
-            // Calculate the number of records should be skipped.
-            var skippedRecord = filter.Page*filter.Records;
-
+            
             // Response initialization.
             var response = new ResponsePrescriptionFilterViewModel();
             response.Total = await prescriptions.CountAsync();
@@ -231,7 +196,45 @@ namespace Olives.Repositories.Medical
         }
 
         /// <summary>
-        /// Base on the requester role to do exact filter function.
+        ///     Filter prescriptions by using specific conditions.
+        /// </summary>
+        /// <param name="prescriptions"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        private IQueryable<Prescription> FilterPrescriptions(IQueryable<Prescription> prescriptions,
+            FilterPrescriptionViewModel filter)
+        {
+            // Id is specified.
+            if (filter.Id != null)
+                prescriptions = prescriptions.Where(x => x.Id == filter.Id.Value);
+
+            // Medical record is defined.
+            if (filter.MedicalRecord != null)
+                prescriptions = prescriptions.Where(x => x.MedicalRecordId == filter.MedicalRecord);
+
+            // From is defined.
+            if (filter.MinFrom != null) prescriptions = prescriptions.Where(x => x.From >= filter.MinFrom);
+            if (filter.MaxFrom != null) prescriptions = prescriptions.Where(x => x.From <= filter.MaxFrom);
+
+            // To is defined.
+            if (filter.MinTo != null) prescriptions = prescriptions.Where(x => x.To >= filter.MinTo);
+            if (filter.MaxTo != null) prescriptions = prescriptions.Where(x => x.To <= filter.MaxTo);
+
+            // Created is defined.
+            if (filter.MinCreated != null) prescriptions = prescriptions.Where(x => x.Created >= filter.MinCreated);
+            if (filter.MaxCreated != null) prescriptions = prescriptions.Where(x => x.Created <= filter.MaxCreated);
+
+            // Last modified is defined.
+            if (filter.MinLastModified != null)
+                prescriptions = prescriptions.Where(x => x.LastModified >= filter.MinLastModified);
+            if (filter.MaxLastModified != null)
+                prescriptions = prescriptions.Where(x => x.LastModified <= filter.MaxLastModified);
+
+            return prescriptions;
+        }
+
+        /// <summary>
+        ///     Base on the requester role to do exact filter function.
         /// </summary>
         /// <param name="prescriptions"></param>
         /// <param name="filter"></param>
@@ -245,7 +248,7 @@ namespace Olives.Repositories.Medical
                 throw new Exception("Requester must be specified.");
 
             // Patient only can see his/her records.
-            if (filter.Requester.Role == (byte)Role.Patient)
+            if (filter.Requester.Role == (byte) Role.Patient)
             {
                 prescriptions = prescriptions.Where(x => x.Owner == filter.Requester.Id);
                 if (filter.Partner != null)
@@ -264,13 +267,13 @@ namespace Olives.Repositories.Medical
                 relationships = relationships.Where(x => x.Source == filter.Partner.Value);
 
             var results = from r in relationships
-                          from m in prescriptions
-                          where r.Source == m.Owner || r.Source == m.Creator
-                          select m;
+                from m in prescriptions
+                where r.Source == m.Owner || r.Source == m.Creator
+                select m;
 
             return results;
         }
-        
+
         #endregion
     }
 }

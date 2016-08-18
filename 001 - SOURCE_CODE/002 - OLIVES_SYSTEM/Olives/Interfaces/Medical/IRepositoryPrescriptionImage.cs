@@ -2,8 +2,6 @@
 using Olives.ViewModels.Filter.Medical;
 using Olives.ViewModels.Response.Medical;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Olives.Interfaces.Medical
 {
@@ -21,15 +19,14 @@ namespace Olives.Interfaces.Medical
         /// </summary>
         /// <param name="initializer"></param>
         /// <returns></returns>
-        Task<PrescriptionImage> InitializePrescriptionImage(PrescriptionImage initializer);
+        Task<PrescriptionImage> InitializePrescriptionImageAsync(PrescriptionImage initializer);
 
         /// <summary>
         ///     Initialize a prescription with input paramters.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="owner"></param>
+        /// <param name="filter"></param>
         /// <returns></returns>
-        Task<int> DeletePrescriptionImageAsync(int id, int? owner);
+        Task<int> DeletePrescriptionImageAsync(FilterPrescriptionImageViewModel filter);
 
         /// <summary>
         ///     Filter prescription image.

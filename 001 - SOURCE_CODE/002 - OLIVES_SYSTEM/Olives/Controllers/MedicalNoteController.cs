@@ -75,7 +75,7 @@ namespace Olives.Controllers
                 filter.Requester = requester;
 
                 // Do the filter.
-                var result = await _repositoryMedicalNote.FilterMedicalNotesAsync(filter);
+                var result = await _repositoryMedicalNote.FilterMedicalNoteAsync(filter);
                 if (result.Total != 1)
                 {
                     _log.Error($"There is/are {result.Total} medical note [Id: {id}]");
@@ -488,7 +488,7 @@ namespace Olives.Controllers
                 filter.Requester = requester;
 
                 // Insert a new allergy to database.
-                var result = await _repositoryMedicalNote.FilterMedicalNotesAsync(filter);
+                var result = await _repositoryMedicalNote.FilterMedicalNoteAsync(filter);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
