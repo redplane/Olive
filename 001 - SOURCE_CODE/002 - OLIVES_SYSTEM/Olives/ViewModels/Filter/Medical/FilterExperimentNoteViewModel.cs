@@ -3,7 +3,6 @@ using Olives.Enumerations.Filter;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -38,7 +37,7 @@ namespace Olives.ViewModels.Filter.Medical
         ///     Partner who is included in medical experiment notes.
         /// </summary>
         public int? Partner { get; set; }
-        
+
         /// <summary>
         ///     Time after which experiment was lastly created.
         /// </summary>
@@ -76,19 +75,21 @@ namespace Olives.ViewModels.Filter.Medical
         public double? MaxLastModified { get; set; }
 
         /// <summary>
-        /// Time after which experiment was note about.
+        ///     Time after which experiment was note about.
         /// </summary>
-        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MaxTime", Comparision = Comparision.LowerEqual,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         public double? MinTime { get; set; }
 
         /// <summary>
-        /// Time before which experiment had been note about.
+        ///     Time before which experiment had been note about.
         /// </summary>
-        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MinTime", Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeGreaterThan")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeGreaterThan")]
         public double? MaxTime { get; set; }
 
         /// <summary>

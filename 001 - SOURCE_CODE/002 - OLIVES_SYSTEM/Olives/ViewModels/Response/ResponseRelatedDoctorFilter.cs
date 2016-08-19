@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Olives.ViewModels.Filter;
 
 namespace Olives.ViewModels.Response
 {

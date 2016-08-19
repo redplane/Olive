@@ -14,7 +14,7 @@ namespace Olives.ViewModels.Filter.Medical
     public class FilterMedicalRecordViewModel : IPagination
     {
         /// <summary>
-        /// Id of medical record.
+        ///     Id of medical record.
         /// </summary>
         public int? Id { get; set; }
 
@@ -33,7 +33,7 @@ namespace Olives.ViewModels.Filter.Medical
         ///     Filtering mode.
         /// </summary>
         public RecordFilterMode? Mode { get; set; }
-        
+
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MaxTime", Comparision = Comparision.LowerEqual,

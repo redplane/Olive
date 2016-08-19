@@ -11,7 +11,7 @@ namespace Olives.ViewModels.Filter.Medical
     public class FilterPrescriptionImageViewModel : IPagination
     {
         /// <summary>
-        /// Id of prescription image.
+        ///     Id of prescription image.
         /// </summary>
         public int? Id { get; set; }
 
@@ -24,7 +24,7 @@ namespace Olives.ViewModels.Filter.Medical
         ///     Who created prescription image or just own it.
         /// </summary>
         public int? Partner { get; set; }
-        
+
         /// <summary>
         ///     Index of prescription.
         /// </summary>
@@ -33,15 +33,15 @@ namespace Olives.ViewModels.Filter.Medical
         public int Prescription { get; set; }
 
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MaxCreated", Comparision = Comparision.LowerEqual,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         public double? MinCreated { get; set; }
 
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MinCreated", Comparision = Comparision.GreaterEqual,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public double? MaxCreated { get; set; }
 
         /// <summary>

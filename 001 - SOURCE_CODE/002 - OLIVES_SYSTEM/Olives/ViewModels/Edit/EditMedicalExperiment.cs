@@ -10,16 +10,17 @@ namespace Olives.ViewModels.Edit
     public class EditMedicalExperiment
     {
         /// <summary>
-        /// Name of medical experiment.
+        ///     Name of medical experiment.
         /// </summary>
         [StringLength(32, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Name { get; set; }
 
         /// <summary>
-        /// Time when the note is about.
+        ///     Time when the note is about.
         /// </summary>
-        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? Time { get; set; }
 
         /// <summary>

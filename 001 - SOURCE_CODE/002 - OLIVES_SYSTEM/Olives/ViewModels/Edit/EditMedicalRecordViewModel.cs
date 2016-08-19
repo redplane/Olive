@@ -19,9 +19,10 @@ namespace Olives.ViewModels.Edit
         public int? Category { get; set; }
 
         /// <summary>
-        /// Name of medical record.
+        ///     Name of medical record.
         /// </summary>
-        [StringLength(OlivesValues.MaxMedicalRecordNameLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        [StringLength(OlivesValues.MaxMedicalRecordNameLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Name { get; set; }
 
         /// <summary>

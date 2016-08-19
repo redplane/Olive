@@ -12,11 +12,12 @@ namespace Olives.ViewModels.Initialize
         /// <summary>
         ///     Medical record experiment should belong to.
         /// </summary>
-        [NumericCompare(1, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
+        [NumericCompare(1, Comparision = Comparision.GreaterEqual, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueIsInvalid")]
         public int MedicalRecord { get; set; }
 
         /// <summary>
-        /// Name of experiment note.
+        ///     Name of experiment note.
         /// </summary>
         [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsRequired")]
@@ -25,9 +26,10 @@ namespace Olives.ViewModels.Initialize
         public string Name { get; set; }
 
         /// <summary>
-        /// Time when the note is about.
+        ///     Time when the note is about.
         /// </summary>
-        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
+        [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double Time { get; set; }
 
         /// <summary>

@@ -3,7 +3,6 @@ using Olives.Enumerations.Filter;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -13,7 +12,7 @@ namespace Olives.ViewModels.Filter.Medical
     public class FilterPrescriptionViewModel : IPagination
     {
         /// <summary>
-        /// Id of prescription.
+        ///     Id of prescription.
         /// </summary>
         public int? Id { get; set; }
 
@@ -31,7 +30,7 @@ namespace Olives.ViewModels.Filter.Medical
         ///     Who is included in medical prescription.
         /// </summary>
         public int? Partner { get; set; }
-        
+
         [NumericPropertyCompare("MaxFrom", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,

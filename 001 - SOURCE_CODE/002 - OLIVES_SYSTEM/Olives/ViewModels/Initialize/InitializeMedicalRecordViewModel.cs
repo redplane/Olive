@@ -18,15 +18,17 @@ namespace Olives.ViewModels.Initialize
         public int? Owner { get; set; }
 
         /// <summary>
-        /// Id of the medical record creator.
+        ///     Id of the medical record creator.
         /// </summary>
         public int? Creator { get; set; }
 
         /// <summary>
-        /// Name of medical record.
+        ///     Name of medical record.
         /// </summary>
-        [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsRequired")]
-        [StringLength(OlivesValues.MaxMedicalRecordNameLength, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueIsRequired")]
+        [StringLength(OlivesValues.MaxMedicalRecordNameLength, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Name { get; set; }
 
         /// <summary>

@@ -12,7 +12,7 @@ namespace Olives.ViewModels.Filter.Medical
     public class FilterMedicalImageViewModel : IPagination
     {
         /// <summary>
-        /// Id of medical image
+        ///     Id of medical image
         /// </summary>
         public int? Id { get; set; }
 
@@ -33,22 +33,22 @@ namespace Olives.ViewModels.Filter.Medical
         public int MedicalRecord { get; set; }
 
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeGreaterThan")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeGreaterThan")]
         [NumericPropertyCompare("MaxCreated", Comparision = Comparision.LowerEqual,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         public double? MinCreated { get; set; }
 
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeGreaterThan")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeGreaterThan")]
         [NumericPropertyCompare("MinCreated", Comparision = Comparision.LowerEqual,
-            ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         public double? MaxCreated { get; set; }
-        
+
         /// <summary>
         ///     Whether records are sorted ascendingly or decendingly.
         /// </summary>
         public SortDirection Direction { get; set; } = SortDirection.Ascending;
-        
+
         /// <summary>
         ///     Index of page result.
         /// </summary>

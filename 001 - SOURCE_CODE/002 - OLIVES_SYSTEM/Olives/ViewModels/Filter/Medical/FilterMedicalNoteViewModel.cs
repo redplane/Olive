@@ -4,7 +4,6 @@ using Olives.Enumerations.Filter;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
@@ -33,7 +32,7 @@ namespace Olives.ViewModels.Filter.Medical
         ///     Who is included in medical note.
         /// </summary>
         public int? Partner { get; set; }
-        
+
         /// <summary>
         ///     Note of medical record.
         /// </summary>

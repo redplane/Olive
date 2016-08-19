@@ -13,7 +13,7 @@ namespace Olives.ViewModels.Filter
     public class FilterRelationshipViewModel : IPagination
     {
         /// <summary>
-        /// Id of request.
+        ///     Id of request.
         /// </summary>
         public int? Id { get; set; }
 
@@ -28,7 +28,7 @@ namespace Olives.ViewModels.Filter
         ///     Who is included in medical record.
         /// </summary>
         public int? Partner { get; set; }
-        
+
         /// <summary>
         ///     Time after which relationship which was created.
         /// </summary>
@@ -46,7 +46,7 @@ namespace Olives.ViewModels.Filter
         [NumericPropertyCompare("MinCreated", Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
         public double? MaxCreated { get; set; }
-        
+
         [NumericCompare(FieldLength.PageIndexMin, Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsInvalid")]

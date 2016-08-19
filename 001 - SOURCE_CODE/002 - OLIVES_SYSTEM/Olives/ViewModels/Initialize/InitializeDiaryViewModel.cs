@@ -11,9 +11,10 @@ namespace Olives.ViewModels.Initialize
     public class InitializeDiaryViewModel
     {
         /// <summary>
-        /// Patient id
+        ///     Patient id
         /// </summary>
-        [AccountValidate(AccountValidateInputType.Id, true, Role.Patient, StatusAccount.Active, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
+        [AccountValidate(AccountValidateInputType.Id, true, Role.Patient, StatusAccount.Active,
+            ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueIsInvalid")]
         public int Target { get; set; }
 
         /// <summary>
