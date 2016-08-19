@@ -20,7 +20,6 @@ using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
-using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
@@ -90,12 +89,12 @@ namespace Olives.Controllers
             }
 
             #endregion
-            
+
             #region Prescription validation
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
             // Find the medical prescription.
             var prescription = await _repositoryPrescription.FindPrescriptionAsync(initializer.Prescription);
 
@@ -162,9 +161,10 @@ namespace Olives.Controllers
                 prescriptionImage.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
                 prescriptionImage.Creator = requester.Id;
                 prescriptionImage.Owner = prescription.Owner;
-                
+
                 // Save the prescription image to database.
-                prescriptionImage = await _repositoryPrescriptionImage.InitializePrescriptionImageAsync(prescriptionImage);
+                prescriptionImage =
+                    await _repositoryPrescriptionImage.InitializePrescriptionImageAsync(prescriptionImage);
 
                 #endregion
 
@@ -184,7 +184,8 @@ namespace Olives.Controllers
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
                     notification.Record = prescription.Id;
-                    notification.Message = string.Format(Language.NotifyPrescriptionImageCreate, requester.FullName, prescription.Name);
+                    notification.Message = string.Format(Language.NotifyPrescriptionImageCreate, requester.FullName,
+                        prescription.Name);
                     notification.Created = prescriptionImage.Created;
 
                     // Broadcast the notification with fault tolerant.
@@ -232,7 +233,7 @@ namespace Olives.Controllers
         {
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+
             try
             {
                 var filter = new FilterPrescriptionImageViewModel();
