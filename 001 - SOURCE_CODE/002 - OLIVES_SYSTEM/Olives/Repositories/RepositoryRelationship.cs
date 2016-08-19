@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using Olives.Interfaces;
+using Olives.ViewModels;
 using Olives.ViewModels.Filter;
 using Olives.ViewModels.Response;
 using Shared.Enumerations;
