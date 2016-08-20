@@ -2,7 +2,7 @@
 using Shared.Constants;
 using Shared.Resources;
 
-namespace Olives.ViewModels.Edit
+namespace Olives.ViewModels.Edit.Personal
 {
     public class EditAddictionViewModel
     {

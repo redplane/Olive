@@ -2,12 +2,21 @@
 using Shared.Constants;
 using Shared.Resources;
 
-namespace Olives.ViewModels.Initialize
+namespace Olives.ViewModels.Initialize.Personal
 {
-    public class InitializeAddictionViewModel
+    public class InitializeAllergyViewModel
     {
         /// <summary>
-        ///     What patient is addictive with.
+        ///     Name of allergy.
+        /// </summary>
+        [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueIsRequired")]
+        [StringLength(32, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
+        public string Name { get; set; }
+
+        /// <summary>
+        ///     Cause of allergy.
         /// </summary>
         [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsRequired")]
@@ -16,7 +25,7 @@ namespace Olives.ViewModels.Initialize
         public string Cause { get; set; }
 
         /// <summary>
-        ///     Note about the addiction.
+        ///     Note of allergy.
         /// </summary>
         [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]

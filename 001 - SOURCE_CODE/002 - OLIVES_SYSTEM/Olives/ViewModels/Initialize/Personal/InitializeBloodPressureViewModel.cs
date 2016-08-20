@@ -4,24 +4,30 @@ using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Resources;
 
-namespace Olives.ViewModels.Edit
+namespace Olives.ViewModels.Initialize.Personal
 {
-    public class EditBloodSugarViewModel
+    public class InitializeBloodPressureViewModel
     {
         /// <summary>
-        ///     Value of sugar in blood.
-        ///     Unit : mmol/L
+        ///     Minimum pressure of blood.
         /// </summary>
-        [Range(Values.MinSugarBloodMmol, Values.MaxSugarBloodMmol, ErrorMessageResourceType = typeof (Language),
+        [Range(Values.MinDiastolic, Values.MaxDiastolic, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueMustBeFromTo")]
-        public double? Value { get; set; }
+        public int Diastolic { get; set; }
 
         /// <summary>
-        ///     Time when measurement was made.
+        ///     Maximum pressure of blood.
+        /// </summary>
+        [Range(Values.MinSystolic, Values.MaxSystolic, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueMustBeFromTo")]
+        public int Systolic { get; set; }
+
+        /// <summary>
+        ///     Time when measurement was done.
         /// </summary>
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
-        public double? Time { get; set; }
+        public double Time { get; set; }
 
         /// <summary>
         ///     Note of measurement.

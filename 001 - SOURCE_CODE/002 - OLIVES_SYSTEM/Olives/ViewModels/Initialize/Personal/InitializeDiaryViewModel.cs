@@ -6,7 +6,7 @@ using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Resources;
 
-namespace Olives.ViewModels.Initialize
+namespace Olives.ViewModels.Initialize.Personal
 {
     public class InitializeDiaryViewModel
     {

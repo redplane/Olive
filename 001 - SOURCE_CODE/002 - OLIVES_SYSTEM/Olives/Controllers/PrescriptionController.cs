@@ -19,7 +19,6 @@ using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
-using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
@@ -31,23 +30,18 @@ namespace Olives.Controllers
         /// <summary>
         ///     Initialize an instance of SpecialtyController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositoryMedicalRecord"></param>
         /// <param name="repositoryPrescription"></param>
-        /// <param name="repositoryRelation"></param>
         /// <param name="timeService"></param>
         /// <param name="notificationService"></param>
         /// <param name="log"></param>
-        public PrescriptionController(IRepositoryAccountExtended repositoryAccountExtended,
+        public PrescriptionController(
             IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryPrescription repositoryPrescription,
-            IRepositoryRelationship repositoryRelation,
             ITimeService timeService, INotificationService notificationService,
             ILog log)
         {
-            _repositoryAccountExtended = repositoryAccountExtended;
             _repositoryMedicalRecord = repositoryMedicalRecord;
             _repositoryPrescription = repositoryPrescription;
-            _repositoryRelation = repositoryRelation;
             _notificationService = notificationService;
             _timeService = timeService;
             _log = log;
@@ -70,11 +64,11 @@ namespace Olives.Controllers
 
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+
             var filter = new FilterPrescriptionViewModel();
             filter.Id = id;
             filter.Requester = requester;
-            
+
             // Do the filter.
             var result = await _repositoryPrescription.FilterPrescriptionAsync(filter);
             if (result.Total != 1)
@@ -97,7 +91,7 @@ namespace Olives.Controllers
             }
 
             #endregion
-            
+
             #region Response initialization
 
             return Request.CreateResponse(HttpStatusCode.OK, new
@@ -538,12 +532,7 @@ namespace Olives.Controllers
         #endregion
 
         #region Properties
-
-        /// <summary>
-        ///     Repository of accounts
-        /// </summary>
-        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
-
+        
         /// <summary>
         ///     Repository of medical record
         /// </summary>
@@ -553,12 +542,7 @@ namespace Olives.Controllers
         ///     Repository of prescription
         /// </summary>
         private readonly IRepositoryPrescription _repositoryPrescription;
-
-        /// <summary>
-        ///     Repository of relationships.
-        /// </summary>
-        private readonly IRepositoryRelationship _repositoryRelation;
-
+        
         /// <summary>
         ///     Repository of notification.
         /// </summary>

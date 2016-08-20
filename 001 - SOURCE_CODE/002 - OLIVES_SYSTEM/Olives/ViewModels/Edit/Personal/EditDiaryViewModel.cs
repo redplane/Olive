@@ -1,31 +1,25 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Olives.Constants;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Resources;
 
-namespace Olives.ViewModels.Edit
+namespace Olives.ViewModels.Edit.Personal
 {
-    public class EditHeartbeatViewModel
+    public class EditDiaryViewModel
     {
         /// <summary>
-        ///     Heart rate.
-        /// </summary>
-        [Range(Values.MinHeartRate, Values.MaxHeartRate, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "ValueMustBeFromTo")]
-        public double? Rate { get; set; }
-
-        /// <summary>
-        ///     Time when measurement was done.
+        ///     Time which diary is noted about.
         /// </summary>
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? Time { get; set; }
 
         /// <summary>
-        ///     Note of measurement.
+        ///     Content of diary note.
         /// </summary>
-        [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
+        [StringLength(OlivesValues.MaxDiaryLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Note { get; set; }
     }

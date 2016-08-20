@@ -1,25 +1,32 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Olives.Constants;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Resources;
 
-namespace Olives.ViewModels.Edit
+namespace Olives.ViewModels.Edit.Personal
 {
-    public class EditDiaryViewModel
+    public class EditBloodSugarViewModel
     {
         /// <summary>
-        ///     Time which diary is noted about.
+        ///     Value of sugar in blood.
+        ///     Unit : mmol/L
+        /// </summary>
+        [Range(Values.MinSugarBloodMmol, Values.MaxSugarBloodMmol, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueMustBeFromTo")]
+        public double? Value { get; set; }
+
+        /// <summary>
+        ///     Time when measurement was made.
         /// </summary>
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         public double? Time { get; set; }
 
         /// <summary>
-        ///     Content of diary note.
+        ///     Note of measurement.
         /// </summary>
-        [StringLength(OlivesValues.MaxDiaryLength, ErrorMessageResourceType = typeof (Language),
+        [StringLength(Values.NoteMaxLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Note { get; set; }
     }

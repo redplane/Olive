@@ -1,11 +1,11 @@
 ﻿using Shared.Models;
 
-namespace Olives.ViewModels.Filter
+namespace Olives.ViewModels
 {
     public class RelatedDoctorViewModel
     {
         /// <summary>
-        /// Id of relationship
+        ///     Id of relationship
         /// </summary>
         public int Relation { get; set; }
 
@@ -13,7 +13,7 @@ namespace Olives.ViewModels.Filter
         ///     Doctor who is related to requester.
         /// </summary>
         public Doctor Doctor { get; set; }
-        
+
         /// <summary>
         ///     Time when relationship was created.
         /// </summary>
