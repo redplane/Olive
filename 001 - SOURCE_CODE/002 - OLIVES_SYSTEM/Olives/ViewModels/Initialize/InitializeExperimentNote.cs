@@ -7,7 +7,7 @@ using Shared.Resources;
 
 namespace Olives.ViewModels.Initialize
 {
-    public class InitializeMedicalExperiment
+    public class InitializeExperimentNote
     {
         /// <summary>
         ///     Medical record experiment should belong to.

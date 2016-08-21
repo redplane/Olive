@@ -15,6 +15,7 @@ using Olives.Interfaces;
 using Olives.Interfaces.Medical;
 using Olives.ViewModels.Filter.Medical;
 using Olives.ViewModels.Initialize;
+using Olives.ViewModels.Initialize.Medical;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;

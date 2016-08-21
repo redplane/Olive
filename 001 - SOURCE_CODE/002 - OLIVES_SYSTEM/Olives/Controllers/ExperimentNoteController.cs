@@ -12,6 +12,7 @@ using Olives.Hubs;
 using Olives.Interfaces;
 using Olives.Interfaces.Medical;
 using Olives.ViewModels.Edit;
+using Olives.ViewModels.Edit.MedicalRecord;
 using Olives.ViewModels.Filter.Medical;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
@@ -113,7 +114,7 @@ namespace Olives.Controllers
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> InitializeMedialExperiment(
-            [FromBody] InitializeMedicalExperiment initializer)
+            [FromBody] InitializeExperimentNote initializer)
         {
             #region Parameters validation
 
@@ -124,7 +125,7 @@ namespace Olives.Controllers
             // Initializer hasn't been initialized.
             if (initializer == null)
             {
-                initializer = new InitializeMedicalExperiment();
+                initializer = new InitializeExperimentNote();
                 Validate(initializer);
             }
 
@@ -258,14 +259,14 @@ namespace Olives.Controllers
         [HttpPut]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
         public async Task<HttpResponseMessage> ModifyMedialExperimentNote([FromUri] int experiment,
-            [FromBody] EditMedicalExperiment modifier)
+            [FromBody] EditExperimentNote modifier)
         {
             #region Parameters validation
 
             // Initializer hasn't been initialized.
             if (modifier == null)
             {
-                modifier = new EditMedicalExperiment();
+                modifier = new EditExperimentNote();
                 Validate(modifier);
             }
 

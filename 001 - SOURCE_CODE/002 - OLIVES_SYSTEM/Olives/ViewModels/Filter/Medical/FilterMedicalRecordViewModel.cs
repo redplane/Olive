@@ -38,13 +38,13 @@ namespace Olives.ViewModels.Filter.Medical
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MaxTime", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
-        public float? MinTime { get; set; }
+        public double? MinTime { get; set; }
 
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
         [NumericPropertyCompare("MinTime", Comparision = Comparision.GreaterEqual,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeEqualGreaterThan")]
-        public float? MaxTime { get; set; }
+        public double? MaxTime { get; set; }
 
         /// <summary>
         ///     Category of medical record.

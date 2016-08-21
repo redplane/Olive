@@ -3,7 +3,7 @@ using MultipartFormDataMediaFormatter.Attributes;
 using MultipartFormDataMediaFormatter.Models;
 using Shared.Resources;
 
-namespace Olives.ViewModels.Initialize
+namespace Olives.ViewModels.Initialize.Medical
 {
     public class InitializeMedicalImageViewModel
     {

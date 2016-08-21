@@ -7,36 +7,23 @@ using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Resources;
 
-namespace Olives.ViewModels.Initialize
+namespace Olives.ViewModels.Edit.MedicalRecord
 {
-    public class InitializeMedicalRecordViewModel
+    public class EditMedicalRecordViewModel
     {
         /// <summary>
-        ///     Owner of medical record
-        ///     As no owner is defined, the requester will be the owner of medical record.
+        ///     Category of medical record.
         /// </summary>
-        public int? Owner { get; set; }
-
-        /// <summary>
-        ///     Id of the medical record creator.
-        /// </summary>
-        public int? Creator { get; set; }
+        [MedicalCategoryValidate(ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueIsInvalid")]
+        public int? Category { get; set; }
 
         /// <summary>
         ///     Name of medical record.
         /// </summary>
-        [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "ValueIsRequired")]
         [StringLength(OlivesValues.MaxMedicalRecordNameLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Name { get; set; }
-
-        /// <summary>
-        ///     Id of category.
-        /// </summary>
-        [MedicalCategoryValidate(ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "ValueIsInvalid")]
-        public int Category { get; set; }
 
         /// <summary>
         ///     List of noticed information.
@@ -52,6 +39,6 @@ namespace Olives.ViewModels.Initialize
         /// </summary>
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
-        public double Time { get; set; }
+        public double? Time { get; set; }
     }
 }

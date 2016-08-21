@@ -17,7 +17,6 @@ using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
-using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
@@ -59,7 +58,7 @@ namespace Olives.Controllers
         [Route("api/appointment")]
         [HttpGet]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> FindAppointment([FromUri] int id)
+        public async Task<HttpResponseMessage> FindAppointmentAsync([FromUri] int id)
         {
             try
             {
@@ -156,7 +155,7 @@ namespace Olives.Controllers
         [Route("api/appointment")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> InitializeAppointment([FromBody] InitializeAppointmentViewModel info)
+        public async Task<HttpResponseMessage> InitializeAppointmentAsync([FromBody] InitializeAppointmentViewModel info)
         {
             try
             {
@@ -300,7 +299,7 @@ namespace Olives.Controllers
         [Route("api/appointment")]
         [HttpPut]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> EditAppointment([FromUri] int id,
+        public async Task<HttpResponseMessage> EditAppointmentAsync([FromUri] int id,
             [FromBody] EditAppointmentViewModel info)
         {
             #region Request parameters validation
@@ -441,7 +440,7 @@ namespace Olives.Controllers
         [Route("api/appointment/filter")]
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> FilterAppointment([FromBody] FilterAppointmentViewModel filter)
+        public async Task<HttpResponseMessage> FilterAppointmentAsync([FromBody] FilterAppointmentViewModel filter)
         {
             #region ModelState result
 

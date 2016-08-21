@@ -5,7 +5,7 @@ using Shared.Attributes;
 using Shared.Enumerations;
 using Shared.Resources;
 
-namespace Olives.ViewModels.Initialize
+namespace Olives.ViewModels.Initialize.Medical
 {
     public class InitializePrescriptionImageViewModel
     {

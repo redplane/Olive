@@ -5,9 +5,9 @@ using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Resources;
 
-namespace Olives.ViewModels.Edit
+namespace Olives.ViewModels.Edit.MedicalRecord
 {
-    public class EditMedicalExperiment
+    public class EditExperimentNote
     {
         /// <summary>
         ///     Name of medical experiment.

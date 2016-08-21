@@ -7,23 +7,36 @@ using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Resources;
 
-namespace Olives.ViewModels.Edit
+namespace Olives.ViewModels.Initialize.Medical
 {
-    public class EditMedicalRecordViewModel
+    public class InitializeMedicalRecordViewModel
     {
         /// <summary>
-        ///     Category of medical record.
+        ///     Owner of medical record
+        ///     As no owner is defined, the requester will be the owner of medical record.
         /// </summary>
-        [MedicalCategoryValidate(ErrorMessageResourceType = typeof (Language),
-            ErrorMessageResourceName = "ValueIsInvalid")]
-        public int? Category { get; set; }
+        public int? Owner { get; set; }
+
+        /// <summary>
+        ///     Id of the medical record creator.
+        /// </summary>
+        public int? Creator { get; set; }
 
         /// <summary>
         ///     Name of medical record.
         /// </summary>
+        [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueIsRequired")]
         [StringLength(OlivesValues.MaxMedicalRecordNameLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Name { get; set; }
+
+        /// <summary>
+        ///     Id of category.
+        /// </summary>
+        [MedicalCategoryValidate(ErrorMessageResourceType = typeof (Language),
+            ErrorMessageResourceName = "ValueIsInvalid")]
+        public int Category { get; set; }
 
         /// <summary>
         ///     List of noticed information.
@@ -39,6 +52,6 @@ namespace Olives.ViewModels.Edit
         /// </summary>
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeAfterYear")]
-        public double? Time { get; set; }
+        public double Time { get; set; }
     }
 }
