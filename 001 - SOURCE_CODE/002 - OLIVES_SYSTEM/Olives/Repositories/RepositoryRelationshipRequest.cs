@@ -143,13 +143,13 @@ namespace Olives.Repositories
                 try
                 {
                     // Initialize the relationship.
-                    var relation = new Relation();
+                    var relation = new Relationship();
                     relation.Source = relationshipRequest.Source;
                     relation.Target = relationshipRequest.Target;
                     relation.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
                     // Add/update relationship.
-                    context.Relations.AddOrUpdate(x => new
+                    context.Relationships.AddOrUpdate(x => new
                     {
                         x.Source,
                         x.Target

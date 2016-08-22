@@ -98,7 +98,7 @@
     <Compile Include="Interfaces\IRepositoryPlace.cs" />
     <Compile Include="Interfaces\IRepositorySpecialty.cs" />
     <Compile Include="Interfaces\ITimeService.cs" />
-    <Compile Include="Models\AccountCode.cs">
+    <Compile Include="Models\AccountToken.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Addiction.cs">
@@ -111,6 +111,9 @@
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\BloodPressure.cs">
+      <DependentUpon>OlivesHealth.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BloodSugar.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Diary.cs">
@@ -182,7 +185,7 @@
     <Compile Include="Models\RealTimeConnection.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Relation.cs">
+    <Compile Include="Models\Relationship.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\RelationshipRequest.cs">
@@ -192,7 +195,7 @@
     <Compile Include="Models\Specialty.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\SugarBlood.cs">
+    <Compile Include="Models\sysdiagram.cs">
       <DependentUpon>OlivesHealth.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

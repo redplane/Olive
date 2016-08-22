@@ -12,15 +12,12 @@ namespace Shared.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class SugarBlood
+    public partial class AccountToken
     {
-        public int Id { get; set; }
         public int Owner { get; set; }
-        public double Value { get; set; }
-        public double Time { get; set; }
-        public string Note { get; set; }
-        public double Created { get; set; }
-        public Nullable<double> LastModified { get; set; }
+        public string Code { get; set; }
+        public byte Type { get; set; }
+        public System.DateTime Expired { get; set; }
     
         public virtual Person Person { get; set; }
     }

@@ -2,8 +2,6 @@
 using Olives.ViewModels.Filter.Personal;
 using Olives.ViewModels.Response.Personal;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Olives.Interfaces.PersonalNote
 {
@@ -14,14 +12,14 @@ namespace Olives.Interfaces.PersonalNote
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        Task<SugarBlood> InitializeBloodSugarAsync(SugarBlood info);
+        Task<BloodSugar> InitializeBloodSugarAsync(BloodSugar info);
 
         /// <summary>
         ///     Find blood sugar by using blood sugar note id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<SugarBlood> FindBloodSugarAsync(int id);
+        Task<BloodSugar> FindBloodSugarAsync(int id);
 
         /// <summary>
         ///     Find blood sugar by using conditions.

@@ -184,7 +184,7 @@ namespace Olives.Repositories
             var response = new ResponsePatientFilter();
 
             // Take all relations which requester takes part in.
-            IQueryable<Relation> relationships = context.Relations;
+            IQueryable<Relationship> relationships = context.Relationships;
             relationships = relationships.Where(x => x.Source == filter.Requester || x.Target == filter.Requester);
 
             // By default, take all patients.

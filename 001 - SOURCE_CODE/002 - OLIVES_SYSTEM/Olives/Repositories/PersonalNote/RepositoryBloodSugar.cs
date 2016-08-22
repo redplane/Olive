@@ -36,12 +36,12 @@ namespace Olives.Repositories.PersonalNote
         /// </summary>
         /// <param name="info"></param>
         /// <returns></returns>
-        public async Task<SugarBlood> InitializeBloodSugarAsync(SugarBlood info)
+        public async Task<BloodSugar> InitializeBloodSugarAsync(BloodSugar info)
         {
             // Add allergy to database context.
             var context = _dataContext.Context;
 
-            context.SugarBloods.AddOrUpdate(info);
+            context.BloodSugars.AddOrUpdate(info);
 
             // Submit allergy.
             await context.SaveChangesAsync();
@@ -54,10 +54,10 @@ namespace Olives.Repositories.PersonalNote
         /// </summary>
         /// <param name="id">Blood sugar Id</param>
         /// <returns></returns>
-        public async Task<SugarBlood> FindBloodSugarAsync(int id)
+        public async Task<BloodSugar> FindBloodSugarAsync(int id)
         {
             var context = _dataContext.Context;
-            return await context.SugarBloods.FirstOrDefaultAsync(x => x.Id == id);
+            return await context.BloodSugars.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Olives.Repositories.PersonalNote
         {
             // By default, take all information.
             var context = _dataContext.Context;
-            IQueryable<SugarBlood> bloodSugars = context.SugarBloods;
+            IQueryable<BloodSugar> bloodSugars = context.BloodSugars;
             bloodSugars = FilterBloodSugars(bloodSugars, filter);
 
             // Initialize response and throw result back.
@@ -126,7 +126,7 @@ namespace Olives.Repositories.PersonalNote
         /// <param name="bloodSugars"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        private IQueryable<SugarBlood> FilterBloodSugars(IQueryable<SugarBlood> bloodSugars,
+        private IQueryable<BloodSugar> FilterBloodSugars(IQueryable<BloodSugar> bloodSugars,
             FilterBloodSugarViewModel filter)
         {
             // Id is specified.
@@ -178,11 +178,11 @@ namespace Olives.Repositories.PersonalNote
         {
             // By default, take all information.
             var context = _dataContext.Context;
-            IQueryable<SugarBlood> bloodSugars = context.SugarBloods;
+            IQueryable<BloodSugar> bloodSugars = context.BloodSugars;
             bloodSugars = FilterBloodSugars(bloodSugars, filter);
 
             // Delete the filtered record.
-            context.SugarBloods.RemoveRange(bloodSugars);
+            context.BloodSugars.RemoveRange(bloodSugars);
 
             // Save changes and count the affected records.
             var records = await context.SaveChangesAsync();

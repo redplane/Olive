@@ -12,12 +12,11 @@ namespace Shared.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Rating
+    public partial class Relationship
     {
-        public int Maker { get; set; }
+        public int Id { get; set; }
+        public int Source { get; set; }
         public int Target { get; set; }
-        public int Value { get; set; }
-        public string Comment { get; set; }
         public double Created { get; set; }
     
         public virtual Doctor Doctor { get; set; }

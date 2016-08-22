@@ -44,13 +44,13 @@ namespace Olives.Repositories
         /// <param name="filter"></param>
         /// >
         /// <returns></returns>
-        public async Task<Relation> FindRelationshipAsync(FilterRelationshipViewModel filter)
+        public async Task<Relationship> FindRelationshipAsync(FilterRelationshipViewModel filter)
         {
             // Database context initialization.
             var context = _dataContext.Context;
 
             // Take all relationships.
-            IQueryable<Relation> relationships = context.Relations;
+            IQueryable<Relationship> relationships = context.Relationships;
 
             // Filter the relationships.
             relationships = FilterRelationships(relationships, filter);
@@ -69,14 +69,14 @@ namespace Olives.Repositories
             var context = _dataContext.Context;
 
             // By default, take all relationships.
-            IQueryable<Relation> relationships = context.Relations;
+            IQueryable<Relationship> relationships = context.Relationships;
 
             // Filter the relationships.
             relationships = FilterRelationships(relationships, filter);
 
 
             // Find the relation whose id is matched and has the specific person takes part in.
-            context.Relations.RemoveRange(relationships);
+            context.Relationships.RemoveRange(relationships);
 
             return await context.SaveChangesAsync();
         }
@@ -90,7 +90,7 @@ namespace Olives.Repositories
             var context = _dataContext.Context;
 
             // By default, take all relationship.
-            IQueryable<Relation> relationships = context.Relations;
+            IQueryable<Relationship> relationships = context.Relationships;
             relationships = FilterRelationships(relationships, filter);
 
             // Response initialization.Filter
@@ -118,7 +118,7 @@ namespace Olives.Repositories
             var context = _dataContext.Context;
 
             // By default, take all relationship.
-            IQueryable<Relation> relationships = context.Relations;
+            IQueryable<Relationship> relationships = context.Relationships;
 
             // Take the relationship whose source is requester and type is provide treatment.
             relationships = relationships.Where(x => x.Source == requester);
@@ -179,7 +179,7 @@ namespace Olives.Repositories
                 return false;
 
             // By default, take all relationships.
-            IQueryable<Relation> relationships = context.Relations;
+            IQueryable<Relationship> relationships = context.Relationships;
 
             // Find the relationship which these 2 people take part in.
             return await
@@ -195,8 +195,8 @@ namespace Olives.Repositories
         /// <param name="relationships"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        private IQueryable<Relation> FilterRelationships(
-            IQueryable<Relation> relationships, FilterRelationshipViewModel filter)
+        private IQueryable<Relationship> FilterRelationships(
+            IQueryable<Relationship> relationships, FilterRelationshipViewModel filter)
         {
             // Base on requester role, do the filter.
             relationships = FilterRelationshipsByRequesterRole(relationships, filter);
@@ -220,8 +220,8 @@ namespace Olives.Repositories
         /// <param name="relationships"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        private IQueryable<Relation> FilterRelationshipsByRequesterRole(
-            IQueryable<Relation> relationships,
+        private IQueryable<Relationship> FilterRelationshipsByRequesterRole(
+            IQueryable<Relationship> relationships,
             FilterRelationshipViewModel filter)
         {
             // Requester is not defined.

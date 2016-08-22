@@ -20,8 +20,8 @@ namespace Shared.Models
             this.ExperimentNotes = new HashSet<ExperimentNote>();
             this.MedicalImages = new HashSet<MedicalImage>();
             this.MedicalNotes = new HashSet<MedicalNote>();
-            this.PrescriptionImages = new HashSet<PrescriptionImage>();
             this.Prescriptions = new HashSet<Prescription>();
+            this.PrescriptionImages = new HashSet<PrescriptionImage>();
         }
     
         public int Id { get; set; }
@@ -44,8 +44,8 @@ namespace Shared.Models
         public virtual Person Person { get; set; }
         public virtual Person Person1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PrescriptionImage> PrescriptionImages { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Prescription> Prescriptions { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PrescriptionImage> PrescriptionImages { get; set; }
     }
 }

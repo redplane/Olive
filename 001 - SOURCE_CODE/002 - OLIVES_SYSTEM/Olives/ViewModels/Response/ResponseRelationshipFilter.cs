@@ -8,7 +8,7 @@ namespace Olives.ViewModels.Response
         /// <summary>
         ///     List of filtered relationships.
         /// </summary>
-        public IEnumerable<Relation> Relationships { get; set; }
+        public IEnumerable<Relationship> Relationships { get; set; }
 
         /// <summary>
         ///     Total of record matched with conditions.

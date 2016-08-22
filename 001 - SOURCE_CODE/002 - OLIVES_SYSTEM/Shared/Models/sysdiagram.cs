@@ -12,14 +12,12 @@ namespace Shared.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Relation
+    public partial class sysdiagram
     {
-        public int Id { get; set; }
-        public int Source { get; set; }
-        public int Target { get; set; }
-        public double Created { get; set; }
-    
-        public virtual Doctor Doctor { get; set; }
-        public virtual Patient Patient { get; set; }
+        public string name { get; set; }
+        public int principal_id { get; set; }
+        public int diagram_id { get; set; }
+        public Nullable<int> version { get; set; }
+        public byte[] definition { get; set; }
     }
 }

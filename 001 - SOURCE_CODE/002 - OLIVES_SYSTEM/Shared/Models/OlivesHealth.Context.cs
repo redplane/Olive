@@ -25,11 +25,12 @@ namespace Shared.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<AccountCode> AccountCodes { get; set; }
+        public virtual DbSet<AccountToken> AccountTokens { get; set; }
         public virtual DbSet<Addiction> Addictions { get; set; }
         public virtual DbSet<Allergy> Allergies { get; set; }
         public virtual DbSet<Appointment> Appointments { get; set; }
         public virtual DbSet<BloodPressure> BloodPressures { get; set; }
+        public virtual DbSet<BloodSugar> BloodSugars { get; set; }
         public virtual DbSet<Diary> Diaries { get; set; }
         public virtual DbSet<Doctor> Doctors { get; set; }
         public virtual DbSet<ExperimentNote> ExperimentNotes { get; set; }
@@ -48,9 +49,9 @@ namespace Shared.Models
         public virtual DbSet<PrescriptionImage> PrescriptionImages { get; set; }
         public virtual DbSet<Rating> Ratings { get; set; }
         public virtual DbSet<RealTimeConnection> RealTimeConnections { get; set; }
-        public virtual DbSet<Relation> Relations { get; set; }
+        public virtual DbSet<Relationship> Relationships { get; set; }
         public virtual DbSet<RelationshipRequest> RelationshipRequests { get; set; }
         public virtual DbSet<Specialty> Specialties { get; set; }
-        public virtual DbSet<SugarBlood> SugarBloods { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
     }
 }

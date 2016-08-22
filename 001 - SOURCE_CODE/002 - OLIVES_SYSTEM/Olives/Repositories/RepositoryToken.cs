@@ -25,46 +25,6 @@ namespace Olives.Repositories
         }
 
         #endregion
-
-        /// <summary>
-        ///     Find activation code by owner and code.
-        /// </summary>
-        /// <param name="owner"></param>
-        /// <param name="type"></param>
-        /// <param name="code"></param>
-        /// <returns></returns>
-        public async Task<AccountCode> FindAccountTokenAsync(int? owner, byte? type, string code)
-        {
-            // No filter is specified.
-            if (owner == null && string.IsNullOrWhiteSpace(code))
-                return null;
-
-            var context = _dataContext.Context;
-
-            // By default, retrieve all results.
-            IQueryable<AccountCode> results = context.AccountCodes;
-
-            // Owner is specified.
-            if (owner != null)
-                results = results.Where(x => x.Owner == owner.Value);
-
-            // Type is specified.
-            if (type != null)
-                results = results.Where(x => x.Type == type.Value);
-
-            // Code is specified.
-            if (!string.IsNullOrWhiteSpace(code))
-                results = results.Where(x => x.Code.Equals(code));
-
-            // Count the total result.
-            var records = await results.CountAsync();
-
-            // Result is not unique.
-            if (records != 1)
-                return null;
-
-            return await results.FirstOrDefaultAsync();
-        }
         
         /// <summary>
         ///     Filter and detach the account tokens.
@@ -77,11 +37,11 @@ namespace Olives.Repositories
             var context = _dataContext.Context;
 
             // Take all the records.
-            IQueryable<AccountCode> accountTokens = context.AccountCodes;
+            IQueryable<AccountToken> accountTokens = context.AccountTokens;
 
             // Filter and detach.
             accountTokens = FilterAccountTokens(accountTokens, filter);
-            context.AccountCodes.RemoveRange(accountTokens);
+            context.AccountTokens.RemoveRange(accountTokens);
 
             // Retrieve the number of records which have been deleted.
             var records = await context.SaveChangesAsync();
@@ -94,12 +54,12 @@ namespace Olives.Repositories
         /// </summary>
         /// <param name="accountToken"></param>
         /// <returns></returns>
-        public async Task<AccountCode> InitializeAccountTokenAsync(AccountCode accountToken)
+        public async Task<AccountToken> InitializeAccountTokenAsync(AccountToken accountToken)
         {
             // Database context initialization.
             var context = _dataContext.Context;
 
-            context.AccountCodes.AddOrUpdate(x => new
+            context.AccountTokens.AddOrUpdate(x => new
             {
                 x.Owner,
                 x.Type
@@ -115,13 +75,13 @@ namespace Olives.Repositories
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public Task<AccountCode> FindAccountTokenAsync(FilterAccountTokenViewModel filter)
+        public Task<AccountToken> FindAccountTokenAsync(FilterAccountTokenViewModel filter)
         {
             // Database context initialization.
             var context = _dataContext.Context;
 
             // Take all account tokens.
-            IQueryable<AccountCode> accountCodes = context.AccountCodes;
+            IQueryable<AccountToken> accountCodes = context.AccountTokens;
             accountCodes = FilterAccountTokens(accountCodes, filter);
 
             return accountCodes.FirstOrDefaultAsync();
@@ -133,7 +93,7 @@ namespace Olives.Repositories
         /// <param name="accountTokens"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        private IQueryable<AccountCode> FilterAccountTokens(IQueryable<AccountCode> accountTokens,
+        private IQueryable<AccountToken> FilterAccountTokens(IQueryable<AccountToken> accountTokens,
             FilterAccountTokenViewModel filter)
         {
             // Owner is specified.

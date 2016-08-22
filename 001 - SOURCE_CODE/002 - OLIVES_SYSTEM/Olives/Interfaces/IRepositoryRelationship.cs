@@ -12,7 +12,7 @@ namespace Olives.Interfaces
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        Task<Relation> FindRelationshipAsync(FilterRelationshipViewModel filter);
+        Task<Relationship> FindRelationshipAsync(FilterRelationshipViewModel filter);
 
         /// <summary>
         ///     Delete a relation asynchronously.

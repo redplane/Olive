@@ -17,12 +17,13 @@ namespace Shared.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Person()
         {
-            this.AccountCodes = new HashSet<AccountCode>();
+            this.AccountTokens = new HashSet<AccountToken>();
             this.Addictions = new HashSet<Addiction>();
             this.Allergies = new HashSet<Allergy>();
             this.Appointments = new HashSet<Appointment>();
             this.Appointments1 = new HashSet<Appointment>();
             this.BloodPressures = new HashSet<BloodPressure>();
+            this.BloodSugars = new HashSet<BloodSugar>();
             this.ExperimentNotes = new HashSet<ExperimentNote>();
             this.ExperimentNotes1 = new HashSet<ExperimentNote>();
             this.Heartbeats = new HashSet<Heartbeat>();
@@ -38,7 +39,6 @@ namespace Shared.Models
             this.Prescriptions = new HashSet<Prescription>();
             this.PrescriptionImages = new HashSet<PrescriptionImage>();
             this.Prescriptions1 = new HashSet<Prescription>();
-            this.SugarBloods = new HashSet<SugarBlood>();
         }
     
         public int Id { get; set; }
@@ -59,7 +59,7 @@ namespace Shared.Models
         public string PhotoPhysicPath { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AccountCode> AccountCodes { get; set; }
+        public virtual ICollection<AccountToken> AccountTokens { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Addiction> Addictions { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -70,6 +70,8 @@ namespace Shared.Models
         public virtual ICollection<Appointment> Appointments1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BloodPressure> BloodPressures { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BloodSugar> BloodSugars { get; set; }
         public virtual Doctor Doctor { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ExperimentNote> ExperimentNotes { get; set; }
@@ -102,7 +104,5 @@ namespace Shared.Models
         public virtual ICollection<PrescriptionImage> PrescriptionImages { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Prescription> Prescriptions1 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SugarBlood> SugarBloods { get; set; }
     }
 }

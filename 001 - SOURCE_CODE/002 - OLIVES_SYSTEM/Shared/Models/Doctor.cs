@@ -19,8 +19,8 @@ namespace Shared.Models
         {
             this.Diaries = new HashSet<Diary>();
             this.Ratings = new HashSet<Rating>();
-            this.Relations = new HashSet<Relation>();
             this.RelationshipRequests = new HashSet<RelationshipRequest>();
+            this.Relationships = new HashSet<Relationship>();
         }
     
         public int Id { get; set; }
@@ -29,17 +29,19 @@ namespace Shared.Models
         public int Voters { get; set; }
         public int PlaceId { get; set; }
         public string ProfilePdf { get; set; }
+        public string ProfileUrl { get; set; }
+        public string ProfilePhysicPath { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Diary> Diaries { get; set; }
-        public virtual Place Place { get; set; }
         public virtual Person Person { get; set; }
+        public virtual Place Place { get; set; }
         public virtual Specialty Specialty { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Rating> Ratings { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Relation> Relations { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RelationshipRequest> RelationshipRequests { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Relationship> Relationships { get; set; }
     }
 }

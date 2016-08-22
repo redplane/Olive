@@ -8,7 +8,7 @@ namespace Olives.ViewModels.Response.Personal
         /// <summary>
         ///     List of filtered heartbeat notes.
         /// </summary>
-        public IEnumerable<SugarBlood> Sugarbloods { get; set; }
+        public IEnumerable<BloodSugar> Sugarbloods { get; set; }
 
         /// <summary>
         ///     Number of results match the condition.
