@@ -8,17 +8,14 @@ using log4net;
 using Olives.Attributes;
 using Olives.Interfaces;
 using Olives.Interfaces.PersonalNote;
-using Olives.ViewModels.Edit;
 using Olives.ViewModels.Edit.Personal;
 using Olives.ViewModels.Filter.Personal;
-using Olives.ViewModels.Initialize;
 using Olives.ViewModels.Initialize.Personal;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
-using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
@@ -34,7 +31,8 @@ namespace Olives.Controllers
         /// <param name="repositoryRelation"></param>
         /// <param name="log"></param>
         /// <param name="timeService"></param>
-        public BloodSugarController(IRepositoryBloodSugar repositorySugarblood, IRepositoryRelationship repositoryRelation,
+        public BloodSugarController(IRepositoryBloodSugar repositorySugarblood,
+            IRepositoryRelationship repositoryRelation,
             ILog log,
             ITimeService timeService)
         {
@@ -153,7 +151,7 @@ namespace Olives.Controllers
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
             // Only filter and receive the first result.
-            var bloodSugar = new SugarBlood();
+            var bloodSugar = new BloodSugar();
             bloodSugar.Owner = requester.Id;
             bloodSugar.Value = info.Value;
             bloodSugar.Note = info.Note;

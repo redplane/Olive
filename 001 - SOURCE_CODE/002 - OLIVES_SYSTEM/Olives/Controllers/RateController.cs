@@ -15,7 +15,6 @@ using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
-using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
@@ -26,16 +25,14 @@ namespace Olives.Controllers
         /// <summary>
         ///     Initialize an instance of AccountController with Dependency injections.
         /// </summary>
-        /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositoryRating"></param>
         /// <param name="repositoryRelation"></param>
         /// <param name="timeService"></param>
         /// <param name="log"></param>
-        public RateController(IRepositoryAccountExtended repositoryAccountExtended, IRepositoryRating repositoryRating,
+        public RateController(IRepositoryRating repositoryRating,
             IRepositoryRelationship repositoryRelation,
             ITimeService timeService, ILog log)
         {
-            _repositoryAccountExtended = repositoryAccountExtended;
             _repositoryRating = repositoryRating;
             _repositoryRelation = repositoryRelation;
             _timeService = timeService;
@@ -214,8 +211,7 @@ namespace Olives.Controllers
                         },
                         x.Value,
                         x.Comment,
-                        x.Created,
-                        x.LastModified
+                        x.Created
                     }),
                     result.Total
                 });
@@ -235,12 +231,7 @@ namespace Olives.Controllers
         #endregion
 
         #region Properties
-
-        /// <summary>
-        ///     Repository of accounts
-        /// </summary>
-        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
-
+        
         /// <summary>
         ///     Repository of rating.
         /// </summary>

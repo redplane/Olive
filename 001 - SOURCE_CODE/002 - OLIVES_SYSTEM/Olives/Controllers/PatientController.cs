@@ -9,7 +9,6 @@ using Olives.Attributes;
 using Olives.Constants;
 using Olives.Enumerations;
 using Olives.Interfaces;
-using Olives.Models;
 using Olives.ViewModels;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Filter;
@@ -33,27 +32,21 @@ namespace Olives.Controllers
         /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositoryCode"></param>
         /// <param name="repositoryRelation"></param>
-        /// <param name="repositoryStorage"></param>
         /// <param name="timeService"></param>
         /// <param name="emailService"></param>
         /// <param name="log"></param>
-        /// <param name="applicationSetting"></param>
         public PatientController(
             IRepositoryAccountExtended repositoryAccountExtended, IRepositoryToken repositoryCode,
             IRepositoryRelationship repositoryRelation,
-            IRepositoryStorage repositoryStorage,
             ITimeService timeService, IEmailService emailService,
-            ILog log,
-            ApplicationSetting applicationSetting)
+            ILog log)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
             _repositoryCode = repositoryCode;
             _repositoryRelation = repositoryRelation;
-            _repositoryStorage = repositoryStorage;
             _log = log;
             _timeService = timeService;
             _emailService = emailService;
-            _applicationSetting = applicationSetting;
         }
 
         #endregion
@@ -106,10 +99,7 @@ namespace Olives.Controllers
                 }
 
                 #endregion
-
-                // Find the avatar storage.
-                var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
-
+                
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     Patient = new
@@ -304,10 +294,7 @@ namespace Olives.Controllers
 
                 // Update the patient.
                 requester = await _repositoryAccountExtended.EditPersonProfileAsync(requester.Id, requester);
-
-                // Find the avatar storage.
-                var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
-
+                
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     User = new
@@ -370,10 +357,7 @@ namespace Olives.Controllers
 
             // Call the filter function.
             var result = await _repositoryAccountExtended.FilterPatientsAsync(filter);
-
-            // Find the avatar storage.
-            var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
-
+            
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 Patients = result.Patients.Select(x => new
@@ -442,7 +426,7 @@ namespace Olives.Controllers
             try
             {
                 // Initialize activation and send email to client.
-                InitializeActivationCodeAsync(account);
+                await InitializeActivationCodeAsync(account);
 
                 // Respond status 200 with no content to notify user to check email for activation code.
                 return Request.CreateResponse(HttpStatusCode.OK);
@@ -464,7 +448,7 @@ namespace Olives.Controllers
         {
             #region Token initialization
 
-            var accountToken = new AccountCode();
+            var accountToken = new AccountToken();
             accountToken.Code = Guid.NewGuid().ToString();
             accountToken.Expired = DateTime.UtcNow.AddHours(Values.ActivationCodeHourDuration);
             accountToken.Owner = account.Id;
@@ -505,22 +489,12 @@ namespace Olives.Controllers
         ///     Repository which provides functions to relationship database.
         /// </summary>
         private readonly IRepositoryRelationship _repositoryRelation;
-
-        /// <summary>
-        ///     Repository which provides functions to storage setting.
-        /// </summary>
-        private readonly IRepositoryStorage _repositoryStorage;
-
+        
         /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>
         private readonly ILog _log;
-
-        /// <summary>
-        ///     Property which contains settings of application which had been deserialized from json file.
-        /// </summary>
-        private readonly ApplicationSetting _applicationSetting;
-
+        
         /// <summary>
         ///     Service which provides function to access time calculation.
         /// </summary>

@@ -205,7 +205,7 @@ namespace Olives.Controllers
 
             try
             {
-                var accountToken = new AccountCode();
+                var accountToken = new AccountToken();
                 accountToken.Owner = account.Id;
                 accountToken.Code = Guid.NewGuid().ToString();
                 accountToken.Type = (byte) TypeAccountCode.ForgotPassword;
