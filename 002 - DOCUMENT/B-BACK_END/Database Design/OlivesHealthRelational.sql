@@ -20,7 +20,7 @@ DROP TABLE Notification;
 DROP TABLE Appointment;
 DROP TABLE Rating;
 DROP TABLE RelationshipRequest;
-DROP TABLE Relation;
+DROP TABLE Relationship;
 DROP TABLE Patient;
 DROP TABLE Doctor;
 DROP TABLE Place;
@@ -212,7 +212,7 @@ CREATE TABLE RelationshipRequest
 )
 
 -- Relation table
-CREATE TABLE Relation
+CREATE TABLE Relationship
 (
 	Id					INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	Source				INT NOT NULL,
