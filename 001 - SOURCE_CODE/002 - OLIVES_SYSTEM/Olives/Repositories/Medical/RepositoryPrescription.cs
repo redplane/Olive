@@ -50,6 +50,25 @@ namespace Olives.Repositories.Medical
         }
 
         /// <summary>
+        /// Find prescription by using specific conditions.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public async Task<Prescription> FindPrescriptionAsync(FilterPrescriptionViewModel filter)
+        {
+            // Database context initialization.
+            var context = _dataContext.Context;
+
+            // Take all prescription.
+            IQueryable<Prescription> prescriptions = context.Prescriptions;
+
+            // Filter prescription.
+            prescriptions = FilterPrescriptions(prescriptions, filter);
+
+            return await prescriptions.FirstOrDefaultAsync();
+        }
+
+        /// <summary>
         ///     Initialize or update an prescription.
         /// </summary>
         /// <param name="prescription"></param>

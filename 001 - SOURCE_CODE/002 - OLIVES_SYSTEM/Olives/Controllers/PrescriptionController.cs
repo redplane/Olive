@@ -11,10 +11,8 @@ using Olives.Enumerations;
 using Olives.Hubs;
 using Olives.Interfaces;
 using Olives.Interfaces.Medical;
-using Olives.ViewModels.Edit;
 using Olives.ViewModels.Edit.MedicalRecord;
 using Olives.ViewModels.Filter.Medical;
-using Olives.ViewModels.Initialize;
 using Olives.ViewModels.Initialize.Medical;
 using Shared.Constants;
 using Shared.Enumerations;
@@ -71,21 +69,12 @@ namespace Olives.Controllers
             filter.Id = id;
             filter.Requester = requester;
 
-            // Do the filter.
-            var result = await _repositoryPrescription.FilterPrescriptionAsync(filter);
-            if (result.Total != 1)
-            {
-                _log.Error($"There is/are {result.Total} prescription [Id: {id}]");
-                return Request.CreateResponse(HttpStatusCode.NotFound, new
-                {
-                    Error = $"{Language.WarnRecordNotFound}"
-                });
-            }
+            // Find the prescription
+            var prescription = await _repositoryPrescription.FindPrescriptionAsync(filter);
 
-            var prescription = result.Prescriptions.FirstOrDefault();
             if (prescription == null)
             {
-                _log.Error($"There is/are {result.Total} prescription [Id: {id}]");
+                _log.Error($"Cannot find prescription (Id: {id}) in database");
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
                     Error = $"{Language.WarnRecordNotFound}"
@@ -534,7 +523,7 @@ namespace Olives.Controllers
         #endregion
 
         #region Properties
-        
+
         /// <summary>
         ///     Repository of medical record
         /// </summary>
@@ -544,7 +533,7 @@ namespace Olives.Controllers
         ///     Repository of prescription
         /// </summary>
         private readonly IRepositoryPrescription _repositoryPrescription;
-        
+
         /// <summary>
         ///     Repository of notification.
         /// </summary>
