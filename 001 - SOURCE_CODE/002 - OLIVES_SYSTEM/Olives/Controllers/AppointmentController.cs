@@ -233,7 +233,7 @@ namespace Olives.Controllers
                 appointment.From = info.From ?? unixTime;
                 appointment.To = info.To ?? unixTime;
                 appointment.Note = info.Note;
-                appointment.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+                appointment.Created = unixTime;
                 appointment.Status = (byte) StatusAppointment.Pending;
 
                 // Initialize an appointment into database.
@@ -373,7 +373,7 @@ namespace Olives.Controllers
             appointment.LastModified = lastModifiedTime;
 
             // Update the appointment.
-            await _repositoryAppointment.InitializeAppointmentAsync(appointment);
+            appointment = await _repositoryAppointment.InitializeAppointmentAsync(appointment);
 
             #endregion
 
@@ -391,7 +391,7 @@ namespace Olives.Controllers
             notification.Recipient = recipient;
             notification.Record = appointment.Id;
             notification.Message = string.Format(Language.NotificationAppointmentEdit, requester.FullName,
-                appointment.Note);
+                appointment.LastModifiedNote);
             notification.Created = lastModifiedTime;
 
             // Broadcast the notification with fault tolerant.

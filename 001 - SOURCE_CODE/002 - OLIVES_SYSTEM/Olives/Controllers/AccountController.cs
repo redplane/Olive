@@ -15,7 +15,6 @@ using Olives.ViewModels.Filter;
 using Olives.ViewModels.Initialize;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels;
@@ -60,7 +59,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [Route("api/account/avatar")]
         [HttpPost]
-        [OlivesAuthorize(new[] { Role.Patient, Role.Doctor })]
+        [OlivesAuthorize(new[] {Role.Patient, Role.Doctor})]
         public async Task<HttpResponseMessage> InitializeAvatarAsync([FromBody] InitializeAvatarViewModel info)
         {
             #region Request parameters validation
@@ -85,7 +84,7 @@ namespace Olives.Controllers
             try
             {
                 // Retrieve information of person who sent request.
-                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 // Retrieve avatar storage setting.
                 var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
@@ -108,7 +107,6 @@ namespace Olives.Controllers
                 // Log the information.
                 _log.Info($"{requester.Email} has uploaded avatar successfuly.");
 
-
                 #endregion
 
                 #region Image link generation
@@ -124,7 +122,7 @@ namespace Olives.Controllers
                 _log.Info($"{requester.Email} has saved avatar successfully");
 
                 #endregion
-                
+
                 // Everything is successful. Tell client the result.
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -215,7 +213,7 @@ namespace Olives.Controllers
 
                 // Url construction.
                 var url = Url.Link("Default",
-                    new { controller = "Service", action = "FindPassword" });
+                    new {controller = "Service", action = "FindPassword"});
 
                 // Data which will be bound to email template.
                 var data = new
@@ -228,8 +226,8 @@ namespace Olives.Controllers
 
                 // Send the activation code email.
                 await
-                    _emailService.InitializeEmail(new[] { info.Email }, OlivesValues.TemplateEmailFindPassword, data);
-                
+                    _emailService.InitializeEmail(new[] {info.Email}, OlivesValues.TemplateEmailFindPassword, data);
+
                 _log.Error("Create token successful");
 
                 // Tell doctor to wait for admin confirmation.
@@ -296,7 +294,7 @@ namespace Olives.Controllers
             #endregion
 
             #region Token validation
-            
+
             // Token is expired.
             if (DateTime.UtcNow > accountToken.Expired)
             {
@@ -318,7 +316,7 @@ namespace Olives.Controllers
             // Find the account.
             var account =
                 await
-                    _repositoryAccountExtended.FindPersonAsync(accountToken.Owner, null, null, (byte)Role.Patient,
+                    _repositoryAccountExtended.FindPersonAsync(accountToken.Owner, null, null, (byte) Role.Patient,
                         StatusAccount.Pending);
 
             // No account is not found.
@@ -362,8 +360,7 @@ namespace Olives.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
-            
-            
+
             #endregion
         }
 
@@ -412,7 +409,7 @@ namespace Olives.Controllers
             }
 
             // Requested user is not a patient or a doctor.
-            if (account.Role != (byte)Role.Patient && account.Role != (byte)Role.Doctor)
+            if ((account.Role != (byte) Role.Patient) && (account.Role != (byte) Role.Doctor))
             {
                 _log.Error($"{loginViewModel.Email} is a admin, therefore, it cannot be used here.");
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -422,10 +419,10 @@ namespace Olives.Controllers
             }
 
             // Login is failed because of account is pending.
-            if ((StatusAccount)account.Status == StatusAccount.Pending)
+            if ((StatusAccount) account.Status == StatusAccount.Pending)
             {
                 // Tell doctor to contact admin for account verification.
-                if (account.Role == (byte)Role.Doctor)
+                if (account.Role == (byte) Role.Doctor)
                 {
                     _log.Error($"Access is forbidden because {loginViewModel.Email} is waiting for admin confirmation");
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
@@ -443,7 +440,7 @@ namespace Olives.Controllers
             }
 
             // Login is failed because of account has been disabled.
-            if ((StatusAccount)account.Status == StatusAccount.Inactive)
+            if ((StatusAccount) account.Status == StatusAccount.Inactive)
             {
                 _log.Error($"Access is forbidden because {loginViewModel.Email} has been disabled");
                 // Tell patient to access his/her email to verify the account.
@@ -454,11 +451,8 @@ namespace Olives.Controllers
             }
 
             #endregion
-
-            var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
-
-            if (account.Role == (byte)Role.Doctor)
-            {
+            
+            if (account.Role == (byte) Role.Doctor)
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     User = new
@@ -479,7 +473,6 @@ namespace Olives.Controllers
                         Photo = account.PhotoUrl
                     }
                 });
-            }
 
             return Request.CreateResponse(HttpStatusCode.OK, new
             {

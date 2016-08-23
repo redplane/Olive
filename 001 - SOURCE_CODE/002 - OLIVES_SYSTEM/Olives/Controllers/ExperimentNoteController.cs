@@ -11,7 +11,6 @@ using Olives.Enumerations;
 using Olives.Hubs;
 using Olives.Interfaces;
 using Olives.Interfaces.Medical;
-using Olives.ViewModels.Edit;
 using Olives.ViewModels.Edit.MedicalRecord;
 using Olives.ViewModels.Filter.Medical;
 using Olives.ViewModels.Initialize;
@@ -58,7 +57,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [HttpGet]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> FindMedicalExperimentAsync([FromUri] int id)
+        public async Task<HttpResponseMessage> FindExperimentNoteAsync([FromUri] int id)
         {
             #region Record filter
 
@@ -113,7 +112,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> InitializeMedialExperiment(
+        public async Task<HttpResponseMessage> InitializeExperimentNoteAsync(
             [FromBody] InitializeExperimentNote initializer)
         {
             #region Parameters validation
@@ -350,11 +349,15 @@ namespace Olives.Controllers
                     experimentNote = await _repositoryExperimentNote.InitializeExperimentNoteAsync(experimentNote);
                 }
 
+                double unix = 0;
+                if (isDataChanged)
+                    unix = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+                
                 #endregion
 
                 #region Notification broadcast
 
-                if (experimentNote.Creator != experimentNote.Owner)
+                if (isDataChanged && experimentNote.Creator != experimentNote.Owner)
                 {
                     var recipient = experimentNote.Owner;
                     if (requester.Id == experimentNote.Owner)
@@ -369,7 +372,7 @@ namespace Olives.Controllers
                     notification.Recipient = recipient;
                     notification.Record = experimentNote.Id;
                     notification.Message = string.Format(Language.NotifyExperimentNoteEdit, requester.FullName);
-                    notification.Created = experimentNote.Created;
+                    notification.Created = unix;
 
                     // Broadcast the notification with fault tolerant.
                     await _notificationService.BroadcastNotificationAsync(notification, Hub);

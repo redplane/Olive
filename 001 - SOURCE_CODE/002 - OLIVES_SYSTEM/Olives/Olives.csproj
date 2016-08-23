@@ -300,7 +300,6 @@
     <Compile Include="Enumerations\NotificationTopic.cs" />
     <Compile Include="Enumerations\NotificationType.cs" />
     <Compile Include="Enumerations\RoleRelationship.cs" />
-    <Compile Include="Enumerations\StatusAppointment.cs" />
     <Compile Include="Enumerations\TypeAccountCode.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

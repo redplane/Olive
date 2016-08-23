@@ -17,6 +17,7 @@
   "Storage": {
     "Avatar": "~/Resources/Avatar",
     "MedicalImage": "~/App_Data/MedicalImage",
-    "PrescriptionImage": "~/App_Data/PrescriptionImage"
+    "PrescriptionImage": "~/App_Data/PrescriptionImage",
+    "Profile": "~/Resources/Profile" 
   }
 }

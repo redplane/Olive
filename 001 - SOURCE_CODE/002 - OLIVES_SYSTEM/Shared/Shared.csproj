@@ -91,6 +91,7 @@
     <Compile Include="Constants\Values.cs" />
     <Compile Include="Enumerations\Filter\PartnerFilterMode.cs" />
     <Compile Include="Enumerations\Comparision.cs" />
+    <Compile Include="Enumerations\StatusAppointment.cs" />
     <Compile Include="Interfaces\IOliveDataContext.cs" />
     <Compile Include="Interfaces\IPagination.cs" />
     <Compile Include="Interfaces\IRepositoryAccount.cs" />

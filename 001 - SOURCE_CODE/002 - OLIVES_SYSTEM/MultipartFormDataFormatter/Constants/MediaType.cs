@@ -48,5 +48,13 @@ namespace MultipartFormDataMediaFormatter.Constants
             "image/vnd.wap.wbmp",
             "image/vnd.xiff"
         });
+
+        /// <summary>
+        /// Initialize a list of media type of PDF
+        /// </summary>
+        public static readonly IList<string> Documents = new ReadOnlyCollection<string>(new List<string>
+        {
+            "application/pdf"
+        });
     }
 }

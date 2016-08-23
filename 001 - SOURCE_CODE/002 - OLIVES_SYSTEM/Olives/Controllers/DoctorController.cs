@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -6,10 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
-using Olives.Constants;
-using Olives.Enumerations;
 using Olives.Interfaces;
-using Olives.Models;
 using Olives.ViewModels.Edit;
 using Olives.ViewModels.Filter;
 using Olives.ViewModels.Initialize;
@@ -32,16 +30,19 @@ namespace Olives.Controllers
         /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositorySpecialty"></param>
         /// <param name="repositoryPlace"></param>
+        /// <param name="repositoryStorage"></param>
         /// <param name="log"></param>
         /// <param name="timeService"></param>
         public DoctorController(IRepositoryAccountExtended repositoryAccountExtended,
             IRepositorySpecialty repositorySpecialty,
             IRepositoryPlace repositoryPlace,
+            IRepositoryStorage repositoryStorage,
             ILog log, ITimeService timeService)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
             _repositorySpecialty = repositorySpecialty;
             _repositoryPlace = repositoryPlace;
+            _repositoryStorage = repositoryStorage;
             _log = log;
             _timeService = timeService;
         }
@@ -59,7 +60,7 @@ namespace Olives.Controllers
         public async Task<HttpResponseMessage> FindDoctorAsync([FromUri] int id)
         {
             #region Result find
-            
+
             // Find the doctor by using id.
             var account =
                 await
@@ -76,9 +77,9 @@ namespace Olives.Controllers
             }
 
             #endregion
-            
+
             #region Result handling
-            
+
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 Doctor = new
@@ -170,6 +171,19 @@ namespace Olives.Controllers
 
             #region Information initialization
 
+            #region File initialization
+
+            // Find the storage of profile.
+            var fileName = $"{Guid.NewGuid()}.pdf";
+            var storageProfile = _repositoryStorage.FindStorage("Profile");
+            var profileAbsolute = Path.Combine(storageProfile.Absolute, fileName);
+            var profileUrl = InitializeUrl(storageProfile.Relative, fileName, null);
+
+            // Save the file first.
+            File.WriteAllBytes(profileAbsolute, initializer.Profile.Buffer);
+
+            #endregion
+
             // Account initialization.
             var person = new Person();
             var doctor = new Doctor();
@@ -188,6 +202,8 @@ namespace Olives.Controllers
             person.Status = (byte) StatusAccount.Pending;
             doctor.SpecialtyId = specialty.Id;
             doctor.PlaceId = place.Id;
+            doctor.ProfileUrl = profileUrl;
+            doctor.ProfilePhysicPath = profileAbsolute;
 
             // Assign personal information to patient.
             person.Doctor = doctor;
@@ -195,7 +211,7 @@ namespace Olives.Controllers
             try
             {
                 // Save patient data to database.
-                person = await _repositoryAccountExtended.InitializePersonAsync(person);
+                await _repositoryAccountExtended.InitializePersonAsync(person);
 
                 // Tell doctor to wait for admin confirmation.
                 return Request.CreateResponse(HttpStatusCode.OK);
@@ -281,7 +297,7 @@ namespace Olives.Controllers
             {
                 // Save account.
                 requester = await _repositoryAccountExtended.EditPersonProfileAsync(requester.Id, requester);
-                
+
                 // Respond information to client.
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -345,7 +361,7 @@ namespace Olives.Controllers
             {
                 filter.Status = StatusAccount.Active;
                 var result = await _repositoryAccountExtended.FilterDoctorsAsync(filter);
-                
+
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     Doctors = result.Doctors.Select(x => new
@@ -407,7 +423,12 @@ namespace Olives.Controllers
         ///     Repository of places.
         /// </summary>
         private readonly IRepositoryPlace _repositoryPlace;
-        
+
+        /// <summary>
+        ///     Repository of storage.
+        /// </summary>
+        private readonly IRepositoryStorage _repositoryStorage;
+
         /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>

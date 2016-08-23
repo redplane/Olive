@@ -28,7 +28,6 @@ namespace Shared.Models
         public int SpecialtyId { get; set; }
         public int Voters { get; set; }
         public int PlaceId { get; set; }
-        public string ProfilePdf { get; set; }
         public string ProfileUrl { get; set; }
         public string ProfilePhysicPath { get; set; }
     

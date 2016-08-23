@@ -71,30 +71,30 @@ namespace DataInitializer
 
         private static void Main()
         {
-            // Initialize places list.
-            Console.WriteLine("Initialize places");
-            InitializePlaces().Wait();
+            //// Initialize places list.
+            //Console.WriteLine("Initialize places");
+            //InitializePlaces().Wait();
 
-            // Initialize specialties.
-            Console.WriteLine("Initialize specialties");
-            InitializeSpecialties().Wait();
+            //// Initialize specialties.
+            //Console.WriteLine("Initialize specialties");
+            //InitializeSpecialties().Wait();
 
-            // Initialize medical categories.
-            Console.WriteLine("Initialize medical categories");
-            InitializeMedicalCategories().Wait();
+            //// Initialize medical categories.
+            //Console.WriteLine("Initialize medical categories");
+            //InitializeMedicalCategories().Wait();
 
-            // Initialize a list of patients.
-            Console.WriteLine("Initialize patients");
-            InitializePatient(15).Wait();
+            //// Initialize a list of patients.
+            //Console.WriteLine("Initialize patients");
+            //InitializePatient(15).Wait();
 
-            // Initialize a list of doctors.
-            InitializeDoctor(15).Wait();
+            //// Initialize a list of doctors.
+            //InitializeDoctor(15).Wait();
 
-            // Initialize a list of admins.
-            InitializeAdmin(15).Wait();
+            //// Initialize a list of admins.
+            //InitializeAdmin(15).Wait();
 
-            InitializePairValues().Wait();
-            InitializeMedicalRecordsInfo().Wait();
+            //InitializePairValues().Wait();
+            //InitializeMedicalRecordsInfo().Wait();
         }
 
         #region Private methods

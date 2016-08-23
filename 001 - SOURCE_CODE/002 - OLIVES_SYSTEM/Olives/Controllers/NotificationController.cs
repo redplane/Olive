@@ -11,10 +11,7 @@ using Olives.ViewModels.Filter;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
-using Shared.Interfaces;
 using Shared.Models;
-using Shared.Resources;
-using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
@@ -124,7 +121,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("api/notification/seen")]
-        public async Task<HttpResponseMessage> MakeNotificationsSeen([FromBody] FilterNotificationViewModel filter) 
+        public async Task<HttpResponseMessage> MakeNotificationsSeen([FromBody] FilterNotificationViewModel filter)
         {
             try
             {

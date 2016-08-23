@@ -49,6 +49,25 @@ namespace Olives.Hubs
             return base.OnConnected();
         }
 
+        public override Task OnReconnected()
+        {
+            // Retrieve the account information.
+            var account = (Person)Context.Request.Environment[Values.KeySignalrClient];
+
+            // Retrieve the connection index.
+            var connectionIndex = Context.ConnectionId;
+
+            // Initialize a real time connection information.
+            var realTimeConnection = new RealTimeConnection();
+            realTimeConnection.Owner = account.Id;
+            realTimeConnection.ConnectionId = connectionIndex;
+            realTimeConnection.Created = TimeService.DateTimeUtcToUnix(DateTime.UtcNow);
+
+            // Initialize a connection information.
+            RepositoryRealTimeConnection.InitializeRealTimeConnectionInfoAsync(realTimeConnection);
+            
+            return base.OnReconnected();
+        }
         /// <summary>
         ///     This function is called when a client disconnects from server.
         /// </summary>

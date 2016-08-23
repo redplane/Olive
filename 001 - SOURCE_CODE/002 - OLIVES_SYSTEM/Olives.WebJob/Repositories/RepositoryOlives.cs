@@ -1,53 +1,66 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Olives.WebJob.Interfaces;
 using Shared.Enumerations;
-using Shared.Helpers;
+using Shared.Interfaces;
 using Shared.Models;
+using Shared.Services;
 
 namespace Olives.WebJob.Repositories
 {
     public class RepositoryOlives : IRepositoryOlives
     {
+        #region Properties
+
         /// <summary>
-        ///     This function is for finding account which has invalid activation code and delete all of 'em.
+        /// Instance for accessing time calculation.
+        /// </summary>
+        private readonly ITimeService _timeService;
+
+        /// <summary>
+        /// Millseconds of a day.
+        /// </summary>
+        private const double MillisecondOfDay = 8.64e+7;
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Initialize a repository of Olives.
+        /// </summary>
+        public RepositoryOlives()
+        {
+            _timeService = new TimeService();
+        }
+
+        #endregion
+
+        /// <summary>
+        ///     Find expired activation codes and delete 'em all.
         /// </summary>
         /// <returns>The number of deleted record.</returns>
-        public async Task<int> RemoveAllExpiredActivationCode()
+        public async Task<int> FindAndCleanAllExpiredAccountTokens()
         {
-            // Context initialization.
+            // Database context initialization
             var context = new OlivesHealthEntities();
+
+            // Retrieve the current UTC.
+            var currentUtc = DateTime.UtcNow;
 
             // Begin the transaction, remove all invalid activation code.
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    // By default, remove all pending account at the check point.
-                    IQueryable<Person> expiredAccounts = context.People;
-                    expiredAccounts = expiredAccounts.Where(x => x.Status == (byte) StatusAccount.Pending);
+                    // Find all expired account tokens.
+                    var expiredAccountTokens = context.AccountTokens.Where(x => x.Expired <= currentUtc);
 
-                    // By default, find all the expired tokens.
-                    IQueryable<AccountCode> expiredTokens = context.AccountCodes;
-                    expiredTokens = expiredTokens.Where(x => x.Type == (byte) TypeAccountCode.Activation);
-                    expiredTokens = expiredTokens.Where(x => x.Expired <= DateTime.UtcNow);
-
-                    // Join 2 tables : Person and AccountToken to find the invalid account.
-                    var expireCollection = from p in expiredAccounts
-                        join t in expiredTokens on p.Id equals t.Owner
-                        select new
-                        {
-                            People = p,
-                            Tokens = t
-                        };
-
-                    // Remove invalid accounts first.
-                    context.People.RemoveRange(expireCollection.Select(x => x.People));
-                    context.AccountCodes.RemoveRange(expireCollection.Select(x => x.Tokens));
+                    // Delete all of 'em.
+                    context.AccountTokens.RemoveRange(expiredAccountTokens);
 
                     // Save changed.
                     var records = await context.SaveChangesAsync();
@@ -61,22 +74,72 @@ namespace Olives.WebJob.Repositories
                 {
                     // Rollback the transaction.
                     transaction.Rollback();
-                    throw;
+                    return 0;
                 }
             }
         }
 
         /// <summary>
+        ///     Find expired  and delete 'em all.
+        /// </summary>
+        /// <returns>The number of deleted record.</returns>
+        public async Task<int> FindAndCleanAllExpiredAccounts()
+        {
+            // Database context initialization
+            var context = new OlivesHealthEntities();
+
+            // Retrieve the current UTC.
+            var unix = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+
+            // Begin the transaction, remove all invalid activation code.
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Find all expired account tokens.
+                    var expiredAccounts = context.People.Where(x => x.Status == (byte)StatusAccount.Pending && x.Created + MillisecondOfDay < unix);
+                    
+                    // Loop through everybody.
+                    await expiredAccounts.ForEachAsync(x =>
+                    {
+                        if (x.Role == (byte) Role.Doctor)
+                            context.Doctors.RemoveRange(context.Doctors.Where(doctor => doctor.Id == x.Id));
+
+                        if (x.Role == (byte) Role.Patient)
+                            context.Patients.RemoveRange(context.Patients.Where(patient => patient.Id == x.Id));
+                    });
+
+                    // Delete all of 'em.
+                    context.People.RemoveRange(expiredAccounts);
+
+                    // Save changed.
+                    var records = await context.SaveChangesAsync();
+
+                    // Commit the transaction.
+                    transaction.Commit();
+
+                    return records;
+                }
+                catch
+                {
+                    // Rollback the transaction.
+                    transaction.Rollback();
+                    return 0;
+                }
+            }
+        }
+        
+        /// <summary>
         ///     This function is for finding appointment whose date is expired.
         /// </summary>
         /// <returns></returns>
-        public async Task<int> HandleExpiredAppointmentsAsync()
+        public async Task<int> FindAndHandleExpiredAppointments()
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
             // Get the current unix time.
-            var unixTime = EpochTimeHelper.Instance.DateTimeToEpochTime(DateTime.UtcNow);
+            var unixTime = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
             // Find and update active appointment.
             IQueryable<Appointment> appointments = context.Appointments;
@@ -107,7 +170,7 @@ namespace Olives.WebJob.Repositories
         ///     This function is for searching and cleaning enlisted junk files.
         /// </summary>
         /// <returns></returns>
-        public async Task<int> CleanJunkFilesAsync(List<Exception> exceptions)
+        public async Task<int> FindAndCleanJunkFile()
         {
             // Database context initialization.
             var context = new OlivesHealthEntities();
@@ -130,12 +193,15 @@ namespace Olives.WebJob.Repositories
                         continue;
                     }
 
+                    // Delete the file first.
                     File.Delete(junkFile.FullPath);
+
+                    // Remove the junk file.
                     context.JunkFiles.Remove(junkFile);
                 }
-                catch (Exception exception)
+                catch
                 {
-                    exceptions.Add(exception);
+                    // Let it be handled later.
                 }
             }
 

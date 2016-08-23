@@ -1,4 +1,4 @@
-﻿namespace Olives.Enumerations
+﻿namespace Shared.Enumerations
 {
     public enum StatusAppointment
     {
