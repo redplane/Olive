@@ -2,8 +2,6 @@
 using Olives.ViewModels.Filter.Medical;
 using Olives.ViewModels.Response.Medical;
 using Shared.Models;
-using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Olives.Interfaces.Medical
 {
@@ -15,6 +13,13 @@ namespace Olives.Interfaces.Medical
         /// <param name="id"></param>
         /// <returns></returns>
         Task<Prescription> FindPrescriptionAsync(int id);
+
+        /// <summary>
+        /// Find the prescription by using filter.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        Task<Prescription> FindPrescriptionAsync(FilterPrescriptionViewModel filter);
 
         /// <summary>
         ///     Initialize or update an prescription.

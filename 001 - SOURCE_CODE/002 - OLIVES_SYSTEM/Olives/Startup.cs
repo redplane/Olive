@@ -10,6 +10,7 @@ using Autofac.Integration.SignalR;
 using Autofac.Integration.WebApi;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
+using Microsoft.Owin.Cors;
 using Newtonsoft.Json;
 using Olives;
 using Olives.Attributes;
@@ -157,8 +158,15 @@ namespace Olives
             var repositoryRealtimeConnection = DependencyResolver.Current.GetService<IRepositoryRealTimeConnection>();
             repositoryRealtimeConnection.DeleteRealTimeConnectionInfoAsync(null, null, null).Wait();
 
+            app.Map("/signalr", map =>
+            {
+                map.UseCors(CorsOptions.AllowAll);
+                var hubConfiguration = new HubConfiguration();
+                map.RunSignalR(hubConfiguration);
+            });
+
             // Map all signalr hubs.
-            app.MapSignalR();
+            //app.MapSignalR();
 
             #endregion
         }

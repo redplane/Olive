@@ -179,6 +179,18 @@ namespace Olives.Controllers
 
                 #region Find the dater
 
+                // Retrieve information of person who sent request.
+                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+                
+                if (requester.Id == info.Dater)
+                {
+                    _log.Error($"Dater [Id: {info.Dater}] is not found as active in system");
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, new
+                    {
+                        Error = $"{Language.WarnDaterNotFound}"
+                    });
+                }
+
                 var dater = await _repositoryAccountExtended.FindPersonAsync(info.Dater, null, null, null, StatusAccount.Active);
                 if (dater == null)
                 {
@@ -192,10 +204,7 @@ namespace Olives.Controllers
                 #endregion
 
                 #region Relation validation
-
-                // Retrieve information of person who sent request.
-                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
+                
                 // Check whether 2 people are connected or not.
                 var rPeopleConnected = await _repositoryRelation.IsPeopleConnected(requester.Id, info.Dater);
                 if (!rPeopleConnected)
