@@ -13,11 +13,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olives", "Olives\Olives.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OlivesAdministration.Test", "OlivesAdministrationUnitTest\OlivesAdministration.Test.csproj", "{B4541E99-C6BD-4B01-BFB5-F53A8ECC8C5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olives.WebJob", "Olives.WebJob\Olives.WebJob.csproj", "{C676DCA0-0BBE-4F86-A2B6-304E289CB7FF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultipartFormDataMediaFormatter", "MultipartFormDataFormatter\MultipartFormDataMediaFormatter.csproj", "{1F851995-9C6B-4B34-82AF-AC4E075F00C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olives.Test", "Olives.Test\Olives.Test.csproj", "{D2284679-5E31-4194-94DC-31CCFF1D1E5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olives.Job", "Olives.Job\Olives.Job.csproj", "{016581C8-ADA7-4132-89BD-2CAEC3A537FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,10 +45,6 @@ Global
 		{B4541E99-C6BD-4B01-BFB5-F53A8ECC8C5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4541E99-C6BD-4B01-BFB5-F53A8ECC8C5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4541E99-C6BD-4B01-BFB5-F53A8ECC8C5B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C676DCA0-0BBE-4F86-A2B6-304E289CB7FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C676DCA0-0BBE-4F86-A2B6-304E289CB7FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C676DCA0-0BBE-4F86-A2B6-304E289CB7FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C676DCA0-0BBE-4F86-A2B6-304E289CB7FF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1F851995-9C6B-4B34-82AF-AC4E075F00C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1F851995-9C6B-4B34-82AF-AC4E075F00C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F851995-9C6B-4B34-82AF-AC4E075F00C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -57,6 +53,10 @@ Global
 		{D2284679-5E31-4194-94DC-31CCFF1D1E5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2284679-5E31-4194-94DC-31CCFF1D1E5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2284679-5E31-4194-94DC-31CCFF1D1E5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{016581C8-ADA7-4132-89BD-2CAEC3A537FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{016581C8-ADA7-4132-89BD-2CAEC3A537FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{016581C8-ADA7-4132-89BD-2CAEC3A537FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{016581C8-ADA7-4132-89BD-2CAEC3A537FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
