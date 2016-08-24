@@ -34,8 +34,15 @@ namespace Olives.Attributes
 
             try
             {
+                // Empty email or password.
+                if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+                    return false;
+                
+                // Find the hashed password from the original one.
+                var accountHashedPassword = _repositoryAccountExtended.FindMd5Password(password);
+
                 // Find the account.
-                var account = _repositoryAccountExtended.FindPerson(null, email, password, null, StatusAccount.Active);
+                var account = _repositoryAccountExtended.FindPerson(null, email, accountHashedPassword, null, StatusAccount.Active);
 
                 // Invalid account. The request is unauthorized.
                 if (account == null)
@@ -72,9 +79,16 @@ namespace Olives.Attributes
 
             try
             {
-                // Find the account.
-                var account = _repositoryAccountExtended.FindPerson(null, email, password, null, StatusAccount.Active);
+                // Empty email or password.
+                if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+                    return false;
 
+                // Find the hashed password from the original one.
+                var accountHashedPassword = _repositoryAccountExtended.FindMd5Password(password);
+
+                // Find the account.
+                var account = _repositoryAccountExtended.FindPerson(null, email, accountHashedPassword, null, StatusAccount.Active);
+                
                 if (account == null)
                     return false;
 

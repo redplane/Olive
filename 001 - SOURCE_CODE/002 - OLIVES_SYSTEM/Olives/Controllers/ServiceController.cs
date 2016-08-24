@@ -79,6 +79,8 @@ namespace Olives.Controllers
                     return View(ViewBag);
                 }
 
+                #endregion
+
                 #region Token validate
 
                 // Token has been expired.
@@ -120,6 +122,7 @@ namespace Olives.Controllers
                 // Save the account.
                 await _repositoryAccountExtended.InitializePersonAsync(account);
 
+                // Delete the account token. Fault is tollerant.
                 try
                 {
                     await _repositoryToken.DeleteAccountTokenAsync(filter);
@@ -130,8 +133,11 @@ namespace Olives.Controllers
                 }
 
                 #endregion
-                
-                #endregion
+
+                ViewBag.Message = Language.MessageAccountActivatedSuccessfully;
+                ViewBag.IsError = false;
+
+                return View(ViewBag);
 
             }
             catch (Exception exception)

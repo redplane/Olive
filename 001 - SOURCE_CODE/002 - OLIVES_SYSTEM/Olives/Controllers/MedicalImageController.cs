@@ -14,7 +14,6 @@ using Olives.Hubs;
 using Olives.Interfaces;
 using Olives.Interfaces.Medical;
 using Olives.ViewModels.Filter.Medical;
-using Olives.ViewModels.Initialize;
 using Olives.ViewModels.Initialize.Medical;
 using Shared.Constants;
 using Shared.Enumerations;
@@ -65,7 +64,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [HttpPost]
         [OlivesAuthorize(new[] {Role.Doctor, Role.Patient})]
-        public async Task<HttpResponseMessage> InitializeMedicalImage([FromBody] InitializeMedicalImageViewModel info)
+        public async Task<HttpResponseMessage> InitializeMedicalImageÁync([FromBody] InitializeMedicalImageViewModel info)
         {
             #region Parameters validation
 
@@ -215,7 +214,7 @@ namespace Olives.Controllers
         /// <returns></returns>
         [HttpDelete]
         [OlivesAuthorize(new[] {Role.Patient})]
-        public async Task<HttpResponseMessage> DeleteMedicalImage([FromUri] int id)
+        public async Task<HttpResponseMessage> DeleteMedicalImageAsync([FromUri] int id)
         {
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];

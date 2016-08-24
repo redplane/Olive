@@ -11,10 +11,8 @@ using Olives.Enumerations;
 using Olives.Hubs;
 using Olives.Interfaces;
 using Olives.Interfaces.Medical;
-using Olives.ViewModels.Edit;
 using Olives.ViewModels.Edit.MedicalRecord;
 using Olives.ViewModels.Filter.Medical;
-using Olives.ViewModels.Initialize;
 using Olives.ViewModels.Initialize.Medical;
 using Shared.Constants;
 using Shared.Enumerations;
@@ -167,7 +165,7 @@ namespace Olives.Controllers
                 info.Creator = requester.Id;
 
                 // Doctor cannot create a medical record for him/herself.
-                if (info.Owner == null || info.Creator == info.Owner)
+                if ((info.Owner == null) || (info.Creator == info.Owner))
                 {
                     _log.Error($"Doctor [Id: {requester.Id}] cannot create medical record for him/herself");
                     return Request.CreateResponse(HttpStatusCode.Forbidden, new
@@ -332,7 +330,7 @@ namespace Olives.Controllers
 
             #region Role validation
 
-            if (!(requester.Id == medicalRecord.Owner || requester.Id == medicalRecord.Creator))
+            if (!((requester.Id == medicalRecord.Owner) || (requester.Id == medicalRecord.Creator)))
             {
                 _log.Error(
                     $"There is no relationship between requester [Id: {requester.Id}] with owner [Id: {medicalRecord.Owner}] or creator [Id: {medicalRecord.Creator}]");
@@ -348,59 +346,80 @@ namespace Olives.Controllers
             {
                 #region Information update
 
+                // To check whether any information has been modified or not.
+                var isInformationUpdated = false;
+
                 // Infos needs updating.
                 if (info.Infos != null)
+                {
                     medicalRecord.Info = JsonConvert.SerializeObject(info.Infos);
+                    isInformationUpdated = true;
+                }
 
                 if (!string.IsNullOrWhiteSpace(info.Name))
+                {
                     medicalRecord.Name = info.Name;
-
+                    isInformationUpdated = true;
+                }
                 // Time needs updating.
                 if (info.Time != null)
+                {
                     medicalRecord.Time = info.Time.Value;
+                    isInformationUpdated = true;
+                }
 
                 if (info.Category != null)
-                    medicalRecord.Category = info.Category.Value;
-
-                // Update the last time
-                medicalRecord.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
-
-                // Insert a new allergy to database.
-                var result = await _repositoryMedical.InitializeMedicalRecordAsync(medicalRecord);
-
-                #endregion
-
-                #region Notification initialization
-
-                // If the medical record is created privately, no notification should be sent.
-                if (medicalRecord.Creator != medicalRecord.Owner)
                 {
-                    var recipient = requester.Id == medicalRecord.Owner ? medicalRecord.Creator : medicalRecord.Owner;
-
-                    var notification = new Notification();
-                    notification.Type = (byte) NotificationType.Edit;
-                    notification.Topic = (byte) NotificationTopic.MedicalRecord;
-                    notification.Container = medicalRecord.Id;
-                    notification.ContainerType = (byte) NotificationTopic.MedicalRecord;
-                    notification.Broadcaster = requester.Id;
-                    notification.Recipient = recipient;
-                    notification.Record = medicalRecord.Id;
-                    notification.Message = string.Format(Language.NotifyMedicalRecordModified, requester.FullName);
-                    notification.Created = medicalRecord.Created;
-
-                    // Broadcast the notification with fault tolerant.
-                    await _notificationService.BroadcastNotificationAsync(notification, Hub);
+                    medicalRecord.Category = info.Category.Value;
+                    isInformationUpdated = true;
                 }
 
                 #endregion
+
+                if (isInformationUpdated)
+                {
+                    // Update the last time
+                    var unix = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+
+                    medicalRecord.LastModified = unix;
+
+                    // Insert a new allergy to database.
+                    medicalRecord = await _repositoryMedical.InitializeMedicalRecordAsync(medicalRecord);
+
+                    #region Notification initialization
+
+                    // If the medical record is created privately, no notification should be sent.
+                    if (medicalRecord.Creator != medicalRecord.Owner)
+                    {
+                        var recipient = requester.Id == medicalRecord.Owner
+                            ? medicalRecord.Creator
+                            : medicalRecord.Owner;
+
+                        var notification = new Notification();
+                        notification.Type = (byte) NotificationType.Edit;
+                        notification.Topic = (byte) NotificationTopic.MedicalRecord;
+                        notification.Container = medicalRecord.Id;
+                        notification.ContainerType = (byte) NotificationTopic.MedicalRecord;
+                        notification.Broadcaster = requester.Id;
+                        notification.Recipient = recipient;
+                        notification.Record = medicalRecord.Id;
+                        notification.Message = string.Format(Language.NotifyMedicalRecordModified, requester.FullName);
+                        notification.Created = unix;
+
+                        // Broadcast the notification with fault tolerant.
+                        await _notificationService.BroadcastNotificationAsync(notification, Hub);
+                    }
+
+                    #endregion
+                }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     MedicalRecord = new
                     {
-                        result.Id,
-                        result.Info,
-                        result.Name,
+                        medicalRecord.Id,
+                        medicalRecord.Info,
+                        medicalRecord.Name,
                         Creator = new
                         {
                             medicalRecord.Person.Id,
@@ -415,9 +434,9 @@ namespace Olives.Controllers
                             medicalRecord.Person1.LastName,
                             medicalRecord.Person1.Role
                         },
-                        result.Time,
-                        result.Created,
-                        result.LastModified
+                        medicalRecord.Time,
+                        medicalRecord.Created,
+                        medicalRecord.LastModified
                     }
                 });
             }
