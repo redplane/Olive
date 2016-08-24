@@ -43,7 +43,6 @@ namespace Shared.Models
     
         public int Id { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string FullName { get; set; }
@@ -57,6 +56,7 @@ namespace Shared.Models
         public string Address { get; set; }
         public string PhotoUrl { get; set; }
         public string PhotoPhysicPath { get; set; }
+        public string Password { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccountToken> AccountTokens { get; set; }

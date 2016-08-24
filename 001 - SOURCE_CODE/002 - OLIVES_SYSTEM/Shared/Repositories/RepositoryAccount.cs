@@ -1,8 +1,7 @@
-﻿using System;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Management.Instrumentation;
+using System.Text;
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Interfaces;
@@ -30,7 +29,7 @@ namespace Shared.Repositories
 
         #endregion
         
-        #region Shared
+        #region Methods
 
         /// <summary>
         ///     Find person by using email, password and role.
@@ -129,6 +128,31 @@ namespace Shared.Repositories
             await context.SaveChangesAsync();
 
             return info;
+        }
+
+        /// <summary>
+        /// Find the md5 hashed password from the original one.
+        /// </summary>
+        /// <param name="originalPassword"></param>
+        /// <returns></returns>
+        public string FindMd5Password(string originalPassword)
+        {
+            // Use input string to calculate MD5 hash
+            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+            {
+                // Find the byte stream from the original password string.
+                var originalPasswordBytes = Encoding.ASCII.GetBytes(originalPassword);
+                
+                // Find the hashed byte stream.
+                var originalPasswordHashedBytes = md5.ComputeHash(originalPasswordBytes);
+
+                // Convert the byte array to hexadecimal string
+                var sb = new StringBuilder();
+                foreach (byte t in originalPasswordHashedBytes)
+                    sb.Append(t.ToString("X2"));
+
+                return sb.ToString();
+            }
         }
 
         #endregion

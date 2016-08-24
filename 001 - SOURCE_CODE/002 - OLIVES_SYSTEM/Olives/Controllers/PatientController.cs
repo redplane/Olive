@@ -163,7 +163,7 @@ namespace Olives.Controllers
             person.Birthday = info.Birthday;
             person.Gender = (byte) info.Gender;
             person.Email = info.Email;
-            person.Password = info.Password;
+            person.Password = _repositoryAccountExtended.FindMd5Password(info.Password);
             person.Phone = info.Phone;
             person.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
             person.Role = (byte) Role.Patient;

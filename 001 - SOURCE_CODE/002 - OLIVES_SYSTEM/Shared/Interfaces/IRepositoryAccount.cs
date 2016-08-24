@@ -34,5 +34,12 @@ namespace Shared.Interfaces
         /// <param name="info"></param>
         /// <returns></returns>
         Task<Person> InitializePersonAsync(Person info);
+
+        /// <summary>
+        /// Find the md5 password from the original one.
+        /// </summary>
+        /// <param name="originalPassword"></param>
+        /// <returns></returns>
+        string FindMd5Password(string originalPassword);
     }
 }

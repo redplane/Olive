@@ -5,76 +5,76 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="3eae640eb1874c8ea5c656702716dbc3" Name="Diagram1">
-        <EntityTypeShape EntityType="OlivesHealthModel.AccountToken" Width="1.5" PointX="3" PointY="58.875" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Addiction" Width="1.5" PointX="3" PointY="68.375" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Allergy" Width="1.5" PointX="3" PointY="22" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Appointment" Width="1.5" PointX="3" PointY="33.875" />
-        <EntityTypeShape EntityType="OlivesHealthModel.BloodPressure" Width="1.5" PointX="3" PointY="51.125" />
-        <EntityTypeShape EntityType="OlivesHealthModel.BloodSugar" Width="1.5" PointX="3" PointY="61.625" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Diary" Width="1.5" PointX="8.25" PointY="47" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Doctor" Width="1.5" PointX="3" PointY="29" />
-        <EntityTypeShape EntityType="OlivesHealthModel.ExperimentNote" Width="1.5" PointX="8.25" PointY="30.25" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Heartbeat" Width="1.5" PointX="3" PointY="71.5" />
+        <EntityTypeShape EntityType="OlivesHealthModel.AccountToken" Width="1.5" PointX="3" PointY="72.125" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Addiction" Width="1.5" PointX="3" PointY="61.25" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Allergy" Width="1.5" PointX="3" PointY="33.25" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Appointment" Width="1.5" PointX="3" PointY="56.375" />
+        <EntityTypeShape EntityType="OlivesHealthModel.BloodPressure" Width="1.5" PointX="3" PointY="64.375" />
+        <EntityTypeShape EntityType="OlivesHealthModel.BloodSugar" Width="1.5" PointX="3" PointY="18.625" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Diary" Width="1.5" PointX="8.25" PointY="43.25" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Doctor" Width="1.5" PointX="6" PointY="34" />
+        <EntityTypeShape EntityType="OlivesHealthModel.ExperimentNote" Width="1.5" PointX="6" PointY="29.25" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Heartbeat" Width="1.5" PointX="3" PointY="48" />
         <EntityTypeShape EntityType="OlivesHealthModel.JunkFile" Width="1.5" PointX="0.75" PointY="0.75" />
-        <EntityTypeShape EntityType="OlivesHealthModel.MedicalCategory" Width="1.5" PointX="3.75" PointY="38.875" />
-        <EntityTypeShape EntityType="OlivesHealthModel.MedicalImage" Width="1.5" PointX="8.25" PointY="34.5" />
-        <EntityTypeShape EntityType="OlivesHealthModel.MedicalNote" Width="1.5" PointX="11.25" PointY="34.375" />
-        <EntityTypeShape EntityType="OlivesHealthModel.MedicalRecord" Width="1.5" PointX="6" PointY="33.75" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Message" Width="1.5" PointX="3" PointY="18.625" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Notification" Width="1.5" PointX="3" PointY="54.625" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Patient" Width="1.5" PointX="3" PointY="64.875" />
+        <EntityTypeShape EntityType="OlivesHealthModel.MedicalCategory" Width="1.5" PointX="3.75" PointY="51.875" />
+        <EntityTypeShape EntityType="OlivesHealthModel.MedicalImage" Width="1.5" PointX="3" PointY="37.5" />
+        <EntityTypeShape EntityType="OlivesHealthModel.MedicalNote" Width="1.5" PointX="3" PointY="29.375" />
+        <EntityTypeShape EntityType="OlivesHealthModel.MedicalRecord" Width="1.5" PointX="6" PointY="38.75" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Message" Width="1.5" PointX="3" PointY="22" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Notification" Width="1.5" PointX="3" PointY="67.875" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Patient" Width="1.5" PointX="3" PointY="44.5" />
         <EntityTypeShape EntityType="OlivesHealthModel.Person" Width="1.5" PointX="0.75" PointY="31.5" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Place" Width="1.5" PointX="0.75" PointY="28.875" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Prescription" Width="1.5" PointX="8.25" PointY="39" />
-        <EntityTypeShape EntityType="OlivesHealthModel.PrescriptionImage" Width="1.5" PointX="10.5" PointY="48" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Rating" Width="1.5" PointX="5.25" PointY="44.125" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Place" Width="1.5" PointX="3.75" PointY="41.125" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Prescription" Width="1.5" PointX="8.25" PointY="34.375" />
+        <EntityTypeShape EntityType="OlivesHealthModel.PrescriptionImage" Width="1.5" PointX="10.5" PointY="34.75" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Rating" Width="1.5" PointX="11.25" PointY="39.5" />
         <EntityTypeShape EntityType="OlivesHealthModel.RealTimeConnection" Width="1.5" PointX="2.75" PointY="0.75" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Relationship" Width="1.5" PointX="5.25" PointY="47.25" />
-        <EntityTypeShape EntityType="OlivesHealthModel.RelationshipRequest" Width="1.5" PointX="5.25" PointY="51.125" />
-        <EntityTypeShape EntityType="OlivesHealthModel.Specialty" Width="1.5" PointX="0.75" PointY="26.375" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Relationship" Width="1.5" PointX="11.25" PointY="42.625" />
+        <EntityTypeShape EntityType="OlivesHealthModel.RelationshipRequest" Width="1.5" PointX="8.25" PointY="39.375" />
+        <EntityTypeShape EntityType="OlivesHealthModel.Specialty" Width="1.5" PointX="3.75" PointY="26.875" />
         <EntityTypeShape EntityType="OlivesHealthModel.sysdiagram" Width="1.5" PointX="0.75" PointY="3.75" />
-        <AssociationConnector Association="OlivesHealthModel.FK__AccountTo__Owner__77168B72" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Addiction__Owner__009FF5AC" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Allergy__Owner__7DC38901" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Appointme__Dater__7AE71C56" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Appointme__Statu__79F2F81D" />
-        <AssociationConnector Association="OlivesHealthModel.FK__BloodPres__LastM__743A1EC7" />
-        <AssociationConnector Association="OlivesHealthModel.FK__BloodSuga__LastM__715DB21C" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Diary__LastModif__12BEA5E7" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Diary__Target__13B2CA20" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Doctor__Id__037C6257" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Doctor__PlaceId__0564AAC9" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Doctor__Specialt__04708690" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Rating__Target__3607E224" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Relations__Targe__0C11A858" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Relations__Targe__0FE2393C" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Experimen__Creat__32375140" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Experimen__Medic__304F08CE" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Experimen__Owner__31432D07" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Heartbeat__LastM__6E814571" />
-        <AssociationConnector Association="OlivesHealthModel.FK__MedicalRe__Categ__1A5FC7AF" />
-        <AssociationConnector Association="OlivesHealthModel.FK__MedicalIm__Medic__1D3C345A" />
-        <AssociationConnector Association="OlivesHealthModel.FK__MedicalIm__Owner__1E305893" />
-        <AssociationConnector Association="OlivesHealthModel.FK__MedicalNo__Creat__2200E977" />
-        <AssociationConnector Association="OlivesHealthModel.FK__MedicalNo__Medic__22F50DB0" />
-        <AssociationConnector Association="OlivesHealthModel.FK__MedicalNo__Owner__210CC53E" />
-        <AssociationConnector Association="OlivesHealthModel.FK__MedicalRe__Creat__196BA376" />
-        <AssociationConnector Association="OlivesHealthModel.FK__MedicalRe__Owner__18777F3D" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Prescript__Medic__25D17A5B" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Prescript__Medic__2A962F78" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Message__Broadca__40857097" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Message__Recipie__417994D0" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Notificat__IsSee__3ACC9741" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Notificat__Recip__3BC0BB7A" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Patient__Height__08411774" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Prescript__Owner__2D729C23" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Rating__Maker__3513BDEB" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Relations__Sourc__0B1D841F" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Relations__Sourc__0EEE1503" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Prescript__Creat__27B9C2CD" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Prescript__Creat__2C7E77EA" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Prescript__Owner__26C59E94" />
-        <AssociationConnector Association="OlivesHealthModel.FK__Prescript__Presc__2B8A53B1" />
+        <AssociationConnector Association="OlivesHealthModel.FK__AccountTo__Owner__585CFA28" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Addiction__Owner__61E66462" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Allergy__Owner__5F09F7B7" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Appointme__Dater__5C2D8B0C" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Appointme__Statu__5B3966D3" />
+        <AssociationConnector Association="OlivesHealthModel.FK__BloodPres__LastM__55808D7D" />
+        <AssociationConnector Association="OlivesHealthModel.FK__BloodSuga__LastM__52A420D2" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Diary__LastModif__7405149D" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Diary__Target__74F938D6" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Doctor__Id__64C2D10D" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Doctor__PlaceId__66AB197F" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Doctor__Specialt__65B6F546" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Rating__Target__174E50DA" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Relations__Targe__6D58170E" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Relations__Targe__7128A7F2" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Experimen__Creat__137DBFF6" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Experimen__Medic__11957784" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Experimen__Owner__12899BBD" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Heartbeat__LastM__4FC7B427" />
+        <AssociationConnector Association="OlivesHealthModel.FK__MedicalRe__Categ__7BA63665" />
+        <AssociationConnector Association="OlivesHealthModel.FK__MedicalIm__Medic__7E82A310" />
+        <AssociationConnector Association="OlivesHealthModel.FK__MedicalIm__Owner__7F76C749" />
+        <AssociationConnector Association="OlivesHealthModel.FK__MedicalNo__Creat__0347582D" />
+        <AssociationConnector Association="OlivesHealthModel.FK__MedicalNo__Medic__043B7C66" />
+        <AssociationConnector Association="OlivesHealthModel.FK__MedicalNo__Owner__025333F4" />
+        <AssociationConnector Association="OlivesHealthModel.FK__MedicalRe__Creat__7AB2122C" />
+        <AssociationConnector Association="OlivesHealthModel.FK__MedicalRe__Owner__79BDEDF3" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Prescript__Medic__0717E911" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Prescript__Medic__0BDC9E2E" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Message__Broadca__21CBDF4D" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Message__Recipie__22C00386" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Notificat__IsSee__1C1305F7" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Notificat__Recip__1D072A30" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Patient__Height__6987862A" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Prescript__Owner__0EB90AD9" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Rating__Maker__165A2CA1" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Relations__Sourc__6C63F2D5" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Relations__Sourc__703483B9" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Prescript__Creat__09003183" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Prescript__Creat__0DC4E6A0" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Prescript__Owner__080C0D4A" />
+        <AssociationConnector Association="OlivesHealthModel.FK__Prescript__Presc__0CD0C267" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

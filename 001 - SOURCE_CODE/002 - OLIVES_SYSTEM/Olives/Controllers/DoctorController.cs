@@ -194,7 +194,7 @@ namespace Olives.Controllers
             person.Birthday = initializer.Birthday;
             person.Gender = (byte) initializer.Gender;
             person.Email = initializer.Email;
-            person.Password = initializer.Password;
+            person.Password = _repositoryAccountExtended.FindMd5Password(initializer.Password);
             person.Phone = initializer.Phone;
             person.Address = initializer.Address;
             person.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);

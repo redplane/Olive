@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http.Controllers;
-using System.Web.Mvc;
 using Olives.Interfaces;
 using Shared.Constants;
 using Shared.Enumerations;
@@ -14,6 +13,8 @@ namespace Olives.Attributes
 {
     public class OlivesAuthorize : AuthorizeAttribute
     {
+        #region Constructors
+
         /// <summary>
         ///     Initialize an instance of OlivesAuthorize attribute with allowed roles.
         /// </summary>
@@ -23,10 +24,21 @@ namespace Olives.Attributes
             Roles = Array.ConvertAll(roles, x => (int) x);
         }
 
+        #endregion
+
+        #region Properties
+
         /// <summary>
         ///     Which roles can access this function.
         /// </summary>
         public new int[] Roles { get; }
+
+        /// <summary>
+        /// Dependency injection instance of IRepositoryAccountExtended.
+        /// </summary>
+        public IRepositoryAccountExtended RepositoryAccountExtended { get; set; }
+
+        #endregion
 
         /// <summary>
         ///     This function is for handling authorization handling.
@@ -43,12 +55,14 @@ namespace Olives.Attributes
                     .Select(x => x.Value.FirstOrDefault())
                     .FirstOrDefault();
 
+            // Retrieve account password.
             var accountPassword =
                 actionContext.Request.Headers.Where(
                     x =>
                         !string.IsNullOrEmpty(x.Key) &&
                         x.Key.Equals(HeaderFields.RequestAccountPassword))
                     .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
+            
 
             // Invalid account name or password.
             if (string.IsNullOrEmpty(accountEmail) || string.IsNullOrEmpty(accountPassword))
@@ -61,12 +75,12 @@ namespace Olives.Attributes
 
                 return;
             }
-
-            // Find the repository extended in dependencies list.
-            var repositoryAccountExtended = DependencyResolver.Current.GetService<IRepositoryAccountExtended>();
+            
+            // Find the hashed password from the original one.
+            var accountHashedPassword = RepositoryAccountExtended.FindMd5Password(accountPassword);
 
             // Retrieve person whose properties match conditions.
-            var person = repositoryAccountExtended.FindPerson(null, accountEmail, accountPassword, null, null);
+            var person = RepositoryAccountExtended.FindPerson(null, accountEmail, accountHashedPassword, null, null);
 
             // No person has been found.
             if (person == null)

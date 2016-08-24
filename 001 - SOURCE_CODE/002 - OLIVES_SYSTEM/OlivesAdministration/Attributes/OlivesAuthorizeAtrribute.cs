@@ -2,24 +2,17 @@
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web.Http;
 using System.Web.Http.Controllers;
-using System.Web.Mvc;
 using OlivesAdministration.Interfaces;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Interfaces;
 using Shared.Resources;
-using AuthorizeAttribute = System.Web.Http.AuthorizeAttribute;
 
 namespace OlivesAdministration.Attributes
 {
     public class OlivesAuthorize : AuthorizeAttribute
     {
-        /// <summary>
-        /// Repository of accound with extended functions.
-        /// </summary>
-        public IRepositoryAccountExtended RepositoryAccountExtended { get; set; }
-
         /// <summary>
         ///     Initialize an instance of OlivesAuthorize attribute with allowed roles.
         /// </summary>
@@ -28,7 +21,12 @@ namespace OlivesAdministration.Attributes
         {
             Roles = Array.ConvertAll(roles, x => (int) x);
         }
-        
+
+        /// <summary>
+        ///     Repository of accound with extended functions.
+        /// </summary>
+        public IRepositoryAccountExtended RepositoryAccountExtended { get; set; }
+
 
         /// <summary>
         ///     Which roles can access this function.
@@ -44,19 +42,20 @@ namespace OlivesAdministration.Attributes
             // Retrieve email and password.
             var accountEmail =
                 actionContext.Request.Headers.Where(
-                    x =>
-                        !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountEmail))
+                        x =>
+                            !string.IsNullOrEmpty(x.Key) &&
+                            x.Key.Equals(HeaderFields.RequestAccountEmail))
                     .Select(x => x.Value.FirstOrDefault())
                     .FirstOrDefault();
 
+            // Find the requested password.
             var accountPassword =
                 actionContext.Request.Headers.Where(
-                    x =>
-                        !string.IsNullOrEmpty(x.Key) &&
-                        x.Key.Equals(HeaderFields.RequestAccountPassword))
+                        x =>
+                            !string.IsNullOrEmpty(x.Key) &&
+                            x.Key.Equals(HeaderFields.RequestAccountPassword))
                     .Select(x => x.Value.FirstOrDefault()).FirstOrDefault();
-
+            
             // Invalid account name or password.
             if (string.IsNullOrEmpty(accountEmail) || string.IsNullOrEmpty(accountPassword))
             {
@@ -68,9 +67,12 @@ namespace OlivesAdministration.Attributes
 
                 return;
             }
+
+            // Find the md5 hashed password.
+            var accountHashedPassword = RepositoryAccountExtended.FindMd5Password(accountPassword);
             
             // Retrieve person whose properties match conditions.
-            var person = RepositoryAccountExtended.FindPerson(null, accountEmail, accountPassword, null, null);
+            var person = RepositoryAccountExtended.FindPerson(null, accountEmail, accountHashedPassword, null, null);
 
             // No person has been found.
             if (person == null)
@@ -109,13 +111,10 @@ namespace OlivesAdministration.Attributes
 
             // Account role isn't enough to access the function.
             if (!Roles.Any(x => x == person.Role))
-            {
-                // Role isn't valid. Tell the client the access is forbidden.
                 actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Forbidden, new
                 {
                     Error = $"{Language.WarnForbiddenAccessMethod}"
                 });
-            }
 
             // Store the requester information in action argument.
             actionContext.ActionArguments[HeaderFields.RequestAccountStorage] = person;

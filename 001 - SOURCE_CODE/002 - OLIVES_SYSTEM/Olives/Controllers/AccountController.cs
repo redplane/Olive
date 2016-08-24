@@ -394,10 +394,13 @@ namespace Olives.Controllers
 
             #region Login validation
 
+            // Calculate the hashed password from the original one.
+            var hashedPassword = _repositoryAccountExtended.FindMd5Password(loginViewModel.Password);
+
             // Pass parameter to login function. 
             var account =
                 await
-                    _repositoryAccountExtended.FindPersonAsync(null, loginViewModel.Email, loginViewModel.Password, null,
+                    _repositoryAccountExtended.FindPersonAsync(null, loginViewModel.Email, hashedPassword, null,
                         null);
 
             if (account == null)

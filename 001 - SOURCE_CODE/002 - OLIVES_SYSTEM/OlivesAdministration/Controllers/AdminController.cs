@@ -72,10 +72,13 @@ namespace OlivesAdministration.Controllers
 
             try
             {
+                // Find the hashed password from the original one.
+                var accountHashedPassword = _repositoryAccountExtended.FindMd5Password(loginViewModel.Password);
+
                 // Pass parameter to login function. 
                 var admin =
                     await
-                        _repositoryAccountExtended.FindPersonAsync(null, loginViewModel.Email, loginViewModel.Password,
+                        _repositoryAccountExtended.FindPersonAsync(null, loginViewModel.Email, accountHashedPassword,
                             (byte) Role.Admin, StatusAccount.Active);
 
                 // If no result return, that means no account.
