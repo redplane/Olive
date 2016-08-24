@@ -339,7 +339,7 @@ namespace Olives.Controllers
             try
             {
                 // Update account information.
-                account.Password = initializer.Password;
+                account.Password = _repositoryAccountExtended.FindMd5Password(initializer.Password);
 
                 // Save account to database.
                 await _repositoryAccountExtended.InitializePersonAsync(account);

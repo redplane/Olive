@@ -262,7 +262,7 @@ namespace Olives.Controllers
 
             // Password is defined.
             if (!string.IsNullOrWhiteSpace(editor.Password))
-                requester.Password = editor.Password;
+                requester.Password = _repositoryAccountExtended.FindMd5Password(editor.Password);
 
             // First name is defined.
             if (!string.IsNullOrWhiteSpace(editor.FirstName))
