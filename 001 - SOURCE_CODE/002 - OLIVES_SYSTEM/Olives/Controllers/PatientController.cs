@@ -468,7 +468,7 @@ namespace Olives.Controllers
                 firstName = account.FirstName,
                 lastName = account.LastName,
                 url,
-                expired = accountToken.Expired.ToLocalTime()
+                expired = accountToken.Expired
             };
 
             // Write an email to user to notify him/her to activate account.

@@ -58,8 +58,7 @@ namespace OlivesAdministration.Controllers
                         Error = $"{Language.WarnRecordNotFound}"
                     });
                 }
-
-                // TODO: Update doctor profile pdf file.
+                
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     Doctor = new
@@ -90,7 +89,7 @@ namespace OlivesAdministration.Controllers
                         account.Doctor.Voters,
                         account.Created,
                         account.LastModified,
-                        Profile = "",
+                        Profile = account.Doctor.ProfileUrl,
                         account.Status
                     }
                 });

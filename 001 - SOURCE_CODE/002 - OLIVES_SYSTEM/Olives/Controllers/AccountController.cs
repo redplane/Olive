@@ -215,13 +215,15 @@ namespace Olives.Controllers
                 var url = Url.Link("Default",
                     new {controller = "Service", action = "FindPassword"});
 
+                // Retrieve the client current time.
                 // Data which will be bound to email template.
                 var data = new
                 {
                     firstName = account.FirstName,
                     lastName = account.LastName,
+                    token = accountToken.Code,
                     url,
-                    accountToken.Expired
+                    accountToken.Expired,
                 };
 
                 // Send the activation code email.
