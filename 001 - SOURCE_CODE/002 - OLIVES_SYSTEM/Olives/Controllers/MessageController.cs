@@ -55,16 +55,20 @@ namespace Olives.Controllers
         [HttpGet]
         public async Task<HttpResponseMessage> FindMessageAsync([FromUri] int id)
         {
-            // Find the message.
-            var message = await _repositoryMessage.FindMessageAsync(id);
-
             // Retrieve information of person who sent request.
             var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            
+            // Filter initialization.
+            var filter = new FilterMessageViewModel();
+            filter.Id = id;
+            filter.Requester = requester.Id;
 
-            // The requester didn't take part in the message broadcasting.
-            if (!(message.Broadcaster == requester.Id || message.Recipient == requester.Id))
+            // Find the message.
+            var message = await _repositoryMessage.FindMessageAsync(filter);
+
+            // Message is not found.
+            if (message == null)
             {
-                _log.Error($"Requester [Id: {requester.Id}] is not the broadcaster or recipient");
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
                 {
                     Error = $"{Language.WarnRecordNotFound}"

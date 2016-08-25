@@ -68,17 +68,51 @@ namespace Olives.Repositories
         {
             var context = _dataContext.Context;
 
-            // By default, take all relationships.
-            IQueryable<Relationship> relationships = context.Relationships;
+            // Using a transaction.
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // By default, take all relationships.
+                    IQueryable<Relationship> relationships = context.Relationships;
 
-            // Filter the relationships.
-            relationships = FilterRelationships(relationships, filter);
+                    // Filter the relationships.
+                    relationships = FilterRelationships(relationships, filter);
 
+                    // Load the relationships into memory.
+                    var relationshipsList = await relationships.ToListAsync();
+                    
+                    foreach (var relationship in relationshipsList)
+                    {
+                        // Remove all appointments between these 2 people.
+                        IQueryable<Appointment> appointments = context.Appointments;
+                        appointments =
+                            appointments.Where(
+                                x =>
+                                    (x.Maker == relationship.Source && x.Dater == relationship.Target) ||
+                                    (x.Maker == relationship.Target && x.Dater == relationship.Source));
 
-            // Find the relation whose id is matched and has the specific person takes part in.
-            context.Relationships.RemoveRange(relationships);
+                        context.Appointments.RemoveRange(appointments);
+                    }
 
-            return await context.SaveChangesAsync();
+                    // Find the relation whose id is matched and has the specific person takes part in.
+                    context.Relationships.RemoveRange(relationships);
+
+                    // Save changes and retrieve the number of deleted records.
+                    var records = await context.SaveChangesAsync();
+
+                    // Commit the transaction.
+                    transaction.Commit();
+
+                    return records;
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+
         }
 
         /// <summary>

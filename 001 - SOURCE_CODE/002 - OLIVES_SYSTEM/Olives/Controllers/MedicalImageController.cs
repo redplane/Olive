@@ -232,7 +232,7 @@ namespace Olives.Controllers
                 if (records < 1)
                 {
                     // Log the error for future tracking.
-                    _log.Error($"No record [Id: {id}] is found.");
+                    _log.Error($"Medical image [Id: {id}] owned by [Requester: {requester.Id}] not found");
 
                     // Tell the client no record has been found.
                     return Request.CreateResponse(HttpStatusCode.NotFound, new

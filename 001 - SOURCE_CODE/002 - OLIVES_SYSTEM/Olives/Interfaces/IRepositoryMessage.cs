@@ -2,7 +2,6 @@
 using Olives.ViewModels.Filter;
 using Olives.ViewModels.Response;
 using Shared.Models;
-using Shared.ViewModels.Response;
 
 namespace Olives.Interfaces
 {
@@ -28,6 +27,13 @@ namespace Olives.Interfaces
         /// <param name="filter"></param>
         /// <returns></returns>
         Task<ResponseMessageFilter> FilterMessagesAsync(FilterMessageViewModel filter);
+
+        /// <summary>
+        /// Find message by using filter.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        Task<Message> FindMessageAsync(FilterMessageViewModel filter);
 
         /// <summary>
         /// Filter and make messages be seen.

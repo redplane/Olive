@@ -60,7 +60,7 @@ namespace Olives.Repositories
             IQueryable<Message> messages = context.Messages;
 
             // Filter the messages.
-            messages = FilterMessages(messages, filter);
+            messages = FilterMessages(messages, filter, context);
 
             // Record sorting.
             switch (filter.Direction)
@@ -114,6 +114,23 @@ namespace Olives.Repositories
         }
 
         /// <summary>
+        /// Find message by using filter.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public async Task<Message> FindMessageAsync(FilterMessageViewModel filter)
+        {
+            // Database context initialization.
+            var context = _dataContext.Context;
+
+            // By default, take all messages.
+            IQueryable<Message> messages = context.Messages;
+            messages = FilterMessages(messages, filter, context);
+
+            return await messages.FirstOrDefaultAsync();
+        }
+
+        /// <summary>
         ///     Make the message be seen.
         /// </summary>
         /// <param name="filter"></param>
@@ -136,7 +153,7 @@ namespace Olives.Repositories
                     filter.IsSeen = false;
 
                     // Filter the message.
-                    messages = FilterMessages(messages, filter);
+                    messages = FilterMessages(messages, filter, context);
 
                     // Change the status of messages.
                     await messages.ForEachAsync(x => { x.IsSeen = true; });
@@ -162,9 +179,18 @@ namespace Olives.Repositories
         /// </summary>
         /// <param name="messages"></param>
         /// <param name="filter"></param>
+        /// <param name="context"></param>
         /// <returns></returns>
-        private IQueryable<Message> FilterMessages(IQueryable<Message> messages, FilterMessageViewModel filter)
+        private IQueryable<Message> FilterMessages(IQueryable<Message> messages, FilterMessageViewModel filter, OlivesHealthEntities context)
         {
+            #region Relationship find
+
+            // Find the relationship which requester takes part in.
+            IQueryable<Relationship> relationships = context.Relationships;
+            relationships = relationships.Where(x =>  x.Source == filter.Requester || x.Target == filter.Requester);
+
+            #endregion
+            
             // Base on the mode of image filter to decide the role of requester.
             if (filter.Mode == RecordFilterMode.RequesterIsOwner)
             {
@@ -191,6 +217,10 @@ namespace Olives.Repositories
                                 (x.Broadcaster == filter.Partner.Value && x.Recipient == filter.Requester));
             }
 
+            // Id is specified.
+            if (filter.Id != null)
+                messages = messages.Where(x => x.Id == filter.Id);
+
             // Created is defined.
             if (filter.MinCreated != null) messages = messages.Where(x => x.Created >= filter.MinCreated.Value);
             if (filter.MaxCreated != null) messages = messages.Where(x => x.Created <= filter.MaxCreated.Value);
@@ -198,6 +228,15 @@ namespace Olives.Repositories
             // Status is defined.
             if (filter.IsSeen != null)
                 messages = messages.Where(x => x.IsSeen == filter.IsSeen.Value);
+
+            // Select messages related to relationships.
+            var messagesList = messages;
+            messages = from relationship in relationships
+                from message in messagesList
+                       where
+                (relationship.Source == message.Broadcaster && relationship.Target == message.Recipient) ||
+                (relationship.Source == message.Recipient && relationship.Target == message.Broadcaster)
+                select message;
 
             return messages;
         }

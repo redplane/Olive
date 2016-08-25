@@ -8,6 +8,11 @@ namespace Olives.ViewModels.Filter
     public class FilterMessageViewModel
     {
         /// <summary>
+        /// Id of message.
+        /// </summary>
+        public int? Id { get; set; }
+
+        /// <summary>
         ///     Person who sent the filter request.
         /// </summary>
         public int Requester { get; set; }
