@@ -146,7 +146,7 @@ namespace Olives.Repositories
             var context = _dataContext.Context;
             return await context.Notifications.FirstOrDefaultAsync(x => x.Id == id);
         }
-
+        
         /// <summary>
         ///     Initialize / update notification asynchronously.
         /// </summary>
@@ -228,7 +228,7 @@ namespace Olives.Repositories
 
             if (filter.IsSeen != null)
                 notifications = notifications.Where(x => x.IsSeen == filter.IsSeen.Value);
-
+            
             return notifications;
         }
 

@@ -84,7 +84,8 @@ namespace Olives.Repositories
                     
                     foreach (var relationship in relationshipsList)
                     {
-                        // Remove all appointments between these 2 people.
+                        #region Remove all appointments between these 2 people.
+
                         IQueryable<Appointment> appointments = context.Appointments;
                         appointments =
                             appointments.Where(
@@ -93,6 +94,91 @@ namespace Olives.Repositories
                                     (x.Maker == relationship.Target && x.Dater == relationship.Source));
 
                         context.Appointments.RemoveRange(appointments);
+
+                        #endregion
+
+                        #region Medical record information change
+
+                        IQueryable<MedicalRecord> medicalRecords = context.MedicalRecords;
+                        medicalRecords =
+                            medicalRecords.Where(
+                                x =>
+                                    (x.Owner == relationship.Source && x.Creator == relationship.Target) ||
+                                    (x.Owner == relationship.Target && x.Creator == relationship.Source));
+
+                        await medicalRecords.ForEachAsync(x =>
+                        {
+                            x.Creator = x.Owner;
+                        });
+
+                        #endregion
+
+                        #region Prescription information change
+
+                        IQueryable<Prescription> prescriptions = context.Prescriptions;
+                        prescriptions =
+                            prescriptions.Where(
+                                x =>
+                                    (x.Owner == relationship.Source && x.Creator == relationship.Target) ||
+                                    (x.Owner == relationship.Target && x.Creator == relationship.Source));
+
+                        await prescriptions.ForEachAsync(x =>
+                        {
+                            x.Creator = x.Owner;
+                        });
+
+                        #endregion
+
+                        #region Experiment note
+
+                        IQueryable<ExperimentNote> experimentNotes = context.ExperimentNotes;
+                        experimentNotes =
+                            experimentNotes.Where(
+                                x =>
+                                    (x.Owner == relationship.Source && x.Creator == relationship.Target) ||
+                                    (x.Owner == relationship.Target && x.Creator == relationship.Source));
+
+                        await experimentNotes.ForEachAsync(x =>
+                        {
+                            x.Creator = x.Owner;
+                        });
+
+                        #endregion
+
+                        #region Medical note
+
+                        IQueryable<MedicalNote> medicalNotes = context.MedicalNotes;
+                        medicalNotes =
+                            medicalNotes.Where(
+                                x =>
+                                    (x.Owner == relationship.Source && x.Creator == relationship.Target) ||
+                                    (x.Owner == relationship.Target && x.Creator == relationship.Source));
+
+                        await medicalNotes.ForEachAsync(x =>
+                        {
+                            x.Creator = x.Owner;
+                        });
+
+                        #endregion
+
+                        #region Make all unseen notification be seen
+
+
+                        IQueryable<Notification> notifications = context.Notifications;
+                        notifications =
+                            notifications.Where(
+                                x =>
+                                    (x.Broadcaster == relationship.Source && x.Recipient == relationship.Target) ||
+                                    (x.Broadcaster == relationship.Target && x.Recipient == relationship.Source));
+
+                        notifications = notifications.Where(x => !x.IsSeen);
+
+                        await notifications.ForEachAsync(x =>
+                        {
+                            x.IsSeen = true;
+                        });
+
+                        #endregion
                     }
 
                     // Find the relation whose id is matched and has the specific person takes part in.

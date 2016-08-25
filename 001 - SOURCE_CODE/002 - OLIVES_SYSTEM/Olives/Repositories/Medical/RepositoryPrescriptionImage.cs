@@ -153,7 +153,8 @@ namespace Olives.Repositories.Medical
             prescriptionImages = FilterPrescriptionByRequesterRole(prescriptionImages, filter, olivesHealthEntities);
 
             // Prescription is defined.
-            prescriptionImages = prescriptionImages.Where(x => x.PrescriptionId == filter.Prescription);
+            if (filter.Prescription != null)
+                prescriptionImages = prescriptionImages.Where(x => x.PrescriptionId == filter.Prescription);
 
             if (filter.Id != null)
                 prescriptionImages = prescriptionImages.Where(x => x.Id == filter.Id);

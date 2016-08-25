@@ -213,7 +213,7 @@ namespace Olives.Controllers
 
                 // Url construction.
                 var url = Url.Link("Default",
-                    new {controller = "Service", action = "FindPassword"});
+                    new {controller = "forgotpwd", action = "next"});
 
                 // Retrieve the client current time.
                 // Data which will be bound to email template.
@@ -319,7 +319,7 @@ namespace Olives.Controllers
             var account =
                 await
                     _repositoryAccountExtended.FindPersonAsync(accountToken.Owner, null, null, (byte) Role.Patient,
-                        StatusAccount.Pending);
+                        StatusAccount.Active);
 
             // No account is not found.
             if (account == null)

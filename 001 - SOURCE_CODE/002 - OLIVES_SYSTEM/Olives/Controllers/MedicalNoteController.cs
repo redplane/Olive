@@ -10,18 +10,14 @@ using Olives.Enumerations;
 using Olives.Hubs;
 using Olives.Interfaces;
 using Olives.Interfaces.Medical;
-using Olives.ViewModels.Edit;
 using Olives.ViewModels.Edit.MedicalRecord;
 using Olives.ViewModels.Filter.Medical;
-using Olives.ViewModels.Initialize;
 using Olives.ViewModels.Initialize.Medical;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Enumerations.Filter;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
-using Shared.ViewModels.Filter;
 
 namespace Olives.Controllers
 {
@@ -35,18 +31,16 @@ namespace Olives.Controllers
         /// </summary>
         /// <param name="repositoryMedicalNote"></param>
         /// <param name="repositoryMedicalRecord"></param>
-        /// <param name="repositoryRelation"></param>
         /// <param name="timeService"></param>
         /// <param name="notificationService"></param>
         /// <param name="log"></param>
         public MedicalNoteController(IRepositoryMedicalNote repositoryMedicalNote,
-            IRepositoryMedicalRecord repositoryMedicalRecord, IRepositoryRelationship repositoryRelation,
+            IRepositoryMedicalRecord repositoryMedicalRecord,
             ITimeService timeService, INotificationService notificationService,
             ILog log)
         {
             _repositoryMedicalNote = repositoryMedicalNote;
             _repositoryMedicalRecord = repositoryMedicalRecord;
-            _repositoryRelation = repositoryRelation;
             _timeService = timeService;
             _notificationService = notificationService;
             _log = log;
@@ -70,7 +64,7 @@ namespace Olives.Controllers
                 #region Result filter
 
                 // Retrieve information of person who sent request.
-                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
                 var filter = new FilterMedicalNoteViewModel();
                 filter.Id = id;
@@ -161,8 +155,8 @@ namespace Olives.Controllers
             #region Medical record validation
 
             // Retrieve information of person who sent request.
-            var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-            
+            var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
             // Find the medical record.
             var medicalRecord = await _repositoryMedicalRecord.FindMedicalRecordAsync(initializer.MedicalRecord);
 
@@ -183,7 +177,7 @@ namespace Olives.Controllers
             #region Owner & relationship validation
 
             // Requester doesn't take part in the medical record.
-            if (requester.Id != medicalRecord.Creator && requester.Id != medicalRecord.Owner)
+            if ((requester.Id != medicalRecord.Creator) && (requester.Id != medicalRecord.Owner))
             {
                 _log.Error(
                     $"Requester [Id: {requester.Id}] is not the creator of medical record [Id: {medicalRecord.Id}]");
@@ -218,15 +212,19 @@ namespace Olives.Controllers
                 #region Notification broadcast
 
                 // Only the owner should receive the notification.
-                if (requester.Id != medicalNote.Owner)
+                if (medicalRecord.Owner != medicalRecord.Creator)
                 {
+                    var recipient = medicalRecord.Owner;
+                    if (requester.Id == medicalRecord.Owner)
+                        recipient = medicalRecord.Creator;
+
                     var notification = new Notification();
                     notification.Type = (byte) NotificationType.Create;
                     notification.Topic = (byte) NotificationTopic.MedicalNote;
                     notification.Container = medicalRecord.Id;
                     notification.ContainerType = (byte) NotificationTopic.MedicalRecord;
                     notification.Broadcaster = requester.Id;
-                    notification.Recipient = medicalNote.Owner;
+                    notification.Recipient = recipient;
                     notification.Record = medicalNote.Id;
                     notification.Message = string.Format(Language.NotifyMedicalNoteCreate, requester.FullName);
                     notification.Created = medicalNote.Created;
@@ -317,11 +315,14 @@ namespace Olives.Controllers
             }
 
             #endregion
-
+            
             #region Relationship check
 
+            // Find the medical record contains medical note.
+            var medicalRecord = medicalNote.MedicalRecord;
+
             // No relationship is found.
-            if (requester.Id != medicalNote.Owner && requester.Id != medicalNote.Creator)
+            if ((requester.Id != medicalRecord.Owner) && (requester.Id != medicalRecord.Creator))
             {
                 // Log the error.
                 _log.Error(
@@ -357,12 +358,12 @@ namespace Olives.Controllers
                 #endregion
 
                 #region Notification broadcast
-
-                if (medicalNote.Creator != medicalNote.Owner)
+                
+                if (medicalRecord.Owner != medicalRecord.Creator)
                 {
-                    var recipient = medicalNote.Owner;
-                    if (requester.Id == medicalNote.Owner)
-                        recipient = medicalNote.Creator;
+                    var recipient = medicalRecord.Owner;
+                    if (requester.Id == medicalRecord.Owner)
+                        recipient = medicalRecord.Creator;
 
                     var notification = new Notification();
                     notification.Type = (byte) NotificationType.Create;
@@ -427,7 +428,7 @@ namespace Olives.Controllers
             var filter = new FilterMedicalNoteViewModel();
             filter.Id = id;
             filter.Requester = requester;
-            
+
             try
             {
                 var records = await _repositoryMedicalNote.DeleteMedicalNoteAsync(filter);
@@ -532,12 +533,7 @@ namespace Olives.Controllers
         ///     Repository of medical records.
         /// </summary>
         private readonly IRepositoryMedicalRecord _repositoryMedicalRecord;
-
-        /// <summary>
-        ///     Repository of relationships.
-        /// </summary>
-        private readonly IRepositoryRelationship _repositoryRelation;
-
+        
         /// <summary>
         ///     Service which provides function to access time calculation.
         /// </summary>

@@ -179,26 +179,26 @@ namespace Olives.Controllers
                 #region Record initialization
 
                 // Initialize note.
-                var note = new ExperimentNote();
-                note.Info = JsonConvert.SerializeObject(initializer.Infos);
-                note.Time = initializer.Time;
-                note.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
-                note.MedicalRecordId = initializer.MedicalRecord;
-                note.Name = initializer.Name;
-                note.Owner = medicalRecord.Owner;
-                note.Creator = requester.Id;
+                var experimentNote = new ExperimentNote();
+                experimentNote.Info = JsonConvert.SerializeObject(initializer.Infos);
+                experimentNote.Time = initializer.Time;
+                experimentNote.Created = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+                experimentNote.MedicalRecordId = initializer.MedicalRecord;
+                experimentNote.Name = initializer.Name;
+                experimentNote.Owner = medicalRecord.Owner;
+                experimentNote.Creator = requester.Id;
 
-                note = await _repositoryExperimentNote.InitializeExperimentNoteAsync(note);
+                experimentNote = await _repositoryExperimentNote.InitializeExperimentNoteAsync(experimentNote);
 
                 #endregion
 
                 #region Notification broadcast
 
-                if (note.Creator != note.Owner)
+                if (medicalRecord.Owner != medicalRecord.Creator)
                 {
-                    var recipient = note.Owner;
-                    if (requester.Id == note.Owner)
-                        recipient = note.Creator;
+                    var recipient = medicalRecord.Owner;
+                    if (requester.Id == medicalRecord.Owner)
+                        recipient = medicalRecord.Creator;
 
                     var notification = new Notification();
                     notification.Type = (byte) NotificationType.Create;
@@ -207,9 +207,9 @@ namespace Olives.Controllers
                     notification.ContainerType = (byte) NotificationTopic.MedicalRecord;
                     notification.Broadcaster = requester.Id;
                     notification.Recipient = recipient;
-                    notification.Record = note.Id;
+                    notification.Record = experimentNote.Id;
                     notification.Message = string.Format(Language.NotifyExperimentNoteCreate, requester.FullName);
-                    notification.Created = note.Created;
+                    notification.Created = experimentNote.Created;
 
                     // Broadcast the notification with fault tolerant.
                     await _notificationService.BroadcastNotificationAsync(notification, Hub);
@@ -223,13 +223,13 @@ namespace Olives.Controllers
                 {
                     Note = new
                     {
-                        note.Id,
-                        MedicalRecord = note.MedicalRecordId,
-                        note.Owner,
-                        note.Name,
-                        note.Info,
-                        note.Time,
-                        note.Created
+                        experimentNote.Id,
+                        MedicalRecord = experimentNote.MedicalRecordId,
+                        experimentNote.Owner,
+                        experimentNote.Name,
+                        experimentNote.Info,
+                        experimentNote.Time,
+                        experimentNote.Created
                     }
                 });
 
@@ -296,13 +296,16 @@ namespace Olives.Controllers
 
             #endregion
 
-            #region Relationship find
+            #region Participation find
 
             // Retrieve information of person who sent request.
             var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            
+            // Find the medical record contains experiment note.
+            var medicalRecord = experimentNote.MedicalRecord;
 
             // Requester doesn't take part in the medical note.
-            if (requester.Id != experimentNote.Creator && requester.Id != experimentNote.Owner)
+            if (requester.Id != medicalRecord.Creator && requester.Id != medicalRecord.Owner)
             {
                 _log.Error($"Requester is not the creator of experiment note [Id: {experimentNote.Id}]");
                 return Request.CreateResponse(HttpStatusCode.NotFound, new
@@ -356,12 +359,12 @@ namespace Olives.Controllers
                 #endregion
 
                 #region Notification broadcast
-
-                if (isDataChanged && experimentNote.Creator != experimentNote.Owner)
+                
+                if (isDataChanged && (medicalRecord.Creator != medicalRecord.Owner))
                 {
-                    var recipient = experimentNote.Owner;
-                    if (requester.Id == experimentNote.Owner)
-                        recipient = experimentNote.Creator;
+                    var recipient = medicalRecord.Owner;
+                    if (requester.Id == medicalRecord.Owner)
+                        recipient = medicalRecord.Creator;
 
                     var notification = new Notification();
                     notification.Type = (byte) NotificationType.Edit;

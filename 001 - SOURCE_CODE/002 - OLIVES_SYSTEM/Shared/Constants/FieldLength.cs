@@ -40,7 +40,7 @@
         /// <summary>
         ///     Maximum length of an activation code.
         /// </summary>
-        public const int ActivationCodeLength = 10;
+        public const int AccountTokenLength = 36;
 
         /// <summary>
         ///     Maximum length of address.

@@ -6,16 +6,12 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
 using Olives.Attributes;
-using Olives.Constants;
 using Olives.Interfaces;
 using Olives.ViewModels.Filter;
 using Shared.Constants;
 using Shared.Enumerations;
-using Shared.Interfaces;
 using Shared.Models;
 using Shared.Resources;
-using Shared.ViewModels.Filter;
-using FilterRelationshipViewModel = Olives.ViewModels.Filter.FilterRelationshipViewModel;
 
 namespace Olives.Controllers
 {
@@ -28,15 +24,12 @@ namespace Olives.Controllers
         ///     Initialize an instance of AccountController with Dependency injections.
         /// </summary>
         /// <param name="repositoryRelation"></param>
-        /// <param name="repositoryStorage"></param>
         /// <param name="log"></param>
         public RelationshipController(
             IRepositoryRelationship repositoryRelation,
-            IRepositoryStorage repositoryStorage,
             ILog log)
         {
             _repositoryRelation = repositoryRelation;
-            _repositoryStorage = repositoryStorage;
             _log = log;
         }
 
@@ -56,8 +49,8 @@ namespace Olives.Controllers
             try
             {
                 // Retrieve information of person who sent request.
-                var requester = (Person)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-                
+                var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+
                 // Filter initialization.
                 var filter = new FilterRelationshipViewModel();
                 filter.Requester = requester;
@@ -128,10 +121,7 @@ namespace Olives.Controllers
                 await
                     _repositoryRelation.FilterRelatedDoctorAsync(requester.Id, filter.Page,
                         filter.Records);
-
-            // Find the avatar storage.
-            var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
-
+            
             // Throw the list back to client.
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -200,10 +190,7 @@ namespace Olives.Controllers
             var result =
                 await
                     _repositoryRelation.FilterRelationshipAsync(filter);
-
-            // Find the storage of avatar.
-            var storageAvatar = _repositoryStorage.FindStorage(Storage.Avatar);
-
+            
             // Throw the list back to client.
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
@@ -240,12 +227,7 @@ namespace Olives.Controllers
         ///     Repository of relationships.
         /// </summary>
         private readonly IRepositoryRelationship _repositoryRelation;
-
-        /// <summary>
-        ///     Repository of storage.
-        /// </summary>
-        private readonly IRepositoryStorage _repositoryStorage;
-
+        
         /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>

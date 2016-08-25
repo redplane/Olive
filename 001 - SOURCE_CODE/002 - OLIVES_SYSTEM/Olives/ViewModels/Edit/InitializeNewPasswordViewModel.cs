@@ -9,7 +9,7 @@ namespace Olives.ViewModels.Edit
     {
         [Required(AllowEmptyStrings = false, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueIsRequired")]
-        [StringLength(10, ErrorMessageResourceType = typeof (Language),
+        [StringLength(FieldLength.AccountTokenLength, ErrorMessageResourceType = typeof (Language),
             ErrorMessageResourceName = "ValueCanOnlyContainCharacter")]
         public string Token { get; set; }
 

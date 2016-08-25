@@ -105,7 +105,7 @@ namespace Olives.Services
         ///     Intstance which provides access to real time connection database.
         /// </summary>
         private readonly IRepositoryRealTimeConnection _repositoryRealTimeConnection;
-
+        
         /// <summary>
         ///     Context which provides instance to access to database.
         /// </summary>
