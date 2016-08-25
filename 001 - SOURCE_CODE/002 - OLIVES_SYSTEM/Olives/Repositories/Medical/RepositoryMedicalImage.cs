@@ -136,7 +136,8 @@ namespace Olives.Repositories.Medical
                 medicalImages = medicalImages.Where(x => x.Id == filter.Id);
 
             // Filter by medical record id.
-            medicalImages = medicalImages.Where(x => x.MedicalRecordId == filter.MedicalRecord);
+            if (filter.MedicalRecord != null)
+                medicalImages = medicalImages.Where(x => x.MedicalRecordId == filter.MedicalRecord);
 
             // Created is specified.
             if (filter.MinCreated != null)

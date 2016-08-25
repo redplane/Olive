@@ -30,7 +30,7 @@ namespace Olives.ViewModels.Filter.Medical
         /// <summary>
         ///     Id of medical record which image belongs to.
         /// </summary>
-        public int MedicalRecord { get; set; }
+        public int? MedicalRecord { get; set; }
 
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeGreaterThan")]
