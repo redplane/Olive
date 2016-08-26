@@ -11,6 +11,7 @@ namespace Olives
 
             // website route
             //routes.MapRoute("IntroPatient", "intro/patient", new {controller = "Home", action = "Index"});
+            //routes.MapRoute("Messages", "messages", new { controller = "Home", action = "Index" });
             //routes.MapRoute("IntroDoctor", "intro/doctor", new {controller = "Home", action = "Index"});
             //routes.MapRoute("Signin", "signin", new {controller = "Home", action = "Index"});
             //routes.MapRoute("Signup", "signup", new {controller = "Home", action = "Index"});
@@ -92,18 +93,29 @@ namespace Olives
             //    new {controller = "Home", action = "Index", acid = UrlParameter.Optional});
 
 
+            //routes.MapRoute(
+            //    "Default",
+            //    "{controller}/{action}/{id}",
+            //    new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+            //    );
+            
+            routes.MapRoute(
+                "Default",
+                "{*url}",
+                new
+                {
+                    controller = "Home",
+                    action = "Index",
+                    id = UrlParameter.Optional
+                }
+              );
+
             routes.MapRoute(
                 "Olives",
                 "{controller}/{action}/{id}",
                 new { controller = "Home", action = "Index", id = UrlParameter.Optional }
                 );
 
-            routes.MapRoute(
-                "Default",
-                "{*url}",
-                new {controller = "Home", action = "Index", id = UrlParameter.Optional
-            }
-                );
         }
     }
 }

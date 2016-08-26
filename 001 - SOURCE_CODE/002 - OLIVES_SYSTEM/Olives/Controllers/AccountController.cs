@@ -227,7 +227,7 @@ namespace Olives.Controllers
                 await
                     _emailService.InitializeEmail(new[] {info.Email}, OlivesValues.TemplateEmailFindPassword, data);
 
-                _log.Error("Create token successful");
+                _log.Info("Create token successful");
 
                 // Tell doctor to wait for admin confirmation.
                 return Request.CreateResponse(HttpStatusCode.OK);
