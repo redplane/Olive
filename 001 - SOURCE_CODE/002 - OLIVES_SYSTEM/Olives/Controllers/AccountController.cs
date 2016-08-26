@@ -210,11 +210,7 @@ namespace Olives.Controllers
                 accountToken.Expired = DateTime.UtcNow.AddHours(Values.ActivationCodeHourDuration);
 
                 accountToken = await _repositoryActivationCode.InitializeAccountTokenAsync(accountToken);
-
-                // Url construction.
-                var url = Url.Link("Default",
-                    new {controller = "forgotpwd", action = "next"});
-
+                
                 // Retrieve the client current time.
                 // Data which will be bound to email template.
                 var data = new
@@ -222,7 +218,8 @@ namespace Olives.Controllers
                     firstName = account.FirstName,
                     lastName = account.LastName,
                     token = accountToken.Code,
-                    url,
+                    url = Url.Link("Olives",
+                    new { controller = "forgotpwd", action = "next" }),
                     accountToken.Expired,
                 };
 

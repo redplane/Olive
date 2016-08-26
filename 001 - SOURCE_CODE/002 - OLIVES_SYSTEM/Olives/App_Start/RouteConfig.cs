@@ -92,13 +92,13 @@ namespace Olives
             //    new {controller = "Home", action = "Index", acid = UrlParameter.Optional});
 
 
-            //routes.MapRoute(
-            //    "Default",
-            //    "{controller}/{action}/{id}",
-            //    new {controller = "Home", action = "Index", id = UrlParameter.Optional}
-            //    );
+            routes.MapRoute(
+                "Olives",
+                "{controller}/{action}/{id}",
+                new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                );
 
-                routes.MapRoute(
+            routes.MapRoute(
                 "Default",
                 "{*url}",
                 new {controller = "Home", action = "Index", id = UrlParameter.Optional

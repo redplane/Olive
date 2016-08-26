@@ -459,7 +459,7 @@ namespace Olives.Controllers
             #endregion
             
             // Url construction.
-            var url = Url.Link("Default",
+            var url = Url.Link("Olives",
                 new {controller = "Service", action = "Verify", code = accountToken.Code});
 
             // Data which will be bound to email.
