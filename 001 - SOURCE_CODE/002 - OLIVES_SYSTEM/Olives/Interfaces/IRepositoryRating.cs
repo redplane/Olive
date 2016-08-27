@@ -23,5 +23,12 @@ namespace Olives.Interfaces
         /// <param name="filter"></param>
         /// <returns></returns>
         Task<ResponseRatingFilter> FilterRatingAsync(FilterRatingViewModel filter);
+
+        /// <summary>
+        /// Filter ratings using specific conditions.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        Task<ResponseRatingFilter> FilterGuestRatingAsync(FilterGuestRatingViewModel filter);
     }
 }

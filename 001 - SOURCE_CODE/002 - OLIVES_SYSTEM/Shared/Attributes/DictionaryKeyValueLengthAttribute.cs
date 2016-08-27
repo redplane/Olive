@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Linq;
 
 namespace Shared.Attributes
@@ -54,7 +55,7 @@ namespace Shared.Attributes
                 // Find the invalid key.
                 var invalidKey = dict.Keys.FirstOrDefault(x => x.Length > _keyLength);
                 if (invalidKey != null)
-                    return new ValidationResult(FormatErrorMessage(invalidKey));
+                    return new ValidationResult(FormatKeyErrorMessage(invalidKey));
             }
 
             // Value length is defined.
@@ -63,9 +64,30 @@ namespace Shared.Attributes
                 // Find the invalid value.
                 var invalidValue = dict.Values.FirstOrDefault(x => x.Length > _valueLength);
                 if (invalidValue != null)
-                    return new ValidationResult(FormatErrorMessage(invalidValue));
+                    return new ValidationResult(FormatKeyValueErrorMessage(invalidValue));
             }
             return ValidationResult.Success;
         }
+
+        /// <summary>
+        ///     Override format error message to support multi parameters and multilingual.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private string FormatKeyErrorMessage(string name)
+        {
+            return string.Format(CultureInfo.CurrentCulture, ErrorMessageString, name, _keyLength);
+        }
+
+        /// <summary>
+        ///     Override format error message to support multi parameters and multilingual.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private string FormatKeyValueErrorMessage(string name)
+        {
+            return string.Format(CultureInfo.CurrentCulture, ErrorMessageString, name, _valueLength);
+        }
+
     }
 }

@@ -98,6 +98,17 @@ namespace Olives
             //    "{controller}/{action}/{id}",
             //    new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             //    );
+
+            routes.MapRoute(
+        name: "ServiceRoute",
+        url: "Service/{action}/{id}",
+        defaults: new
+        {
+            controller = "Service",
+            action = "All",
+            id = UrlParameter.Optional
+        }
+    );
             
             routes.MapRoute(
                 "Default",
@@ -115,7 +126,7 @@ namespace Olives
                 "{controller}/{action}/{id}",
                 new { controller = "Home", action = "Index", id = UrlParameter.Optional }
                 );
-
+            
         }
     }
 }
