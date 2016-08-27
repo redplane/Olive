@@ -171,6 +171,72 @@ namespace Olives.Repositories
             return response;
         }
 
+        /// <summary>
+        /// Filter ratings using specific conditions.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public async Task<ResponseRatingFilter> FilterGuestRatingAsync(FilterGuestRatingViewModel filter)
+        {
+            // By default, take all records.
+            var context = _dataContext.Context;
+            IQueryable<Rating> ratings = context.Ratings;
+            
+            // Created is defined.
+            if (filter.MinCreated != null) ratings = ratings.Where(x => x.Created >= filter.MinCreated.Value);
+            if (filter.MaxCreated != null) ratings = ratings.Where(x => x.Created <= filter.MaxCreated.Value);
+
+            // Value is defined.
+            if (filter.MinValue != null) ratings = ratings.Where(x => x.Value >= filter.MinValue.Value);
+            if (filter.MaxValue != null) ratings = ratings.Where(x => x.Value <= filter.MaxValue.Value);
+
+            // Result sort.
+            switch (filter.Direction)
+            {
+                case SortDirection.Ascending:
+                    switch (filter.Sort)
+                    {
+                        case RatingResultSort.Created:
+                            ratings = ratings.OrderBy(x => x.Created);
+                            break;
+                        default:
+                            ratings = ratings.OrderBy(x => x.Value);
+                            break;
+                    }
+                    break;
+                default:
+                    switch (filter.Sort)
+                    {
+                        case RatingResultSort.Created:
+                            ratings = ratings.OrderByDescending(x => x.Created);
+                            break;
+                        default:
+                            ratings = ratings.OrderByDescending(x => x.Value);
+                            break;
+                    }
+                    break;
+            }
+
+            // Response initialization.
+            var response = new ResponseRatingFilter();
+
+            // Calculate the matched results.
+            response.Total = await ratings.CountAsync();
+
+            // Record is defined.
+            if (filter.Records != null)
+            {
+                ratings = ratings.Skip(filter.Page * filter.Records.Value)
+                    .Take(filter.Records.Value);
+            }
+
+            // Initialize a list of filtered rate.
+            response.Rates = await ratings
+                .ToListAsync();
+
+            return response;
+        }
+
         #endregion
     }
 }

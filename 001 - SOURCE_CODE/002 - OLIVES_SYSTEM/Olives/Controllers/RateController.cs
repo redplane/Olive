@@ -228,10 +228,81 @@ namespace Olives.Controllers
             #endregion
         }
 
+        /// <summary>
+        /// Filter guest ratings.
+        /// </summary>
+        /// <param name="filterGuestRatingViewModel"></param>
+        /// <returns></returns>
+        [Route("api/rating/guest/filter")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> FilterGuestRatingAsync([FromBody] FilterGuestRatingViewModel filterGuestRatingViewModel)
+        {
+            #region Paramters validation
+
+            // Filter hasn't been initialized.
+            if (filterGuestRatingViewModel == null)
+            {
+                // Initialize filter and validate model.
+                filterGuestRatingViewModel = new FilterGuestRatingViewModel();
+                Validate(filterGuestRatingViewModel);
+            }
+
+            // Model state is invalid.
+            if (!ModelState.IsValid)
+            {
+                // Log the error and sent validation errors to client.
+                _log.Error("Request parameters are invalid. Errors sent to client");
+                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
+            }
+
+            #endregion
+
+            #region Filter
+
+            try
+            {
+                // Do the filter.
+                var result = await _repositoryRating.FilterGuestRatingAsync(filterGuestRatingViewModel);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    Ratings = result.Rates.Select(x => new
+                    {
+                        Maker = new
+                        {
+                            Id = x.Maker,
+                            x.Patient.Person.FirstName,
+                            x.Patient.Person.LastName
+                        },
+                        Target = new
+                        {
+                            Id = x.Target,
+                            x.Doctor.Person.FirstName,
+                            x.Doctor.Person.LastName
+                        },
+                        x.Value,
+                        x.Comment,
+                        x.Created
+                    }),
+                    result.Total
+                });
+            }
+            catch (Exception exception)
+            {
+                // Log the exception.
+                _log.Error(exception.Message, exception);
+
+                // Tell the client about the error.
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+
+            #endregion
+        }
+
         #endregion
 
         #region Properties
-        
+
         /// <summary>
         ///     Repository of rating.
         /// </summary>

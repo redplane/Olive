@@ -381,6 +381,7 @@
     <Compile Include="ViewModels\Filter\FilterAppointmentViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterDiaryViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterDoctorViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterGuestRatingViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterMessageViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterNotificationViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPatientViewModel.cs" />
