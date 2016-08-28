@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -32,18 +34,21 @@ namespace Olives.Controllers
         /// <param name="repositoryAccountExtended"></param>
         /// <param name="repositoryCode"></param>
         /// <param name="repositoryRelation"></param>
+        /// <param name="repositoryStorage"></param>
         /// <param name="timeService"></param>
         /// <param name="emailService"></param>
         /// <param name="log"></param>
         public PatientController(
             IRepositoryAccountExtended repositoryAccountExtended, IRepositoryToken repositoryCode,
             IRepositoryRelationship repositoryRelation,
+            IRepositoryStorage repositoryStorage,
             ITimeService timeService, IEmailService emailService,
             ILog log)
         {
             _repositoryAccountExtended = repositoryAccountExtended;
             _repositoryCode = repositoryCode;
             _repositoryRelation = repositoryRelation;
+            _repositoryStorage = repositoryStorage;
             _log = log;
             _timeService = timeService;
             _emailService = emailService;
@@ -169,6 +174,17 @@ namespace Olives.Controllers
             person.Role = (byte) Role.Patient;
             person.Status = (byte) StatusAccount.Pending;
 
+            // Find avatar storage.
+            var storageAvatar = _repositoryStorage.FindStorage("Avatar");
+
+            string avatar = null;
+            if (person.Gender == (byte) Gender.Male)
+                avatar = ConfigurationManager.AppSettings["AvatarFemale"];
+            else
+                avatar = ConfigurationManager.AppSettings["AvatarMale"];
+
+            person.PhotoUrl = InitializeUrl(storageAvatar.Relative, avatar, null);
+            person.PhotoPhysicPath = Path.Combine(storageAvatar.Absolute, avatar);
 
             // Assign personal information to patient.
             var patient = new Patient();
@@ -489,7 +505,12 @@ namespace Olives.Controllers
         ///     Repository which provides functions to relationship database.
         /// </summary>
         private readonly IRepositoryRelationship _repositoryRelation;
-        
+
+        /// <summary>
+        /// Repository which provides functions to storage settings.
+        /// </summary>
+        private readonly IRepositoryStorage _repositoryStorage;
+
         /// <summary>
         ///     Instance of module which is used for logging.
         /// </summary>

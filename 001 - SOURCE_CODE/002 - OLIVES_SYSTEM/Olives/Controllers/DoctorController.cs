@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -204,6 +205,19 @@ namespace Olives.Controllers
             doctor.PlaceId = place.Id;
             doctor.ProfileUrl = profileUrl;
             doctor.ProfilePhysicPath = profileAbsolute;
+
+            // Find avatar storage.
+            var storageAvatar = _repositoryStorage.FindStorage("Avatar");
+
+            string avatar;
+            if (person.Gender == (byte)Gender.Male)
+                avatar = ConfigurationManager.AppSettings["AvatarFemale"];
+            else
+                avatar = ConfigurationManager.AppSettings["AvatarMale"];
+
+            person.PhotoUrl = InitializeUrl(storageAvatar.Relative, avatar, null);
+            person.PhotoPhysicPath = Path.Combine(storageAvatar.Absolute, avatar);
+
 
             // Assign personal information to patient.
             person.Doctor = doctor;

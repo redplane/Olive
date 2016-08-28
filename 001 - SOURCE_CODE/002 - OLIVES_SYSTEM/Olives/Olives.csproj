@@ -235,10 +235,12 @@
     <Content Include="Resources\Avatar\2.png" />
     <Content Include="Resources\Avatar\3.png" />
     <Content Include="Resources\Avatar\4.png" />
-    <Content Include="Scripts\app.16e9852dbd56dfdd47c6.js" />
-    <Content Include="Scripts\polyfills.16e9852dbd56dfdd47c6.js" />
-    <Content Include="Scripts\vendor.16e9852dbd56dfdd47c6.css" />
-    <Content Include="Scripts\vendor.16e9852dbd56dfdd47c6.js" />
+    <Content Include="Resources\Avatar\Avatar-Female.png" />
+    <Content Include="Resources\Avatar\Avatar-Male.png" />
+    <Content Include="Scripts\app.a0f8060bc2e62028860e.js" />
+    <Content Include="Scripts\polyfills.a0f8060bc2e62028860e.js" />
+    <Content Include="Scripts\vendor.a0f8060bc2e62028860e.css" />
+    <Content Include="Scripts\vendor.a0f8060bc2e62028860e.js" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\Index.html" />
     <Content Include="Web.config" />

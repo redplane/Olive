@@ -9,6 +9,8 @@ namespace Olives.ViewModels.Filter
 {
     public class FilterGuestRatingViewModel
     {
+        public int? Target { get; set; }
+
         [NumericPropertyCompare("MaxCreated", Comparision = Comparision.LowerEqual,
             ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueMustBeEqualLowerThan")]
         [EpochTimeCompare(Values.MinimumAllowedYear, Comparision = Comparision.Greater,

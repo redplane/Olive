@@ -181,7 +181,10 @@ namespace Olives.Repositories
             // By default, take all records.
             var context = _dataContext.Context;
             IQueryable<Rating> ratings = context.Ratings;
-            
+
+            if (filter.Target != null)
+                ratings = ratings.Where(x => x.Target == filter.Target.Value);
+
             // Created is defined.
             if (filter.MinCreated != null) ratings = ratings.Where(x => x.Created >= filter.MinCreated.Value);
             if (filter.MaxCreated != null) ratings = ratings.Where(x => x.Created <= filter.MaxCreated.Value);
