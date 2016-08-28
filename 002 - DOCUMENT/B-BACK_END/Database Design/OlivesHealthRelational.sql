@@ -50,7 +50,7 @@ CREATE TABLE Person
 (
 	Id					INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	Email				VARCHAR(64) NOT NULL,
-	Password			VARCHAR(16),
+	Password			VARCHAR(32) NOT NULL,
 	FirstName			NVARCHAR(32) NOT NULL,
 	LastName			NVARCHAR(32) NOT NULL,
 	FullName			NVARCHAR(96) NOT NULL,
@@ -178,7 +178,6 @@ CREATE TABLE Doctor
 	SpecialtyId			INT NOT NULL,
 	Voters				INT				NOT NULL,
 	PlaceId				INT				NOT NULL,
-	ProfilePdf			NVARCHAR(32),
 	ProfileUrl			NVARCHAR(MAX),
 	ProfilePhysicPath	NVARCHAR(MAX),
 

@@ -27,16 +27,25 @@ namespace DataInitializer
         {"Duong", "Tuan", "Hung", "Thang", "Linh", "Trong", "Nguyen", "Ngoc", "Viet Anh", "Dung"};
 
         // Collection of specialties.
+        //private static readonly string[] Specialties =
+        //{
+        //    "Internal medicine", "Surgery", "Plastic surgery", "Oncology", "Ophthalmology", "Urology",
+        //    "Dietetics (and nutrition)", "Cardiology"
+        //};
+
         private static readonly string[] Specialties =
         {
-            "Internal medicine", "Surgery", "Plastic surgery", "Oncology", "Ophthalmology", "Urology",
-            "Dietetics (and nutrition)", "Cardiology"
+            "Nội khoa", "Nhãn khoa", "Đông Y", "Nha khoa", "Tai-mũi-họng"
         };
 
         // Collection of medical categories.
+        //private static readonly string[] MedicalCategories =
+        //{
+        //    "Blood sugar", "Blood pressure", "Internal medicine", "Nutrition", "Dental", "Mental", "In-Patient"
+        //};
         private static readonly string[] MedicalCategories =
-        {
-            "Blood sugar", "Blood pressure", "Internal medicine", "Nutrition", "Dental", "Mental", "In-Patient"
+            {
+            "Bệnh án Nội khoa", "Bệnh án Nhãn khoa", "Bệnh án Đông Y", "Bệnh án Nha khoa", "Bệnh án Tai-mũi-họng"
         };
 
         // List of prescription time.
@@ -82,19 +91,9 @@ namespace DataInitializer
             // Initialize medical categories.
             Console.WriteLine("Initialize medical categories");
             InitializeMedicalCategories().Wait();
-
-            // Initialize a list of patients.
-            Console.WriteLine("Initialize patients");
-            InitializePatient(15).Wait();
-
-            // Initialize a list of doctors.
-            InitializeDoctor(15).Wait();
-
+            
             // Initialize a list of admins.
             InitializeAdmin(15).Wait();
-
-            InitializePairValues().Wait();
-            InitializeMedicalRecordsInfo().Wait();
         }
 
         #region Private methods
@@ -121,7 +120,7 @@ namespace DataInitializer
             // Database context initialization.
             var context = new OlivesHealthEntities();
 
-            var countries = new[] {"Vietnam", "Another Vietnam"};
+            var countries = new[] {"Vietnam"};
             var cities = new[]
             {
                 "An Giang",
@@ -912,6 +911,7 @@ namespace DataInitializer
 
             await context.SaveChangesAsync();
         }
+        
 
         #endregion
     }
