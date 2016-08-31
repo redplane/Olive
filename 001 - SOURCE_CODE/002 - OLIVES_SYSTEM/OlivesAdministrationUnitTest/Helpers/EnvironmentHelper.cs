@@ -1,5 +1,4 @@
 ﻿using System;
-using OlivesAdministration.Controllers;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -8,11 +7,9 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.SessionState;
-using Shared.Enumerations;
-using Shared.Interfaces;
-using Shared.Models;
-using Shared.Services;
 using Shared.Constants;
+using Shared.Enumerations;
+using Shared.Models;
 
 namespace OlivesAdministration.Test.Helpers
 {
@@ -23,7 +20,7 @@ namespace OlivesAdministration.Test.Helpers
         private static EnvironmentHelper _instance;
 
         /// <summary>
-        /// Retrieve the static instance of EnvironmentHelper.
+        ///     Retrieve the static instance of EnvironmentHelper.
         /// </summary>
         public static EnvironmentHelper Instance => _instance ?? (_instance = new EnvironmentHelper());
 
@@ -32,7 +29,7 @@ namespace OlivesAdministration.Test.Helpers
         #region Methods
 
         /// <summary>
-        /// Forge 
+        ///     Forge
         /// </summary>
         /// <returns></returns>
         public HttpContext ForgeHttpContext()
@@ -43,22 +40,22 @@ namespace OlivesAdministration.Test.Helpers
             var httpContext = new HttpContext(httpRequest, httpResponce);
 
             var sessionContainer = new HttpSessionStateContainer("id", new SessionStateItemCollection(),
-                                                                 new HttpStaticObjectsCollection(), 10, true,
-                                                                 HttpCookieMode.AutoDetect,
-                                                                 SessionStateMode.InProc, false);
+                new HttpStaticObjectsCollection(), 10, true,
+                HttpCookieMode.AutoDetect,
+                SessionStateMode.InProc, false);
 
             httpContext.Items["AspSession"] = typeof(HttpSessionState).GetConstructor(
-                                                     BindingFlags.NonPublic | BindingFlags.Instance,
-                                                     null, CallingConventions.Standard,
-                                                     new[] { typeof(HttpSessionStateContainer) },
-                                                     null)
-                                                .Invoke(new object[] { sessionContainer });
+                    BindingFlags.NonPublic | BindingFlags.Instance,
+                    null, CallingConventions.Standard,
+                    new[] {typeof(HttpSessionStateContainer)},
+                    null)
+                .Invoke(new object[] {sessionContainer});
 
             return httpContext;
         }
 
         /// <summary>
-        /// Initialize http context for a controller
+        ///     Initialize http context for a controller
         /// </summary>
         /// <param name="controller"></param>
         /// <returns></returns>
@@ -68,7 +65,6 @@ namespace OlivesAdministration.Test.Helpers
             var httpRequestMessage = new HttpRequestMessage();
             controller.Request = httpRequestMessage;
             controller.Request.Properties["MS_HttpConfiguration"] = httpConfiguration;
-
         }
 
         #endregion
@@ -82,28 +78,29 @@ namespace OlivesAdministration.Test.Helpers
         /// <param name="max"></param>
         public async Task InitializePlaces(OlivesHealthEntities olivesHealthEntities, int max)
         {
-            var countries = new[] { "Vietnam", "Another Vietnam" };
+            var countries = new[] {"Vietnam", "Another Vietnam"};
             var cities = new[]
             {
                 "An Giang",
-                "Bà Rịa - Vũng Tàu","Bắc Giang","Bắc Kạn","Bạc Liêu","Bắc Ninh","Bến Tre","Bình Định","Bình Dương","Bình Phước","Bình Thuận",
-                "Cà Mau","Cao Bằng","Cần Thơ",
-                "Đắk Lắk","Đắk Nông","Điện Biên","Đồng Nai","Đồng Tháp","Đà Nẵng",
+                "Bà Rịa - Vũng Tàu", "Bắc Giang", "Bắc Kạn", "Bạc Liêu", "Bắc Ninh", "Bến Tre", "Bình Định",
+                "Bình Dương", "Bình Phước", "Bình Thuận",
+                "Cà Mau", "Cao Bằng", "Cần Thơ",
+                "Đắk Lắk", "Đắk Nông", "Điện Biên", "Đồng Nai", "Đồng Tháp", "Đà Nẵng",
                 "Gia Lai",
-                "Hà Giang","Hà Nam","Hà Tĩnh","Hải Dương","Hậu Giang","Hòa Bình","Hưng Yên","Hải Phòng","Hà Nội",
-                "Khánh Hòa","Kiên Giang","Kon Tum",
-                "Lai Châu","Lâm Đồng","Lạng Sơn","Lào Cai","Long An",
-                "Nam Định","Nghệ An","Ninh Bình","Ninh Thuận",
-                "Phú Thọ","Phú Yên",
-                "Quảng Bình","Quảng Nam","Quảng Ngãi","Quảng Ninh","Quảng Trị",
-                "Sóc Trăng","Sơn La",
-                "Tây Ninh","Thái Bình","Thái Nguyên","Thanh Hóa","Thừa Thiên Huế","Tiền Giang","Trà Vinh","Tuyên Quang",
-                "Vĩnh Long","Vĩnh Phúc","Yên Bái",
+                "Hà Giang", "Hà Nam", "Hà Tĩnh", "Hải Dương", "Hậu Giang", "Hòa Bình", "Hưng Yên", "Hải Phòng", "Hà Nội",
+                "Khánh Hòa", "Kiên Giang", "Kon Tum",
+                "Lai Châu", "Lâm Đồng", "Lạng Sơn", "Lào Cai", "Long An",
+                "Nam Định", "Nghệ An", "Ninh Bình", "Ninh Thuận",
+                "Phú Thọ", "Phú Yên",
+                "Quảng Bình", "Quảng Nam", "Quảng Ngãi", "Quảng Ninh", "Quảng Trị",
+                "Sóc Trăng", "Sơn La",
+                "Tây Ninh", "Thái Bình", "Thái Nguyên", "Thanh Hóa", "Thừa Thiên Huế", "Tiền Giang", "Trà Vinh",
+                "Tuyên Quang",
+                "Vĩnh Long", "Vĩnh Phúc", "Yên Bái",
                 "TP HCM"
             };
 
             foreach (var country in countries)
-            {
                 foreach (var city in cities)
                 {
                     var place = new Place();
@@ -112,7 +109,6 @@ namespace OlivesAdministration.Test.Helpers
 
                     olivesHealthEntities.Places.Add(place);
                 }
-            }
 
             // Save database changes.
             await olivesHealthEntities.SaveChangesAsync();
@@ -154,15 +150,15 @@ namespace OlivesAdministration.Test.Helpers
                 person.LastName = $"AL[{i}]";
                 person.FullName = person.FirstName + " " + person.LastName;
                 person.Gender = 0;
-                person.Role = (byte)Role.Admin;
+                person.Role = (byte) Role.Admin;
                 person.Created = 1;
 
                 if (i > 25)
-                    person.Status = (byte)StatusAccount.Active;
+                    person.Status = (byte) StatusAccount.Active;
                 else if (i == 25)
-                    person.Status = (byte)StatusAccount.Pending;
+                    person.Status = (byte) StatusAccount.Pending;
                 else
-                    person.Status = (byte)StatusAccount.Inactive;
+                    person.Status = (byte) StatusAccount.Inactive;
 
                 olivesHealthEntities.People.Add(person);
             }
@@ -198,11 +194,12 @@ namespace OlivesAdministration.Test.Helpers
                 person.LastName = $"DL[{i}]";
                 person.FullName = person.FirstName + " " + person.LastName;
                 person.Gender = 0;
-                person.Role = (byte)Role.Doctor;
+                person.Role = (byte) Role.Doctor;
                 person.Created = 1;
                 person.Address = "New York, NY, USA";
                 person.Birthday = 1;
-                person.Photo = $"{random.Next(1, 4)}";
+                person.PhotoUrl = $"{random.Next(1, 4)}";
+                person.PhotoPhysicPath = "1111";
 
                 if (status > 2)
                     status = 0;
@@ -221,11 +218,10 @@ namespace OlivesAdministration.Test.Helpers
             }
 
             await olivesHealthEntities.SaveChangesAsync();
-
         }
 
         /// <summary>
-        /// Initialize a number of medical categories.
+        ///     Initialize a number of medical categories.
         /// </summary>
         /// <param name="olivesHealthEntities"></param>
         /// <param name="max"></param>

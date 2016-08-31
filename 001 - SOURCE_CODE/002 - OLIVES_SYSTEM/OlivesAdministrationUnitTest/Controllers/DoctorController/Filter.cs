@@ -6,13 +6,11 @@ using OlivesAdministration.Enumerations;
 using OlivesAdministration.Interfaces;
 using OlivesAdministration.Repositories;
 using OlivesAdministration.Test.Helpers;
+using OlivesAdministration.Test.Repositories;
 using OlivesAdministration.ViewModels.Filter;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
-using Shared.Models;
-using Shared.Repositories;
-using Shared.ViewModels;
 
 namespace OlivesAdministration.Test.Controllers.DoctorController
 {
@@ -23,38 +21,33 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
 
         private OlivesAdministration.Controllers.DoctorController _doctorController;
         private IRepositoryAccountExtended _repositoryAccountExtended;
-        private IRepositoryStorage _repositoryStorage;
         private ILog _log;
 
         /// <summary>
-        /// Initialize context.
+        ///     Initialize context.
         /// </summary>
         private void InitializeContext()
         {
             // Data context initialiation.
-            var oliveDataContext = new Repositories.OliveDataContext();
+            var oliveDataContext = new OliveDataContext();
 
             // Repositories initialization.
             _repositoryAccountExtended = new RepositoryAccountExtended(oliveDataContext);
-            _repositoryStorage = new RepositoryStorage();
-            _repositoryStorage.InitializeStorage("Avatar", "Avatar");
 
             _log = LogManager.GetLogger(typeof(Get));
-            _doctorController = new OlivesAdministration.Controllers.DoctorController(_repositoryAccountExtended, _repositoryStorage, _log);
+            _doctorController = new OlivesAdministration.Controllers.DoctorController(_repositoryAccountExtended, _log);
             EnvironmentHelper.Instance.InitializeController(_doctorController);
         }
 
         /// <summary>
-        /// Initialize function context.
+        ///     Initialize function context.
         /// </summary>
         /// <param name="dataContext"></param>
         private void InitializeContext(IOliveDataContext dataContext)
         {
             _repositoryAccountExtended = new RepositoryAccountExtended(dataContext);
-            _repositoryStorage = new RepositoryStorage(EnvironmentHelper.Instance.ForgeHttpContext());
-            _repositoryStorage.InitializeStorage("Avatar", "Avatar");
             _log = LogManager.GetLogger(typeof(Get));
-            _doctorController = new OlivesAdministration.Controllers.DoctorController(_repositoryAccountExtended, _repositoryStorage, _log);
+            _doctorController = new OlivesAdministration.Controllers.DoctorController(_repositoryAccountExtended, _log);
             EnvironmentHelper.Instance.InitializeController(_doctorController);
         }
 
@@ -63,7 +56,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         #region Tests
 
         /// <summary>
-        /// Doctor filter isn't initialized.
+        ///     Doctor filter isn't initialized.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -75,7 +68,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// Email contains invalid characters
+        ///     Email contains invalid characters
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -92,7 +85,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// MinLastModified is 1900
+        ///     MinLastModified is 1900
         /// </summary>
         /// <returns></returns>
         public async Task InvalidMinLastModified()
@@ -107,7 +100,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// MinLastModified must be smaller or equal than MaxLastModified.
+        ///     MinLastModified must be smaller or equal than MaxLastModified.
         /// </summary>
         /// <returns></returns>
         public async Task MinLastModifiedGreaterMaxLastModified()
@@ -124,7 +117,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// MaxLastModified is 1900
+        ///     MaxLastModified is 1900
         /// </summary>
         /// <returns></returns>
         public async Task MaxLastModifiedInvalid()
@@ -139,7 +132,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// Name length is more than 64
+        ///     Name length is more than 64
         /// </summary>
         /// <returns></returns>
         public async Task NameMaxLengthExceeded()
@@ -157,7 +150,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// Max birthday is less than 1916.
+        ///     Max birthday is less than 1916.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -173,7 +166,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// Max birthday is less than 1916.
+        ///     Max birthday is less than 1916.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -189,7 +182,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// Min birthday is greater than max birthday.
+        ///     Min birthday is greater than max birthday.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -206,7 +199,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// Invalid gender.
+        ///     Invalid gender.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -214,7 +207,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         {
             InitializeContext();
             var filter = new FilterDoctorViewModel();
-            filter.Gender = -1;
+            filter.Gender = (Gender?) -1;
 
             _doctorController.Validate(filter);
             var result = await _doctorController.Filter(filter);
@@ -222,7 +215,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// Min created is smaller than the allowed value.
+        ///     Min created is smaller than the allowed value.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -239,7 +232,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// Max created is smaller than the allowed value.
+        ///     Max created is smaller than the allowed value.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -256,7 +249,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// Min created is larger than min created.
+        ///     Min created is larger than min created.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -274,7 +267,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// City name max length exceeded.
+        ///     City name max length exceeded.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -293,7 +286,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// Country name max length exceeded.
+        ///     Country name max length exceeded.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -312,7 +305,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// Specialty is invalid.
+        ///     Specialty is invalid.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -330,7 +323,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
 
 
         /// <summary>
-        /// Min rank is smaller than the allowed value.
+        ///     Min rank is smaller than the allowed value.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -347,7 +340,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// Max rank is smaller than the allowed value.
+        ///     Max rank is smaller than the allowed value.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -364,7 +357,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// Min created is larger than min created.
+        ///     Min created is larger than min created.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -382,7 +375,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// Sort direction is invalid.
+        ///     Sort direction is invalid.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -390,7 +383,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         {
             InitializeContext();
             var filter = new FilterDoctorViewModel();
-            filter.Direction = (SortDirection)(-1);
+            filter.Direction = (SortDirection) (-1);
 
             _doctorController.Validate(filter);
             var result = await _doctorController.Filter(filter);
@@ -399,7 +392,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// Invalid sort properties
+        ///     Invalid sort properties
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -407,16 +400,16 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         {
             InitializeContext();
             var filter = new FilterDoctorViewModel();
-            filter.Sort = (FilterDoctorSort)(-1);
+            filter.Sort = (FilterDoctorSort) (-1);
 
             _doctorController.Validate(filter);
             var result = await _doctorController.Filter(filter);
 
             Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
         }
-        
+
         /// <summary>
-        /// Page index is invalid.
+        ///     Page index is invalid.
         /// </summary>
         /// <returns></returns>
         public async Task PageIndexIsInvalid()
@@ -432,7 +425,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// Record less than one.
+        ///     Record less than one.
         /// </summary>
         /// <returns></returns>
         public async Task RecordLessThanOne()
@@ -448,7 +441,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// Record more than twenty.
+        ///     Record more than twenty.
         /// </summary>
         /// <returns></returns>
         public async Task RecordMoreThanTwenty()
@@ -462,14 +455,14 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
 
             Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
         }
-        
+
         /// <summary>
-        /// Filter doctor successfully.
+        ///     Filter doctor successfully.
         /// </summary>
         /// <returns></returns>
         public async Task FilterDoctorSuccessfully()
         {
-            var dataContext = new OliveDataContext();
+            var dataContext = new Shared.Repositories.OliveDataContext();
             await EnvironmentHelper.Instance.InitializePlaces(dataContext.Context, 10);
             await EnvironmentHelper.Instance.InitializeSpecialties(dataContext.Context, 10);
             await EnvironmentHelper.Instance.InitializeDoctor(dataContext.Context, 10);

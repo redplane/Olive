@@ -7,6 +7,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Data;
+using System.Data.Common;
+
 namespace Shared.Models
 {
     using System;
@@ -19,7 +22,12 @@ namespace Shared.Models
             : base("name=OlivesHealthEntities")
         {
         }
-    
+
+        public OlivesHealthEntities(DbConnection dbConnection) : base (dbConnection, true)
+        {
+        }
+
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();

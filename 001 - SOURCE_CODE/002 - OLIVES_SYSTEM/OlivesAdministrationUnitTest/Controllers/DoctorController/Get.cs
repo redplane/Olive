@@ -5,11 +5,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OlivesAdministration.Interfaces;
 using OlivesAdministration.Repositories;
 using OlivesAdministration.Test.Helpers;
+using OlivesAdministration.Test.Repositories;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.Repositories;
-using Shared.ViewModels;
 
 namespace OlivesAdministration.Test.Controllers.DoctorController
 {
@@ -20,38 +19,33 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
 
         private OlivesAdministration.Controllers.DoctorController _doctorController;
         private IRepositoryAccountExtended _repositoryAccountExtended;
-        private IRepositoryStorage _repositoryStorage;
         private ILog _log;
 
         /// <summary>
-        /// Initialize context.
+        ///     Initialize context.
         /// </summary>
         private void InitializeContext()
         {
             // Data context initialiation.
-            var oliveDataContext = new Repositories.OliveDataContext();
+            var oliveDataContext = new OliveDataContext();
 
             // Repositories initialization.
             _repositoryAccountExtended = new RepositoryAccountExtended(oliveDataContext);
-            _repositoryStorage = new RepositoryStorage();
-            _repositoryStorage.InitializeStorage("Avatar", "Avatar");
 
             _log = LogManager.GetLogger(typeof(Get));
-            _doctorController = new OlivesAdministration.Controllers.DoctorController(_repositoryAccountExtended, _repositoryStorage, _log);
+            _doctorController = new OlivesAdministration.Controllers.DoctorController(_repositoryAccountExtended, _log);
             EnvironmentHelper.Instance.InitializeController(_doctorController);
         }
 
         /// <summary>
-        /// Initialize function context.
+        ///     Initialize function context.
         /// </summary>
         /// <param name="dataContext"></param>
         private void InitializeContext(IOliveDataContext dataContext)
         {
             _repositoryAccountExtended = new RepositoryAccountExtended(dataContext);
-            _repositoryStorage = new RepositoryStorage(EnvironmentHelper.Instance.ForgeHttpContext());
-            _repositoryStorage.InitializeStorage("Avatar", "Avatar");
             _log = LogManager.GetLogger(typeof(Get));
-            _doctorController = new OlivesAdministration.Controllers.DoctorController(_repositoryAccountExtended, _repositoryStorage, _log);
+            _doctorController = new OlivesAdministration.Controllers.DoctorController(_repositoryAccountExtended, _log);
             EnvironmentHelper.Instance.InitializeController(_doctorController);
         }
 
@@ -60,7 +54,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         #region Tests
 
         /// <summary>
-        /// Account is not a doctor.
+        ///     Account is not a doctor.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -68,7 +62,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         {
             #region Account initialization
 
-            var dataContext = new Repositories.OliveDataContext();
+            var dataContext = new OliveDataContext();
             var person = new Person();
             person.Id = 1;
             person.Email = $"doctor@gmail.com";
@@ -77,7 +71,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
             person.LastName = "lastName";
             person.FullName = person.FirstName + " " + person.LastName;
             person.Gender = 0;
-            person.Role = (byte)Role.Admin;
+            person.Role = (byte) Role.Admin;
             person.Created = 1;
 
             dataContext.Context.People.Add(person);
@@ -92,7 +86,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// Account is not found in database.
+        ///     Account is not found in database.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -100,7 +94,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         {
             #region Account initialization
 
-            var dataContext = new Repositories.OliveDataContext();
+            var dataContext = new OliveDataContext();
             var person = new Person();
             person.Id = 1;
             person.Email = $"doctor@gmail.com";
@@ -109,7 +103,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
             person.LastName = "lastName";
             person.FullName = person.FirstName + " " + person.LastName;
             person.Gender = 0;
-            person.Role = (byte)Role.Admin;
+            person.Role = (byte) Role.Admin;
             person.Created = 1;
 
             dataContext.Context.People.Add(person);
@@ -124,7 +118,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         }
 
         /// <summary>
-        /// Account is not a doctor.
+        ///     Account is not a doctor.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -132,12 +126,12 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
         {
             #region Data initialization
 
-            var dataContext = new Repositories.OliveDataContext();
+            var dataContext = new OliveDataContext();
             await EnvironmentHelper.Instance.InitializeSpecialties(dataContext.Context, 10);
             await EnvironmentHelper.Instance.InitializePlaces(dataContext.Context, 10);
             await EnvironmentHelper.Instance.InitializeDoctor(dataContext.Context, 10);
-         
-            InitializeContext(dataContext);   
+
+            InitializeContext(dataContext);
             EnvironmentHelper.Instance.InitializeController(_doctorController);
 
             #endregion
@@ -146,6 +140,7 @@ namespace OlivesAdministration.Test.Controllers.DoctorController
 
             Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
         }
+
         #endregion
     }
 }

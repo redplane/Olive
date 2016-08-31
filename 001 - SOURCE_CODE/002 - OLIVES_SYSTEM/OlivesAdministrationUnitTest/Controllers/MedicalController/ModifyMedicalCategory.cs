@@ -2,16 +2,14 @@
 using System.Threading.Tasks;
 using log4net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OlivesAdministration.Interfaces;
-using OlivesAdministration.Repositories;
+using OlivesAdministration.Controllers;
 using OlivesAdministration.Test.Helpers;
 using OlivesAdministration.ViewModels.Initialize;
 using Shared.Constants;
-using Shared.Enumerations;
 using Shared.Interfaces;
-using Shared.Models;
 using Shared.Repositories;
 using Shared.Services;
+using OliveDataContext = OlivesAdministration.Test.Repositories.OliveDataContext;
 
 namespace OlivesAdministration.Test.Controllers.MedicalController
 {
@@ -20,32 +18,32 @@ namespace OlivesAdministration.Test.Controllers.MedicalController
     {
         #region Initialization sector
 
-        private OlivesAdministration.Controllers.MedicalCategoryController _medicalController;
+        private MedicalCategoryController _medicalController;
         private IRepositoryMedicalCategory _repositoryMedicalCategory;
         private ITimeService _timeService;
         private ILog _log;
 
         /// <summary>
-        /// Initialize context.
+        ///     Initialize context.
         /// </summary>
         private void InitializeContext()
         {
             // Data context initialiation.
-            var oliveDataContext = new Repositories.OliveDataContext();
-            
+            var oliveDataContext = new OliveDataContext();
+
             // Initialize time service.
             _timeService = new TimeService();
 
             // Repositories initialization.
             _repositoryMedicalCategory = new RepositoryMedicalCategory(oliveDataContext);
-            
+
             _log = LogManager.GetLogger(typeof(InitializeMedicalCategory));
-            _medicalController = new OlivesAdministration.Controllers.MedicalCategoryController(_repositoryMedicalCategory, _timeService, _log);
+            _medicalController = new MedicalCategoryController(_repositoryMedicalCategory, _timeService, _log);
             EnvironmentHelper.Instance.InitializeController(_medicalController);
         }
 
         /// <summary>
-        /// Initialize function context.
+        ///     Initialize function context.
         /// </summary>
         /// <param name="dataContext"></param>
         private void InitializeContext(IOliveDataContext dataContext)
@@ -53,7 +51,7 @@ namespace OlivesAdministration.Test.Controllers.MedicalController
             _repositoryMedicalCategory = new RepositoryMedicalCategory(dataContext);
             _log = LogManager.GetLogger(typeof(InitializeMedicalCategory));
             _timeService = new TimeService();
-            _medicalController = new OlivesAdministration.Controllers.MedicalCategoryController(_repositoryMedicalCategory, _timeService, _log);
+            _medicalController = new MedicalCategoryController(_repositoryMedicalCategory, _timeService, _log);
             EnvironmentHelper.Instance.InitializeController(_medicalController);
         }
 
@@ -62,7 +60,7 @@ namespace OlivesAdministration.Test.Controllers.MedicalController
         #region Tests
 
         /// <summary>
-        /// Category name shouldn't be blank
+        ///     Category name shouldn't be blank
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -79,7 +77,7 @@ namespace OlivesAdministration.Test.Controllers.MedicalController
         }
 
         /// <summary>
-        /// Category name max length reached.
+        ///     Category name max length reached.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -98,15 +96,15 @@ namespace OlivesAdministration.Test.Controllers.MedicalController
         }
 
         /// <summary>
-        /// Category doesn't exist in database.
+        ///     Category doesn't exist in database.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
         public async Task MedicalCategoryDoesntExist()
         {
-            var dataContext = new Repositories.OliveDataContext();
+            var dataContext = new OliveDataContext();
             await EnvironmentHelper.Instance.InitializeMedicalCategories(dataContext.Context, 10);
-            InitializeContext(dataContext);    
+            InitializeContext(dataContext);
 
             var modifier = new InitializeMedicalCategoryViewModel();
             modifier.Name = "12";
@@ -116,13 +114,13 @@ namespace OlivesAdministration.Test.Controllers.MedicalController
         }
 
         /// <summary>
-        /// Medical name is already in database.
+        ///     Medical name is already in database.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
         public async Task MedicalCategoryNameConflict()
         {
-            var dataContext = new Repositories.OliveDataContext();
+            var dataContext = new OliveDataContext();
             await EnvironmentHelper.Instance.InitializeMedicalCategories(dataContext.Context, 10);
             InitializeContext(dataContext);
 
@@ -134,13 +132,13 @@ namespace OlivesAdministration.Test.Controllers.MedicalController
         }
 
         /// <summary>
-        /// Modification is succesful.
+        ///     Modification is succesful.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
         public async Task MedicalCategoryModifySuccessfully()
         {
-            var dataContext = new Repositories.OliveDataContext();
+            var dataContext = new OliveDataContext();
             await EnvironmentHelper.Instance.InitializeMedicalCategories(dataContext.Context, 10);
             InitializeContext(dataContext);
 
@@ -150,6 +148,7 @@ namespace OlivesAdministration.Test.Controllers.MedicalController
             var result = await _medicalController.ModifyMedicalCategory(1, modifier);
             Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
         }
+
         #endregion
     }
 }

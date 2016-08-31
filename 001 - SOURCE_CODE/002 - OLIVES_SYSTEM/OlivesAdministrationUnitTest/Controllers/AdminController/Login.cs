@@ -1,28 +1,16 @@
-﻿using System;
-using System.Data.Entity.Infrastructure;
-using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Reflection;
+﻿using System.Net;
 using System.Threading.Tasks;
-using System.Web.Http;
-using Effort;
-using Effort.DataLoaders;
 using log4net;
-using log4net.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OlivesAdministration.Interfaces;
 using OlivesAdministration.Repositories;
+using OlivesAdministration.Test.Helpers;
 using OlivesAdministration.Test.Repositories;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
-using Shared.Repositories;
 using Shared.Services;
 using Shared.ViewModels;
-using System.Web;
-using System.Web.SessionState;
-using OlivesAdministration.Test.Helpers;
 
 namespace OlivesAdministration.Test.Controllers.AdminController
 {
@@ -33,47 +21,45 @@ namespace OlivesAdministration.Test.Controllers.AdminController
 
         private OlivesAdministration.Controllers.AdminController _adminController;
         private IRepositoryAccountExtended _repositoryAccountExtended;
-        private IRepositoryStorage _repositoryStorage;
         private ILog _log;
+        private ITimeService _timeService;
 
         #endregion
 
         #region Initialization
 
         /// <summary>
-        /// Initialize context.
+        ///     Initialize context.
         /// </summary>
         private void InitializeContext()
         {
             // Data context initialiation.
-            var oliveDataContext = new Repositories.OliveDataContext();
+            var oliveDataContext = new OliveDataContext();
 
             // Repositories initialization.
             _repositoryAccountExtended = new RepositoryAccountExtended(oliveDataContext);
-            _repositoryStorage = new RepositoryStorage();
-            _repositoryStorage.InitializeStorage("Avatar", "Avatar");
-
+            _timeService = new TimeService();
             _log = LogManager.GetLogger(typeof(Login));
-            _adminController = new OlivesAdministration.Controllers.AdminController(_repositoryAccountExtended, _repositoryStorage, _log);
+            _adminController = new OlivesAdministration.Controllers.AdminController(_repositoryAccountExtended, _log,
+                _timeService);
             EnvironmentHelper.Instance.InitializeController(_adminController);
         }
 
         /// <summary>
-        /// Initialize function context.
+        ///     Initialize function context.
         /// </summary>
         /// <param name="dataContext"></param>
         private void InitializeContext(IOliveDataContext dataContext)
         {
             _repositoryAccountExtended = new RepositoryAccountExtended(dataContext);
-            _repositoryStorage = new RepositoryStorage(EnvironmentHelper.Instance.ForgeHttpContext());
-            _repositoryStorage.InitializeStorage("Avatar", "Avatar");
             _log = LogManager.GetLogger(typeof(Login));
-            _adminController = new OlivesAdministration.Controllers.AdminController(_repositoryAccountExtended, _repositoryStorage, _log);
+            _adminController = new OlivesAdministration.Controllers.AdminController(_repositoryAccountExtended, _log,
+                _timeService);
             EnvironmentHelper.Instance.InitializeController(_adminController);
         }
 
         /// <summary>
-        /// Initialize function context
+        ///     Initialize function context
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
@@ -84,33 +70,33 @@ namespace OlivesAdministration.Test.Controllers.AdminController
                 // General information.
                 var person = new Person();
                 person.Email = $"admin{i}@gmail.com";
-                person.Password = "admin199x";
+                person.Password = "00F2BA2AA3E9AD96D400A7CA60C5FDA0";
                 person.FirstName = $"AF[{i}]";
                 person.LastName = $"AL[{i}]";
                 person.FullName = person.FirstName + " " + person.LastName;
                 person.Gender = 0;
-                person.Role = (byte)Role.Admin;
+                person.Role = (byte) Role.Admin;
                 person.Created = 1;
 
                 if (i == 0)
-                    person.Status = (byte)StatusAccount.Active;
+                    person.Status = (byte) StatusAccount.Active;
                 else if (i == 1)
-                    person.Status = (byte)StatusAccount.Pending;
+                    person.Status = (byte) StatusAccount.Pending;
                 else if (i == 2)
-                    person.Status = (byte)StatusAccount.Inactive;
+                    person.Status = (byte) StatusAccount.Inactive;
 
                 context.People.Add(person);
             }
 
             await context.SaveChangesAsync();
         }
-        
+
         #endregion
-        
+
         #region Tests
 
         /// <summary>
-        /// No information has been input to login board.
+        ///     No information has been input to login board.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -121,13 +107,13 @@ namespace OlivesAdministration.Test.Controllers.AdminController
 
             var loginViewModel = new LoginViewModel();
             _adminController.Validate(loginViewModel);
-            var result = await _adminController.Login(loginViewModel);
+            var result = await _adminController.LoginAsync(loginViewModel);
 
             Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
         /// <summary>
-        /// Email is correct but password is missing.
+        ///     Email is correct but password is missing.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -140,13 +126,13 @@ namespace OlivesAdministration.Test.Controllers.AdminController
             loginViewModel.Email = "admin26@gmail.com";
 
             _adminController.Validate(loginViewModel);
-            var result = await _adminController.Login(loginViewModel);
+            var result = await _adminController.LoginAsync(loginViewModel);
 
             Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
         /// <summary>
-        /// Password is filled but email is not.
+        ///     Password is filled but email is not.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -159,63 +145,61 @@ namespace OlivesAdministration.Test.Controllers.AdminController
             loginViewModel.Password = "admin199x";
 
             _adminController.Validate(loginViewModel);
-            var result = await _adminController.Login(loginViewModel);
+            var result = await _adminController.LoginAsync(loginViewModel);
 
             Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
         /// <summary>
-        /// All information is filled, but wrong
+        ///     All information is filled, but wrong
         /// </summary>
         /// <returns></returns>
         [TestMethod]
         public async Task EmailIsInvalid()
         {
-            var dataContext = new OlivesAdministration.Test.Repositories.OliveDataContext();
+            var dataContext = new OliveDataContext();
             InitializeContext(dataContext);
             await InitializeAdminAccounts(dataContext.Context);
 
             var loginViewModel = new LoginViewModel();
             loginViewModel.Email = "admin10@gmail.com";
             loginViewModel.Password = "password";
-
-            var validationResult = await _adminController.Login(loginViewModel);
+            
             _adminController.Validate(loginViewModel);
 
-            var result = await _adminController.Login(loginViewModel);
+            var result = await _adminController.LoginAsync(loginViewModel);
             Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
         }
 
         /// <summary>
-        /// Admin account is pending.
+        ///     Admin account is pending.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
         public async Task AccountIsPending()
         {
-            var dataContext = new OlivesAdministration.Test.Repositories.OliveDataContext();
+            var dataContext = new OliveDataContext();
             InitializeContext(dataContext);
             await InitializeAdminAccounts(dataContext.Context);
 
             var loginViewModel = new LoginViewModel();
             loginViewModel.Email = "admin1@gmail.com";
             loginViewModel.Password = "password";
-
-            var validationResult = await _adminController.Login(loginViewModel);
+            
             _adminController.Validate(loginViewModel);
 
-            var result = await _adminController.Login(loginViewModel);
+            var result = await _adminController.LoginAsync(loginViewModel);
             Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
         }
 
         /// <summary>
-        /// Account is currently deactivated.
+        ///     Account is currently deactivated.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
         public async Task AccountIsDeactivated()
         {
-            var dataContext = new OlivesAdministration.Test.Repositories.OliveDataContext();
+            var dataContext = new OliveDataContext();
             InitializeContext(dataContext);
             await InitializeAdminAccounts(dataContext.Context);
 
@@ -223,21 +207,21 @@ namespace OlivesAdministration.Test.Controllers.AdminController
             loginViewModel.Email = "admin2@gmail.com";
             loginViewModel.Password = "password";
 
-            var validationResult = await _adminController.Login(loginViewModel);
+            var validationResult = await _adminController.LoginAsync(loginViewModel);
             _adminController.Validate(loginViewModel);
 
-            var result = await _adminController.Login(loginViewModel);
+            var result = await _adminController.LoginAsync(loginViewModel);
             Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
         }
 
         /// <summary>
-        /// Login is valid because email and password are correct.
+        ///     Login is valid because email and password are correct.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
         public async Task LoginSuccessful()
         {
-            var dataContext = new OlivesAdministration.Test.Repositories.OliveDataContext();
+            var dataContext = new OliveDataContext();   
             InitializeContext(dataContext);
             await InitializeAdminAccounts(dataContext.Context);
 
@@ -245,13 +229,12 @@ namespace OlivesAdministration.Test.Controllers.AdminController
             loginViewModel.Email = "admin0@gmail.com";
             loginViewModel.Password = "admin199x";
 
-            var validationResult = await _adminController.Login(loginViewModel);
             _adminController.Validate(loginViewModel);
 
-            var result = await _adminController.Login(loginViewModel);
+            var result = await _adminController.LoginAsync(loginViewModel);
             Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
         }
-        
+
         #endregion
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using Effort;
-using Effort.DataLoaders;
-using OlivesAdministration.Test.Helpers;
+﻿using Effort;
 using Shared.Interfaces;
 using Shared.Models;
 
@@ -29,7 +26,7 @@ namespace OlivesAdministration.Test.Repositories
         {
             Context = context;
         }
-        
+
         #endregion
     }
 }
