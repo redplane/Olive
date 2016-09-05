@@ -1,0 +1,86 @@
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\bin\Debug\Sale Management System.exe
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\bin\Debug\Sale Management System.pdb
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\bin\Debug\en-us\Sale Management System.resources.dll
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\bin\Debug\vi-vn\Sale Management System.resources.dll
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Form_BillManagement.resources
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Form_ProductManagement.resources
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Properties.Resources.resources
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\SaleManagementSystem.csproj.GenerateResource.Cache
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\en-us\Sale Management System.resources.dll
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\vi-vn\Sale Management System.resources.dll
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale Management System.exe
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale Management System.pdb
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Lang.MyResource.resources
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Lang.MyResource.en-us.resources
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Lang.MyResource.vi-vn.resources
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Form_CustomerManagement.resources
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Form_LoginMenu.resources
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Form_MainMenu.resources
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.AppForm.SForm_ProductAdd.resources
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.AppForm.SForm_ProductEdit.resources
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.AppForm.SForm_CustomerAdd.resources
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.AppForm.SForm_CustomerEdit.resources
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.AppForm.SForm_BillAdd.resources
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.AppForm.SForm_SendEmail.resources
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.AppForm.Form_Statistic.resources
+C:\Users\DuyLinh\documents\visual studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.AppForm.SForm_PrintingSetting.resources
+C:\Users\DuyLinh\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\bin\Debug\Sale Management System.exe.config
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\bin\Debug\Sale Management System.exe.config
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale Management System.exe
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale Management System.pdb
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\bin\Debug\Sale Management System.exe
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\bin\Debug\Sale Management System.pdb
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\bin\Debug\en-us\Sale Management System.resources.dll
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\bin\Debug\vi-vn\Sale Management System.resources.dll
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Form_CustomerManagement.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Form_BillManagement.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Form_ProductManagement.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Form_LoginMenu.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Form_MainMenu.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Properties.Resources.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Lang.MyResource.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Lang.MyResource.en-us.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Lang.MyResource.vi-vn.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\SaleManagementSystem.csproj.GenerateResource.Cache
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\en-us\Sale Management System.resources.dll
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\vi-vn\Sale Management System.resources.dll
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.SplashScreen.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Form_Statistic.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.SForm_CustomerEdit.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Dialog_SendEmail.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\SaleManagementSystem.csprojResolveAssemblyReference.cache
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Dialog_CustomerAdd.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Dialog_PrintingSetting.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Dialog_ProductAdd.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Dialog_ProductEdit.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Dialog_BillAdd.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\bin\Debug\Sale Management System.exe.config
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale Management System.exe
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale Management System.pdb
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\bin\Debug\Sale Management System.exe
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\bin\Debug\Sale Management System.pdb
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\bin\Debug\en-us\Sale Management System.resources.dll
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\bin\Debug\vi-vn\Sale Management System.resources.dll
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\SaleManagementSystem.csprojResolveAssemblyReference.cache
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Form_Statistic.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Dialog_PrintingSetting.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Dialog_SendEmail.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Dialog_BillAdd.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.SForm_CustomerEdit.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Form_CustomerManagement.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Form_BillManagement.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Form_ProductManagement.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Form_LoginMenu.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Form_MainMenu.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Dialog_CustomerAdd.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Dialog_ProductAdd.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Dialog_ProductEdit.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Properties.Resources.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Lang.MyResource.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.SplashScreen.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Lang.MyResource.en-us.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Lang.MyResource.vi-vn.resources
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\SaleManagementSystem.csproj.GenerateResource.Cache
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\en-us\Sale Management System.resources.dll
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\vi-vn\Sale Management System.resources.dll
+C:\Users\Redplane\Documents\Visual Studio 2010\Projects\Backup Code\Sale Management System\Sale Management System\Sale Management System\obj\x86\Debug\Sale_Management_System.Dialog_AuthorInfo.resources

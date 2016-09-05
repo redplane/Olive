@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9A57C067-0E89-4332-941A-3B587BFE4B69}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sale_Management_System</RootNamespace>
+    <AssemblyName>Sale Management System</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="UI\SplashScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\SplashScreen.Designer.cs">
+      <DependentUpon>SplashScreen.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialog\Dialog_BillAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialog\Dialog_BillAdd.Designer.cs">
+      <DependentUpon>Dialog_BillAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialog\Dialog_CustomerEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialog\Dialog_CustomerEdit.Designer.cs">
+      <DependentUpon>Dialog_CustomerEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialog\Dialog_CustomerAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialog\Dialog_CustomerAdd.Designer.cs">
+      <DependentUpon>Dialog_CustomerAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialog\Dialog_ProductAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialog\Dialog_ProductAdd.Designer.cs">
+      <DependentUpon>Dialog_ProductAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Dialog\Dialog_ProductEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Dialog\Dialog_ProductEdit.Designer.cs">
+      <DependentUpon>Dialog_ProductEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BLL\Customer.cs" />
+    <Compile Include="BLL\GlobalConstants.cs" />
+    <Compile Include="BLL\GlobalFunctions.cs" />
+    <Compile Include="BLL\util_Sql.cs" />
+    <Compile Include="UI\Form\Form_CustomerManagement.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Form\Form_CustomerManagement.Designer.cs">
+      <DependentUpon>Form_CustomerManagement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Form\Form_BillManagement.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Form\Form_BillManagement.Designer.cs">
+      <DependentUpon>Form_BillManagement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Form\Form_ProductManagement.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Form\Form_ProductManagement.Designer.cs">
+      <DependentUpon>Form_ProductManagement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Form\Form_LoginMenu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Form\Form_LoginMenu.Designer.cs">
+      <DependentUpon>Form_LoginMenu.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Form\Form_MainMenu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Form\Form_MainMenu.Designer.cs">
+      <DependentUpon>Form_MainMenu.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BLL\Product.cs" />
+    <Compile Include="BLL\UserSettings.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="UI\Dialog\Dialog_BillAdd.resx">
+      <DependentUpon>Dialog_BillAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialog\Dialog_CustomerEdit.resx">
+      <DependentUpon>Dialog_CustomerEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Form\Form_CustomerManagement.resx">
+      <DependentUpon>Form_CustomerManagement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Form\Form_BillManagement.resx">
+      <DependentUpon>Form_BillManagement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Form\Form_ProductManagement.resx">
+      <DependentUpon>Form_ProductManagement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Form\Form_LoginMenu.resx">
+      <DependentUpon>Form_LoginMenu.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Form\Form_MainMenu.resx">
+      <DependentUpon>Form_MainMenu.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialog\Dialog_CustomerAdd.resx">
+      <DependentUpon>Dialog_CustomerAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialog\Dialog_ProductAdd.resx">
+      <DependentUpon>Dialog_ProductAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Dialog\Dialog_ProductEdit.resx">
+      <DependentUpon>Dialog_ProductEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="UI\SplashScreen.resx">
+      <DependentUpon>SplashScreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
