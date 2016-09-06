@@ -2,7 +2,7 @@
 using Shared.Constants;
 using Shared.Resources;
 
-namespace OlivesAdministration.ViewModels.Edit
+namespace Olive.Admin.ViewModels.Edit
 {
     public class EditPlaceViewModel
     {

@@ -68,7 +68,7 @@ namespace Shared.Repositories
 
             return result.FirstOrDefault();
         }
-
+        
         /// <summary>
         ///     Find person by using email, password and role.
         /// </summary>

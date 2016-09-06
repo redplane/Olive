@@ -1,7 +1,7 @@
 ﻿using Shared.Attributes;
 using Shared.Resources;
 
-namespace OlivesAdministration.ViewModels.Statistic
+namespace Olive.Admin.ViewModels.Statistic
 {
     public class StatusSummary
     {

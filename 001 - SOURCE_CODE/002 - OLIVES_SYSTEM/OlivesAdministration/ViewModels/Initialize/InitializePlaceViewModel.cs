@@ -2,7 +2,7 @@
 using Shared.Constants;
 using Shared.Resources;
 
-namespace OlivesAdministration.ViewModels.Initialize
+namespace Olive.Admin.ViewModels.Initialize
 {
     public class InitializePlaceViewModel
     {

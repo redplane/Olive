@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
-using OlivesAdministration.Attributes;
+using Olives.Admin.Attributes;
 using OlivesAdministration.ViewModels.Initialize;
 using Shared.Enumerations;
 using Shared.Interfaces;
@@ -13,7 +13,7 @@ using Shared.Models;
 using Shared.Resources;
 using Shared.ViewModels.Filter;
 
-namespace OlivesAdministration.Controllers
+namespace Olives.Admin.Controllers
 {
     [OlivesAuthorize(new[] {Role.Admin})]
     public class MedicalCategoryController : ApiParentController

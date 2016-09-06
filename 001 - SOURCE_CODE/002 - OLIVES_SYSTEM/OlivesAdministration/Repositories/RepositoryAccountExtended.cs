@@ -4,17 +4,17 @@ using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
-using OlivesAdministration.Enumerations;
-using OlivesAdministration.Interfaces;
-using OlivesAdministration.ViewModels.Filter;
-using OlivesAdministration.ViewModels.Statistic;
+using Olive.Admin.Enumerations;
+using Olive.Admin.Interfaces;
+using Olive.Admin.ViewModels.Filter;
+using Olive.Admin.ViewModels.Statistic;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.Repositories;
 using Shared.ViewModels.Response;
 
-namespace OlivesAdministration.Repositories
+namespace Olive.Admin.Repositories
 {
     public class RepositoryAccountExtended : RepositoryAccount, IRepositoryAccountExtended
     {

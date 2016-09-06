@@ -1,0 +1,33 @@
+﻿@{
+    Layout = "_Layout.cshtml";
+}
+
+<body class="layout-boxed sidebar-mini skin-green-light sidebar-collapse">
+    <!-- Site wrapper -->
+    <div class="wrapper">
+        
+        @*Render partial view*@
+        @Html.Partial("_NavigationBar")
+
+        @*Render sidebar*@
+        @Html.Partial("_Sidebar")
+
+        <div class="content-wrapper" style="min-height: 976px;">
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <h1>
+                    @ViewBag.ContentLarge
+                    <small>@ViewBag.ContentSmall</small>
+                </h1>
+            </section>
+            @RenderBody()
+        </div>
+
+        @*Reder page footer*@
+        @Html.Partial("_Footer")
+
+    </div>
+   
+    <script src="~/Scripts/AdminLTE/app.min.js"></script>
+
+</body>

@@ -5,14 +5,14 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using log4net;
-using OlivesAdministration.Attributes;
-using OlivesAdministration.Interfaces;
+using Olives.Admin.Attributes;
+using Olives.Admin.Interfaces;
 using OlivesAdministration.ViewModels.Edit;
 using OlivesAdministration.ViewModels.Statistic;
 using Shared.Enumerations;
 using Shared.Resources;
 
-namespace OlivesAdministration.Controllers
+namespace Olives.Admin.Controllers
 {
     [Route("api/person")]
     public class PersonController : ApiParentController

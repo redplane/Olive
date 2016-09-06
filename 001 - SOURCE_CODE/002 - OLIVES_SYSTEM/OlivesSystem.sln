@@ -5,13 +5,9 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{5227A0F6-C8CD-4A8B-B8BB-870BDE42F88B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OlivesAdministration", "OlivesAdministration\OlivesAdministration.csproj", "{C7E1E007-46DE-424C-82AE-018086DD43B9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataInitializer", "DataInitializer\DataInitializer.csproj", "{23992EFE-D28D-44CC-84C5-06108FDF1A4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olive.Admin", "OlivesAdministration\Olive.Admin.csproj", "{C7E1E007-46DE-424C-82AE-018086DD43B9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olives", "Olives\Olives.csproj", "{0ADE9646-30D3-48CE-BCDE-8A1684401973}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OlivesAdministration.Test", "OlivesAdministrationUnitTest\OlivesAdministration.Test.csproj", "{B4541E99-C6BD-4B01-BFB5-F53A8ECC8C5B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultipartFormDataMediaFormatter", "MultipartFormDataFormatter\MultipartFormDataMediaFormatter.csproj", "{1F851995-9C6B-4B34-82AF-AC4E075F00C2}"
 EndProject
@@ -33,18 +29,10 @@ Global
 		{C7E1E007-46DE-424C-82AE-018086DD43B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7E1E007-46DE-424C-82AE-018086DD43B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7E1E007-46DE-424C-82AE-018086DD43B9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{23992EFE-D28D-44CC-84C5-06108FDF1A4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{23992EFE-D28D-44CC-84C5-06108FDF1A4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{23992EFE-D28D-44CC-84C5-06108FDF1A4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{23992EFE-D28D-44CC-84C5-06108FDF1A4A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0ADE9646-30D3-48CE-BCDE-8A1684401973}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0ADE9646-30D3-48CE-BCDE-8A1684401973}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0ADE9646-30D3-48CE-BCDE-8A1684401973}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0ADE9646-30D3-48CE-BCDE-8A1684401973}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B4541E99-C6BD-4B01-BFB5-F53A8ECC8C5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B4541E99-C6BD-4B01-BFB5-F53A8ECC8C5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B4541E99-C6BD-4B01-BFB5-F53A8ECC8C5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B4541E99-C6BD-4B01-BFB5-F53A8ECC8C5B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1F851995-9C6B-4B34-82AF-AC4E075F00C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1F851995-9C6B-4B34-82AF-AC4E075F00C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F851995-9C6B-4B34-82AF-AC4E075F00C2}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using OlivesAdministration.Enumerations;
+﻿using System.ComponentModel.DataAnnotations;
+using Olive.Admin.Enumerations;
 using Shared.Attributes;
 using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Resources;
 
-namespace OlivesAdministration.ViewModels.Filter
+namespace Olive.Admin.ViewModels.Filter
 {
     public class FilterDoctorViewModel : IPagination
     {

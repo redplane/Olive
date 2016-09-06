@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using OlivesAdministration.ViewModels.Filter;
-using OlivesAdministration.ViewModels.Statistic;
+using Olive.Admin.ViewModels.Filter;
+using Olive.Admin.ViewModels.Statistic;
 using Shared.Interfaces;
 using Shared.Models;
 using Shared.ViewModels.Response;
 
-namespace OlivesAdministration.Interfaces
+namespace Olive.Admin.Interfaces
 {
     public interface IRepositoryAccountExtended : IRepositoryAccount
     {

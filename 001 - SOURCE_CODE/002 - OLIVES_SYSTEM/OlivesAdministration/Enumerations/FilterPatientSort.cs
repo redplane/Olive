@@ -1,4 +1,4 @@
-﻿namespace OlivesAdministration.Enumerations
+﻿namespace Olive.Admin.Enumerations
 {
     public enum FilterPatientSort
     {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Web.Http;
@@ -9,7 +8,7 @@ using System.Web.Http.Controllers;
 using System.Web.Http.ModelBinding;
 using Shared.Models;
 
-namespace OlivesAdministration.Controllers
+namespace Olives.Admin.Controllers
 {
     public class ApiParentController : ApiController
     {
@@ -40,7 +39,7 @@ namespace OlivesAdministration.Controllers
             // Check whether any language has been sent to server.
             var language = controllerContext.Request.Headers.AcceptLanguage.FirstOrDefault();
 
-            if (language != null && !string.IsNullOrEmpty(language.Value))
+            if ((language != null) && !string.IsNullOrEmpty(language.Value))
                 acceptLanguage = language.Value;
 
             try
@@ -55,6 +54,5 @@ namespace OlivesAdministration.Controllers
 
             base.Initialize(controllerContext);
         }
-        
     }
 }

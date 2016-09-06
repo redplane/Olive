@@ -1,4 +1,4 @@
-﻿namespace OlivesAdministration.ViewModels.Statistic
+﻿namespace Olive.Admin.ViewModels.Statistic
 {
     public class StatusSummaryViewModel
     {
