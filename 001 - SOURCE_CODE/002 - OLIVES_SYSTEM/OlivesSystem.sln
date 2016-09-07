@@ -5,13 +5,11 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{5227A0F6-C8CD-4A8B-B8BB-870BDE42F88B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olive.Admin", "OlivesAdministration\Olive.Admin.csproj", "{C7E1E007-46DE-424C-82AE-018086DD43B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olive.Admin", "Olive.Admin\Olive.Admin.csproj", "{C7E1E007-46DE-424C-82AE-018086DD43B9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olives", "Olives\Olives.csproj", "{0ADE9646-30D3-48CE-BCDE-8A1684401973}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultipartFormDataMediaFormatter", "MultipartFormDataFormatter\MultipartFormDataMediaFormatter.csproj", "{1F851995-9C6B-4B34-82AF-AC4E075F00C2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olives.Test", "Olives.Test\Olives.Test.csproj", "{D2284679-5E31-4194-94DC-31CCFF1D1E5D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olives.Job", "Olives.Job\Olives.Job.csproj", "{016581C8-ADA7-4132-89BD-2CAEC3A537FB}"
 EndProject
