@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Olive.Admin.Enumerations;
 using Shared.Attributes;
 using Shared.Constants;
