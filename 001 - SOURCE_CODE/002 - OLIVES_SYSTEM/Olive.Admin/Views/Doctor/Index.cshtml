@@ -1,8 +1,4 @@
-﻿@using Olive.Admin.Enumerations
-@using Olive.Admin.Resources
-@using Shared.Constants
-@using Shared.Enumerations
-@using SortDirection = System.Web.Helpers.SortDirection
+﻿@using Olive.Admin.Resources
 
 @{
     Layout = "~/Views/Shared/_AuthorizedView.cshtml";
@@ -15,11 +11,13 @@
 <section ng-app="DoctorModule"
          ng-controller="DoctorController"
          class="content">
+
+    <!-- Account filter box-->
     <div class="row">
         <div class="col-md-12">
             <div class="box box-default collapsed-box">
                 <div class="box-header">
-                    <span class="glyphicon glyphicon-filter"></span> <span class="box-title">Account filter</span>
+                    <span class="glyphicon glyphicon-filter"></span> <span class="box-title">Doctor filter</span>
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool"
                                 data-widget="collapse">
@@ -31,44 +29,33 @@
                 <div class="box-body">
 
                     <div class="col-md-6">
-
+                        <!-- Email -->
                         <div class="form-group">
                             <label>Email</label>
-                            <input id="txtEmail"
+                            <input ng-model="filterDoctorViewModel.email"
                                    class="form-control"
                                    maxlength="64"
-                                   type="email" />
+                                   type="text" />
                         </div>
 
+                        <!-- Phone -->
                         <div class="form-group">
                             <label>Phone</label>
-                            <input id="txtPhone"
-                                   type="tel"
+                            <input ng-model="filterDoctorViewModel.phone"
                                    class="form-control" />
                         </div>
 
+                        <!-- MinCreated -->
                         <div class="form-group">
                             <label>Created [Min]</label>
-
-                            <div id="dtpCreatedMin"
-                                 class="input-group date" data-provide="datepicker">
-                                <input type="text" class="form-control">
-                                <div class="input-group-addon">
-                                    <span class="glyphicon glyphicon-th"></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Created [Max]</label>
 
                             <p class="input-group">
                                 <input type="text"
                                        class="form-control"
-                                       uib-datepicker-popup="yyyy-mm-dd"
-                                       ng-model="minBirthdayDatepicker.date"
-                                       is-open="minBirthdayDatepicker.isOpened"
-                                       datepicker-options="generalDateOptions"
+                                       uib-datepicker-popup="yyyy-MM-dd"
+                                       ng-model="filterDoctorViewModel.minCreated"
+                                       is-open="datePickerToggleState.minCreated"
+                                       datepicker-options="globalDateTimeOptions"
                                        ng-required="true"
                                        close-text="Close"
                                        alt-input-formats="altInputFormats" />
@@ -76,7 +63,7 @@
                                 <span class="input-group-btn">
                                     <button type="button"
                                             class="btn btn-default"
-                                            ng-click="openDatepicker()">
+                                            ng-click="datePickerToggleState.openMinCreated();">
                                         <i class="glyphicon glyphicon-calendar"></i>
                                     </button>
                                 </span>
@@ -84,128 +71,196 @@
 
                         </div>
 
+                        <!-- MaxCreated -->
+                        <div class="form-group">
+                            <label>Created [Max]</label>
+
+                            <p class="input-group">
+                                <input type="text"
+                                       class="form-control"
+                                       uib-datepicker-popup="yyyy-MM-dd"
+                                       ng-model="filterDoctorViewModel.maxCreated"
+                                       is-open="datePickerToggleState.maxCreated"
+                                       datepicker-options="globalDateTimeOptions"
+                                       ng-required="true"
+                                       close-text="Close"
+                                       alt-input-formats="altInputFormats" />
+
+                                <span class="input-group-btn">
+                                    <button type="button"
+                                            class="btn btn-default"
+                                            ng-click="datePickerToggleState.openMaxCreated();">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </button>
+                                </span>
+                            </p>
+
+                        </div>
+
+                        <!-- Sort properties -->
                         <div class="form-group">
 
                             <label>Sort property</label>
-                            <select id="lstSortProperty"
-                                    class="form-control">
-                                <option value="@((int) FilterDoctorSort.Status)"
-                                        selected="selected">
-                                    Status
-                                </option>
-                                <option value="@((int) FilterDoctorSort.Birthday)">Birthday</option>
-                                <option value="@((int) FilterDoctorSort.Created)">Created</option>
-                                <option value="@((int) FilterDoctorSort.FirstName)">First name</option>
-                                <option value="@((int) FilterDoctorSort.Gender)">Gender</option>
-                                <option value="@((int) FilterDoctorSort.LastModified)">Last modified</option>
-                                <option value="@((int) FilterDoctorSort.LastName)">Last name</option>
-                                <option value="@((int) FilterDoctorSort.Rank)">Rank</option>
-                            </select>
+                            <select class="form-control"
+                                    ng-options="sortProperty.value as sortProperty.text for sortProperty in filterDoctorSort"
+                                    ng-model="filterDoctorViewModel.sort"></select>
                         </div>
 
+                        <!-- Sort directions -->
                         <div class="form-group">
 
                             <label>Sort direction</label>
-                            <select id="lstSortDirection"
-                                    class="form-control">
-                                <option value="@((int) SortDirection.Ascending)"
-                                        selected="selected">
-                                    Ascending
-                                </option>
-                                <option value="@((int) SortDirection.Descending)">Descending</option>
-                            </select>
+                            <select ng-options="sortDirection.value as sortDirection.text for sortDirection in sortDirections"
+                                    class="form-control"
+                                    ng-model="filterDoctorViewModel.direction"></select>
                         </div>
-
+                        
+                        <!-- Statuses -->
                         <div class="form-group">
                             <label>Statuses</label>
+
                             <select class="form-control"
+                                    ng-options="filterStatus.value as filterStatus.text for filterStatus in filterStatuses"
                                     multiple="multiple"
+                                    ng-model="filterDoctorViewModel.statuses"
                                     size="3">
-                                <option value="@((int)StatusAccount.Inactive)" selected="selected">Inactive</option>
-                                <option value="@((int)StatusAccount.Pending)" selected="selected">Pending</option>
-                                <option value="@((int)StatusAccount.Active)" selected="selected">Active</option>
                             </select>
                         </div>
+                    
+                        <!-- Genders -->
+                        <div class="form-group">
+                            <label>Genders</label>
+
+                            <select class="form-control"
+                                    ng-options="gender.value as gender.text for gender in genders"
+                                    multiple="multiple"
+                                    ng-model="filterDoctorViewModel.genders"
+                                    size="2"></select>
+                        </div>
+
                     </div>
 
                     <div class="col-md-6">
 
+                        <!-- First name -->
                         <div class="form-group">
                             <label>First name</label>
-                            <input id="txtFirstName"
+                            <input ng-model="filterAccountViewModel.firstName"
                                    class="form-control"
                                    maxlength="32"
                                    type="email" />
                         </div>
 
+                        <!-- Last name -->
                         <div class="form-group">
                             <label>Last name</label>
-                            <input id="txtLastName"
+                            <input ng-model="filterAccountViewModel.lastName"
                                    type="text"
                                    class="form-control"
                                    maxlength="32" />
                         </div>
 
+                        <!-- MinBirthday -->
                         <div class="form-group">
                             <label>Birthday [Min]</label>
 
-                            <div id="dtpBirthdayMin"
-                                 class="input-group date"
-                                 data-provide="datepicker">
-                                <input type="text" class="form-control">
-                                <div class="input-group-addon">
-                                    <span class="glyphicon glyphicon-th"></span>
-                                </div>
-                            </div>
+                            <p class="input-group">
+                                <input type="text"
+                                       class="form-control"
+                                       uib-datepicker-popup="yyyy-MM-dd"
+                                       ng-model="filterDoctorViewModel.minBirthday"
+                                       is-open="datePickerToggleState.minBirthday"
+                                       datepicker-options="globalDateTimeOptions"
+                                       ng-required="true"
+                                       close-text="Close"
+                                       alt-input-formats="altInputFormats" />
+
+                                <span class="input-group-btn">
+                                    <button type="button"
+                                            class="btn btn-default"
+                                            ng-click="datePickerToggleState.openMinBirthday();">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </button>
+                                </span>
+                            </p>
+
                         </div>
 
+                        <!-- MaxBirthday -->
                         <div class="form-group">
                             <label>Birthday [Max]</label>
 
-                            <div id="dtpBirthdayMax"
-                                 class="input-group date"
-                                 data-provide="datepicker">
-                                <input type="text" class="form-control">
-                                <div class="input-group-addon">
-                                    <span class="glyphicon glyphicon-th"></span>
-                                </div>
-                            </div>
+                            <p class="input-group">
+                                <input type="text"
+                                       class="form-control"
+                                       uib-datepicker-popup="yyyy-MM-dd"
+                                       ng-model="filterDoctorViewModel.maxBirthday"
+                                       is-open="datePickerToggleState.maxBirthday"
+                                       datepicker-options="globalDateTimeOptions"
+                                       ng-required="true"
+                                       close-text="Close"
+                                       alt-input-formats="altInputFormats" />
+
+                                <span class="input-group-btn">
+                                    <button type="button"
+                                            class="btn btn-default"
+                                            ng-click="datePickerToggleState.openMaxBirthday();">
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </button>
+                                </span>
+                            </p>
+
                         </div>
 
+                        <!-- MinRank -->
                         <div class="form-group">
                             <label>Rank [Min]</label>
 
-                            <input id="txtMinRank"
+                            <input ng-model="filterDoctorViewModel.minRank"
                                    type="number"
                                    class="form-control"
-                                   min="@Values.MinDoctorRank"
-                                   max="@Values.MaxDoctorRank" />
+                                   min="0"
+                                   max="5" />
                         </div>
 
+                        <!-- MaxRank -->
                         <div class="form-group">
                             <label>Rank [Max]</label>
 
-                            <input id="txtMaxRank"
+                            <input ng-model="filterDoctorViewModel.maxRank"
                                    type="number"
                                    class="form-control"
-                                   min="@Values.MinDoctorRank"
-                                   max="@Values.MaxDoctorRank" />
+                                   min="0"
+                                   max="5" />
                         </div>
 
+                        <!-- Record -->
                         <div class="form-group">
                             <label>Records</label>
-                            <input class="form-control"
+                            <input ng-model="filterDoctorViewModel.records"
+                                   class="form-control"
                                    type="number"
                                    min="1"
-                                   max="@FieldLength.RecordMax" />
+                                   max="20" />
                         </div>
                     </div>
 
                 </div>
+                
+            <div class="box-footer">
+                <button class="btn btn-danger btn-flat btn-block"
+                        ng-click="reset()">
+                    Reset
+                </button>
+            </div>
 
-                <div class="box-footer">
-                    <button class="btn btn-primary btn-flat btn-block">OK</button>
-                </div>
+            <div class="box-footer">
+                <button class="btn btn-primary btn-flat btn-block"
+                        ng-click="initialLoad()">
+                    OK
+                </button>
+            </div>
+                
             </div>
         </div>
     </div>
@@ -284,6 +339,21 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <ul uib-pagination
+                total-items="data.Total"
+                items-per-page="pagination.records"
+                ng-model="pagination.page"
+                first-text="&laquo;"
+                last-text="&raquo;"
+                previous-text="&lt;"
+                next-text="&gt;"
+                ng-disabled="isResultLoading"
+                ng-change="getDoctors(pagination.page - 1)"></ul>
+        </div>
+    </div>
+
 </section>
 
 <script src="~/Scripts/angular.min.js"></script>
@@ -291,166 +361,16 @@
 <script src="~/Scripts/moment.min.js"></script>
 <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
 
+<!-- View model -->
+<script src="~/Scripts/angular/viewmodel/filter-doctor-sort.viewmodel.js"></script>
+
+<!-- Enumeration -->
+<script src="~/Scripts/angular/enumeration/gender.enum.js"></script>
+<script src="~/Scripts/angular/enumeration/sort-direction.enum.js"></script>
+<script src="~/Scripts/angular/enumeration/status.enum.js"></script>
+
 <script>
-
-    angular.module("DoctorModule", ["ui.bootstrap"])
-        .controller("DoctorController",
-            function ($scope) {
-
-                $scope.data = {
-                    "Doctors": [
-                      {
-                          "Id": 0,
-                          "Email": "email_0@gmail.com",
-                          "FirstName": "firstName",
-                          "LastName": "lastName",
-                          "Birthday": 0,
-                          "Phone": "0222",
-                          "Gender": 0,
-                          "Created": 0,
-                          "Status": 0,
-                          "Address": "Address_",
-                          "PhotoUrl": "PhotoUrl_",
-                          "Rank": 0,
-                          "Specialty": {
-                              "Id": 0,
-                              "Name": "Specialty Name"
-                          },
-                          "Voters": 0,
-                          "Place": {
-                              "Id": 1,
-                              "City": "City",
-                              "Country": "Country"
-                          },
-                          "ProfileUrl": "www.google.com"
-                      },
-                      {
-                          "Id": 0,
-                          "Email": "email_0@gmail.com",
-                          "FirstName": "firstName",
-                          "LastName": "lastName",
-                          "Birthday": 0,
-                          "Phone": "0222",
-                          "Gender": 0,
-                          "Created": 0,
-                          "Status": 1,
-                          "Address": "Address_",
-                          "PhotoUrl": "PhotoUrl_",
-                          "Rank": 0,
-                          "Specialty": {
-                              "Id": 0,
-                              "Name": "Specialty Name"
-                          },
-                          "Voters": 0,
-                          "Place": {
-                              "Id": 1,
-                              "City": "City",
-                              "Country": "Country"
-                          },
-                          "ProfileUrl": "www.google.com"
-                      },
-                      {
-                          "Id": 0,
-                          "Email": "email_0@gmail.com",
-                          "FirstName": "firstName",
-                          "LastName": "lastName",
-                          "Birthday": 0,
-                          "Phone": "0222",
-                          "Gender": 0,
-                          "Created": 0,
-                          "Status": 2,
-                          "Address": "Address_",
-                          "PhotoUrl": "PhotoUrl_",
-                          "Rank": 0,
-                          "Specialty": {
-                              "Id": 0,
-                              "Name": "Specialty Name"
-                          },
-                          "Voters": 0,
-                          "Place": {
-                              "Id": 1,
-                              "City": "City",
-                              "Country": "Country"
-                          },
-                          "ProfileUrl": "www.google.com"
-                      }
-                    ],
-                    "Total": 3
-                }
-
-                $scope.generalDateOptions = {
-                    formatYear: 'yy',
-                    startingDay: 1
-                };
-
-                $scope.minBirthdayDatepicker = {
-                    isOpened: false,
-                    date: null
-                }
-
-                $scope.openDatepicker = function() {
-                    $scope.minBirthdayDatepicker.isOpened = true;
-                }
-
-                $scope.convertToBoxClass = function (status) {
-                    if (status === 2)
-                        return "box-primary";
-
-                    if (status === 1)
-                        return "box-warning";
-
-                    return "box-danger";
-                }
-
-            });
-
-
-    $(function () {
-
-        // Initialize date picker controls.
-        $("#dtpCreatedMin,#dtpBirthdayMin,#dtpBirthdayMax").datepicker({
-            autoclose: true,
-            todayHighlight: true,
-            format: "yyyy-mm-dd"
-        });
-
-
-        function loadDoctors() {
-
-            var filterDoctorViewModel = {
-                email: $("#txtEmail").val(),
-                phone: $("#txtPhone").val(),
-                firstName: $("#txtFirstName").val(),
-                lastName: $("#txtLastName").val()
-            }
-
-        }
-
-        function toBeginningDate(date) {
-
-            if (date == null)
-                return null;
-
-            date.setHours(0);
-            date.setMinutes(0);
-            date.setSeconds(0);
-            date.setMilliseconds(0);
-
-            return date;
-        }
-
-        function toEndingDate(date) {
-
-            if (date == null)
-                return null;
-
-            date.setHours(23);
-            date.setMinutes(59);
-            date.setSeconds(59);
-            date.setMilliseconds(999);
-
-            return date;
-        }
-    });
-
+    angular.module("DoctorModule", ["ui.bootstrap", "ui.bootstrap.pagination"]);
 </script>
+
+<script src="~/Scripts/angular/controller/doctor-management-controller.js"></script>

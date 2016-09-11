@@ -81,8 +81,11 @@ namespace Olive.Admin.Repositories
                 people = people.Where(x => x.Birthday <= filter.MaxBirthday);
 
             // Filter by gender.
-            //if (filter.Genders != null && filter.Genders.Count > 0)
-            //    people = people.Where(x => x.Gender == (byte)filter.Gender);
+            if (filter.Genders != null && filter.Genders.Length > 0)
+            {
+                var genders = filter.Genders.Select(x => (byte) x);
+                people = people.Where(x => x.Gender != null && genders.Contains(x.Gender.Value));
+            }
 
             // Filter by last modified.
             if (filter.MinLastModified != null)
@@ -99,7 +102,7 @@ namespace Olive.Admin.Repositories
             // Filter by status.
             if (filter.Statuses != null)
             {
-                var statuses = new List<byte>(filter.Statuses);
+                var statuses = filter.Statuses.Select(x => (byte) x);
                 people = from person in people
                          where statuses.Contains(person.Status)
                          select person;
@@ -127,6 +130,47 @@ namespace Olive.Admin.Repositories
 
             #endregion
 
+            #region Join & handle results
+
+            var filteredPeople = people;
+
+            IQueryable<DoctorViewModel> filteredResult = from doctor in doctors
+                                 from person in filteredPeople
+                                 from place in places
+                                 from specialty in specialties
+                                 where doctor.Id == person.Id && doctor.PlaceId == place.Id && doctor.SpecialtyId == specialty.Id
+                                 select new DoctorViewModel
+                                 {
+                                     Id = person.Id,
+                                     Email = person.Email,
+                                     FirstName = person.FirstName,
+                                     LastName = person.LastName,
+                                     Birthday = person.Birthday,
+                                     Phone = person.Phone,
+                                     Gender = person.Gender ?? (byte)Gender.Male,
+                                     Created = person.Created,
+                                     LastModified = person.LastModified,
+                                     Status = person.Status,
+                                     Address = person.Address,
+                                     PhotoUrl = person.PhotoUrl,
+                                     Rank = doctor.Rank ?? 0,
+                                     Specialty = new SpecialtyViewModel
+                                     {
+                                         Id = specialty.Id,
+                                         Name = specialty.Name
+                                     },
+                                     Voters = doctor.Voters,
+                                     Place = new PlaceViewModel
+                                     {
+                                         Id = place.Id,
+                                         City = place.City,
+                                         Country = place.Country
+                                     },
+                                     ProfileUrl = doctor.ProfileUrl
+                                 };
+
+            #endregion
+
             #region Result sort
 
             switch (filter.Direction)
@@ -135,28 +179,28 @@ namespace Olive.Admin.Repositories
                     switch (filter.Sort)
                     {
                         case FilterDoctorSort.Birthday:
-                            people = people.OrderByDescending(x => x.Birthday);
+                            filteredResult = filteredResult.OrderByDescending(x => x.Birthday);
                             break;
                         case FilterDoctorSort.Created:
-                            people = people.OrderByDescending(x => x.Created);
+                            filteredResult = filteredResult.OrderByDescending(x => x.Created);
                             break;
                         case FilterDoctorSort.FirstName:
-                            people = people.OrderByDescending(x => x.FirstName);
+                            filteredResult = filteredResult.OrderByDescending(x => x.FirstName);
                             break;
                         case FilterDoctorSort.Gender:
-                            people = people.OrderByDescending(x => x.Gender);
+                            filteredResult = filteredResult.OrderByDescending(x => x.Gender);
                             break;
                         case FilterDoctorSort.LastModified:
-                            people = people.OrderByDescending(x => x.LastModified);
+                            filteredResult = filteredResult.OrderByDescending(x => x.LastModified);
                             break;
                         case FilterDoctorSort.LastName:
-                            people = people.OrderByDescending(x => x.LastName);
+                            filteredResult = filteredResult.OrderByDescending(x => x.LastName);
                             break;
                         case FilterDoctorSort.Status:
-                            people = people.OrderByDescending(x => x.Status);
+                            filteredResult = filteredResult.OrderByDescending(x => x.Status);
                             break;
-                        case FilterDoctorSort.Rank:
-                            doctors = doctors.OrderByDescending(x => x.Rank);
+                        default:
+                            filteredResult = filteredResult.OrderByDescending(x => x.Rank);
                             break;
                     }
                     break;
@@ -164,28 +208,28 @@ namespace Olive.Admin.Repositories
                     switch (filter.Sort)
                     {
                         case FilterDoctorSort.Birthday:
-                            people = people.OrderBy(x => x.Birthday);
+                            filteredResult = filteredResult.OrderBy(x => x.Birthday);
                             break;
                         case FilterDoctorSort.Created:
-                            people = people.OrderBy(x => x.Created);
+                            filteredResult = filteredResult.OrderBy(x => x.Created);
                             break;
                         case FilterDoctorSort.FirstName:
-                            people = people.OrderBy(x => x.FirstName);
+                            filteredResult = filteredResult.OrderBy(x => x.FirstName);
                             break;
                         case FilterDoctorSort.Gender:
-                            people = people.OrderBy(x => x.Gender);
+                            filteredResult = filteredResult.OrderBy(x => x.Gender);
                             break;
                         case FilterDoctorSort.LastModified:
-                            people = people.OrderBy(x => x.LastModified);
+                            filteredResult = filteredResult.OrderBy(x => x.LastModified);
                             break;
                         case FilterDoctorSort.LastName:
-                            people = people.OrderBy(x => x.LastName);
+                            filteredResult = filteredResult.OrderBy(x => x.LastName);
                             break;
                         case FilterDoctorSort.Status:
-                            people = people.OrderBy(x => x.Status);
+                            filteredResult = filteredResult.OrderBy(x => x.Status);
                             break;
-                        case FilterDoctorSort.Rank:
-                            doctors = doctors.OrderBy(x => x.Rank);
+                        default:
+                            filteredResult = filteredResult.OrderBy(x => x.Rank);
                             break;
                     }
                     break;
@@ -193,43 +237,7 @@ namespace Olive.Admin.Repositories
 
             #endregion
 
-            #region Join & handle results
-
-            var filteredResult = from doctor in doctors
-                                  from person in people
-                                  from place in places
-                                  from specialty in specialties
-                                  where doctor.Id == person.Id && doctor.PlaceId == place.Id && doctor.SpecialtyId == specialty.Id
-                                  select new DoctorViewModel
-                                  {
-                                      Id = person.Id,
-                                      Email = person.Email,
-                                      FirstName = person.FirstName,
-                                      LastName = person.LastName,
-                                      Birthday = person.Birthday,
-                                      Phone = person.Phone,
-                                      Gender = person.Gender ?? (byte)Gender.Male,
-                                      Created = person.Created,
-                                      Status = person.Status,
-                                      Address = person.Address,
-                                      PhotoUrl = person.PhotoUrl,
-                                      Rank = doctor.Rank ?? 0,
-                                      Specialty = new SpecialtyViewModel
-                                      {
-                                          Id = specialty.Id,
-                                          Name = specialty.Name
-                                      },
-                                      Voters = doctor.Voters,
-                                      Place = new PlaceViewModel
-                                      {
-                                          Id = place.Id,
-                                          City = place.City,
-                                          Country = place.Country
-                                      },
-                                      ProfileUrl = doctor.ProfileUrl
-                                  };
-
-            #endregion
+            
 
             #region Response initialization
 

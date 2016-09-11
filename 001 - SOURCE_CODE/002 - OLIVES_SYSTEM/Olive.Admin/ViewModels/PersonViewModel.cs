@@ -51,6 +51,11 @@
         public double Created { get; set; }
         
         /// <summary>
+        /// When the account was lastly modified.
+        /// </summary>
+        public double? LastModified { get; set; }
+
+        /// <summary>
         /// Status of account.
         /// </summary>
         public byte Status { get; set; }

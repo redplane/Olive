@@ -195,7 +195,13 @@
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\angular.min.js.map" />
+    <Content Include="Scripts\angular\controller\doctor-management-controller.js" />
+    <Content Include="Scripts\angular\viewmodel\doctor-data.js" />
+    <Content Include="Scripts\angular\viewmodel\filter-doctor-sort.viewmodel.js" />
     <None Include="Scripts\jquery-3.1.0.intellisense.js" />
+    <Content Include="Scripts\angular\enumeration\status.enum.js" />
+    <Content Include="Scripts\angular\enumeration\gender.enum.js" />
+    <Content Include="Scripts\angular\enumeration\sort-direction.enum.js" />
     <Content Include="Scripts\bootstrap-datepicker.js" />
     <Content Include="Scripts\bootstrap-datepicker.min.js" />
     <Content Include="Scripts\bootstrap.js" />

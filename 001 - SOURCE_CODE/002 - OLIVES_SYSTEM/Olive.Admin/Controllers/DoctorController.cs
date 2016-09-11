@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using log4net;
@@ -9,7 +7,6 @@ using Olive.Admin.Attributes;
 using Olive.Admin.Interfaces;
 using Olive.Admin.ViewModels.Filter;
 using Shared.Enumerations;
-using Shared.Resources;
 
 namespace Olive.Admin.Controllers
 {
@@ -112,85 +109,31 @@ namespace Olive.Admin.Controllers
         //    }
         //}
 
-        ///// <summary>
-        /////     Filter doctors by using specific conditions.
-        ///// </summary>
-        ///// <param name="filter"></param>
-        ///// <returns></returns>
-        //[HttpPost]
-        //public async Task<HttpResponseMessage> Filter(FilterDoctorViewModel filter)
-        //{
-        //    #region Request parameters validation
+        /// <summary>
+        ///     Filter doctors by using specific conditions.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<ActionResult> Filter(FilterDoctorViewModel filter)
+        {
+            // Invalid data validation.
+            if (!ModelState.IsValid)
+                return View(filter);
 
-        //    // Request parameters haven't been initialized.
-        //    if (filter == null)
-        //    {
-        //        // Initialize the parameters and do validation.
-        //        filter = new FilterDoctorViewModel();
-        //        Validate(filter);
-        //    }
+            try
+            {
+                // Retrieve result from server.
+                var filteredResult = await _repositoryAccountExtended.FilterDoctorsAsync(filter);
 
-        //    // Invalid data validation.
-        //    if (!ModelState.IsValid)
-        //    {
-        //        _log.Error("Request parameters are invalid. Errors sent to client");
-        //        return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-        //    }
-
-        //    #endregion
-
-        //    #region Result filtering & handling
-
-        //    try
-        //    {
-        //        // Retrieve result from server.
-        //        var result = await _repositoryAccountExtended.FilterDoctorsAsync(filter);
-
-        //        // TODO: Update doctor profile PDF
-        //        return Request.CreateResponse(HttpStatusCode.OK, new
-        //        {
-        //            Doctors = result.Doctors.Select(x => new
-        //            {
-        //                x.Id,
-        //                x.Person.FirstName,
-        //                x.Person.LastName,
-        //                x.Person.Email,
-        //                x.Person.Password,
-        //                x.Person.Birthday,
-        //                x.Person.Gender,
-        //                x.Person.Address,
-        //                x.Person.Phone,
-        //                x.Person.Role,
-        //                Photo = x.Person.PhotoUrl,
-        //                x.Rank,
-        //                Specialty = new
-        //                {
-        //                    x.Specialty.Id,
-        //                    x.Specialty.Name
-        //                },
-        //                Place = new
-        //                {
-        //                    x.Place.Id,
-        //                    x.Place.City,
-        //                    x.Place.Country
-        //                },
-        //                x.Voters,
-        //                Profile = "",
-        //                x.Person.Status,
-        //                x.Person.Created,
-        //                x.Person.LastModified
-        //            }),
-        //            result.Total
-        //        });
-        //    }
-        //    catch (Exception exception)
-        //    {
-        //        _log.Error(exception.Message, exception);
-        //        return Request.CreateResponse(HttpStatusCode.InternalServerError);
-        //    }
-
-        //    #endregion
-        //}
+                return Json(filteredResult);
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception.Message, exception);
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
+            }
+        }
 
         #region Properties
 

@@ -146,7 +146,7 @@ namespace Olive.Admin.ViewModels.Filter
         /// <summary>
         ///     Status of account.
         /// </summary>
-        public byte[] Statuses { get; set; }
+        public StatusAccount[] Statuses { get; set; }
 
         /// <summary>
         ///     Index of result page.
