@@ -2,7 +2,7 @@
 using Shared.Constants;
 using Shared.Resources;
 
-namespace Olive.Admin.ViewModels.Initialize
+namespace OliveAdmin.ViewModels.Initialize
 {
     public class InitializeMedicalCategoryViewModel
     {

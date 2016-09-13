@@ -7,12 +7,14 @@ using System.Security.Principal;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using log4net;
 using Newtonsoft.Json;
-using Olive.Admin.Interfaces;
+using OliveAdmin.Interfaces;
+using OliveAdmin.ViewModels.Filter;
 using Shared.Enumerations;
 using Shared.ViewModels;
 
-namespace Olive.Admin.Attributes
+namespace OliveAdmin.Attributes
 {
     public class MvcAuthorizeAttribute : FilterAttribute, IAuthorizationFilter
     {
@@ -22,37 +24,16 @@ namespace Olive.Admin.Attributes
         /// Instance which provides access to account service.
         /// </summary>
         public IRepositoryAccountExtended RepositoryAccountExtended { get; set; }
-
-        /// <summary>
-        /// Legal roles which are allowed to access function.
-        /// </summary>
-        private readonly Role[] _roles;
         
+        /// <summary>
+        /// Repository for logging.
+        /// </summary>
+        public ILog Log { get; set; }
+
         #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Initialize authorize attribute with default settings.
-        /// </summary>
-        public MvcAuthorizeAttribute()
-        {
-            
-        }
-
-        /// <summary>
-        /// Initialize authorize attribute with default settings.
-        /// </summary>
-        /// <param name="roles"></param>
-        public MvcAuthorizeAttribute(Role[] roles)
-        {
-            _roles = roles;
-        }
         
-        #endregion
-
         #region Methods
-
+        
         /// <summary>
         /// This function is for parsing cookie, querying database and decide whether user can access the function or not.
         /// </summary>
@@ -154,9 +135,15 @@ namespace Olive.Admin.Attributes
                     return;
                 }
                 
+                // Initialize admin filter.
+                var filterAdminViewModel = new FilterAdminViewModel();
+                filterAdminViewModel.Email = loginViewModel.Email;
+                filterAdminViewModel.EmailComparision = TextComparision.Equal;
+                filterAdminViewModel.Password = loginViewModel.Password;
+                filterAdminViewModel.PasswordComparision = TextComparision.EqualIgnoreCase;
+
                 // Find the account from database.
-                var account = RepositoryAccountExtended.FindPerson(null, loginViewModel.Email,
-                    loginViewModel.Password, (byte)Role.Admin, null);
+                var account = RepositoryAccountExtended.FindAdmin(filterAdminViewModel);
 
                 // Account is not found
                 if (account == null)
@@ -199,21 +186,14 @@ namespace Olive.Admin.Attributes
                 }, "Cookie");
 
                 authorizationContext.HttpContext.User = new GenericPrincipal(claimIdentity, new[] {"Admin"});
-
-                // Role is not allowed.
-                if (_roles != null && !_roles.Any(x => x == (Role)account.Role))
-                {
-                    if (IsAnonymousAllowed(authorizationContext))
-                        return;
-
-                    authorizationContext.Result = new HttpStatusCodeResult(HttpStatusCode.Forbidden);
-                    return;
-                }
                 
                 #endregion
             }
             catch (Exception exception)
             {
+                // Log the exception.
+                Log.Error(exception.Message, exception);
+
                 // Sign user out.
                 FormsAuthentication.SignOut();
 
@@ -234,6 +214,7 @@ namespace Olive.Admin.Attributes
                                     typeof(AllowAnonymousAttribute), true);
 
         }
+        
         #endregion
     }
 }

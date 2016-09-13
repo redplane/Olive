@@ -1,36 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Olive.Admin.Enumerations;
-using Olive.Admin.Interfaces;
-using Olive.Admin.ViewModels;
-using Olive.Admin.ViewModels.Filter;
-using Olive.Admin.ViewModels.Filter.Response;
-using Olive.Admin.ViewModels.Statistic;
+using ArangoDB.Client;
+using OliveAdmin.Enumerations.Filter;
+using OliveAdmin.Interfaces;
+using OliveAdmin.ViewModels.Filter;
 using Shared.Enumerations;
-using Shared.Interfaces;
-using Shared.Models;
+using Shared.Models.Vertexes;
 using Shared.Repositories;
 using Shared.ViewModels.Response;
+using QueryableExtensions = System.Data.Entity.QueryableExtensions;
 
-namespace Olive.Admin.Repositories
+namespace OliveAdmin.Repositories
 {
     public class RepositoryAccountExtended : RepositoryAccount, IRepositoryAccountExtended
     {
         #region Properties
 
-        private readonly IOliveDataContext _dataContext;
+        /// <summary>
+        ///     Client connector to Arango database.
+        /// </summary>
+        private readonly ArangoDatabase _arangoClient;
 
         #endregion
 
-        #region Constructors
+        #region Constructor
 
-        public RepositoryAccountExtended(IOliveDataContext dataContext) : base(dataContext)
+        /// <summary>
+        ///     Initialize an instance of repository.
+        /// </summary>
+        /// <param name="arangoClient"></param>
+        public RepositoryAccountExtended(ArangoDatabase arangoClient) : base(arangoClient)
         {
-            _dataContext = dataContext;
+            _arangoClient = arangoClient;
         }
 
         #endregion
@@ -38,441 +39,483 @@ namespace Olive.Admin.Repositories
         #region Methods
 
         /// <summary>
-        ///     Filter doctors by using specific conditions asynchronously.
+        ///     Find the first admin account which matches with the specific conditions synchronously.
         /// </summary>
-        /// <param name="filter"></param>
+        /// <param name="filterAdminViewModel"></param>
         /// <returns></returns>
-        public async Task<ResponseFilterDoctorViewModel> FilterDoctorsAsync(FilterDoctorViewModel filter)
+        public Admin FindAdmin(FilterAdminViewModel filterAdminViewModel)
         {
-            #region Data initialization
+            // List of admins in database.
+            IQueryable<Admin> admins = _arangoClient.Query<Admin>();
 
-            // By default, take all doctors.
-            var context = _dataContext.Context;
+            // Filter admin account by using specific conditions.
+            admins = FilterAdmins(admins, filterAdminViewModel);
 
-            // Take all the people in the system.
-            IQueryable<Person> people = context.People;
+            // Find the first result.
+            return admins
+                .Select(x => x)
+                .FirstOrDefault();
+        }
 
-            // Take all the doctors in the system.
-            people = people.Where(x => x.Role == (byte)Role.Doctor);
-            IQueryable<Doctor> doctors = context.Doctors;
+        /// <summary>
+        ///     Find the first admin account which matches with the specific conditions asynchronously.
+        /// </summary>
+        /// <param name="filterAdminViewModel"></param>
+        /// <returns></returns>
+        public async Task<Admin> FindAdminAsync(FilterAdminViewModel filterAdminViewModel)
+        {
+            // List of admins in database.
+            IQueryable<Admin> admins = _arangoClient.Query<Admin>();
 
-            // Take all places.
-            IQueryable<Place> places = context.Places;
+            // Filter admin account by using specific conditions.
+            admins = FilterAdmins(admins, filterAdminViewModel);
 
-            // Take all specialties information.
-            IQueryable<Specialty> specialties = context.Specialties;
+            // Find the first result.
+            return await admins
+                .Select(x => x)
+                .FirstOrDefaultAsync();
+        }
 
-            #endregion
+        /// <summary>
+        ///     Filter patients by using specific conditions asynchronously.
+        /// </summary>
+        /// <param name="filterPatientViewModel"></param>
+        /// <returns></returns>
+        public async Task<ResponsePatientFilter> FilterPatientsAsync(FilterPatientViewModel filterPatientViewModel)
+        {
+            // Take all patients from database.
+            IQueryable<Patient> patients = _arangoClient.Query<Patient>();
+            patients = FilterPatients(patients, filterPatientViewModel);
 
-            #region People filter
-
-            // Filter doctor by using email.
-            if (!string.IsNullOrEmpty(filter.Email))
-                people = people.Where(x => x.Email.Contains(filter.Email));
-
-            // Filter doctor by using phone number.
-            if (!string.IsNullOrEmpty(filter.Phone))
-                people = people.Where(x => x.Phone.Contains(filter.Phone));
-
-            // Filter by using birthday.
-            if (filter.MinBirthday != null)
-                people = people.Where(x => x.Birthday >= filter.MinBirthday);
-            if (filter.MaxBirthday != null)
-                people = people.Where(x => x.Birthday <= filter.MaxBirthday);
-
-            // Filter by gender.
-            if (filter.Genders != null && filter.Genders.Length > 0)
-            {
-                var genders = filter.Genders.Select(x => (byte) x);
-                people = people.Where(x => x.Gender != null && genders.Contains(x.Gender.Value));
-            }
-
-            // Filter by last modified.
-            if (filter.MinLastModified != null)
-                people = people.Where(x => x.LastModified >= filter.MinLastModified);
-            if (filter.MaxLastModified != null)
-                people = people.Where(x => x.LastModified <= filter.MaxLastModified);
-
-            // Filter by created.
-            if (filter.MinCreated != null)
-                people = people.Where(x => x.Created >= filter.MinCreated);
-            if (filter.MaxCreated != null)
-                people = people.Where(x => x.Created <= filter.MaxCreated);
-
-            // Filter by status.
-            if (filter.Statuses != null)
-            {
-                var statuses = filter.Statuses.Select(x => (byte) x);
-                people = from person in people
-                         where statuses.Contains(person.Status)
-                         select person;
-            }
-
-            #endregion
-
-            #region Doctors
-
-            // Filter doctor by city.
-            if (!string.IsNullOrWhiteSpace(filter.City))
-                places = places.Where(x => x.City.Contains(filter.City));
-
-            // Filter doctor by country
-            if (!string.IsNullOrWhiteSpace(filter.Country))
-                places = places.Where(x => x.Country.Contains(filter.Country));
-
-            // Filter by rank.
-            if (filter.MinRank != null) doctors = doctors.Where(x => x.Rank >= filter.MinRank);
-            if (filter.MaxRank != null) doctors = doctors.Where(x => x.Rank <= filter.MaxRank);
-
-            // Filter by id of specialty.
-            if (filter.Specialty != null)
-                specialties = specialties.Where(x => x.Id == filter.Specialty.Value);
-
-            #endregion
-
-            #region Join & handle results
-
-            var filteredPeople = people;
-
-            IQueryable<DoctorViewModel> filteredResult = from doctor in doctors
-                                 from person in filteredPeople
-                                 from place in places
-                                 from specialty in specialties
-                                 where doctor.Id == person.Id && doctor.PlaceId == place.Id && doctor.SpecialtyId == specialty.Id
-                                 select new DoctorViewModel
-                                 {
-                                     Id = person.Id,
-                                     Email = person.Email,
-                                     FirstName = person.FirstName,
-                                     LastName = person.LastName,
-                                     Birthday = person.Birthday,
-                                     Phone = person.Phone,
-                                     Gender = person.Gender ?? (byte)Gender.Male,
-                                     Created = person.Created,
-                                     LastModified = person.LastModified,
-                                     Status = person.Status,
-                                     Address = person.Address,
-                                     PhotoUrl = person.PhotoUrl,
-                                     Rank = doctor.Rank ?? 0,
-                                     Specialty = new SpecialtyViewModel
-                                     {
-                                         Id = specialty.Id,
-                                         Name = specialty.Name
-                                     },
-                                     Voters = doctor.Voters,
-                                     Place = new PlaceViewModel
-                                     {
-                                         Id = place.Id,
-                                         City = place.City,
-                                         Country = place.Country
-                                     },
-                                     ProfileUrl = doctor.ProfileUrl
-                                 };
-
-            #endregion
-
-            #region Result sort
-
-            switch (filter.Direction)
+            // Do sorting.
+            switch (filterPatientViewModel.SortDirection)
             {
                 case SortDirection.Decending:
-                    switch (filter.Sort)
+                    switch (filterPatientViewModel.SortProperty)
                     {
-                        case FilterDoctorSort.Birthday:
-                            filteredResult = filteredResult.OrderByDescending(x => x.Birthday);
+                        case FilterPatientSort.FirstName:
+                            patients = patients.OrderByDescending(x => x.FirstName);
                             break;
-                        case FilterDoctorSort.Created:
-                            filteredResult = filteredResult.OrderByDescending(x => x.Created);
+                        case FilterPatientSort.LastName:
+                            patients = patients.OrderByDescending(x => x.LastName);
                             break;
-                        case FilterDoctorSort.FirstName:
-                            filteredResult = filteredResult.OrderByDescending(x => x.FirstName);
+                        case FilterPatientSort.Created:
+                            patients = patients.OrderByDescending(x => x.Created);
                             break;
-                        case FilterDoctorSort.Gender:
-                            filteredResult = filteredResult.OrderByDescending(x => x.Gender);
+                        case FilterPatientSort.LastModified:
+                            patients = patients.OrderByDescending(x => x.LastModified);
                             break;
-                        case FilterDoctorSort.LastModified:
-                            filteredResult = filteredResult.OrderByDescending(x => x.LastModified);
+                        case FilterPatientSort.Birthday:
+                            patients = patients.OrderByDescending(x => x.Birthday);
                             break;
-                        case FilterDoctorSort.LastName:
-                            filteredResult = filteredResult.OrderByDescending(x => x.LastName);
-                            break;
-                        case FilterDoctorSort.Status:
-                            filteredResult = filteredResult.OrderByDescending(x => x.Status);
+                        case FilterPatientSort.Gender:
+                            patients = patients.OrderByDescending(x => x.Gender);
                             break;
                         default:
-                            filteredResult = filteredResult.OrderByDescending(x => x.Rank);
+                            patients = patients.OrderByDescending(x => x.Status);
                             break;
                     }
                     break;
                 default:
-                    switch (filter.Sort)
+                    switch (filterPatientViewModel.SortProperty)
                     {
-                        case FilterDoctorSort.Birthday:
-                            filteredResult = filteredResult.OrderBy(x => x.Birthday);
+                        case FilterPatientSort.FirstName:
+                            patients = patients.OrderBy(x => x.FirstName);
                             break;
-                        case FilterDoctorSort.Created:
-                            filteredResult = filteredResult.OrderBy(x => x.Created);
+                        case FilterPatientSort.LastName:
+                            patients = patients.OrderBy(x => x.LastName);
                             break;
-                        case FilterDoctorSort.FirstName:
-                            filteredResult = filteredResult.OrderBy(x => x.FirstName);
+                        case FilterPatientSort.Created:
+                            patients = patients.OrderBy(x => x.Created);
                             break;
-                        case FilterDoctorSort.Gender:
-                            filteredResult = filteredResult.OrderBy(x => x.Gender);
+                        case FilterPatientSort.LastModified:
+                            patients = patients.OrderBy(x => x.LastModified);
                             break;
-                        case FilterDoctorSort.LastModified:
-                            filteredResult = filteredResult.OrderBy(x => x.LastModified);
+                        case FilterPatientSort.Birthday:
+                            patients = patients.OrderBy(x => x.Birthday);
                             break;
-                        case FilterDoctorSort.LastName:
-                            filteredResult = filteredResult.OrderBy(x => x.LastName);
-                            break;
-                        case FilterDoctorSort.Status:
-                            filteredResult = filteredResult.OrderBy(x => x.Status);
+                        case FilterPatientSort.Gender:
+                            patients = patients.OrderBy(x => x.Gender);
                             break;
                         default:
-                            filteredResult = filteredResult.OrderBy(x => x.Rank);
+                            patients = patients.OrderBy(x => x.Status);
                             break;
                     }
                     break;
             }
 
-            #endregion
-
-            
-
-            #region Response initialization
-
             // Response initialization.
-            var responseFilterDoctorViewModel = new ResponseFilterDoctorViewModel();
+            var responsePatientFilter = new ResponsePatientFilter();
 
-            // Total matched result.
-            responseFilterDoctorViewModel.Total = await filteredResult.CountAsync();
+            // Count the total records match the conditions.
+            responsePatientFilter.Total = await QueryableExtensions.CountAsync(patients);
 
-            #endregion
-            
-            #region Result handling
+            // Throw results with pagination.
+            if (filterPatientViewModel.Records != null)
+                responsePatientFilter.Patients = await patients
+                    .Skip(filterPatientViewModel.Page*filterPatientViewModel.Records.Value)
+                    .Take(filterPatientViewModel.Records.Value)
+                    .ToListAsync();
 
-            // Record is defined.
-            if (filter.Records != null)
-            {
-                filteredResult = filteredResult.Skip(filter.Page * filter.Records.Value)
-                    .Take(filter.Records.Value);
-            }
-
-            responseFilterDoctorViewModel.Doctors = await filteredResult.ToListAsync();
-            return responseFilterDoctorViewModel;
-
-            #endregion
+            responsePatientFilter.Patients = await patients.ToListAsync();
+            return responsePatientFilter;
         }
 
         /// <summary>
-        ///     Filter patient by using specific conditions asynchronously.
+        ///     Filter doctors by using specific conditions asychronously.
         /// </summary>
-        /// <param name="filter"></param>
+        /// <param name="filterDoctorViewModel"></param>
         /// <returns></returns>
-        public async Task<ResponsePatientFilter> FilterPatientsAsync(FilterPatientViewModel filter)
+        public async Task<ResponseDoctorFilter> FilterDoctorsAsync(FilterDoctorViewModel filterDoctorViewModel)
         {
-            #region Record filter
+            // Take all doctors from database.
+            IQueryable<Doctor> doctors = _arangoClient.Query<Doctor>();
+            doctors = FilterDoctors(doctors, filterDoctorViewModel);
 
-            // Response initialization.
-            var response = new ResponsePatientFilter();
-
-            var context = _dataContext.Context;
-            // By default, take all patients.
-            IQueryable<Patient> patients = context.Patients;
-
-            // Filter doctor by using email.
-            if (!string.IsNullOrEmpty(filter.Email))
-                patients = patients.Where(x => x.Person.Email.Contains(filter.Email));
-
-            // Filter doctor by using phone number.
-            if (!string.IsNullOrEmpty(filter.Phone))
-                patients = patients.Where(x => x.Person.Phone.Contains(filter.Phone));
-
-            // Filter by last modified.
-            if (filter.MinLastModified != null)
-                patients = patients.Where(x => x.Person.LastModified >= filter.MinLastModified);
-
-            if (filter.MaxLastModified != null)
-                patients = patients.Where(x => x.Person.LastModified <= filter.MaxLastModified);
-
-            // Filter by using name
-            if (!string.IsNullOrEmpty(filter.Name))
-                patients = patients.Where(x => x.Person.FullName.Contains(filter.Name));
-
-            // Filter by using birthday.
-            if (filter.MinBirthday != null)
-                patients = patients.Where(x => x.Person.Birthday >= filter.MinBirthday);
-
-            if (filter.MaxBirthday != null)
-                patients = patients.Where(x => x.Person.Birthday <= filter.MaxBirthday);
-
-            // Filter by gender.
-            if (filter.Gender != null)
-                patients = patients.Where(x => x.Person.Gender == (byte)filter.Gender);
-
-            // Filter by created.
-            if (filter.MinCreated != null)
-                patients = patients.Where(x => x.Person.Created >= filter.MinCreated);
-
-            if (filter.MaxCreated != null)
-                patients = patients.Where(x => x.Person.Created <= filter.MaxCreated);
-
-            // Filter by status.
-            if (filter.Status != null)
-                patients = patients.Where(x => x.Person.Status == (byte)filter.Status);
-
-            // Filter by height.
-            if (filter.MinHeight != null) patients = patients.Where(x => x.Height >= filter.MinHeight);
-            if (filter.MaxHeight != null) patients = patients.Where(x => x.Height <= filter.MaxHeight);
-
-            // Filter by weight.
-            if (filter.MinWeight != null) patients = patients.Where(x => x.Weight >= filter.MinWeight);
-            if (filter.MaxWeight != null) patients = patients.Where(x => x.Weight <= filter.MaxWeight);
-
-            // Caculate the total matched results.
-            response.Total = await patients.CountAsync();
-
-            #endregion
-
-            #region Result sorting
-
-            switch (filter.Direction)
+            // Do sorting.
+            switch (filterDoctorViewModel.SortDirection)
             {
                 case SortDirection.Decending:
-                    switch (filter.Sort)
+                    switch (filterDoctorViewModel.SortProperty)
                     {
-                        case FilterPatientSort.FirstName:
-                            patients = patients.OrderByDescending(x => x.Person.FirstName);
+                        case FilterDoctorSort.FirstName:
+                            doctors = doctors.OrderByDescending(x => x.FirstName);
                             break;
-                        case FilterPatientSort.LastName:
-                            patients = patients.OrderByDescending(x => x.Person.LastName);
+                        case FilterDoctorSort.LastName:
+                            doctors = doctors.OrderByDescending(x => x.LastName);
                             break;
-                        case FilterPatientSort.Created:
-                            patients = patients.OrderByDescending(x => x.Person.Created);
+                        case FilterDoctorSort.Created:
+                            doctors = doctors.OrderByDescending(x => x.Created);
                             break;
-                        case FilterPatientSort.LastModified:
-                            patients = patients.OrderByDescending(x => x.Person.LastModified);
+                        case FilterDoctorSort.LastModified:
+                            doctors = doctors.OrderByDescending(x => x.LastModified);
                             break;
-                        case FilterPatientSort.Birthday:
-                            patients = patients.OrderByDescending(x => x.Person.Birthday);
+                        case FilterDoctorSort.Birthday:
+                            doctors = doctors.OrderByDescending(x => x.Birthday);
                             break;
-                        case FilterPatientSort.Gender:
-                            patients = patients.OrderByDescending(x => x.Person.Gender);
+                        case FilterDoctorSort.Gender:
+                            doctors = doctors.OrderByDescending(x => x.Gender);
                             break;
-                        case FilterPatientSort.Status:
-                            patients = patients.OrderByDescending(x => x.Person.Status);
+                        case FilterDoctorSort.Status:
+                            doctors = doctors.OrderByDescending(x => x.Status);
+                            break;
+                        default:
+                            doctors = doctors.OrderByDescending(x => x.Rank);
                             break;
                     }
                     break;
                 default:
-                    switch (filter.Sort)
+                    switch (filterDoctorViewModel.SortProperty)
                     {
-                        case FilterPatientSort.FirstName:
-                            patients = patients.OrderBy(x => x.Person.FirstName);
+                        case FilterDoctorSort.FirstName:
+                            doctors = doctors.OrderBy(x => x.FirstName);
                             break;
-                        case FilterPatientSort.LastName:
-                            patients = patients.OrderBy(x => x.Person.LastName);
+                        case FilterDoctorSort.LastName:
+                            doctors = doctors.OrderBy(x => x.LastName);
                             break;
-                        case FilterPatientSort.Created:
-                            patients = patients.OrderBy(x => x.Person.Created);
+                        case FilterDoctorSort.Created:
+                            doctors = doctors.OrderBy(x => x.Created);
                             break;
-                        case FilterPatientSort.LastModified:
-                            patients = patients.OrderBy(x => x.Person.LastModified);
+                        case FilterDoctorSort.LastModified:
+                            doctors = doctors.OrderBy(x => x.LastModified);
                             break;
-                        case FilterPatientSort.Birthday:
-                            patients = patients.OrderBy(x => x.Person.Birthday);
+                        case FilterDoctorSort.Birthday:
+                            doctors = doctors.OrderBy(x => x.Birthday);
                             break;
-                        case FilterPatientSort.Gender:
-                            patients = patients.OrderBy(x => x.Person.Gender);
+                        case FilterDoctorSort.Gender:
+                            doctors = doctors.OrderBy(x => x.Gender);
                             break;
-                        case FilterPatientSort.Status:
-                            patients = patients.OrderBy(x => x.Person.Status);
+                        case FilterDoctorSort.Status:
+                            doctors = doctors.OrderBy(x => x.Status);
+                            break;
+                        default:
+                            doctors = doctors.OrderBy(x => x.Rank);
                             break;
                     }
                     break;
             }
 
-            #endregion
+            // Response initialization.
+            var responseDoctorFilter = new ResponseDoctorFilter();
 
-            #region Result handling
+            // Count the total records match the conditions.
+            responseDoctorFilter.Total = await QueryableExtensions.CountAsync(doctors);
 
-            // Record is specified.
-            if (filter.Records != null)
+            // Throw results with pagination.
+            if (filterDoctorViewModel.Records != null)
             {
-                patients = patients.Skip(filter.Page * filter.Records.Value)
-                    .Take(filter.Records.Value);
+                // Do pagination.
+                responseDoctorFilter.Doctors = await doctors
+                    .Skip(filterDoctorViewModel.Page*filterDoctorViewModel.Records.Value)
+                    .Take(filterDoctorViewModel.Records.Value)
+                    .ToListAsync();
+
+                return responseDoctorFilter;
             }
 
-            // Take the list of filtered patient.
-            response.Patients = await patients.ToListAsync();
-            return response;
-
-            #endregion
+            responseDoctorFilter.Doctors = await doctors.ToListAsync();
+            return responseDoctorFilter;
         }
 
         /// <summary>
-        ///     Summary person by using role.
+        ///     Filter admins by using specific conditions.
         /// </summary>
+        /// <param name="admins"></param>
+        /// <param name="filterAdminViewModel"></param>
         /// <returns></returns>
-        public async Task<IList<StatusSummaryViewModel>> SummarizePersonRoleAsync(byte? role)
+        private IQueryable<Admin> FilterAdmins(IQueryable<Admin> admins, FilterAdminViewModel filterAdminViewModel)
         {
-            var context = _dataContext.Context;
-            IQueryable<Person> result = context.People;
-
-            if (role != null)
-                result = result.Where(x => x.Role == role);
-
-            var filteredResult = result.GroupBy(x => new { x.Role, x.Status })
-                .OrderBy(x => x.Key)
-                .Select(x => new StatusSummaryViewModel
+            // Name is specified.
+            if (!string.IsNullOrWhiteSpace(filterAdminViewModel.Email))
+                switch (filterAdminViewModel.EmailComparision)
                 {
-                    Role = x.Key.Role,
-                    Status = x.Key.Status,
-                    Total = x.Count()
-                });
+                    case TextComparision.Contain:
+                        admins = admins.Where(x => AQL.Contains(x.Email, filterAdminViewModel.Email));
+                        break;
+                    case TextComparision.EqualIgnoreCase:
+                        admins = admins.Where(x => AQL.Upper(x.Email) == filterAdminViewModel.Email.ToUpper());
+                        break;
+                    default:
+                        admins = admins.Where(x => x.Email == filterAdminViewModel.Email);
+                        break;
+                }
 
-            return await filteredResult.ToListAsync();
+            // Password is specified.
+            if (!string.IsNullOrWhiteSpace(filterAdminViewModel.Password))
+                switch (filterAdminViewModel.PasswordComparision)
+                {
+                    case TextComparision.Contain:
+                        admins = admins.Where(x => AQL.Contains(x.Password, filterAdminViewModel.Password));
+                        break;
+                    case TextComparision.EqualIgnoreCase:
+                        admins = admins.Where(x => AQL.Upper(x.Password) == filterAdminViewModel.Password.ToUpper());
+                        break;
+                    default:
+                        admins = admins.Where(x => x.Password == filterAdminViewModel.Password);
+                        break;
+                }
+
+            // Statuses are specified.
+            if (filterAdminViewModel.Statuses != null)
+                admins = admins.Where(x => AQL.In(x.Status, filterAdminViewModel.Statuses));
+
+            return admins;
         }
 
         /// <summary>
-        ///     Edit person profile asynchronously.
+        ///     Filter patients by using specific conditions.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="info"></param>
+        /// <param name="patients"></param>
+        /// <param name="filterPatientViewModel"></param>
         /// <returns></returns>
-        public async Task<Person> EditPersonProfileAsync(int id, Person info)
+        private IQueryable<Patient> FilterPatients(IQueryable<Patient> patients,
+            FilterPatientViewModel filterPatientViewModel)
         {
-            // Information hasn't been specified.
-            if (info == null)
-                throw new Exception("Personal information is required.");
-
-            // Keep the id.
-            info.Id = id;
-
-            var context = _dataContext.Context;
-            using (var transaction = context.Database.BeginTransaction())
-            {
-                try
+            // Email is specified.
+            if (!string.IsNullOrWhiteSpace(filterPatientViewModel.Email))
+                switch (filterPatientViewModel.EmailComparision)
                 {
-                    // Add or update information base on the primary key.
-                    context.People.AddOrUpdate(info);
-
-                    // Save change to database.
-                    await context.SaveChangesAsync();
-
-                    // Commit the transaction.
-                    transaction.Commit();
-                    return info;
+                    case TextComparision.Contain:
+                        patients = patients.Where(x => AQL.Contains(x.Email, filterPatientViewModel.Email));
+                        break;
+                    case TextComparision.EqualIgnoreCase:
+                        patients = patients.Where(x => AQL.Upper(x.Email) == filterPatientViewModel.Email.ToUpper());
+                        break;
+                    default:
+                        patients = patients.Where(x => x.Email == filterPatientViewModel.Email);
+                        break;
                 }
-                catch
+
+            // First name is specified.
+            if (!string.IsNullOrWhiteSpace(filterPatientViewModel.FirstName))
+                switch (filterPatientViewModel.FirstNameComparision)
                 {
-                    // Error happens, transaction will be rolled back and error will be thrown to client.
-                    transaction.Rollback();
-
-                    throw;
+                    case TextComparision.Contain:
+                        patients = patients.Where(x => AQL.Contains(x.FirstName, filterPatientViewModel.FirstName));
+                        break;
+                    case TextComparision.EqualIgnoreCase:
+                        patients =
+                            patients.Where(x => AQL.Upper(x.FirstName) == filterPatientViewModel.FirstName.ToUpper());
+                        break;
+                    default:
+                        patients = patients.Where(x => x.FirstName == filterPatientViewModel.FirstName);
+                        break;
                 }
-            }
+
+            // Last name is specified.
+            if (!string.IsNullOrWhiteSpace(filterPatientViewModel.LastName))
+                switch (filterPatientViewModel.LastNameComparision)
+                {
+                    case TextComparision.Contain:
+                        patients = patients.Where(x => AQL.Contains(x.LastName, filterPatientViewModel.LastName));
+                        break;
+                    case TextComparision.EqualIgnoreCase:
+                        patients =
+                            patients.Where(x => AQL.Upper(x.LastName) == filterPatientViewModel.LastName.ToUpper());
+                        break;
+                    default:
+                        patients = patients.Where(x => x.LastName == filterPatientViewModel.LastName);
+                        break;
+                }
+
+            // Birthday range is specified.
+            if (filterPatientViewModel.MinBirthday != null)
+                patients = patients.Where(x => x.Birthday >= filterPatientViewModel.MinBirthday.Value);
+
+            if (filterPatientViewModel.MaxBirthday != null)
+                patients = patients.Where(x => x.Birthday <= filterPatientViewModel.MaxBirthday.Value);
+
+            // Phone is specified.
+            if (!string.IsNullOrWhiteSpace(filterPatientViewModel.Phone))
+                switch (filterPatientViewModel.PhoneComparision)
+                {
+                    case TextComparision.Contain:
+                        patients = patients.Where(x => AQL.Contains(x.Phone, filterPatientViewModel.Phone));
+                        break;
+                    case TextComparision.EqualIgnoreCase:
+                        patients = patients.Where(x => AQL.Upper(x.Phone) == filterPatientViewModel.Phone.ToUpper());
+                        break;
+                    default:
+                        patients = patients.Where(x => x.Phone == filterPatientViewModel.Phone);
+                        break;
+                }
+
+            // Genders are specified.
+            if ((filterPatientViewModel.Genders != null) && (filterPatientViewModel.Genders.Length > 0))
+                patients = patients.Where(x => AQL.In(x.Gender, filterPatientViewModel.Genders));
+
+            // Created is specified.
+            if (filterPatientViewModel.MinCreated != null)
+                patients = patients.Where(x => x.Created >= filterPatientViewModel.MinCreated.Value);
+
+            if (filterPatientViewModel.MaxCreated != null)
+                patients = patients.Where(x => x.Created <= filterPatientViewModel.MaxCreated.Value);
+
+            // Last modified is specified.
+            if (filterPatientViewModel.MinLastModified != null)
+                patients =
+                    patients.Where(
+                        x => (x.LastModified != null) && (x.LastModified >= filterPatientViewModel.MinLastModified));
+
+            if (filterPatientViewModel.MaxLastModified != null)
+                patients =
+                    patients.Where(
+                        x => (x.LastModified != null) && (x.LastModified <= filterPatientViewModel.MinLastModified));
+
+            return patients;
         }
+
+        /// <summary>
+        ///     Filter doctors by using specific conditions.
+        /// </summary>
+        /// <param name="doctors"></param>
+        /// <param name="filterDoctorViewModel"></param>
+        /// <returns></returns>
+        private IQueryable<Doctor> FilterDoctors(IQueryable<Doctor> doctors, FilterDoctorViewModel filterDoctorViewModel)
+        {
+            // Email is specified.
+            if (!string.IsNullOrWhiteSpace(filterDoctorViewModel.Email))
+                switch (filterDoctorViewModel.EmailComparision)
+                {
+                    case TextComparision.Contain:
+                        doctors = doctors.Where(x => AQL.Contains(x.Email, filterDoctorViewModel.Email));
+                        break;
+                    case TextComparision.EqualIgnoreCase:
+                        doctors = doctors.Where(x => AQL.Upper(x.Email) == filterDoctorViewModel.Email.ToUpper());
+                        break;
+                    default:
+                        doctors = doctors.Where(x => x.Email == filterDoctorViewModel.Email);
+                        break;
+                }
+
+            // First name is specified.
+            if (!string.IsNullOrWhiteSpace(filterDoctorViewModel.FirstName))
+                switch (filterDoctorViewModel.FirstNameComparision)
+                {
+                    case TextComparision.Contain:
+                        doctors = doctors.Where(x => AQL.Contains(x.FirstName, filterDoctorViewModel.FirstName));
+                        break;
+                    case TextComparision.EqualIgnoreCase:
+                        doctors = doctors.Where(x => AQL.Upper(x.FirstName) == filterDoctorViewModel.FirstName.ToUpper());
+                        break;
+                    default:
+                        doctors = doctors.Where(x => x.FirstName == filterDoctorViewModel.FirstName);
+                        break;
+                }
+
+            // Last name is specified.
+            if (!string.IsNullOrWhiteSpace(filterDoctorViewModel.LastName))
+                switch (filterDoctorViewModel.LastNameComparision)
+                {
+                    case TextComparision.Contain:
+                        doctors = doctors.Where(x => AQL.Contains(x.LastName, filterDoctorViewModel.LastName));
+                        break;
+                    case TextComparision.EqualIgnoreCase:
+                        doctors = doctors.Where(x => AQL.Upper(x.LastName) == filterDoctorViewModel.LastName.ToUpper());
+                        break;
+                    default:
+                        doctors = doctors.Where(x => x.LastName == filterDoctorViewModel.LastName);
+                        break;
+                }
+
+            // Rank is specified.
+            if (filterDoctorViewModel.MinRank != null)
+                doctors = doctors.Where(x => x.Rank >= filterDoctorViewModel.MinRank);
+            if (filterDoctorViewModel.MaxRank != null)
+                doctors = doctors.Where(x => x.Rank <= filterDoctorViewModel.MaxRank.Value);
+
+            // Statuses are specified.
+            if ((filterDoctorViewModel.Statuses != null) && (filterDoctorViewModel.Statuses.Length > 0))
+                doctors = doctors.Where(x => AQL.In(x.Status, filterDoctorViewModel.Statuses));
+
+            // Genders are specified.
+            if ((filterDoctorViewModel.Genders != null) && (filterDoctorViewModel.Genders.Length > 0))
+                doctors = doctors.Where(x => AQL.In(x.Gender, filterDoctorViewModel.Genders));
+
+            // Phone number is specified.
+            if (!string.IsNullOrWhiteSpace(filterDoctorViewModel.Phone))
+                switch (filterDoctorViewModel.PhoneComparision)
+                {
+                    case TextComparision.Contain:
+                        doctors = doctors.Where(x => AQL.Contains(x.Phone, filterDoctorViewModel.Phone));
+                        break;
+                    case TextComparision.EqualIgnoreCase:
+                        doctors = doctors.Where(x => AQL.Upper(x.Phone) == filterDoctorViewModel.Phone.ToUpper());
+                        break;
+                    default:
+                        doctors = doctors.Where(x => x.Phone == filterDoctorViewModel.Phone);
+                        break;
+                }
+
+            // Birthday is specified.
+            if (filterDoctorViewModel.MinBirthday != null)
+                doctors = doctors.Where(x => x.Birthday >= filterDoctorViewModel.MinBirthday.Value);
+            if (filterDoctorViewModel.MaxBirthday != null)
+                doctors = doctors.Where(x => x.Birthday <= filterDoctorViewModel.MaxBirthday.Value);
+
+            // Created is specified.
+            if (filterDoctorViewModel.MinCreated != null)
+                doctors = doctors.Where(x => x.Created >= filterDoctorViewModel.MinCreated.Value);
+            if (filterDoctorViewModel.MaxCreated != null)
+                doctors = doctors.Where(x => x.Created <= filterDoctorViewModel.MinCreated.Value);
+
+            // LastModified is specified.
+            if (filterDoctorViewModel.MinLastModified != null)
+                doctors =
+                    doctors.Where(
+                        x =>
+                            (x.LastModified != null) &&
+                            (x.LastModified.Value >= filterDoctorViewModel.MinLastModified.Value));
+            if (filterDoctorViewModel.MaxLastModified != null)
+                doctors =
+                    doctors.Where(
+                        x =>
+                            (x.LastModified != null) &&
+                            (x.LastModified.Value <= filterDoctorViewModel.MinLastModified.Value));
+
+            return doctors;
+        }
+
         #endregion
     }
 }

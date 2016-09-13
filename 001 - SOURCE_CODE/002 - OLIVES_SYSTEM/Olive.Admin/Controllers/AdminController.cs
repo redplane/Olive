@@ -1,20 +1,26 @@
 ﻿using System;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using log4net;
 using Newtonsoft.Json;
-using Olive.Admin.Attributes;
-using Olive.Admin.Interfaces;
-using Olive.Admin.Resources;
+using OliveAdmin.Attributes;
+using OliveAdmin.Interfaces;
+using OliveAdmin.Resources;
+using OliveAdmin.ViewModels.Edit;
+using OliveAdmin.ViewModels.Filter;
+using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
+using Shared.Models.Vertexes;
 using Shared.ViewModels;
 
-namespace Olive.Admin.Controllers
+namespace OliveAdmin.Controllers
 {
-    [MvcAuthorize(new[] { Role.Admin})]
+    [MvcAuthorize]
     public class AdminController : Controller
     {
         #region Constructors
@@ -78,11 +84,16 @@ namespace Olive.Admin.Controllers
             // Find the hashed password from the original one.
             var accountHashedPassword = _repositoryAccountExtended.FindMd5Password(loginViewModel.Password);
 
+            var filterAdminViewModel = new FilterAdminViewModel();
+            filterAdminViewModel.Email = loginViewModel.Email;
+            filterAdminViewModel.EmailComparision = TextComparision.Equal;
+            filterAdminViewModel.Password = loginViewModel.Password;
+            filterAdminViewModel.PasswordComparision = TextComparision.Equal;
+            
             // Pass parameter to login function. 
             var admin =
                 await
-                    _repositoryAccountExtended.FindPersonAsync(null, loginViewModel.Email, accountHashedPassword,
-                        (byte) Role.Admin, null);
+                    _repositoryAccountExtended.FindAdminAsync(filterAdminViewModel);
 
             // If no result return, that means no account.
             if (admin == null)
@@ -96,7 +107,7 @@ namespace Olive.Admin.Controllers
             }
 
             // Account is pending.
-            if (admin.Status == (byte) StatusAccount.Pending)
+            if (admin.Status == AccountStatus.Pending)
             {
                 _log.Error($"{loginViewModel.Email} is pending");
 
@@ -107,7 +118,7 @@ namespace Olive.Admin.Controllers
             }
 
             // Account is disabled.
-            if (admin.Status == (byte)StatusAccount.Inactive)
+            if (admin.Status == (byte)AccountStatus.Disabled)
             {
                 _log.Error($"{loginViewModel.Email} is disabled");
 
@@ -131,110 +142,98 @@ namespace Olive.Admin.Controllers
             
         }
 
-        ///// <summary>
-        /////     Find a patient by using specific id.
-        ///// </summary>
-        ///// <returns></returns>
-        //[System.Web.Http.HttpPut]
-        //[OlivesAuthorize(new[] {Role.Admin})]
-        //[System.Web.Http.Route("api/admin/profile")]
-        //public async Task<HttpResponseMessage> EditAdminProfileAsync([FromBody] EditAdminProfileViewModel editor)
-        //{
-        //    #region Request parameters validation
+        /// <summary>
+        ///     Find a patient by using specific id.
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<ActionResult> Edit(EditAdminViewModel editAdminViewModel)
+        {
+            #region Request parameters validation
+            
+            // ModelState is invalid.
+            if (!ModelState.IsValid)
+                return View(editAdminViewModel);
 
-        //    // Model hasn't been initialized.
-        //    if (editor == null)
-        //    {
-        //        editor = new EditAdminProfileViewModel();
-        //        Validate(editor);
-        //    }
+            #endregion
 
-        //    // ModelState is invalid.
-        //    if (!ModelState.IsValid)
-        //    {
-        //        _log.Error("Request parameters are invalid. Errors sent to client");
-        //        return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-        //    }
+            #region Information construction
 
-        //    #endregion
+            // Retrieve information of person who sent request.
+            var requester = (Admin)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
 
-        //    #region Information construction
+            // First name is defined.
+            if (!string.IsNullOrWhiteSpace(editor.FirstName))
+                requester.FirstName = editor.FirstName;
 
-        //    // Retrieve information of person who sent request.
-        //    var requester = (Person) ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
+            // Last name is defined.
+            if (!string.IsNullOrWhiteSpace(editor.LastName))
+                requester.LastName = editor.LastName;
 
-        //    // First name is defined.
-        //    if (!string.IsNullOrWhiteSpace(editor.FirstName))
-        //        requester.FirstName = editor.FirstName;
+            // Birthday is defined.
+            if (editor.Birthday != null)
+                requester.Birthday = editor.Birthday;
 
-        //    // Last name is defined.
-        //    if (!string.IsNullOrWhiteSpace(editor.LastName))
-        //        requester.LastName = editor.LastName;
+            // Password is defined.
+            if (!string.IsNullOrWhiteSpace(editor.Password))
+                requester.Password = editor.Password;
 
-        //    // Birthday is defined.
-        //    if (editor.Birthday != null)
-        //        requester.Birthday = editor.Birthday;
+            // Gender is defined.
+            if (editor.Gender != null)
+                requester.Gender = (byte)editor.Gender;
 
-        //    // Password is defined.
-        //    if (!string.IsNullOrWhiteSpace(editor.Password))
-        //        requester.Password = editor.Password;
+            // Phone is defined.
+            if (!string.IsNullOrWhiteSpace(editor.Phone))
+                requester.Phone = editor.Phone;
 
-        //    // Gender is defined.
-        //    if (editor.Gender != null)
-        //        requester.Gender = (byte) editor.Gender;
+            // Address is defined.
+            if (!string.IsNullOrWhiteSpace(editor.Address))
+                requester.Address = editor.Address;
 
-        //    // Phone is defined.
-        //    if (!string.IsNullOrWhiteSpace(editor.Phone))
-        //        requester.Phone = editor.Phone;
+            // Update person full name.
+            requester.FullName = requester.FirstName + " " + requester.LastName;
 
-        //    // Address is defined.
-        //    if (!string.IsNullOrWhiteSpace(editor.Address))
-        //        requester.Address = editor.Address;
+            #endregion
 
-        //    // Update person full name.
-        //    requester.FullName = requester.FirstName + " " + requester.LastName;
+            #region Result handling
 
-        //    #endregion
+            try
+            {
+                // Update the last modified.
+                requester.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
 
-        //    #region Result handling
+                // Update the patient.
+                requester = await _repositoryAccountExtended.EditPersonProfileAsync(requester.Id, requester);
 
-        //    try
-        //    {
-        //        // Update the last modified.
-        //        requester.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    User = new
+                    {
+                        requester.Id,
+                        requester.Email,
+                        requester.Password,
+                        requester.FirstName,
+                        requester.LastName,
+                        requester.Birthday,
+                        requester.Phone,
+                        requester.Gender,
+                        requester.Role,
+                        requester.Created,
+                        requester.LastModified,
+                        requester.Status,
+                        requester.Address,
+                        Photo = requester.PhotoUrl
+                    }
+                });
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception.Message, exception);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+            }
 
-        //        // Update the patient.
-        //        requester = await _repositoryAccountExtended.EditPersonProfileAsync(requester.Id, requester);
-
-        //        return Request.CreateResponse(HttpStatusCode.OK, new
-        //        {
-        //            User = new
-        //            {
-        //                requester.Id,
-        //                requester.Email,
-        //                requester.Password,
-        //                requester.FirstName,
-        //                requester.LastName,
-        //                requester.Birthday,
-        //                requester.Phone,
-        //                requester.Gender,
-        //                requester.Role,
-        //                requester.Created,
-        //                requester.LastModified,
-        //                requester.Status,
-        //                requester.Address,
-        //                Photo = requester.PhotoUrl
-        //            }
-        //        });
-        //    }
-        //    catch (Exception exception)
-        //    {
-        //        _log.Error(exception.Message, exception);
-        //        return Request.CreateResponse(HttpStatusCode.InternalServerError);
-        //    }
-
-        //    #endregion
-        //}
+            #endregion
+        }
 
         #endregion
 

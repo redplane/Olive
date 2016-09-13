@@ -1,16 +1,29 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Olive.Admin.ViewModels.Filter;
-using Olive.Admin.ViewModels.Filter.Response;
-using Olive.Admin.ViewModels.Statistic;
+using OliveAdmin.ViewModels.Filter;
+using OliveAdmin.ViewModels.Statistic;
 using Shared.Interfaces;
-using Shared.Models;
+using Shared.Models.Vertexes;
 using Shared.ViewModels.Response;
 
-namespace Olive.Admin.Interfaces
+namespace OliveAdmin.Interfaces
 {
     public interface IRepositoryAccountExtended : IRepositoryAccount
     {
+        /// <summary>
+        /// Find an admin by using specific conditions synchronously.
+        /// </summary>
+        /// <param name="filterAdminViewModel"></param>
+        /// <returns></returns>
+        Admin FindAdmin(FilterAdminViewModel filterAdminViewModel);
+
+        /// <summary>
+        /// Find an admin by using specific conditions asynchronously.
+        /// </summary>
+        /// <param name="filterAdminViewModel"></param>
+        /// <returns></returns>
+        Task<Admin> FindAdminAsync(FilterAdminViewModel filterAdminViewModel);
+        
         /// <summary>
         ///     Filter patient asynchronously with specific conditions.
         /// </summary>
@@ -23,20 +36,6 @@ namespace Olive.Admin.Interfaces
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        Task<ResponseFilterDoctorViewModel> FilterDoctorsAsync(FilterDoctorViewModel filter);
-
-        /// <summary>
-        ///     Summary person by using role.
-        /// </summary>
-        /// <returns></returns>
-        Task<IList<StatusSummaryViewModel>> SummarizePersonRoleAsync(byte? role);
-
-        /// <summary>
-        ///     Edit person profile asynchronously.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="info"></param>
-        /// <returns></returns>
-        Task<Person> EditPersonProfileAsync(int id, Person info);
+        Task<ResponseDoctorFilter> FilterDoctorsAsync(FilterDoctorViewModel filter);
     }
 }

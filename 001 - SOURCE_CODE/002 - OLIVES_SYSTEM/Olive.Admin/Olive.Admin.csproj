@@ -13,8 +13,8 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Olive.Admin</RootNamespace>
-    <AssemblyName>Olive.Admin</AssemblyName>
+    <RootNamespace>OliveAdmin</RootNamespace>
+    <AssemblyName>OliveAdmin</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -43,6 +43,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ArangoDB.Client, Version=0.7.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ArangoDB.Client.0.7.42\lib\portable45-net45+win8+wpa81\ArangoDB.Client.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ArangoDB.Client.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ArangoDB.Client.0.7.42\lib\portable45-net45+win8+wpa81\ArangoDB.Client.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Autofac, Version=4.1.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.4.1.0\lib\net45\Autofac.dll</HintPath>
       <Private>True</Private>
@@ -76,7 +84,6 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Extensions.dll</HintPath>
@@ -297,8 +304,9 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\DoctorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Enumerations\FilterDoctorSort.cs" />
-    <Compile Include="Enumerations\FilterPatientSort.cs" />
+    <Compile Include="Controllers\PatientController.cs" />
+    <Compile Include="Enumerations\Filter\FilterDoctorSort.cs" />
+    <Compile Include="Enumerations\Filter\FilterPatientSort.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -311,14 +319,14 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Olive.Admin.Language.resx</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\Filter\Response\ResponseFilterDoctorViewModel.cs" />
+    <Compile Include="ViewModels\Filter\FilterAdminViewModel.cs" />
     <Compile Include="ViewModels\PersonViewModel.cs" />
     <Compile Include="ViewModels\DoctorViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditPlaceViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditStatusViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterDoctorViewModel.cs" />
     <Compile Include="ViewModels\Filter\FilterPatientViewModel.cs" />
-    <Compile Include="ViewModels\Edit\EditAdminProfileViewModel.cs" />
+    <Compile Include="ViewModels\Edit\EditAdminViewModel.cs" />
     <Compile Include="ViewModels\PlaceViewModel.cs" />
     <Compile Include="ViewModels\SpecialtyViewModel.cs" />
     <Compile Include="ViewModels\Statistic\StatusSummaryViewModel.cs" />

@@ -1,4 +1,4 @@
-﻿namespace Olive.Admin.ViewModels
+﻿namespace OliveAdmin.ViewModels
 {
     /// <summary>
     /// Account information.

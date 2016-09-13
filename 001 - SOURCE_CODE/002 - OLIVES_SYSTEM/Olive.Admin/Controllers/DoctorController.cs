@@ -3,14 +3,13 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using log4net;
-using Olive.Admin.Attributes;
-using Olive.Admin.Interfaces;
-using Olive.Admin.ViewModels.Filter;
-using Shared.Enumerations;
+using OliveAdmin.Attributes;
+using OliveAdmin.Interfaces;
+using OliveAdmin.ViewModels.Filter;
 
-namespace Olive.Admin.Controllers
+namespace OliveAdmin.Controllers
 {
-    [MvcAuthorize(new[] { Role.Admin })]
+    [MvcAuthorize]
     public class DoctorController : Controller
     {
         #region Constructors
@@ -30,6 +29,8 @@ namespace Olive.Admin.Controllers
 
         #endregion
 
+        #region Methods
+
         /// <summary>
         /// This function is for rendering doctor management page.
         /// </summary>
@@ -39,76 +40,7 @@ namespace Olive.Admin.Controllers
         {
             return View();
         }
-
-        ///// <summary>
-        /////     Access role : Admin
-        /////     Description : Retrieve a doctor by using specific id
-        ///// </summary>
-        ///// <param name="id"></param>
-        ///// <returns></returns>
-        //[HttpGet]
-        //public async Task<HttpResponseMessage> Get(int id)
-        //{
-        //    try
-        //    {
-        //        // Retrieve filtered result asynchronously.
-        //        var account = await _repositoryAccountExtended.FindPersonAsync(id, null, null, (byte)Role.Doctor, null);
-
-        //        // No result has been found.
-        //        if (account == null)
-        //        {
-        //            // Log error.
-        //            _log.Error($"Cannot find the doctor [Id : {id}]");
-        //            return Request.CreateResponse(HttpStatusCode.NotFound, new
-        //            {
-        //                Error = $"{Language.WarnRecordNotFound}"
-        //            });
-        //        }
-
-        //        return Request.CreateResponse(HttpStatusCode.OK, new
-        //        {
-        //            Doctor = new
-        //            {
-        //                account.Id,
-        //                account.FirstName,
-        //                account.LastName,
-        //                account.Email,
-        //                account.Password,
-        //                account.Birthday,
-        //                account.Gender,
-        //                account.Address,
-        //                account.Phone,
-        //                account.Role,
-        //                Photo = account.PhotoUrl,
-        //                account.Doctor.Rank,
-        //                Specialty = new
-        //                {
-        //                    account.Doctor.Specialty.Id,
-        //                    account.Doctor.Specialty.Name
-        //                },
-        //                Place = new
-        //                {
-        //                    account.Doctor.Place.Id,
-        //                    account.Doctor.Place.City,
-        //                    account.Doctor.Place.Country
-        //                },
-        //                account.Doctor.Voters,
-        //                account.Created,
-        //                account.LastModified,
-        //                Profile = account.Doctor.ProfileUrl,
-        //                account.Status
-        //            }
-        //        });
-        //    }
-        //    catch (Exception exception)
-        //    {
-        //        // Log the exception before telling client.
-        //        _log.Error(exception.Message, exception);
-
-        //        return Request.CreateResponse(HttpStatusCode.InternalServerError);
-        //    }
-        //}
-
+        
         /// <summary>
         ///     Filter doctors by using specific conditions.
         /// </summary>
@@ -134,6 +66,8 @@ namespace Olive.Admin.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
             }
         }
+
+        #endregion
 
         #region Properties
 

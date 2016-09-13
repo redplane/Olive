@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Shared.Models;
+using Shared.Models.Vertexes;
 
 namespace Shared.ViewModels.Response
 {

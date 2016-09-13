@@ -1,20 +1,16 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Http;
+using System.Web.Mvc;
 using log4net;
-using Olives.Admin.Attributes;
-using Olives.Admin.Interfaces;
-using OlivesAdministration.ViewModels.Filter;
-using Shared.Enumerations;
-using Shared.Resources;
+using OliveAdmin.Attributes;
+using OliveAdmin.Interfaces;
+using OliveAdmin.ViewModels.Filter;
 
-namespace Olives.Admin.Controllers
+namespace OliveAdmin.Controllers
 {
-    [Route("api/patient")]
-    public class PatientController : ApiParentController
+    [MvcAuthorize]
+    public class PatientController : Controller
     {
         #region Constructors
 
@@ -50,121 +46,30 @@ namespace Olives.Admin.Controllers
         #region Methods
 
         /// <summary>
-        ///     Find a patient by using a specific id.
-        /// </summary>
-        /// <param name="id">Id of patient</param>
-        /// <returns></returns>
-        [HttpGet]
-        [OlivesAuthorize(new[] {Role.Admin})]
-        public async Task<HttpResponseMessage> Get(int id)
-        {
-            #region Result find & handling
-
-            try
-            {
-                // Retrieve list of patients.
-                var account =
-                    await
-                        _repositoryAccountExtended.FindPersonAsync(id, null, null, (byte) Role.Patient, null);
-
-                // No patient has been found.
-                if (account == null)
-                {
-                    _log.Error($"There is no patient [Id: {id}] in database.");
-                    return Request.CreateResponse(HttpStatusCode.NotFound, new
-                    {
-                        Error = $"{Language.WarnRecordNotFound}"
-                    });
-                }
-
-                // Respond to client.
-                return Request.CreateResponse(HttpStatusCode.OK, new
-                {
-                    Patient = new
-                    {
-                        account.Id,
-                        account.Email,
-                        account.Password,
-                        account.FirstName,
-                        account.LastName,
-                        account.Birthday,
-                        account.Phone,
-                        account.Role,
-                        account.Created,
-                        account.LastModified,
-                        account.Gender,
-                        account.Status,
-                        account.Address,
-                        Photo = account.PhotoUrl,
-                        account.Patient.Height,
-                        account.Patient.Weight
-                    }
-                });
-            }
-            catch (Exception exception)
-            {
-                _log.Error(exception.Message, exception);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError);
-            }
-
-            #endregion
-        }
-
-        /// <summary>
         ///     Filter patient by using specific conditions.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        [Route("api/patient/filter")]
         [HttpPost]
-        [OlivesAuthorize(new[] {Role.Admin})]
-        public async Task<HttpResponseMessage> Filter([FromBody] FilterPatientViewModel filter)
+        public async Task<ActionResult> Filter(FilterPatientViewModel filter)
         {
-            #region Request parameters validation
-
-            // Filter hasn't been initialized . Initialize it.
-            if (filter == null)
+            try
             {
-                filter = new FilterPatientViewModel();
-                Validate(filter);
+                // Invalid model state.
+                if (!ModelState.IsValid)
+                    return View(filter);
+
+                // Filter patient by using specific conditions.
+                var filteredResult = await _repositoryAccountExtended.FilterPatientsAsync(filter);
+
+                return Json(filteredResult);
             }
-
-            // Invalid model state.
-            if (!ModelState.IsValid)
-                return Request.CreateResponse(HttpStatusCode.BadRequest, RetrieveValidationErrors(ModelState));
-
-            #endregion
-
-            #region Result handling
-
-            // Filter patient by using specific conditions.
-            var result = await _repositoryAccountExtended.FilterPatientsAsync(filter);
-
-            return Request.CreateResponse(HttpStatusCode.OK, new
+            catch (Exception exception)
             {
-                Patients = result.Patients.Select(x => new
-                {
-                    x.Id,
-                    x.Person.Email,
-                    x.Person.Password,
-                    x.Person.FirstName,
-                    x.Person.LastName,
-                    x.Person.Birthday,
-                    x.Person.Phone,
-                    x.Person.Role,
-                    x.Person.Created,
-                    x.Person.LastModified,
-                    x.Person.Gender,
-                    x.Person.Status,
-                    x.Person.Address,
-                    Photo = x.Person.PhotoUrl,
-                    x.Height,
-                    x.Weight
-                }),
-                result.Total
-            });
-
-            #endregion
+                _log.Error(exception.Message, exception);
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
+            }
+            
         }
 
         #endregion

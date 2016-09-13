@@ -32,12 +32,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    <Reference Include="ArangoDB.Client, Version=0.7.42.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ArangoDB.Client.0.7.42\lib\portable45-net45+win8+wpa81\ArangoDB.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    <Reference Include="ArangoDB.Client.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ArangoDB.Client.0.7.42\lib\portable45-net45+win8+wpa81\ArangoDB.Client.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -82,7 +82,7 @@
     <Compile Include="Enumerations\Filter\PlaceFilterSort.cs" />
     <Compile Include="Enumerations\Filter\RecordFilterMode.cs" />
     <Compile Include="Enumerations\SortDirection.cs" />
-    <Compile Include="Enumerations\StatusAccount.cs" />
+    <Compile Include="Enumerations\AccountStatus.cs" />
     <Compile Include="Constants\HeaderFields.cs" />
     <Compile Include="Constants\FieldLength.cs" />
     <Compile Include="Constants\Regexes.cs" />
@@ -92,115 +92,24 @@
     <Compile Include="Enumerations\Filter\PartnerFilterMode.cs" />
     <Compile Include="Enumerations\Comparision.cs" />
     <Compile Include="Enumerations\StatusAppointment.cs" />
-    <Compile Include="Interfaces\IOliveDataContext.cs" />
+    <Compile Include="Enumerations\TextComparision.cs" />
     <Compile Include="Interfaces\IPagination.cs" />
     <Compile Include="Interfaces\IRepositoryAccount.cs" />
     <Compile Include="Interfaces\IRepositoryMedicalCategory.cs" />
     <Compile Include="Interfaces\IRepositoryPlace.cs" />
     <Compile Include="Interfaces\IRepositorySpecialty.cs" />
     <Compile Include="Interfaces\ITimeService.cs" />
-    <Compile Include="Models\AccountToken.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Addiction.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Allergy.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Appointment.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\BloodPressure.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\BloodSugar.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Diary.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Doctor.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ExperimentNote.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Heartbeat.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\JunkFile.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MedicalCategory.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MedicalImage.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MedicalNote.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MedicalRecord.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Message.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Notification.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\OlivesHealth.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>OlivesHealth.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\OlivesHealth.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\OlivesHealth.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>OlivesHealth.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Patient.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Person.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Place.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Prescription.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\PrescriptionImage.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Rating.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\RealTimeConnection.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Relationship.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\RelationshipRequest.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
+    <Compile Include="Models\Edges\HasAppointment.cs" />
+    <Compile Include="Models\Edges\RequestedRelationship.cs" />
+    <Compile Include="Models\Photo.cs" />
     <Compile Include="Models\ResponseErrror.cs" />
-    <Compile Include="Models\Specialty.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\sysdiagram.cs">
-      <DependentUpon>OlivesHealth.tt</DependentUpon>
-    </Compile>
+    <Compile Include="Models\Vertexes\Admin.cs" />
+    <Compile Include="Models\Vertexes\BloodPressure.cs" />
+    <Compile Include="Models\Vertexes\BloodSugar.cs" />
+    <Compile Include="Models\Vertexes\Doctor.cs" />
+    <Compile Include="Models\Vertexes\HeartRate.cs" />
+    <Compile Include="Models\Vertexes\Patient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\OliveDataContext.cs" />
     <Compile Include="Repositories\RepositoryMedicalCategory.cs" />
     <Compile Include="Repositories\RepositoryAccount.cs" />
     <Compile Include="Repositories\RepositoryPlace.cs" />
@@ -239,29 +148,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <EntityDeploy Include="Models\OlivesHealth.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>OlivesHealth.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="Models\OlivesHealth.edmx.diagram">
-      <DependentUpon>OlivesHealth.edmx</DependentUpon>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Models\OlivesHealth.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>OlivesHealth.edmx</DependentUpon>
-      <LastGenOutput>OlivesHealth.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\OlivesHealth.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>OlivesHealth.edmx</DependentUpon>
-      <LastGenOutput>OlivesHealth.cs</LastGenOutput>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MultipartFormDataFormatter\MultipartFormDataMediaFormatter.csproj">

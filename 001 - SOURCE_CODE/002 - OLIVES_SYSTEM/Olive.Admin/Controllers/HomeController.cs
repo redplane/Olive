@@ -1,10 +1,9 @@
 ﻿using System.Web.Mvc;
-using Olive.Admin.Attributes;
-using Shared.Enumerations;
+using OliveAdmin.Attributes;
 
-namespace Olive.Admin.Controllers
+namespace OliveAdmin.Controllers
 {
-    [MvcAuthorize(new [] { Role.Admin, })]
+    [MvcAuthorize]
     public class HomeController : Controller
     {
         /// <summary>

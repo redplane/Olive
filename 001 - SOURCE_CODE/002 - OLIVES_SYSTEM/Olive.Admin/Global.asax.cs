@@ -4,15 +4,15 @@ using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.Mvc;
 using log4net.Config;
-using Olive.Admin.Attributes;
-using Olive.Admin.Interfaces;
-using Olive.Admin.Module;
-using Olive.Admin.Repositories;
+using OliveAdmin.Attributes;
+using OliveAdmin.Interfaces;
+using OliveAdmin.Module;
+using OliveAdmin.Repositories;
 using Shared.Interfaces;
 using Shared.Repositories;
 using Shared.Services;
 
-namespace Olive.Admin
+namespace OliveAdmin
 {
     public class WebApiApplication : HttpApplication
     {

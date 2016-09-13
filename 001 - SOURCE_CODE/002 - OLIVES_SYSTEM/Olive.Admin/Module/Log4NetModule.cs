@@ -3,7 +3,7 @@ using System.Reflection;
 using Autofac.Core;
 using log4net;
 
-namespace Olive.Admin.Module
+namespace OliveAdmin.Module
 {
     /// <summary>
     ///     This module is for attaching with Autofact.
