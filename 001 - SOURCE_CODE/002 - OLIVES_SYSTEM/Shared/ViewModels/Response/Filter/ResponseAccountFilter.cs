@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Shared.Models.Vertexes;
 
-namespace Shared.ViewModels.Response
+namespace Shared.ViewModels.Response.Filter
 {
     public class ResponseAccountFilter
     {

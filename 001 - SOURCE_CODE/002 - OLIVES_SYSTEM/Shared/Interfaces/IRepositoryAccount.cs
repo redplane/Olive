@@ -1,8 +1,7 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Shared.Models.Vertexes;
 using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
+using Shared.ViewModels.Response.Filter;
 
 namespace Shared.Interfaces
 {
@@ -13,7 +12,7 @@ namespace Shared.Interfaces
         /// </summary>
         /// <param name="originalPassword"></param>
         /// <returns></returns>
-        string FindMd5Password(string originalPassword);
+        string FindEncryptedPassword(string originalPassword);
 
         /// <summary>
         /// Initialize an account asynchronously.

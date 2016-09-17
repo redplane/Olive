@@ -7,6 +7,8 @@ namespace OliveAdmin
     {
         public static void RegisterRoutes(RouteCollection routes)
         {
+            routes.MapMvcAttributeRoutes();
+
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
@@ -14,6 +16,8 @@ namespace OliveAdmin
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Admin", action = "Login", id = UrlParameter.Optional }
             );
+
+            
         }
     }
 }

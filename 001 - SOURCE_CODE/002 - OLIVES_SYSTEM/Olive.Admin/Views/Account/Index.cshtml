@@ -114,7 +114,7 @@
                                     class="form-control"
                                     ng-model="filterDoctorViewModel.direction"></select>
                         </div>
-                        
+
                         <!-- Statuses -->
                         <div class="form-group">
                             <label>Statuses</label>
@@ -123,10 +123,9 @@
                                     ng-options="filterStatus.value as filterStatus.text for filterStatus in filterStatuses"
                                     multiple="multiple"
                                     ng-model="filterDoctorViewModel.statuses"
-                                    size="3">
-                            </select>
+                                    size="3"></select>
                         </div>
-                    
+
                         <!-- Genders -->
                         <div class="form-group">
                             <label>Genders</label>
@@ -246,21 +245,21 @@
                     </div>
 
                 </div>
-                
-            <div class="box-footer">
-                <button class="btn btn-danger btn-flat btn-block"
-                        ng-click="reset()">
-                    Reset
-                </button>
-            </div>
 
-            <div class="box-footer">
-                <button class="btn btn-primary btn-flat btn-block"
-                        ng-click="initialLoad()">
-                    OK
-                </button>
-            </div>
-                
+                <div class="box-footer">
+                    <button class="btn btn-danger btn-flat btn-block"
+                            ng-click="reset()">
+                        Reset
+                    </button>
+                </div>
+
+                <div class="box-footer">
+                    <button class="btn btn-primary btn-flat btn-block"
+                            ng-click="initialLoad()">
+                        OK
+                    </button>
+                </div>
+
             </div>
         </div>
     </div>

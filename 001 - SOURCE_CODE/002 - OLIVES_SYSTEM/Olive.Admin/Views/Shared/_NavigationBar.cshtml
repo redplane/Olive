@@ -1,7 +1,8 @@
-﻿@using Olive.Admin.Resources
-@using Shared.Models
+﻿@using OliveAdmin.Models
+@using OliveAdmin.Resources
+@using Shared.Models.Vertexes
 @{
-    var account = (Person)Session["Account"];
+    var account = (Account)Session[Constant.MvcAccount];
 }
 <header class="main-header">
     <!-- Logo -->
@@ -121,7 +122,8 @@
                         <!-- Menu Footer-->
                         <li class="user-footer">
                             <div class="form-group has-feedback">
-                                <a href="#" class="btn btn-info btn-flat btn-block">@Olive_Admin_Language.Profile</a>
+                                <a href='@Url.Action("PersonalProfile", "Admin")' 
+                                   class="btn btn-info btn-flat btn-block">@Olive_Admin_Language.Profile</a>
                             </div>
                             <div class="form-group has-feedback">
                                 <a href="@Url.Action("Logout", "Admin")"

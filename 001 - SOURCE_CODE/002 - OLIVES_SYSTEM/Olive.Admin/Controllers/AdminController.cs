@@ -18,7 +18,8 @@ using Shared.ViewModels.Filter;
 
 namespace OliveAdmin.Controllers
 {
-    [MvcAuthorize(new [] {Role.Admin})]
+    [RoutePrefix("Admin")]
+    [MvcAuthorize(new[] { Role.Admin })]
     public class AdminController : Controller
     {
         #region Constructors
@@ -77,12 +78,12 @@ namespace OliveAdmin.Controllers
                 return RedirectToAction("Index", "Home");
 
             // Find the hashed password from the original one.
-            var accountHashedPassword = _repositoryAccount.FindMd5Password(loginViewModel.Password);
+            var accountHashedPassword = _repositoryAccount.FindEncryptedPassword(loginViewModel.Password);
 
             var filterAdminViewModel = new FilterAccountViewModel();
             filterAdminViewModel.Email = loginViewModel.Email;
             filterAdminViewModel.EmailComparision = TextComparision.Equal;
-            filterAdminViewModel.Password = loginViewModel.Password;
+            filterAdminViewModel.Password = _repositoryAccount.FindEncryptedPassword(loginViewModel.Password);
             filterAdminViewModel.PasswordComparision = TextComparision.EqualIgnoreCase;
 
             // Pass parameter to login function. 
@@ -115,7 +116,7 @@ namespace OliveAdmin.Controllers
             }
 
             // Account is disabled.
-            if (admin.Status == (byte) AccountStatus.Disabled)
+            if (admin.Status == (byte)AccountStatus.Disabled)
             {
                 _log.Error($"{loginViewModel.Email} is disabled");
 
@@ -142,23 +143,74 @@ namespace OliveAdmin.Controllers
         }
 
         /// <summary>
+        /// This function is for sign user out of system.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult Logout()
+        {
+            // Clear the authorization cookie.
+            FormsAuthentication.SignOut();
+
+            return RedirectToAction("Login", "Admin");
+        }
+
+        /// <summary>
+        /// This function is for reading requester profile and display profile page.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Profile")]
+        public async Task<ActionResult> PersonalProfile()
+        {
+            try
+            {
+                // Find account from session to know the current accessing user.
+                var account = (Account)Session[Constant.MvcAccount];
+
+                // Account information is not found. Redirect user to logout page.
+                if (account == null)
+                    return RedirectToAction("Logout", "Admin");
+
+                // Find the account from database.
+                var filterAccountViewModel = new FilterAccountViewModel();
+                filterAccountViewModel.Email = account.Email;
+                filterAccountViewModel.EmailComparision = TextComparision.EqualIgnoreCase;
+                filterAccountViewModel.Password = account.Password;
+                filterAccountViewModel.PasswordComparision = TextComparision.EqualIgnoreCase;
+
+                // Access database repository to retrieve full information of account.
+                account = await _repositoryAccount.FindAccountAsync(filterAccountViewModel);
+
+                // Clear sensitive informations before throwing 'em to client.
+                account.Password = null;
+                return View(account);
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception.Message, exception);
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
+            }
+        }
+
+        /// <summary>
         ///     Find a patient by using specific id.
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult> Edit([Bind(Include = "Password")] EditAccountViewModel editAccountViewModel)
+        public async Task<ActionResult> PersonalProfile(EditPersonalProfileViewModel editPersonalProfileViewModel)
         {
             // ModelState is invalid.
             if (!ModelState.IsValid)
-                return View(editAccountViewModel);
-            
+                return View(editPersonalProfileViewModel);
+
             try
             {
                 // Find account information from session.
                 var account = (Account)Session[Constant.MvcAccount];
-                
+
                 // Encrypt user password.
-                account.Password = _repositoryAccount.FindMd5Password(editAccountViewModel.Password);
+                account.Password = _repositoryAccount.FindEncryptedPassword(editPersonalProfileViewModel.Password);
 
                 // Update the account information.
                 account = await _repositoryAccount.InitializeAccountAsync(account);
@@ -199,7 +251,7 @@ namespace OliveAdmin.Controllers
         ///     Instance for logging.
         /// </summary>
         private readonly ILog _log;
-        
+
         #endregion
     }
 }

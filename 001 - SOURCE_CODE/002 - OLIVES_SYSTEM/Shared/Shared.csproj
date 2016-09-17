@@ -127,10 +127,7 @@
     </Compile>
     <Compile Include="Services\TimeService.cs" />
     <Compile Include="ViewModels\Filter\FilterAccountViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterMedicalCategoryViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterPlaceViewModel.cs" />
-    <Compile Include="ViewModels\Response\ResponseAccountFilter.cs" />
-    <Compile Include="ViewModels\Filter\FilterSpecialtyViewModel.cs" />
+    <Compile Include="ViewModels\Response\Filter\ResponseAccountFilter.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

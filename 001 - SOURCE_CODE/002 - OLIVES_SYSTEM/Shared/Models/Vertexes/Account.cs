@@ -6,14 +6,9 @@ namespace Shared.Models.Vertexes
     public class Account
     {
         /// <summary>
-        /// Id of account in graph database.
-        /// </summary>
-        [DocumentProperty(Identifier = IdentifierType.Handle)]
-        public string Id { get; set; }
-
-        /// <summary>
         /// Email of account.
         /// </summary>
+        [DocumentProperty(Identifier = IdentifierType.Key)]
         public string Email { get; set; }
 
         /// <summary>

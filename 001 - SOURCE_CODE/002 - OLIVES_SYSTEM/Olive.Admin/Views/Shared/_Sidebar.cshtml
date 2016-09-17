@@ -1,4 +1,4 @@
-﻿@using Olive.Admin.Resources
+﻿@using OliveAdmin.Resources
 <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar" style="height: auto;">
@@ -6,20 +6,15 @@
         <ul class="sidebar-menu">
             <li class="treeview">
                 <a href="javascript:void(0);">
-                    <i class="fa fa-user"></i> <span>@Olive_Admin_Language.Account</span>
+                    <i class="fa fa-user"></i> <span>Account</span>
                     <span class="pull-right-container">
                         <i class="fa fa-angle-left pull-right"></i>
                     </span>
                 </a>
                 <ul class="treeview-menu">
                     <li>
-                        <a href='@Url.Action("Index", "Doctor")'>
-                            <i class="fa fa-medkit"></i> @Olive_Admin_Language.Doctor
-                        </a>
-                    </li>
-                    <li>
-                        <a href="../../index2.html">
-                            <i class="fa fa-tablet"></i> @Olive_Admin_Language.Patient
+                        <a href='@Url.Action("Index", "Account")'>
+                            <i class="fa fa-medkit"></i> Management
                         </a>
                     </li>
                 </ul>

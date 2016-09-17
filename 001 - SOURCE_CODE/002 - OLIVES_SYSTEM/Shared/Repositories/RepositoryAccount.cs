@@ -8,6 +8,7 @@ using Shared.Interfaces;
 using Shared.Models.Vertexes;
 using Shared.ViewModels.Filter;
 using Shared.ViewModels.Response;
+using Shared.ViewModels.Response.Filter;
 using QueryableExtensions = System.Data.Entity.QueryableExtensions;
 
 namespace Shared.Repositories
@@ -39,7 +40,7 @@ namespace Shared.Repositories
         /// </summary>
         /// <param name="originalPassword"></param>
         /// <returns></returns>
-        public string FindMd5Password(string originalPassword)
+        public string FindEncryptedPassword(string originalPassword)
         {
             // Use input string to calculate MD5 hash
             using (var md5 = MD5.Create())
@@ -141,7 +142,7 @@ namespace Shared.Repositories
                         accounts = accounts.Where(x => x.Email == filterAccountViewModel.Email);
                         break;
                 }
-
+            
             // First name is specified.
             if (!string.IsNullOrWhiteSpace(filterAccountViewModel.FirstName))
                 switch (filterAccountViewModel.FirstNameComparision)
@@ -160,6 +161,7 @@ namespace Shared.Repositories
 
             // Last name is specified.
             if (!string.IsNullOrWhiteSpace(filterAccountViewModel.LastName))
+            {
                 switch (filterAccountViewModel.LastNameComparision)
                 {
                     case TextComparision.Contain:
@@ -173,7 +175,26 @@ namespace Shared.Repositories
                         accounts = accounts.Where(x => x.LastName == filterAccountViewModel.LastName);
                         break;
                 }
+            }
 
+            // Password is specified.
+            if (!string.IsNullOrWhiteSpace(filterAccountViewModel.Password))
+            {
+                switch (filterAccountViewModel.PasswordComparision)
+                {
+                    case TextComparision.Contain:
+                        accounts = accounts.Where(x => AQL.Contains(x.Password, filterAccountViewModel.Password));
+                        break;
+                    case TextComparision.EqualIgnoreCase:
+                        accounts =
+                            accounts.Where(x => AQL.Upper(x.Password) == filterAccountViewModel.Password.ToUpper());
+                        break;
+                    default:
+                        accounts = accounts.Where(x => x.Password == filterAccountViewModel.Password);
+                        break;
+                }
+            }
+            
             // Birthday range is specified.
             if (filterAccountViewModel.MinBirthday != null)
                 accounts = accounts.Where(x => x.Birthday >= filterAccountViewModel.MinBirthday.Value);
