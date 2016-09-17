@@ -5,7 +5,6 @@ using System.Web.Mvc;
 using log4net;
 using OliveAdmin.Attributes;
 using OliveAdmin.Interfaces;
-using OliveAdmin.ViewModels.Filter;
 
 namespace OliveAdmin.Controllers
 {

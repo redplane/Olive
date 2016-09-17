@@ -10,9 +10,9 @@ using System.Web.Security;
 using log4net;
 using Newtonsoft.Json;
 using OliveAdmin.Interfaces;
-using OliveAdmin.ViewModels.Filter;
 using Shared.Enumerations;
 using Shared.ViewModels;
+using Shared.ViewModels.Filter;
 
 namespace OliveAdmin.Attributes
 {
@@ -21,21 +21,46 @@ namespace OliveAdmin.Attributes
         #region Properties
 
         /// <summary>
-        /// Instance which provides access to account service.
+        ///     Instance which provides access to account service.
         /// </summary>
         public IRepositoryAccountExtended RepositoryAccountExtended { get; set; }
-        
+
         /// <summary>
-        /// Repository for logging.
+        ///     Repository for logging.
         /// </summary>
         public ILog Log { get; set; }
 
-        #endregion
-        
-        #region Methods
-        
         /// <summary>
-        /// This function is for parsing cookie, querying database and decide whether user can access the function or not.
+        ///     List of roles can access the function.
+        /// </summary>
+        private readonly Role[] _roles;
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        ///     Initialize attribute with default settings.
+        /// </summary>
+        public MvcAuthorizeAttribute()
+        {
+        }
+
+        /// <summary>
+        ///     Initialize attribute with roles settings.
+        /// </summary>
+        /// <param name="roles"></param>
+        public MvcAuthorizeAttribute(Role[] roles)
+        {
+            _roles = roles;
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        ///     This function is for parsing cookie, querying database and decide whether user can access the function or not.
         /// </summary>
         /// <param name="authorizationContext"></param>
         public void OnAuthorization(AuthorizationContext authorizationContext)
@@ -43,8 +68,9 @@ namespace OliveAdmin.Attributes
             try
             {
                 #region Form authentication cookie
-                
-                var formAuthenticationCookie = authorizationContext.RequestContext.HttpContext.Request.Cookies[FormsAuthentication.FormsCookieName];
+
+                var formAuthenticationCookie =
+                    authorizationContext.RequestContext.HttpContext.Request.Cookies[FormsAuthentication.FormsCookieName];
 
                 // Authentication cookie is invalid.
                 if (formAuthenticationCookie == null)
@@ -134,16 +160,16 @@ namespace OliveAdmin.Attributes
 
                     return;
                 }
-                
+
                 // Initialize admin filter.
-                var filterAdminViewModel = new FilterAdminViewModel();
+                var filterAdminViewModel = new FilterAccountViewModel();
                 filterAdminViewModel.Email = loginViewModel.Email;
                 filterAdminViewModel.EmailComparision = TextComparision.Equal;
                 filterAdminViewModel.Password = loginViewModel.Password;
                 filterAdminViewModel.PasswordComparision = TextComparision.EqualIgnoreCase;
 
                 // Find the account from database.
-                var account = RepositoryAccountExtended.FindAdmin(filterAdminViewModel);
+                var account = RepositoryAccountExtended.FindAccount(filterAdminViewModel);
 
                 // Account is not found
                 if (account == null)
@@ -169,7 +195,7 @@ namespace OliveAdmin.Attributes
                     FormsAuthentication.Encrypt(formAuthenticationTicket));
 
                 authorizationContext.HttpContext.Response.Cookies.Add(authenticationCookie);
-                
+
                 if (authorizationContext.HttpContext.Session != null)
                 {
                     // Clear the password before saved account information to session.
@@ -179,14 +205,29 @@ namespace OliveAdmin.Attributes
                     authorizationContext.HttpContext.Session["Account"] = account;
                 }
 
-                var claimIdentity = new ClaimsIdentity(new List<Claim>()
+                // Role is not allowed to access function.
+                if (_roles != null && _roles.Length > 0)
+                {
+                    if (!_roles.Any(x => x == account.Role))
+                    {
+                        authorizationContext.Result = new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                        return;
+                    }
+                }
+
+                // Setup claim identity to HttpContext.
+                var claimIdentity = new ClaimsIdentity(new List<Claim>
                 {
                     new Claim("email", account.Email),
                     new Claim("role", "admin")
                 }, "Cookie");
 
+                // Setup claim identity to HttpContext.
                 authorizationContext.HttpContext.User = new GenericPrincipal(claimIdentity, new[] {"Admin"});
-                
+
+                // Setup authorization information.
+                authorizationContext.Controller.ViewData.Add("Authorization", account);
+
                 #endregion
             }
             catch (Exception exception)
@@ -203,18 +244,17 @@ namespace OliveAdmin.Attributes
         }
 
         /// <summary>
-        /// Check whether the anonymous is allowed or not.
+        ///     Check whether the anonymous is allowed or not.
         /// </summary>
         /// <param name="authorizationContext"></param>
         /// <returns></returns>
         private bool IsAnonymousAllowed(AuthorizationContext authorizationContext)
         {
             return authorizationContext.ActionDescriptor.IsDefined(typeof(AllowAnonymousAttribute), true) ||
-                                authorizationContext.ActionDescriptor.ControllerDescriptor.IsDefined(
-                                    typeof(AllowAnonymousAttribute), true);
-
+                   authorizationContext.ActionDescriptor.ControllerDescriptor.IsDefined(
+                       typeof(AllowAnonymousAttribute), true);
         }
-        
+
         #endregion
     }
 }

@@ -301,34 +301,23 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Attributes\MvcAuthorizeAttribute.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\DoctorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\PatientController.cs" />
-    <Compile Include="Enumerations\Filter\FilterDoctorSort.cs" />
-    <Compile Include="Enumerations\Filter\FilterPatientSort.cs" />
+    <Compile Include="Controllers\MvcController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Interfaces\IRepositoryAccountExtended.cs" />
     <Compile Include="Module\Log4NetModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\RepositoryAccountExtended.cs" />
     <Compile Include="Resources\Olive.Admin.Language.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Olive.Admin.Language.resx</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\Filter\FilterAdminViewModel.cs" />
-    <Compile Include="ViewModels\PersonViewModel.cs" />
-    <Compile Include="ViewModels\DoctorViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditPlaceViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditStatusViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterDoctorViewModel.cs" />
-    <Compile Include="ViewModels\Filter\FilterPatientViewModel.cs" />
-    <Compile Include="ViewModels\Edit\EditAdminViewModel.cs" />
-    <Compile Include="ViewModels\PlaceViewModel.cs" />
-    <Compile Include="ViewModels\SpecialtyViewModel.cs" />
+    <Compile Include="ViewModels\Edit\EditAccountViewModel.cs" />
     <Compile Include="ViewModels\Statistic\StatusSummaryViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalCategoryViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePlaceViewModel.cs" />
@@ -370,7 +359,11 @@
       <LastGenOutput>Olive.Admin.Language.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Enumerations\Filter\" />
+    <Folder Include="ViewModels\Filter\" />
+    <Folder Include="Views\Account\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

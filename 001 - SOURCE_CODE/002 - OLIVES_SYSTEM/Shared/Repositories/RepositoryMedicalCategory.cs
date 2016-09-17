@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 using Shared.Enumerations;
 using Shared.Enumerations.Filter;
-using Shared.Interfaces;
-using Shared.Models;
 using Shared.ViewModels.Filter;
-using Shared.ViewModels.Response;
 
 namespace Shared.Repositories
 {
@@ -164,10 +159,8 @@ namespace Shared.Repositories
 
             // Record is defined.
             if (filter.Records != null)
-            {
                 categories = categories.Skip(filter.Page*filter.Records.Value)
                     .Take(filter.Records.Value);
-            }
             // Do pagination.
             response.MedicalCategories = await categories
                 .ToListAsync();

@@ -38,7 +38,7 @@ namespace Olives.Repositories
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<ResponseDoctorFilter> FilterDoctorsAsync(FilterDoctorViewModel filter)
+        public async Task<ResponseAccountFilter> FilterDoctorsAsync(FilterDoctorViewModel filter)
         {
             #region Data initialization
 
@@ -99,7 +99,7 @@ namespace Olives.Repositories
             #region Response initialization
 
             // Response initialization.
-            var responseFilter = new ResponseDoctorFilter();
+            var responseFilter = new ResponseAccountFilter();
 
             // Total matched result.
             responseFilter.Total = await doctors.CountAsync();

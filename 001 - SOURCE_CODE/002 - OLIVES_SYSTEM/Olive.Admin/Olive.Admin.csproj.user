@@ -9,6 +9,8 @@
     <WebStackScaffolding_IsReferencingScriptLibrariesSelected>False</WebStackScaffolding_IsReferencingScriptLibrariesSelected>
     <WebStackScaffolding_LayoutPageFile>~/Views/Shared/_AuthorizedView.cshtml</WebStackScaffolding_LayoutPageFile>
     <NameOfLastUsedPublishProfile>olivesadmin - Web Deploy</NameOfLastUsedPublishProfile>
+    <WebStackScaffolding_ControllerDialogWidth>600</WebStackScaffolding_ControllerDialogWidth>
+    <WebStackScaffolding_IsAsyncSelected>False</WebStackScaffolding_IsAsyncSelected>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>

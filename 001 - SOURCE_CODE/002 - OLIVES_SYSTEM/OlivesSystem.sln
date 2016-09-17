@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olives", "Olives\Olives.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultipartFormDataMediaFormatter", "MultipartFormDataFormatter\MultipartFormDataMediaFormatter.csproj", "{1F851995-9C6B-4B34-82AF-AC4E075F00C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Olives.Job", "Olives.Job\Olives.Job.csproj", "{016581C8-ADA7-4132-89BD-2CAEC3A537FB}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,10 +33,6 @@ Global
 		{1F851995-9C6B-4B34-82AF-AC4E075F00C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F851995-9C6B-4B34-82AF-AC4E075F00C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F851995-9C6B-4B34-82AF-AC4E075F00C2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{016581C8-ADA7-4132-89BD-2CAEC3A537FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{016581C8-ADA7-4132-89BD-2CAEC3A537FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{016581C8-ADA7-4132-89BD-2CAEC3A537FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{016581C8-ADA7-4132-89BD-2CAEC3A537FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

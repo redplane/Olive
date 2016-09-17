@@ -20,7 +20,7 @@ namespace Olives.Interfaces
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        Task<ResponseDoctorFilter> FilterDoctorsAsync(FilterDoctorViewModel filter);
+        Task<ResponseAccountFilter> FilterDoctorsAsync(FilterDoctorViewModel filter);
 
         /// <summary>
         ///     Edit a person by using id.

@@ -33,10 +33,7 @@ namespace OliveAdmin
 
             #region Repositories
 
-            containerBuilder.RegisterType<OliveDataContext>().As<IOliveDataContext>().SingleInstance();
             containerBuilder.RegisterType<RepositoryAccountExtended>().As<IRepositoryAccountExtended>().SingleInstance();
-            containerBuilder.RegisterType<RepositoryPlace>().As<IRepositoryPlace>().SingleInstance();
-            containerBuilder.RegisterType<RepositoryMedicalCategory>().As<IRepositoryMedicalCategory>().SingleInstance();
             containerBuilder.RegisterType<TimeService>().As<ITimeService>().SingleInstance();
 
             #endregion

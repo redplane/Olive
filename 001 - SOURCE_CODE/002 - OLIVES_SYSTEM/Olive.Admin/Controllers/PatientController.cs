@@ -5,7 +5,6 @@ using System.Web.Mvc;
 using log4net;
 using OliveAdmin.Attributes;
 using OliveAdmin.Interfaces;
-using OliveAdmin.ViewModels.Filter;
 
 namespace OliveAdmin.Controllers
 {
@@ -44,34 +43,7 @@ namespace OliveAdmin.Controllers
         #endregion
 
         #region Methods
-
-        /// <summary>
-        ///     Filter patient by using specific conditions.
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<ActionResult> Filter(FilterPatientViewModel filter)
-        {
-            try
-            {
-                // Invalid model state.
-                if (!ModelState.IsValid)
-                    return View(filter);
-
-                // Filter patient by using specific conditions.
-                var filteredResult = await _repositoryAccountExtended.FilterPatientsAsync(filter);
-
-                return Json(filteredResult);
-            }
-            catch (Exception exception)
-            {
-                _log.Error(exception.Message, exception);
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
-            }
-            
-        }
-
+        
         #endregion
     }
 }

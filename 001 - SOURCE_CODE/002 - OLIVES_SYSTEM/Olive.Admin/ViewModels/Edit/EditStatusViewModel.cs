@@ -9,7 +9,7 @@ namespace OliveAdmin.ViewModels.Edit
         /// <summary>
         ///     Status of account.
         /// </summary>
-        [InEnumerationsArray(new object[] {AccountStatus.Active, AccountStatus.Inactive, AccountStatus.Pending},
+        [InEnumerationsArray(new object[] {AccountStatus.Active, AccountStatus.Disabled, AccountStatus.Pending},
             ErrorMessageResourceType = typeof (Language), ErrorMessageResourceName = "ValueMustBeOneOfArray")]
         public AccountStatus Status { get; set; }
     }

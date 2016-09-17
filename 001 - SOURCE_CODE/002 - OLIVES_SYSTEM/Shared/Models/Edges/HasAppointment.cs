@@ -1,4 +1,6 @@
-﻿namespace Shared.Models.Edges
+﻿using Shared.Enumerations;
+
+namespace Shared.Models.Edges
 {
     public class HasAppointment
     {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -8,19 +7,17 @@ using System.Web.Security;
 using log4net;
 using Newtonsoft.Json;
 using OliveAdmin.Attributes;
-using OliveAdmin.Interfaces;
 using OliveAdmin.Resources;
 using OliveAdmin.ViewModels.Edit;
-using OliveAdmin.ViewModels.Filter;
-using Shared.Constants;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models.Vertexes;
 using Shared.ViewModels;
+using Shared.ViewModels.Filter;
 
 namespace OliveAdmin.Controllers
 {
-    [MvcAuthorize]
+    [MvcAuthorize(new [] {Role.Admin})]
     public class AdminController : Controller
     {
         #region Constructors
@@ -28,25 +25,22 @@ namespace OliveAdmin.Controllers
         /// <summary>
         ///     Initialize an instance of AdminController.
         /// </summary>
-        /// <param name="repositoryAccountExtended"></param>
+        /// <param name="repositoryAccount"></param>
         /// <param name="log"></param>
-        /// <param name="timeService"></param>
         public AdminController(
-            IRepositoryAccountExtended repositoryAccountExtended,
-            ILog log,
-            ITimeService timeService)
+            IRepositoryAccount repositoryAccount,
+            ILog log)
         {
-            _repositoryAccountExtended = repositoryAccountExtended;
+            _repositoryAccount = repositoryAccount;
             _log = log;
-            _timeService = timeService;
         }
 
         #endregion
 
         #region Methods
-        
+
         /// <summary>
-        /// This function is for rendering login page.
+        ///     This function is for rendering login page.
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -56,7 +50,7 @@ namespace OliveAdmin.Controllers
             // Requester is already logged in. Redirect him/her to home page.
             if (HttpContext.User.Identity.IsAuthenticated)
                 return RedirectToAction("Index", "Home");
-            
+
             return View();
         }
 
@@ -82,26 +76,27 @@ namespace OliveAdmin.Controllers
                 return RedirectToAction("Index", "Home");
 
             // Find the hashed password from the original one.
-            var accountHashedPassword = _repositoryAccountExtended.FindMd5Password(loginViewModel.Password);
+            var accountHashedPassword = _repositoryAccount.FindMd5Password(loginViewModel.Password);
 
-            var filterAdminViewModel = new FilterAdminViewModel();
+            var filterAdminViewModel = new FilterAccountViewModel();
             filterAdminViewModel.Email = loginViewModel.Email;
             filterAdminViewModel.EmailComparision = TextComparision.Equal;
             filterAdminViewModel.Password = loginViewModel.Password;
-            filterAdminViewModel.PasswordComparision = TextComparision.Equal;
-            
+            filterAdminViewModel.PasswordComparision = TextComparision.EqualIgnoreCase;
+
             // Pass parameter to login function. 
             var admin =
                 await
-                    _repositoryAccountExtended.FindAdminAsync(filterAdminViewModel);
+                    _repositoryAccount.FindAccountAsync(filterAdminViewModel);
 
             // If no result return, that means no account.
             if (admin == null)
             {
                 _log.Error($"{loginViewModel.Email} is not found in database");
-                    
+
                 // Response to client.
-                ModelState.AddModelError("Login", string.Format(Olive_Admin_Language.AccountIsNotFound, loginViewModel.Email));
+                ModelState.AddModelError("Login",
+                    string.Format(Olive_Admin_Language.AccountIsNotFound, loginViewModel.Email));
 
                 return View(loginViewModel);
             }
@@ -112,18 +107,20 @@ namespace OliveAdmin.Controllers
                 _log.Error($"{loginViewModel.Email} is pending");
 
                 // Response to client.
-                ModelState.AddModelError("Login", string.Format(Olive_Admin_Language.AccountIsNotFound, loginViewModel.Email));
+                ModelState.AddModelError("Login",
+                    string.Format(Olive_Admin_Language.AccountIsNotFound, loginViewModel.Email));
 
                 return View(loginViewModel);
             }
 
             // Account is disabled.
-            if (admin.Status == (byte)AccountStatus.Disabled)
+            if (admin.Status == (byte) AccountStatus.Disabled)
             {
                 _log.Error($"{loginViewModel.Email} is disabled");
 
                 // Response to client.
-                ModelState.AddModelError("Login", string.Format(Olive_Admin_Language.AccountIsNotFound, loginViewModel.Email));
+                ModelState.AddModelError("Login",
+                    string.Format(Olive_Admin_Language.AccountIsNotFound, loginViewModel.Email));
 
                 return View(loginViewModel);
             }
@@ -132,14 +129,15 @@ namespace OliveAdmin.Controllers
             loginViewModel.Password = accountHashedPassword;
 
             // Initialize form authentication ticket, encrypt and store it to cookie.
-            var formAuthenticationTicket = new FormsAuthenticationTicket(1, FormsAuthentication.FormsCookieName, DateTime.Now, DateTime.Now.AddMinutes(30), true, JsonConvert.SerializeObject(loginViewModel));
-                
+            var formAuthenticationTicket = new FormsAuthenticationTicket(1, FormsAuthentication.FormsCookieName,
+                DateTime.Now, DateTime.Now.AddMinutes(30), true, JsonConvert.SerializeObject(loginViewModel));
+
             // Initialize cookie contain the authorization ticket.
-            var httpCookie = new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(formAuthenticationTicket));
+            var httpCookie = new HttpCookie(FormsAuthentication.FormsCookieName,
+                FormsAuthentication.Encrypt(formAuthenticationTicket));
             Response.Cookies.Add(httpCookie);
 
             return RedirectToAction("Index", "Home");
-            
         }
 
         /// <summary>
@@ -147,92 +145,44 @@ namespace OliveAdmin.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult> Edit(EditAdminViewModel editAdminViewModel)
+        public async Task<ActionResult> Edit(EditAccountViewModel editAccountViewModel)
         {
-            #region Request parameters validation
-            
             // ModelState is invalid.
             if (!ModelState.IsValid)
-                return View(editAdminViewModel);
+                return View(editAccountViewModel);
 
-            #endregion
-
-            #region Information construction
-
-            // Retrieve information of person who sent request.
-            var requester = (Admin)ActionContext.ActionArguments[HeaderFields.RequestAccountStorage];
-
-            // First name is defined.
-            if (!string.IsNullOrWhiteSpace(editor.FirstName))
-                requester.FirstName = editor.FirstName;
-
-            // Last name is defined.
-            if (!string.IsNullOrWhiteSpace(editor.LastName))
-                requester.LastName = editor.LastName;
-
-            // Birthday is defined.
-            if (editor.Birthday != null)
-                requester.Birthday = editor.Birthday;
-
-            // Password is defined.
-            if (!string.IsNullOrWhiteSpace(editor.Password))
-                requester.Password = editor.Password;
-
-            // Gender is defined.
-            if (editor.Gender != null)
-                requester.Gender = (byte)editor.Gender;
-
-            // Phone is defined.
-            if (!string.IsNullOrWhiteSpace(editor.Phone))
-                requester.Phone = editor.Phone;
-
-            // Address is defined.
-            if (!string.IsNullOrWhiteSpace(editor.Address))
-                requester.Address = editor.Address;
-
-            // Update person full name.
-            requester.FullName = requester.FirstName + " " + requester.LastName;
-
-            #endregion
-
-            #region Result handling
+            // Find account information from controller context.
+            var account = (Account)ViewData["Authorization"];
 
             try
             {
-                // Update the last modified.
-                requester.LastModified = _timeService.DateTimeUtcToUnix(DateTime.UtcNow);
+                // Encrypt user password.
+                account.Password = _repositoryAccount.FindMd5Password(editAccountViewModel.Password);
 
-                // Update the patient.
-                requester = await _repositoryAccountExtended.EditPersonProfileAsync(requester.Id, requester);
+                // Update the account information.
+                account = await _repositoryAccount.InitializeAccountAsync(account);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new
-                {
-                    User = new
-                    {
-                        requester.Id,
-                        requester.Email,
-                        requester.Password,
-                        requester.FirstName,
-                        requester.LastName,
-                        requester.Birthday,
-                        requester.Phone,
-                        requester.Gender,
-                        requester.Role,
-                        requester.Created,
-                        requester.LastModified,
-                        requester.Status,
-                        requester.Address,
-                        Photo = requester.PhotoUrl
-                    }
-                });
+                var loginViewModel = new LoginViewModel();
+                loginViewModel.Email = account.Email;
+                loginViewModel.Password = account.Password;
+
+                // As the update is successful, cookie should be updated too.
+                // Initialize form authentication ticket, encrypt and store it to cookie.
+                var formAuthenticationTicket = new FormsAuthenticationTicket(1, FormsAuthentication.FormsCookieName,
+                    DateTime.Now, DateTime.Now.AddMinutes(30), true, JsonConvert.SerializeObject(account));
+
+                // Initialize cookie contain the authorization ticket.
+                var httpCookie = new HttpCookie(FormsAuthentication.FormsCookieName,
+                    FormsAuthentication.Encrypt(formAuthenticationTicket));
+                Response.Cookies.Add(httpCookie);
+
+                return RedirectToAction("Index", "Home");
             }
             catch (Exception exception)
             {
                 _log.Error(exception.Message, exception);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
             }
-
-            #endregion
         }
 
         #endregion
@@ -242,18 +192,13 @@ namespace OliveAdmin.Controllers
         /// <summary>
         ///     Repository account.
         /// </summary>
-        private readonly IRepositoryAccountExtended _repositoryAccountExtended;
+        private readonly IRepositoryAccount _repositoryAccount;
 
         /// <summary>
         ///     Instance for logging.
         /// </summary>
         private readonly ILog _log;
-
-        /// <summary>
-        ///     Service which is used to access time calculation functions.
-        /// </summary>
-        private readonly ITimeService _timeService;
-
+        
         #endregion
     }
 }
