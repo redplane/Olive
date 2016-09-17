@@ -1,34 +1,30 @@
-﻿var filterDoctorSort = [
+﻿var filterAccountSort = [
     {
-    	text: "First name",
+        text: "First name",
         value: 0
     },
     {
-    	text: "Last name",
+        text: "Last name",
         value: 1
     },
     {
-    	text: "Created",
+        text: "Created",
         value: 2
     },
     {
-    	text: "Last modified",
+        text: "Last modified",
         value: 3
     },
     {
-    	text: "Birthday",
+        text: "Birthday",
         value: 4
     },
     {
-    	text: "Gender",
+        text: "Gender",
         value: 5
     },
     {
-    	text: "Status",
+        text: "Status",
         value: 6
-    },
-    {
-    	text: "Rank",
-        value: 7
     }
-]
+];

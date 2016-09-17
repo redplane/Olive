@@ -24,7 +24,7 @@ namespace Shared.ViewModels.Filter
         /// </summary>
         [InEnumerationsArray(new object[] { TextComparision.Contain, TextComparision.Equal },
              ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
-        public TextComparision EmailComparision { get; set; }
+        public TextComparision EmailComparision { get; set; } = TextComparision.Contain;
 
         /// <summary>
         /// Account first name.
@@ -35,7 +35,7 @@ namespace Shared.ViewModels.Filter
         /// First name comparision.
         /// </summary>
         [InEnumerationsArray(new object[] { TextComparision.Contain, TextComparision.Equal, TextComparision.EqualIgnoreCase }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
-        public TextComparision FirstNameComparision { get; set; }
+        public TextComparision FirstNameComparision { get; set; } = TextComparision.Contain;
 
         /// <summary>
         /// Account last name.
@@ -46,7 +46,7 @@ namespace Shared.ViewModels.Filter
         /// Last name comparision.
         /// </summary>
         [InEnumerationsArray(new object[] { TextComparision.Contain, TextComparision.Equal, TextComparision.EqualIgnoreCase }, ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
-        public TextComparision LastNameComparision { get; set; }
+        public TextComparision LastNameComparision { get; set; } = TextComparision.Contain;
 
         /// <summary>
         ///     Password of admin account (encrypted)
@@ -58,7 +58,7 @@ namespace Shared.ViewModels.Filter
         /// </summary>
         [InEnumerationsArray(new object[] { TextComparision.Contain, TextComparision.Equal },
              ErrorMessageResourceType = typeof(Language), ErrorMessageResourceName = "ValueIsInvalid")]
-        public TextComparision PasswordComparision { get; set; }
+        public TextComparision PasswordComparision { get; set; } = TextComparision.Contain;
 
         /// <summary>
         ///     List of statuses.

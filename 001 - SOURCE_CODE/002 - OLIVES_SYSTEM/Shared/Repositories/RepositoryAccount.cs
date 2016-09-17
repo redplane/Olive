@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -239,6 +240,11 @@ namespace Shared.Repositories
                     accounts.Where(
                         x => (x.LastModified != null) && (x.LastModified <= filterAccountViewModel.MinLastModified));
 
+            // Role is specified.
+            if (filterAccountViewModel.Roles != null && filterAccountViewModel.Roles.Length > 0)
+                accounts = accounts.Where(x => AQL.In(x.Role, filterAccountViewModel.Roles));
+            
+
             return accounts;
         }
 
@@ -255,8 +261,8 @@ namespace Shared.Repositories
 
             // Response initialization.
             var responseAccountFilter = new ResponseAccountFilter();
-            responseAccountFilter.Total = await QueryableExtensions.CountAsync(accounts);
-
+            responseAccountFilter.Total = await Task.Run(() => accounts.Count());
+            
             // Do pagination.
             if (filterAccountViewModel.Records != null)
             {

@@ -1,6 +1,8 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using log4net;
 using OliveAdmin.Attributes;
 using OliveAdmin.ViewModels.Edit;
 using Shared.Enumerations;
@@ -18,11 +20,17 @@ namespace OliveAdmin.Controllers
         private readonly IRepositoryAccount _repositoryAccount;
 
         /// <summary>
+        /// Provides functions to access logging.
+        /// </summary>
+        private readonly ILog _log;
+
+        /// <summary>
         /// Initialize controller with dependency injections.
         /// </summary>
-        public AccountController(IRepositoryAccount repositoryAccount)
+        public AccountController(IRepositoryAccount repositoryAccount, ILog log)
         {
             _repositoryAccount = repositoryAccount;
+            _log = log;
         }
 
         [HttpGet]
@@ -50,24 +58,32 @@ namespace OliveAdmin.Controllers
         /// <returns></returns>
         public async Task<ActionResult> Filter(FilterAccountViewModel filterAccountViewModel)
         {
-            // Request parameters are invalid.
-            if (!ModelState.IsValid)
+            try
             {
-                // Custom iis error page shouldn't be shown.
-                Response.TrySkipIisCustomErrors = true;
-
-                // Treat the response as the response of bad request.
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-                // Retrieve list of error messages.
-                return Json(new
+                // Request parameters are invalid.
+                if (!ModelState.IsValid)
                 {
-                    Errors = FindValidationError(ModelState)
-                });
-            }
+                    // Custom iis error page shouldn't be shown.
+                    Response.TrySkipIisCustomErrors = true;
 
-            var filteredResult = await _repositoryAccount.FilterAccountsAsync(filterAccountViewModel);
-            return Json(filteredResult);
+                    // Treat the response as the response of bad request.
+                    Response.StatusCode = (int) HttpStatusCode.BadRequest;
+                    
+                    // Retrieve list of error messages.
+                    return Json(new
+                    {
+                        Errors = FindValidationError(ModelState)
+                    });
+                }
+
+                var filteredResult = await _repositoryAccount.FilterAccountsAsync(filterAccountViewModel);
+                return Json(filteredResult);
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception.Message, exception);
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
+            }
         }
 
     }

@@ -2,43 +2,32 @@
     .controller("DoctorController",
     function ($scope) {
 
-        // This function is for converting date time to unix.
-        $scope.convertDateTimeToUnix = function (utcDate) {
-
-            // Utc date is not specified.
-            if (utcDate == null)
-                return null;
-
-            try {
-                return utcDate.getTime();
-            } catch (exception) {
-                // Supress error as available
-                return null;
-            }
-        }
-
         // Check whether records are being loaded or not.
         $scope.isResultLoading = false;
 
         // List of statuses which are used for filtering purpose.
-        $scope.filterStatuses = statuses;
+        $scope.statuses = statuses;
 
         // List of genders which can be used for filtering.
         $scope.genders = genders;
 
         // List of properties can be used for filtering doctor.
-        $scope.filterDoctorSort = filterDoctorSort;
+        $scope.filterAccountSort = filterAccountSort;
 
         // List of direction which results can be sorted as.
         $scope.sortDirections = sortDirections;
 
         // This view model is for filtering doctors.
-        $scope.filterDoctorViewModel = {};
+        $scope.filterAccountViewModel = {};
+
+        // List of roles which can be selected for filter purpose.
+        $scope.accountRoles = accountRoles;
+
 
         // This view model is for pagination purpose.
         $scope.pagination = {
             page: 1,
-            records: $scope.filterDoctorViewModel.records
+            records: $scope.filterAccountViewModel.records
         }
 
         // Global date picker global configurations.
@@ -87,24 +76,28 @@
         // This function is for getting doctors list from service.
         $scope.getDoctors = function (page) {
 
-            var filterDoctorViewModel = $scope.filterDoctorViewModel;
+            var filterAccountViewModel = jQuery.extend(true, {}, $scope.filterAccountViewModel);
             if (page == undefined)
                 page = 0;
             
             // Update filter doctor view model page.
-            filterDoctorViewModel.page = page;
-            filterDoctorViewModel.minBirthday = $scope.convertDateTimeToUnix($scope.filterDoctorViewModel.minBirthday);
-            filterDoctorViewModel.maxBirthday = $scope.convertDateTimeToUnix($scope.filterDoctorViewModel.maxBirthday);
-            filterDoctorViewModel.minCreated = $scope.convertDateTimeToUnix($scope.filterDoctorViewModel.minCreated);
-            filterDoctorViewModel.maxCreated = $scope.convertDateTimeToUnix($scope.filterDoctorViewModel.maxCreated);
+            filterAccountViewModel.page = page;
+            filterAccountViewModel.minBirthday = $.findBeginningTimeOfDay($scope.filterAccountViewModel.minBirthday);
+            filterAccountViewModel.maxBirthday = $.findEndingTimeOfDay($scope.filterAccountViewModel.maxBirthday);
+            filterAccountViewModel.minCreated = $.findBeginningTimeOfDay($scope.filterAccountViewModel.minCreated);
+            filterAccountViewModel.maxCreated = $.findEndingTimeOfDay($scope.filterAccountViewModel.maxCreated);
+            filterAccountViewModel.genders = $scope.filterAccountViewModel.genders.map(function (x) { return x.value; });
+            filterAccountViewModel.statuses = $scope.filterAccountViewModel.statuses
+                .map(function (x) { return x.value; });
+            filterAccountViewModel.roles = $scope.filterAccountViewModel.roles.map(function (x) { return x.value; });
 
             // Update pagination page.
             $scope.pagination.page = page + 1;
 
             $.ajax({
-                url: "/doctor/filter",
+                url: "/account/filter",
                 type: "post",
-                data: angular.toJson(filterDoctorViewModel),
+                data: angular.toJson(filterAccountViewModel),
                 contentType: "application/json",
                 beforeSend: function () {
                     $scope.isResultLoading = true;
@@ -117,7 +110,7 @@
                 },
                 complete: function () {
                     $scope.isResultLoading = false;
-                    $scope.pagination.records = $scope.filterDoctorViewModel.records;
+                    $scope.pagination.records = $scope.filterAccountViewModel.records;
                     $scope.$applyAsync();
                     return;
                 }
@@ -128,7 +121,7 @@
         $scope.reset = function () {
 
             // Reset the doctor filter.
-            $scope.filterDoctorViewModel = {
+            $scope.filterAccountViewModel = {
                 email: null,
                 phone: null,
                 minLastModified: null,
@@ -142,11 +135,14 @@
                 minRank: null,
                 maxRank: null,
                 direction: $scope.sortDirections[0].value,
-                sort: $scope.filterDoctorSort[0].value,
-                statuses: $scope.filterStatuses.map(function (x) {
+                sort: $scope.filterAccountSort[0].value,
+                statuses: $scope.statuses.map(function (x) {
                     return x.value;
                 }),
                 genders: $scope.genders.map(function(x) {
+                    return x.value;
+                }),
+                roles: $scope.accountRoles.map(function(x) {
                     return x.value;
                 }),
                 city: null,
@@ -169,7 +165,7 @@
         $scope.initialLoad = function () {
 
             // Reset the page
-            $scope.filterDoctorViewModel.page = 0;
+            $scope.filterAccountViewModel.page = 0;
             $scope.$applyAsync();
 
             // Do the load.

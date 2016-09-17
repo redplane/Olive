@@ -202,7 +202,11 @@
     <Content Include="Scripts\angular.js" />
     <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\angular.min.js.map" />
+    <Content Include="Scripts\angular\angular-bootstrap-multiselect-templates.js" />
+    <Content Include="Scripts\angular\angular-bootstrap-multiselect.min.js" />
     <Content Include="Scripts\angular\controller\doctor-management-controller.js" />
+    <Content Include="Scripts\angular\datetimepicker.templates.js" />
+    <Content Include="Scripts\angular\enumeration\account-role.js" />
     <Content Include="Scripts\angular\viewmodel\doctor-data.js" />
     <Content Include="Scripts\angular\viewmodel\filter-doctor-sort.viewmodel.js" />
     <None Include="Scripts\jquery-3.1.0.intellisense.js" />
@@ -224,6 +228,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\jQueryTime.helper.js" />
     <Content Include="Scripts\locales\bootstrap-datepicker.ar.min.js" />
     <Content Include="Scripts\locales\bootstrap-datepicker.az.min.js" />
     <Content Include="Scripts\locales\bootstrap-datepicker.bg.min.js" />
