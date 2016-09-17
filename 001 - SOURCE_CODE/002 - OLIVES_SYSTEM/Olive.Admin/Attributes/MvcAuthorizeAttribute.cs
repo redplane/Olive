@@ -9,8 +9,9 @@ using System.Web.Mvc;
 using System.Web.Security;
 using log4net;
 using Newtonsoft.Json;
-using OliveAdmin.Interfaces;
+using OliveAdmin.Models;
 using Shared.Enumerations;
+using Shared.Interfaces;
 using Shared.ViewModels;
 using Shared.ViewModels.Filter;
 
@@ -23,7 +24,7 @@ namespace OliveAdmin.Attributes
         /// <summary>
         ///     Instance which provides access to account service.
         /// </summary>
-        public IRepositoryAccountExtended RepositoryAccountExtended { get; set; }
+        public IRepositoryAccount RepositoryAccount { get; set; }
 
         /// <summary>
         ///     Repository for logging.
@@ -167,9 +168,10 @@ namespace OliveAdmin.Attributes
                 filterAdminViewModel.EmailComparision = TextComparision.Equal;
                 filterAdminViewModel.Password = loginViewModel.Password;
                 filterAdminViewModel.PasswordComparision = TextComparision.EqualIgnoreCase;
-
+                filterAdminViewModel.Roles = new[] { Role.Admin };
+                
                 // Find the account from database.
-                var account = RepositoryAccountExtended.FindAccount(filterAdminViewModel);
+                var account = RepositoryAccount.FindAccount(filterAdminViewModel);
 
                 // Account is not found
                 if (account == null)
@@ -202,7 +204,7 @@ namespace OliveAdmin.Attributes
                     loginViewModel.Password = "";
 
                     // Save the account information to session.
-                    authorizationContext.HttpContext.Session["Account"] = account;
+                    authorizationContext.HttpContext.Session[Constant.MvcAccount] = account;
                 }
 
                 // Role is not allowed to access function.
@@ -223,11 +225,8 @@ namespace OliveAdmin.Attributes
                 }, "Cookie");
 
                 // Setup claim identity to HttpContext.
-                authorizationContext.HttpContext.User = new GenericPrincipal(claimIdentity, new[] {"Admin"});
-
-                // Setup authorization information.
-                authorizationContext.Controller.ViewData.Add("Authorization", account);
-
+                authorizationContext.HttpContext.User = new GenericPrincipal(claimIdentity, new[] { "Admin" });
+                
                 #endregion
             }
             catch (Exception exception)

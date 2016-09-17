@@ -7,6 +7,7 @@ using System.Web.Security;
 using log4net;
 using Newtonsoft.Json;
 using OliveAdmin.Attributes;
+using OliveAdmin.Models;
 using OliveAdmin.Resources;
 using OliveAdmin.ViewModels.Edit;
 using Shared.Enumerations;
@@ -145,17 +146,17 @@ namespace OliveAdmin.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult> Edit(EditAccountViewModel editAccountViewModel)
+        public async Task<ActionResult> Edit([Bind(Include = "Password")] EditAccountViewModel editAccountViewModel)
         {
             // ModelState is invalid.
             if (!ModelState.IsValid)
                 return View(editAccountViewModel);
-
-            // Find account information from controller context.
-            var account = (Account)ViewData["Authorization"];
-
+            
             try
             {
+                // Find account information from session.
+                var account = (Account)Session[Constant.MvcAccount];
+                
                 // Encrypt user password.
                 account.Password = _repositoryAccount.FindMd5Password(editAccountViewModel.Password);
 
