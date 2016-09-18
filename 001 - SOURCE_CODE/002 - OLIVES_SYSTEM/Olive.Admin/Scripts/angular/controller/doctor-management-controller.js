@@ -74,7 +74,7 @@
         }
 
         // This function is for getting doctors list from service.
-        $scope.getDoctors = function (page) {
+        $scope.getAccounts = function (page) {
 
             var filterAccountViewModel = jQuery.extend(true, {}, $scope.filterAccountViewModel);
             if (page == undefined)
@@ -132,21 +132,11 @@
                 maxBirthday: null,
                 minCreated: null,
                 maxCreated: null,
-                minRank: null,
-                maxRank: null,
                 direction: $scope.sortDirections[0].value,
                 sort: $scope.filterAccountSort[0].value,
-                statuses: $scope.statuses.map(function (x) {
-                    return x.value;
-                }),
-                genders: $scope.genders.map(function(x) {
-                    return x.value;
-                }),
-                roles: $scope.accountRoles.map(function(x) {
-                    return x.value;
-                }),
-                city: null,
-                country: null,
+                statuses: $scope.statuses,
+                genders: $scope.genders,
+                roles: $scope.accountRoles,
                 page: 0,
                 records: 20
             }
@@ -159,7 +149,7 @@
         $scope.reset();
 
         // As the page is loaded, load all default doctors.
-        $scope.getDoctors(0);
+        $scope.getAccounts(0);
 
         // As the filter confirm button is clicked. Load all doctors for the first page.
         $scope.initialLoad = function () {
@@ -172,23 +162,26 @@
             $scope.getDoctors();
         }
 
-        // This function is for checking whether date range is valid or not.
-        $scope.isDateRangeValid = function (minDate, maxDate) {
+        // This function is for changing account status.
+        $scope.changeAccountStatus = function(email, status) {
 
-            // Minimum date is not specified.
-            if (minDate == null)
-                return true;
+            $.ajax({
+                url: "/Account/Info",
+                type: "post",
+                data: {
+                    email: email,
+                    status: status
+                },
+                success: function(data) {
+                    console.log(data);
+                },
+                error: function(data) {
+                    
+                },
+                complete:function(data) {
+                    
+                }
+            });
 
-            // Maximum date is not speicified.
-            if (maxDate == null)
-                return true;
-
-            // Min date is smaller than max date.
-            if (minDate < maxDate)
-                return true;
-
-            return false;
         }
-
-        
     });

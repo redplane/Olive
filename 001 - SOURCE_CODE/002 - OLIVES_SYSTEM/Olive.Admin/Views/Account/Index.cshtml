@@ -219,7 +219,7 @@
 
                 <div class="box-footer">
                     <button class="btn btn-primary btn-flat btn-block"
-                            ng-click="getDoctors(pagination.page - 1)">
+                            ng-click="getAccounts(pagination.page - 1)">
                         OK
                     </button>
                 </div>
@@ -261,18 +261,6 @@
                                 <th><span class="fa fa-clock-o"></span></th>
                                 <td><span>{{account.Created}}</span></td>
                             </tr>
-                            <tr>
-                                <th><span class="fa fa-home"></span></th>
-                                <td><span>{{account.Address}}</span></td>
-                            </tr>
-                            <tr>
-                                <th><span class="glyphicon glyphicon-king"></span></th>
-                                <td><span>{{account.Rank}}</span></td>
-                            </tr>
-                            <tr>
-                                <th><span class="glyphicon glyphicon-education"></span></th>
-                                <td><span>{{account.Voters}}</span></td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -284,7 +272,8 @@
                     </button>
 
                     <button class="btn btn-danger btn-flat btn-block"
-                            ng-show="account.Status === 2">
+                            ng-show="account.Status === 2"
+                            ng-click="changeAccountStatus(account.Email, 0)">
                         Disable
                     </button>
 
@@ -304,7 +293,7 @@
                 previous-text="&lt;"
                 next-text="&gt;"
                 ng-disabled="isResultLoading"
-                ng-change="getDoctors(pagination.page - 1)"></ul>
+                ng-change="getAccounts(pagination.page - 1)"></ul>
         </div>
     </div>
 

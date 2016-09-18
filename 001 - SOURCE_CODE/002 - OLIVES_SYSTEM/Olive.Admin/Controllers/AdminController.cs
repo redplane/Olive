@@ -40,6 +40,8 @@ namespace OliveAdmin.Controllers
         #endregion
 
         #region Methods
+        
+        #region Login & logout
 
         /// <summary>
         ///     This function is for rendering login page.
@@ -155,6 +157,10 @@ namespace OliveAdmin.Controllers
             return RedirectToAction("Login", "Admin");
         }
 
+        #endregion
+
+        #region Profile
+
         /// <summary>
         /// This function is for reading requester profile and display profile page.
         /// </summary>
@@ -237,6 +243,29 @@ namespace OliveAdmin.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
             }
         }
+
+        #endregion
+
+        #region Find lost password
+
+        /// <summary>
+        /// This function is for rendering find admin account lost password page.
+        /// </summary>
+        /// <returns></returns>
+        [Route("Forgot")]
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult FindLostPassword()
+        {
+            // If the user is logged in. Redirect him/her to home page.
+            if (User.Identity.IsAuthenticated)
+                return RedirectToAction("Index", "Home");
+            
+            return View();
+        }
+
+
+        #endregion
 
         #endregion
 

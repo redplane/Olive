@@ -317,6 +317,11 @@
     <Compile Include="Models\Constant.cs" />
     <Compile Include="Module\Log4NetModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\MvcErrorCode.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MvcErrorCode.resx</DependentUpon>
+    </Compile>
     <Compile Include="Resources\Olive.Admin.Language.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -327,6 +332,8 @@
     <Compile Include="ViewModels\Edit\EditPlaceViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditStatusViewModel.cs" />
     <Compile Include="ViewModels\Edit\EditAccountViewModel.cs" />
+    <Compile Include="ViewModels\Responses\Errors\HttpBadRequestViewModel.cs" />
+    <Compile Include="ViewModels\Responses\Errors\HttpErrorViewModel.cs" />
     <Compile Include="ViewModels\Statistic\StatusSummaryViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializeMedicalCategoryViewModel.cs" />
     <Compile Include="ViewModels\Initialize\InitializePlaceViewModel.cs" />
@@ -364,6 +371,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\MvcErrorCode.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MvcErrorCode.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\Olive.Admin.Language.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Olive.Admin.Language.Designer.cs</LastGenOutput>
