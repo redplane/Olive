@@ -1,0 +1,124 @@
+﻿@using Shared.Constants
+@model OliveAdmin.ViewModels.ForgotPasswordViewModel
+
+@{
+    Layout = "../Shared/_Layout.cshtml";
+
+    var properties = new Dictionary<string, object>();
+}
+
+<body ng-app="AdminApplication"
+      ng-controller="ForgotPasswordController"
+      class="hold-transition login-page">
+<div class="login-box">
+
+    <div class="login-box-body">
+        <p class="login-box-msg">{ENTER_EMAIL_TO_RESET_PASSWORD}</p>
+
+        <form action='@Url.Action("Forgot", "Admin")'
+              method="post"
+              ng-submit="submitLostPassword($event)">
+                
+            <div class="alert alert-danger"
+                 ng-hide="validationMessages == null || validationMessages.length < 1">
+                <ul>
+                    <li ng-repeat="validationMessage in validationMessages">{{validationMessage}}</li>
+                </ul>
+            </div>
+            <div class="form-group has-feedback">
+                @{
+                    properties = new Dictionary<string, object>();
+                    properties.Add("class", "form-control");
+                    properties.Add("ng-model", "email");
+                }
+                @Html.TextBoxFor(x => x.Email, properties)
+                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+            </div>
+
+            <div class="form-group has-feedback">
+                <button type="submit"
+                        class="btn btn-primary btn-block btn-flat">
+                    <span class="glyphicon glyphicon-ok"></span> {SUBMIT}
+                </button>
+            </div>
+
+        </form>
+        <!-- /.social-auth-links -->
+        <a href="/Admin/Login">{LOGIN_IN}</a><br>
+    </div>
+</div>
+</body>
+
+<!-- JQuery validation plugins -->
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<!-- Helper which provides shortcut to access neccessary functions of jquery validation -->
+<script src="~/Scripts/helpers/jQueryValidation.helper.js"></script>
+
+<!-- Angular -->
+<script src="~/Scripts/angular.min.js"></script>
+
+<script>
+    angular.module("AdminApplication", [])
+        .controller("ForgotPasswordController",
+            function ($scope) {
+                
+                // List of validation messages.
+                $scope.validationMessages = [];
+
+                // Email which is used for receiving find password instruction.
+                $scope.email = "";
+
+                // This function is for submitting email address which is used for receiving find account password instruction.
+                $scope.submitLostPassword = function(event) {
+                    
+                    // Prevent default form submit behavior.
+                    event.preventDefault();
+
+                    // Find validation error messages.
+                    $scope.validationMessages = $.findValidationMessages(event.target);
+
+                    // There is something wrong with the data.
+                    if ($scope.validationMessages != null && $scope.validationMessages.length > 0) {
+
+                        // Stop submitting form and update list of error message.
+                        $scope.$applyAsync();
+
+                        return;
+                    }
+
+                    // Information seems to be valid. Send request to web server.
+                    $.ajax({
+                        url: "/Admin/Forgot",
+                        type: "post",
+                        data: {
+                            email: $scope.email
+                        },
+                        success: function(data) {
+                            console.log(data);
+                        },
+                        error: function (jqXhr, textStatus, errorThrown) {
+
+                            // Find response status code.
+                            var statusCode = jqXhr.status;
+                            
+                            switch (statusCode) {
+                                case 400:
+                                    // Update validation messages list.
+                                    $scope.validationMessages = jqXhr.responseJSON.Messages;
+                                    $scope.$applyAsync();
+                                    return;
+                                default:
+                                    // Update validation messages list.
+                                    $scope.validationMessages = [];
+                                    $scope.validationMessages.push(jqXhr.responseJSON.Message);
+                                    $scope.$applyAsync();
+                                    return;
+                            }
+                        }
+                    });
+                }
+            });
+</script>

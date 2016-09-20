@@ -9,7 +9,9 @@ using Newtonsoft.Json;
 using OliveAdmin.Attributes;
 using OliveAdmin.Models;
 using OliveAdmin.Resources;
+using OliveAdmin.ViewModels;
 using OliveAdmin.ViewModels.Edit;
+using OliveAdmin.ViewModels.Responses.Errors;
 using Shared.Enumerations;
 using Shared.Interfaces;
 using Shared.Models.Vertexes;
@@ -20,7 +22,7 @@ namespace OliveAdmin.Controllers
 {
     [RoutePrefix("Admin")]
     [MvcAuthorize(new[] { Role.Admin })]
-    public class AdminController : Controller
+    public class AdminController : MvcController
     {
         #region Constructors
 
@@ -252,10 +254,9 @@ namespace OliveAdmin.Controllers
         /// This function is for rendering find admin account lost password page.
         /// </summary>
         /// <returns></returns>
-        [Route("Forgot")]
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult FindLostPassword()
+        public ActionResult Forgot()
         {
             // If the user is logged in. Redirect him/her to home page.
             if (User.Identity.IsAuthenticated)
@@ -264,6 +265,55 @@ namespace OliveAdmin.Controllers
             return View();
         }
 
+        /// <summary>
+        /// This function is for finding admin account and send find password instruction email.
+        /// </summary>
+        /// <param name="forgotPasswordViewModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> Forgot(ForgotPasswordViewModel forgotPasswordViewModel)
+        {
+            // Request parameters are invalid.
+            if (!ModelState.IsValid)
+            {
+                _log.Error("Validation is invalid. Validation errors sent to client.");
+
+                // Tell the client about the bad request.
+                Response.StatusCode = (int) HttpStatusCode.BadRequest;
+                return Json(new HttpBadRequestViewModel
+                {
+                    Errors = FindValidationError(ModelState)
+                });
+            }
+
+            // Account filter initialization.
+            var filterAccountViewModel = new FilterAccountViewModel();
+            filterAccountViewModel.Email = forgotPasswordViewModel.Email;
+            filterAccountViewModel.EmailComparision = TextComparision.Equal;
+            filterAccountViewModel.Roles = new[] {Role.Admin};
+            filterAccountViewModel.Statuses = new[] {AccountStatus.Active};
+
+            // Find the admin account.
+            var account = await _repositoryAccount.FindAccountAsync(filterAccountViewModel);
+
+            // Account is not found.
+            if (account == null)
+            {
+                _log.Error($"Account {forgotPasswordViewModel.Email} is not found in system.");
+
+                Response.StatusCode = (int) HttpStatusCode.NotFound;
+                return Json(new HttpErrorViewModel
+                {
+                    Message = MvcErrorCode.AccountIsNotFound
+                });
+            }
+            
+            // TODO: Tell the Olive to send password forgot to client.
+
+            // Tell the client about the request is OK.
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
+        }
 
         #endregion
 

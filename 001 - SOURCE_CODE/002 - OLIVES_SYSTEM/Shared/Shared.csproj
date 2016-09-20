@@ -105,6 +105,7 @@
     <Compile Include="Interfaces\IPagination.cs" />
     <Compile Include="Interfaces\IRepositoryAccount.cs" />
     <Compile Include="Interfaces\ITimeService.cs" />
+    <Compile Include="Models\Constant.cs" />
     <Compile Include="Models\Edges\HasAppointment.cs" />
     <Compile Include="Models\Edges\RequestedRelationship.cs" />
     <Compile Include="Models\Photo.cs" />
@@ -125,6 +126,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Language.vi.resx</DependentUpon>
     </Compile>
+    <Compile Include="Resources\ValidationMessage.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ValidationMessage.resx</DependentUpon>
+    </Compile>
     <Compile Include="Services\TimeService.cs" />
     <Compile Include="ViewModels\Filter\FilterAccountViewModel.cs" />
     <Compile Include="ViewModels\Response\Filter\ResponseAccountFilter.cs" />
@@ -139,6 +145,10 @@
     <EmbeddedResource Include="Resources\Language.vi.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Language.vi.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ValidationMessage.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ValidationMessage.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

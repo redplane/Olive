@@ -156,12 +156,14 @@ namespace OliveAdmin.Controllers
             // Tell the client the update is successful.
             return Json(account);
         }
-        
+
         /// <summary>
         /// This function is for filtering accounts and return response to front-end.
         /// </summary>
         /// <param name="filterAccountViewModel"></param>
         /// <returns></returns>
+        [HttpPost]
+        [Route("Filter")]
         public async Task<ActionResult> Filter(FilterAccountViewModel filterAccountViewModel)
         {
             try
@@ -191,6 +193,6 @@ namespace OliveAdmin.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
             }
         }
-
+        
     }
 }
